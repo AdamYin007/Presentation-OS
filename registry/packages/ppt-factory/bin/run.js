@@ -11,15 +11,22 @@ function getArg(name, fallback) {
   return fallback;
 }
 
-const topic = getArg("topic", "数字病理的本质，是 AI 和软件驱动的能力升级");
+const storyName = getArg("story", "digital-pathology-15");
 const out = getArg("out", path.join(process.cwd(), "output", "ppt-factory"));
-const slides = Number(getArg("slides", "8"));
+const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
+
+if (!fs.existsSync(storyPath)) {
+  console.error("❌ story not found:", storyPath);
+  process.exit(1);
+}
+
+const story = JSON.parse(fs.readFileSync(storyPath, "utf8"));
 
 fs.mkdirSync(out, { recursive: true });
 
 const pptx = new pptxgen();
 pptx.layout = "LAYOUT_WIDE";
-pptx.author = "AWE PPT Factory";
+pptx.author = "AWE Presentation OS";
 
 pptx.theme = {
   headFontFace: "Arial",
@@ -27,225 +34,310 @@ pptx.theme = {
   lang: "zh-CN"
 };
 
-function addTitle(slide, text, y = 0.45) {
+const C = {
+  navy: "0F172A",
+  blue: "2563EB",
+  lightBlue: "EFF6FF",
+  gray: "64748B",
+  lightGray: "F8FAFC",
+  border: "E2E8F0",
+  green: "059669",
+  orange: "EA580C",
+  red: "DC2626",
+  white: "FFFFFF"
+};
+
+function footer(slide, n) {
+  slide.addText(`AWE Presentation OS · ${story.style} · ${n}`, {
+    x: 0.55,
+    y: 7.12,
+    w: 5,
+    h: 0.2,
+    fontSize: 8,
+    color: "94A3B8",
+    margin: 0
+  });
+}
+
+function title(slide, text, sub) {
   slide.addText(text, {
-    x: 0.6,
-    y,
-    w: 12.1,
-    h: 0.5,
-    fontFace: "Arial",
+    x: 0.55,
+    y: 0.35,
+    w: 11.8,
+    h: 0.45,
     fontSize: 24,
     bold: true,
-    color: "1F2937",
+    color: C.navy,
     margin: 0
   });
-}
-
-function addSubtitle(slide, text, y = 1.1) {
-  slide.addText(text, {
-    x: 0.62,
-    y,
-    w: 11.6,
-    h: 0.6,
-    fontFace: "Arial",
-    fontSize: 14,
-    color: "4B5563",
-    margin: 0
-  });
-}
-
-function addFooter(slide, page) {
-  slide.addShape(pptx.ShapeType.line, {
-    x: 0.6,
-    y: 7.0,
-    w: 12.1,
-    h: 0,
-    line: { color: "E5E7EB", width: 1 }
-  });
-  slide.addText(`AWE PPT Factory · ${page}`, {
-    x: 0.6,
-    y: 7.08,
-    w: 3.5,
-    h: 0.25,
-    fontSize: 8,
-    color: "9CA3AF",
-    margin: 0
-  });
-}
-
-function bulletSlide(title, subtitle, bullets, page) {
-  const slide = pptx.addSlide();
-  slide.background = { color: "FFFFFF" };
-  addTitle(slide, title);
-  addSubtitle(slide, subtitle);
-
-  bullets.forEach((b, idx) => {
-    slide.addText(b, {
-      x: 1.0,
-      y: 2.0 + idx * 0.7,
-      w: 10.6,
-      h: 0.36,
-      fontSize: 17,
-      color: "111827",
-      bullet: { type: "bullet" },
+  if (sub) {
+    slide.addText(sub, {
+      x: 0.57,
+      y: 0.9,
+      w: 11.4,
+      h: 0.35,
+      fontSize: 12,
+      color: C.gray,
       margin: 0
     });
-  });
-
-  addFooter(slide, page);
+  }
 }
 
-let page = 1;
+function card(slide, x, y, w, h, header, body, color = C.blue) {
+  slide.addShape(pptx.ShapeType.roundRect, {
+    x,
+    y,
+    w,
+    h,
+    rectRadius: 0.08,
+    fill: { color: C.white },
+    line: { color: C.border, width: 1 }
+  });
+  slide.addShape(pptx.ShapeType.rect, {
+    x,
+    y,
+    w,
+    h: 0.08,
+    fill: { color },
+    line: { color }
+  });
+  slide.addText(header, {
+    x: x + 0.18,
+    y: y + 0.22,
+    w: w - 0.36,
+    h: 0.35,
+    fontSize: 15,
+    bold: true,
+    color: C.navy,
+    margin: 0
+  });
+  slide.addText(body, {
+    x: x + 0.18,
+    y: y + 0.72,
+    w: w - 0.36,
+    h: h - 0.9,
+    fontSize: 10.5,
+    color: C.gray,
+    fit: "shrink",
+    margin: 0
+  });
+}
 
-let cover = pptx.addSlide();
-cover.background = { color: "F8FAFC" };
-cover.addText(topic, {
-  x: 0.75,
-  y: 2.2,
-  w: 11.8,
-  h: 1.1,
-  fontSize: 34,
-  bold: true,
-  color: "111827",
-  margin: 0
-});
-cover.addText("AWE PPT Factory Enterprise · Consulting Style Draft", {
-  x: 0.78,
-  y: 3.55,
-  w: 10.5,
-  h: 0.4,
-  fontSize: 15,
-  color: "4B5563",
-  margin: 0
-});
-cover.addText(new Date().toISOString().slice(0, 10), {
-  x: 0.78,
-  y: 6.6,
-  w: 3,
-  h: 0.3,
-  fontSize: 10,
-  color: "9CA3AF",
-  margin: 0
-});
-page++;
+function cover(s) {
+  const slide = pptx.addSlide();
+  slide.background = { color: C.lightGray };
+  slide.addShape(pptx.ShapeType.rect, {
+    x: 0,
+    y: 0,
+    w: 4.2,
+    h: 7.5,
+    fill: { color: C.navy },
+    line: { color: C.navy }
+  });
+  slide.addText("DIGITAL\nPATHOLOGY", {
+    x: 0.55,
+    y: 0.65,
+    w: 3.1,
+    h: 1.3,
+    fontSize: 24,
+    bold: true,
+    color: C.white,
+    margin: 0,
+    breakLine: false
+  });
+  slide.addText(s.title, {
+    x: 4.75,
+    y: 2.05,
+    w: 7.7,
+    h: 1.1,
+    fontSize: 32,
+    bold: true,
+    color: C.navy,
+    margin: 0,
+    fit: "shrink"
+  });
+  slide.addText(s.message, {
+    x: 4.78,
+    y: 3.42,
+    w: 7,
+    h: 0.45,
+    fontSize: 15,
+    color: C.gray,
+    margin: 0
+  });
+  slide.addText(story.audience, {
+    x: 4.78,
+    y: 6.35,
+    w: 5.5,
+    h: 0.25,
+    fontSize: 10,
+    color: "94A3B8",
+    margin: 0
+  });
+}
 
-bulletSlide(
-  "核心观点",
-  "硬件是数字化入口，AI 与软件才是能力升级的核心。",
-  [
-    "扫描仪解决的是切片数字化，不等于病理科完成数智化",
-    "真正的价值来自诊断协同、质控闭环、AI 辅助和数据资产沉淀",
-    "软件平台决定系统能否支撑 CAP、ISO 15189、远程会诊和科研教学"
-  ],
-  page++
-);
+function executive(s) {
+  const slide = pptx.addSlide();
+  slide.background = { color: C.white };
+  title(slide, s.title, s.message);
+  card(slide, 0.75, 2.05, 3.6, 2.3, "01 不是设备采购", "数字病理建设不能停留在扫描仪参数比较，而应转向平台能力建设。", C.blue);
+  card(slide, 4.85, 2.05, 3.6, 2.3, "02 软件是中枢", "平台连接 LIS、阅片、AI、质控、归档与会诊，决定长期价值。", C.green);
+  card(slide, 8.95, 2.05, 3.6, 2.3, "03 AI 是增量能力", "AI 嵌入诊断工作流，提升效率、质量、科研和区域协同能力。", C.orange);
+  footer(slide, s.no);
+}
 
-bulletSlide(
-  "行业痛点",
-  "传统病理流程在效率、质量、协同和数据利用上存在结构性瓶颈。",
-  [
-    "诊断压力增加，优质病理医生资源不足",
-    "质控依赖人工经验，难以形成可追溯闭环",
-    "远程会诊、区域协同和科研教学缺少统一平台",
-    "数据分散在 LIS、扫描仪、阅片端和归档系统中"
-  ],
-  page++
-);
+function whyNow(s) {
+  const slide = pptx.addSlide();
+  slide.background = { color: C.white };
+  title(slide, s.title, s.message);
+  ["诊断需求增长", "病理医生稀缺", "AI 技术成熟", "区域协同需求"].forEach((t, i) => {
+    card(slide, 0.8 + i * 3.05, 2.05, 2.55, 2.4, t, ["肿瘤诊疗增长推动病理需求持续上升。", "优质病理资源分布不均，基层能力不足。", "AI 已从算法演示进入工作流整合阶段。", "医联体和远程会诊需要统一数字底座。"][i], [C.blue, C.green, C.orange, C.red][i]);
+  });
+  footer(slide, s.no);
+}
 
-bulletSlide(
-  "解决思路",
-  "以软件平台为中枢，将扫描、阅片、AI、质控、会诊和科研连接成一体。",
-  [
-    "统一接入扫描仪、LIS、AI 模型和会诊系统",
-    "构建病例、切片、诊断、质控、归档的全流程闭环",
-    "用 AI 提升筛查、提示、复核和教学效率",
-    "将数据沉淀为医院长期可复用的病理资产"
-  ],
-  page++
-);
+function problem(s) {
+  const slide = pptx.addSlide();
+  slide.background = { color: C.lightGray };
+  title(slide, s.title, s.message);
+  const items = [
+    ["效率瓶颈", "玻片流转、人工阅片和报告周期压力增加"],
+    ["质控瓶颈", "过程记录分散，复核和追溯成本高"],
+    ["协同瓶颈", "远程会诊、区域病理和多院区协同困难"],
+    ["数据瓶颈", "切片、诊断和科研数据难以沉淀复用"]
+  ];
+  items.forEach((it, i) => {
+    card(slide, i % 2 === 0 ? 1.1 : 6.9, i < 2 ? 1.75 : 4.05, 5.1, 1.55, it[0], it[1], i % 2 === 0 ? C.blue : C.orange);
+  });
+  footer(slide, s.no);
+}
 
-bulletSlide(
-  "能力框架",
-  "数字病理平台应具备四层能力：连接、流程、智能、治理。",
-  [
-    "连接层：扫描仪、LIS、存储、AI、远程会诊",
-    "流程层：登记、取材、制片、扫描、阅片、报告、归档",
-    "智能层：AI 辅助诊断、质控提示、科研检索、教学训练",
-    "治理层：CAP、ISO 15189、权限、日志、质控与数据安全"
-  ],
-  page++
-);
+function transformation(s) {
+  const slide = pptx.addSlide();
+  slide.background = { color: C.white };
+  title(slide, s.title, s.message);
+  const xs = [0.9, 4.7, 8.5];
+  const heads = ["硬件数字化", "平台流程化", "AI 智能化"];
+  const bodies = ["完成切片扫描与图像采集", "打通业务流程、质控与协同", "形成辅助诊断与数据资产能力"];
+  heads.forEach((h, i) => {
+    card(slide, xs[i], 2.35, 3.1, 2.0, h, bodies[i], [C.gray, C.blue, C.green][i]);
+    if (i < 2) {
+      slide.addText("→", { x: xs[i] + 3.25, y: 3.08, w: 0.6, h: 0.4, fontSize: 28, color: C.blue, margin: 0 });
+    }
+  });
+  footer(slide, s.no);
+}
 
-bulletSlide(
-  "为什么不是硬件竞争",
-  "硬件可替换，软件能力决定长期运营价值。",
-  [
-    "不同扫描仪可以完成图像采集，但平台能力差异决定后续价值",
-    "医院真正需要的是可运营、可扩展、可质控的病理数字化体系",
-    "软件平台越强，越能降低设备绑定风险和后期升级成本"
-  ],
-  page++
-);
+function platformHub(s) {
+  const slide = pptx.addSlide();
+  slide.background = { color: C.white };
+  title(slide, s.title, s.message);
+  slide.addShape(pptx.ShapeType.ellipse, {
+    x: 5.0,
+    y: 2.45,
+    w: 3.2,
+    h: 1.45,
+    fill: { color: C.blue },
+    line: { color: C.blue }
+  });
+  slide.addText("数字病理\n软件平台", {
+    x: 5.45,
+    y: 2.78,
+    w: 2.3,
+    h: 0.7,
+    fontSize: 20,
+    bold: true,
+    color: C.white,
+    align: "center",
+    margin: 0
+  });
+  const nodes = [
+    ["LIS", 1.0, 1.75], ["扫描仪", 3.2, 4.65], ["AI 模型", 5.2, 5.35],
+    ["数字阅片", 8.8, 4.65], ["质控", 10.2, 1.75], ["归档/会诊", 1.0, 5.0]
+  ];
+  nodes.forEach(([n, x, y]) => card(slide, x, y, 2.0, 0.85, n, "", C.green));
+  footer(slide, s.no);
+}
 
-bulletSlide(
-  "实施路径",
-  "建议采用分阶段建设方式，从数字化入口逐步走向智能化闭环。",
-  [
-    "阶段一：完成切片扫描、数字阅片和归档",
-    "阶段二：接入 LIS、远程会诊、质控管理和数据看板",
-    "阶段三：部署 AI 辅助诊断、科研教学和区域协同能力",
-    "阶段四：建立长期数据治理和持续运营机制"
-  ],
-  page++
-);
+function layered(s) {
+  const slide = pptx.addSlide();
+  slide.background = { color: C.lightGray };
+  title(slide, s.title, s.message);
+  const layers = [
+    ["应用层", "阅片、AI、会诊、科研、教学"],
+    ["平台层", "流程编排、质控、权限、日志、接口"],
+    ["数据层", "切片、病例、诊断、标注、模型结果"],
+    ["连接层", "LIS、扫描仪、存储、AI、院内系统"]
+  ];
+  layers.forEach((l, i) => {
+    slide.addShape(pptx.ShapeType.roundRect, {
+      x: 1.4,
+      y: 1.75 + i * 1.05,
+      w: 10.4,
+      h: 0.75,
+      rectRadius: 0.06,
+      fill: { color: i === 0 ? C.blue : C.white },
+      line: { color: C.border, width: 1 }
+    });
+    slide.addText(l[0], { x: 1.75, y: 1.96 + i * 1.05, w: 1.6, h: 0.25, fontSize: 15, bold: true, color: i === 0 ? C.white : C.navy, margin: 0 });
+    slide.addText(l[1], { x: 3.55, y: 1.96 + i * 1.05, w: 7.6, h: 0.25, fontSize: 13, color: i === 0 ? C.white : C.gray, margin: 0 });
+  });
+  footer(slide, s.no);
+}
 
-bulletSlide(
-  "结论",
-  "数字病理建设的本质，是 AI 与软件驱动的能力升级。",
-  [
-    "硬件是基础，软件是中枢，AI 是增量能力",
-    "医院采购不应只比较扫描参数，更应比较平台能力",
-    "未来竞争的核心，是谁能帮助病理科形成持续进化的数智化能力"
-  ],
-  page++
-);
+function roadmap(s) {
+  const slide = pptx.addSlide();
+  slide.background = { color: C.white };
+  title(slide, s.title, s.message);
+  const stages = [
+    ["阶段一", "扫描阅片", "完成数字化入口"],
+    ["阶段二", "平台协同", "打通流程与质控"],
+    ["阶段三", "AI 应用", "接入辅助诊断与科研"],
+    ["阶段四", "区域运营", "形成会诊与数据资产"]
+  ];
+  stages.forEach((st, i) => {
+    const x = 0.9 + i * 3.05;
+    slide.addShape(pptx.ShapeType.ellipse, { x: x + 0.85, y: 2.0, w: 0.75, h: 0.75, fill: { color: C.blue }, line: { color: C.blue } });
+    slide.addText(String(i + 1), { x: x + 1.07, y: 2.19, w: 0.3, h: 0.25, fontSize: 15, bold: true, color: C.white, margin: 0 });
+    card(slide, x, 3.05, 2.55, 1.7, st[1], st[2], C.blue);
+    slide.addText(st[0], { x, y: 1.55, w: 2.55, h: 0.25, fontSize: 12, color: C.gray, align: "center", margin: 0 });
+  });
+  slide.addShape(pptx.ShapeType.line, { x: 1.75, y: 2.38, w: 9.1, h: 0, line: { color: C.border, width: 2 } });
+  footer(slide, s.no);
+}
 
-const pptPath = path.join(out, "ppt-factory-demo.pptx");
-const outlinePath = path.join(out, "outline.md");
-const notesPath = path.join(out, "speaker-notes.md");
+function generic(s) {
+  const slide = pptx.addSlide();
+  slide.background = { color: C.white };
+  title(slide, s.title, s.message);
+  card(slide, 0.9, 2.0, 3.4, 2.1, "核心价值", "围绕业务流程形成持续改进能力。", C.blue);
+  card(slide, 4.9, 2.0, 3.4, 2.1, "平台能力", "连接数据、应用、AI 与治理体系。", C.green);
+  card(slide, 8.9, 2.0, 3.4, 2.1, "长期演进", "支撑科研、教学、区域协同与智能化升级。", C.orange);
+  footer(slide, s.no);
+}
 
-fs.writeFileSync(outlinePath, `# PPT Outline
+function renderSlide(s) {
+  if (s.type === "cover") return cover(s);
+  if (s.type === "executive-summary") return executive(s);
+  if (s.type === "why-now") return whyNow(s);
+  if (s.type === "problem") return problem(s);
+  if (s.type === "transformation") return transformation(s);
+  if (s.type === "solution") return platformHub(s);
+  if (s.type === "architecture") return layered(s);
+  if (s.type === "roadmap") return roadmap(s);
+  return generic(s);
+}
 
-Topic: ${topic}
+story.slides.forEach(renderSlide);
 
-Slides:
-1. Cover
-2. 核心观点
-3. 行业痛点
-4. 解决思路
-5. 能力框架
-6. 为什么不是硬件竞争
-7. 实施路径
-8. 结论
-`);
+const pptPath = path.join(out, `${story.name}.pptx`);
+const planPath = path.join(out, `${story.name}-slide-plan.json`);
 
-fs.writeFileSync(notesPath, `# Speaker Notes
-
-## Opening
-今天我们讨论的核心不是数字病理扫描仪本身，而是病理科如何通过 AI 与软件完成能力升级。
-
-## Key Message
-硬件是入口，软件是中枢，AI 是增量能力。
-
-## Closing
-未来数字病理项目的成败，不取决于单台设备参数，而取决于平台能否支撑长期运营、质量体系和智能化升级。
-`);
+fs.writeFileSync(planPath, JSON.stringify(story, null, 2));
 
 pptx.writeFile({ fileName: pptPath }).then(() => {
   console.log("✅ PPT generated:");
   console.log(pptPath);
-  console.log("✅ outline:");
-  console.log(outlinePath);
-  console.log("✅ speaker notes:");
-  console.log(notesPath);
+  console.log("✅ slide plan:");
+  console.log(planPath);
 });
