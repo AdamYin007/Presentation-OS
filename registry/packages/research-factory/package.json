@@ -1,0 +1,7 @@
+{
+  "name": "research-factory",
+  "version": "0.1.0",
+  "type": "factory",
+  "entry": "bin/run.js",
+  "description": "Generate an evidence-first research brief"
+}

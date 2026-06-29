@@ -1,0 +1,24 @@
+{
+  "name": "awe-local-registry",
+  "version": "0.1.0",
+  "packages": [
+    {
+      "name": "ppt-factory",
+      "version": "0.1.0",
+      "type": "factory",
+      "description": "Generate consulting-style PPT decks"
+    },
+    {
+      "name": "medical-factory",
+      "version": "0.1.0",
+      "type": "factory",
+      "description": "Evidence-first medical research workflow"
+    },
+    {
+      "name": "research-factory",
+      "version": "0.1.0",
+      "type": "factory",
+      "description": "Research to evidence brief pipeline"
+    }
+  ]
+}

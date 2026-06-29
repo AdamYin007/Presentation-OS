@@ -1,0 +1,10 @@
+{
+  "packages": [
+    {
+      "name": "medical-factory",
+      "version": "0.1.0",
+      "type": "factory",
+      "installedAt": "2026-06-29T08:34:55.223Z"
+    }
+  ]
+}

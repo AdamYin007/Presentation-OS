@@ -1,0 +1,22 @@
+{
+  "name": "awe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "doctor": "node packages/cli/src/index.js doctor",
+    "start": "node packages/cli/src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "awe": "packages/cli/src/index.js",
+    "awe-dev": "packages/cli/src/index.js"
+  }
+}
