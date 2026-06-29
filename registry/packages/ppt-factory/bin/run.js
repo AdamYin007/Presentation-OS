@@ -69,12 +69,15 @@ function executive(s) {
   const slide = getSlide(pptx);
   bg(slide);
   comp.makeTitle(slide, s.title, s.message);
-  comp.card(slide, 0.75, 2.05, 3.6, 2.3, "01 不是设备采购",
-    "数字病理建设不能停留在扫描仪参数比较，而应转向平台能力建设。", comp.C.blue, pptx);
-  comp.card(slide, 4.85, 2.05, 3.6, 2.3, "02 软件是中枢",
-    "平台连接 LIS、阅片、AI、质控、归档与会诊，决定长期价值。", comp.C.green, pptx);
-  comp.card(slide, 8.95, 2.05, 3.6, 2.3, "03 AI 是增量能力",
-    "AI 嵌入诊断工作流，提升效率、质量、科研和区域协同能力。", comp.C.orange, pptx);
+  comp.card(slide, 0.75, 2.05, 3.6, 2.3, "不是设备采购",
+    "数字病理建设不能停留在扫描仪参数比较，而应转向平台能力建设。", comp.C.blue, pptx,
+    { variant: "badge", badgeText: "01" });
+  comp.card(slide, 4.85, 2.05, 3.6, 2.3, "软件是中枢",
+    "平台连接 LIS、阅片、AI、质控、归档与会诊，决定长期价值。", comp.C.green, pptx,
+    { variant: "badge", badgeText: "02" });
+  comp.card(slide, 8.95, 2.05, 3.6, 2.3, "AI 是增量能力",
+    "AI 嵌入诊断工作流，提升效率、质量、科研和区域协同能力。", comp.C.orange, pptx,
+    { variant: "badge", badgeText: "03" });
   comp.makeFooter(slide, pptx, story, s.no);
 }
 
@@ -83,13 +86,14 @@ function whyNow(s) {
   bg(slide);
   comp.makeTitle(slide, s.title, s.message);
   const items = [
-    ["诊断需求增长", "肿瘤诊疗增长推动病理需求持续上升。", comp.C.blue],
-    ["病理医生稀缺", "优质病理资源分布不均，基层能力不足。", comp.C.green],
-    ["AI 技术成熟", "AI 已从算法演示进入工作流整合阶段。", comp.C.orange],
-    ["区域协同需求", "医联体和远程会诊需要统一数字底座。", comp.C.red]
+    ["诊断需求增长", "肿瘤诊疗增长推动病理需求持续上升。", comp.C.blue, "▲"],
+    ["病理医生稀缺", "优质病理资源分布不均，基层能力不足。", comp.C.green, "👤"],
+    ["AI 技术成熟", "AI 已从算法演示进入工作流整合阶段。", comp.C.orange, "◆"],
+    ["区域协同需求", "医联体和远程会诊需要统一数字底座。", comp.C.red, "◎"]
   ];
   items.forEach((it, i) => {
-    comp.card(slide, 0.8 + i * 3.05, 2.05, 2.55, 2.4, it[0], it[1], it[2], pptx);
+    comp.card(slide, 0.8 + i * 3.05, 2.05, 2.55, 2.4, it[0], it[1], it[2], pptx,
+      { variant: "icon", iconChar: it[3] });
   });
   comp.makeFooter(slide, pptx, story, s.no);
 }
@@ -99,13 +103,14 @@ function problem(s) {
   bg(slide, comp.C.lightGray);
   comp.makeTitle(slide, s.title, s.message);
   const items = [
-    ["效率瓶颈", "玻片流转、人工阅片和报告周期压力增加", comp.C.blue],
-    ["质控瓶颈", "过程记录分散，复核和追溯成本高", comp.C.orange],
-    ["协同瓶颈", "远程会诊、区域病理和多院区协同困难", comp.C.blue],
-    ["数据瓶颈", "切片、诊断和科研数据难以沉淀复用", comp.C.orange]
+    ["效率瓶颈", "玻片流转、人工阅片和报告周期压力增加", comp.C.blue, "⏱"],
+    ["质控瓶颈", "过程记录分散，复核和追溯成本高", comp.C.orange, "⚠"],
+    ["协同瓶颈", "远程会诊、区域病理和多院区协同困难", comp.C.blue, "🔗"],
+    ["数据瓶颈", "切片、诊断和科研数据难以沉淀复用", comp.C.orange, "📊"]
   ];
   items.forEach((it, i) => {
-    comp.card(slide, i % 2 === 0 ? 1.1 : 6.9, i < 2 ? 1.75 : 4.05, 5.1, 1.55, it[0], it[1], it[2], pptx);
+    comp.card(slide, i % 2 === 0 ? 1.1 : 6.9, i < 2 ? 1.75 : 4.05, 5.1, 1.55, it[0], it[1], it[2], pptx,
+      { variant: "icon", iconChar: it[3] });
   });
   comp.makeFooter(slide, pptx, story, s.no);
 }
@@ -116,8 +121,10 @@ function transformation(s) {
   comp.makeTitle(slide, s.title, s.message);
   const heads = ["硬件数字化", "平台流程化", "AI 智能化"];
   const bodies = ["完成切片扫描与图像采集", "打通业务流程、质控与协同", "形成辅助诊断与数据资产能力"];
+  const icons = ["📷", "⚙", "🧠"];
   heads.forEach((h, i) => {
-    comp.card(slide, 0.9 + i * 3.5, 2.35, 3.1, 2.0, h, bodies[i], comp.C.gray, pptx);
+    comp.card(slide, 0.9 + i * 3.5, 2.35, 3.1, 2.0, h, bodies[i], comp.C.gray, pptx,
+      { variant: "icon", iconChar: icons[i] });
     if (i < 2) {
       slide.addText("→", {
         x: 0.9 + i * 3.5 + 3.25, y: 3.08, w: 0.6, h: 0.4,
@@ -133,13 +140,13 @@ function platformHubSlide(s) {
   bg(slide);
   comp.makeTitle(slide, s.title, s.message);
   comp.platformHub(slide, "数字病理\n软件平台", [
-    { label: "LIS", x: 1.0, y: 1.75 },
-    { label: "扫描仪", x: 3.2, y: 4.65 },
-    { label: "AI 模型", x: 5.2, y: 5.35 },
-    { label: "数字阅片", x: 8.8, y: 4.65 },
-    { label: "质控", x: 10.2, y: 1.75 },
-    { label: "归档/会诊", x: 1.0, y: 5.0 }
-  ], pptx);
+    { label: "LIS", icon: "📋" },
+    { label: "扫描仪", icon: "📷" },
+    { label: "AI 模型", icon: "🧠" },
+    { label: "数字阅片", icon: "🖥" },
+    { label: "质控", icon: "✅" },
+    { label: "归档/会诊", icon: "📁" }
+  ], pptx, { autoLayout: true, radius: 3.8 });
   comp.makeFooter(slide, pptx, story, s.no);
 }
 
@@ -148,12 +155,12 @@ function layeredArchSlide(s) {
   bg(slide, comp.C.lightGray);
   comp.makeTitle(slide, s.title, s.message);
   const layers = [
-    { name: "应用层", desc: "阅片、AI、会诊、科研、教学", color: comp.C.blue },
-    { name: "平台层", desc: "流程编排、质控、权限、日志、接口" },
-    { name: "数据层", desc: "切片、病例、诊断、标注、模型结果" },
-    { name: "连接层", desc: "LIS、扫描仪、存储、AI、院内系统" }
+    { name: "应用层", desc: "阅片、AI、会诊、科研、教学", color: comp.C.blue, sideLabel: "V" },
+    { name: "平台层", desc: "流程编排、质控、权限、日志、接口", color: comp.C.lightBlue, sideLabel: "IV" },
+    { name: "数据层", desc: "切片、病例、诊断、标注、模型结果", color: comp.C.lightBlue, sideLabel: "III" },
+    { name: "连接层", desc: "LIS、扫描仪、存储、AI、院内系统", color: comp.C.lightBlue, sideLabel: "I" }
   ];
-  comp.layeredArchitecture(slide, layers, pptx);
+  comp.layeredArchitecture(slide, layers, pptx, { sidePanel: true, showArrows: true });
   comp.makeFooter(slide, pptx, story, s.no);
 }
 
@@ -167,7 +174,7 @@ function roadmap(s) {
     { label: "阶段三", title: "AI 应用", body: "接入辅助诊断与科研", color: comp.C.green },
     { label: "阶段四", title: "区域运营", body: "形成会诊与数据资产", color: comp.C.orange }
   ];
-  comp.timeline(slide, stages, pptx);
+  comp.timeline(slide, stages, pptx, { showArrows: true, connectorWidth: 2.5 });
   comp.makeFooter(slide, pptx, story, s.no);
 }
 
@@ -176,11 +183,14 @@ function generic(s) {
   bg(slide);
   comp.makeTitle(slide, s.title, s.message);
   comp.card(slide, 0.9, 2.0, 3.4, 2.1, "核心价值",
-    "围绕业务流程形成持续改进能力。", comp.C.blue, pptx);
+    "围绕业务流程形成持续改进能力。", comp.C.blue, pptx,
+    { variant: "badge", badgeText: "01" });
   comp.card(slide, 4.9, 2.0, 3.4, 2.1, "平台能力",
-    "连接数据、应用、AI 与治理体系。", comp.C.green, pptx);
+    "连接数据、应用、AI 与治理体系。", comp.C.green, pptx,
+    { variant: "badge", badgeText: "02" });
   comp.card(slide, 8.9, 2.0, 3.4, 2.1, "长期演进",
-    "支撑科研、教学、区域协同与智能化升级。", comp.C.orange, pptx);
+    "支撑科研、教学、区域协同与智能化升级。", comp.C.orange, pptx,
+    { variant: "badge", badgeText: "03" });
   comp.makeFooter(slide, pptx, story, s.no);
 }
 
