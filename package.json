@@ -18,5 +18,8 @@
   "bin": {
     "awe": "packages/cli/src/index.js",
     "awe-dev": "packages/cli/src/index.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
   }
 }

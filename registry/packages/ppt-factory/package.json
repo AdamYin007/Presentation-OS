@@ -1,0 +1,7 @@
+{
+  "name": "ppt-factory",
+  "version": "0.1.0",
+  "type": "factory",
+  "entry": "bin/run.js",
+  "description": "Generate a consulting-style PPT deck"
+}
