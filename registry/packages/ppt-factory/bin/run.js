@@ -178,6 +178,358 @@ function roadmap(s) {
   comp.makeFooter(slide, pptx, story, s.no);
 }
 
+function workflow(s) {
+  const slide = getSlide(pptx);
+  bg(slide);
+  comp.makeTitle(slide, s.title, s.message);
+
+  // AI workflow pipeline: 5 step horizontal cards with arrows
+  const steps = [
+    { title: "数据接入", desc: "批量/实时切片导入", color: comp.C.blue },
+    { title: "预处理", desc: "去噪、配准、归一化", color: comp.C.cyan },
+    { title: "AI 推理", desc: "筛查、分割、分类", color: comp.C.green },
+    { title: "医生复核", desc: "人机协同诊断决策", color: comp.C.orange },
+    { title: "报告归档", desc: "结构化报告与质控", color: comp.C.navy }
+  ];
+  const cardW = 2.0;
+  const gap = 0.15;
+  const totalW = steps.length * cardW + (steps.length - 1) * gap;
+  const startX = (12.8 - totalW) / 2;
+  const startY = 2.2;
+
+  steps.forEach((st, i) => {
+    const x = startX + i * (cardW + gap);
+    comp.card(slide, x, startY, cardW, 1.3, st.title, st.desc, st.color, pptx,
+      { variant: "icon", iconChar: "●" });
+    // Arrow between cards
+    if (i < steps.length - 1) {
+      slide.addShape(pptx.ShapeType.rightArrow, {
+        x: x + cardW, y: startY + 0.55,
+        w: gap, h: 0.15,
+        fill: { color: comp.C.border },
+        line: { color: comp.C.border }
+      });
+    }
+  });
+
+  // Bottom insight bar
+  slide.addShape(pptx.ShapeType.roundRect, {
+    x: 0.7, y: 4.2, w: 11.4, h: 0.7,
+    rectRadius: 0.06,
+    fill: { color: comp.C.lightBlue },
+    line: { color: comp.C.blue, width: 1 }
+  });
+  slide.addText("AI 嵌入工作流，不替代医生决策 — 每步均可追溯、可审计、可优化。", {
+    x: 0.9, y: 4.3, w: 11, h: 0.5,
+    fontSize: 12, color: comp.C.navy, margin: 0, bold: true
+  });
+
+  comp.makeFooter(slide, pptx, story, s.no);
+}
+
+function governance(s) {
+  const slide = getSlide(pptx);
+  bg(slide);
+  comp.makeTitle(slide, s.title, s.message);
+
+  // Closed-loop governance: 4 quadrants in a cycle
+  const quadrants = [
+    { title: "标准制定", desc: "CAP/ISO 15189 合规基线", color: comp.C.blue, pos: "tl" },
+    { title: "过程监控", desc: "全流程质控指标实时采集", color: comp.C.cyan, pos: "tr" },
+    { title: "异常处置", desc: "偏差检测、告警与闭环整改", color: comp.C.orange, pos: "br" },
+    { title: "持续改进", desc: "PDCA 循环驱动质量螺旋上升", color: comp.C.green, pos: "bl" }
+  ];
+
+  const positions = {
+    tl: { x: 0.7, y: 2.0 },
+    tr: { x: 6.8, y: 2.0 },
+    br: { x: 6.8, y: 4.3 },
+    bl: { x: 0.7, y: 4.3 }
+  };
+
+  quadrants.forEach(q => {
+    const pos = positions[q.pos];
+    comp.card(slide, pos.x, pos.y, 5.7, 1.9, q.title, q.desc, q.color, pptx,
+      { variant: "icon", iconChar: "●" });
+  });
+
+  // Cycle arrows (circular flow indicators)
+  const arrowPositions = [
+    { x: 6.5, y: 2.9, text: "→" },
+    { x: 6.5, y: 5.2, text: "↓" },
+    { x: 0.4, y: 5.2, text: "←" },
+    { x: 0.4, y: 2.9, text: "↑" }
+  ];
+  arrowPositions.forEach(a => {
+    slide.addText(a.text, {
+      x: a.x, y: a.y, w: 0.3, h: 0.3,
+      fontSize: 18, color: comp.C.border, margin: 0, bold: true
+    });
+  });
+
+  comp.makeFooter(slide, pptx, story, s.no);
+}
+
+function research(s) {
+  const slide = getSlide(pptx);
+  bg(slide);
+  comp.makeTitle(slide, s.title, s.message);
+
+  // Data flywheel: center hub + 4 orbiting capability cards
+  const cx = 6.4, cy = 3.75;
+  // Center hub
+  slide.addShape(pptx.ShapeType.ellipse, {
+    x: cx, y: cy, w: 2.8, h: 2.0,
+    fill: { color: comp.C.blue },
+    line: { color: comp.C.blue }
+  });
+  slide.addText("病理数据\n资产", {
+    x: cx + 0.3, y: cy + 0.4,
+    w: 2.2, h: 1.2,
+    fontSize: 18, bold: true, color: comp.C.white,
+    align: "center", margin: 0, breakLine: true
+  });
+
+  // Orbiting capability cards
+  const caps = [
+    { label: "数字切片", x: 0.5, y: 1.5 },
+    { label: "诊断标签", x: 10.5, y: 1.5 },
+    { label: "病例数据", x: 0.5, y: 5.5 },
+    { label: "标注集", x: 10.5, y: 5.5 }
+  ];
+  caps.forEach(c => {
+    comp.card(slide, c.x, c.y, 2.2, 0.7, c.label, "", comp.C.green, pptx,
+      { variant: "icon", iconChar: "◆" });
+  });
+
+  // Connection lines
+  caps.forEach(c => {
+    const dx = (c.x + 1.1) - cx;
+    const dy = (c.y + 0.35) - cy;
+    const len = Math.sqrt(dx*dx + dy*dy);
+    const sx = cx + (dx/len) * 1.4;
+    const sy = cy + (dy/len) * 1.0;
+    slide.addShape(pptx.ShapeType.line, {
+      x: sx, y: sy,
+      w: (c.x + 1.1) - sx, h: (c.y + 0.35) - sy,
+      line: { color: comp.C.border, width: 1 }
+    });
+  });
+
+  comp.makeFooter(slide, pptx, story, s.no);
+}
+
+function collaboration(s) {
+  const slide = getSlide(pptx);
+  bg(slide);
+  comp.makeTitle(slide, s.title, s.message);
+
+  // Regional network: central hospital hub + satellite hospitals
+  const center = { x: 6.4, y: 3.5, w: 2.4, h: 1.2 };
+  slide.addShape(pptx.ShapeType.roundRect, {
+    x: center.x, y: center.y, w: center.w, h: center.h,
+    rectRadius: 0.08,
+    fill: { color: comp.C.blue },
+    line: { color: comp.C.blue }
+  });
+  slide.addText("区域病理\n中心", {
+    x: center.x + 0.3, y: center.y + 0.25,
+    w: center.w - 0.6, h: 0.7,
+    fontSize: 16, bold: true, color: comp.C.white,
+    align: "center", margin: 0, breakLine: true
+  });
+
+  const satellites = [
+    { label: "三甲医院", x: 0.5, y: 0.8 },
+    { label: "社区医院", x: 10.5, y: 0.8 },
+    { label: "县级医院", x: 0.5, y: 6.0 },
+    { label: "乡镇卫生院", x: 10.5, y: 6.0 }
+  ];
+
+  satellites.forEach(sat => {
+    comp.card(slide, sat.x, sat.y, 2.2, 0.7, sat.label, "", comp.C.green, pptx,
+      { variant: "icon", iconChar: "●" });
+    // Line to center
+    const dx = (sat.x + 1.1) - (center.x + center.w / 2);
+    const dy = (sat.y + 0.35) - (center.y + center.h / 2);
+    const len = Math.sqrt(dx*dx + dy*dy);
+    const sx = center.x + center.w / 2 + (dx/len) * center.w / 2;
+    const sy = center.y + center.h / 2 + (dy/len) * center.h / 2;
+    slide.addShape(pptx.ShapeType.line, {
+      x: sx, y: sy,
+      w: (sat.x + 1.1) - sx, h: (sat.y + 0.35) - sy,
+      line: { color: comp.C.border, width: 1 }
+    });
+  });
+
+  comp.makeFooter(slide, pptx, story, s.no);
+}
+
+function roi(s) {
+  const slide = getSlide(pptx);
+  bg(slide);
+  comp.makeTitle(slide, s.title, s.message);
+
+  // Value bridge: 4 pillars with value metrics
+  const pillars = [
+    { title: "效率提升", metric: "阅片效率 +40%", desc: "缩短报告周转时间", color: comp.C.blue },
+    { title: "质量改善", metric: "一致性 +25%", desc: "降低误诊漏诊率", color: comp.C.green },
+    { title: "协同扩展", metric: "覆盖 3x 机构", desc: "打破地域与院区间壁垒", color: comp.C.cyan },
+    { title: "科研赋能", metric: "数据资产 ×∞", desc: "从消耗品变为生产要素", color: comp.C.orange }
+  ];
+
+  const pillarW = 2.6;
+  const gap = 0.3;
+  const totalW = pillars.length * pillarW + (pillars.length - 1) * gap;
+  const startX = (12.8 - totalW) / 2;
+  const startY = 2.0;
+
+  pillars.forEach((p, i) => {
+    const x = startX + i * (pillarW + gap);
+    // Pillar card
+    slide.addShape(pptx.ShapeType.roundRect, {
+      x, y: startY, w: pillarW, h: 2.0,
+      rectRadius: 0.08,
+      fill: { color: comp.C.white },
+      line: { color: p.color, width: 2 }
+    });
+    // Color top bar
+    slide.addShape(pptx.ShapeType.rect, {
+      x, y: startY, w: pillarW, h: 0.08,
+      fill: { color: p.color },
+      line: { color: p.color }
+    });
+    // Title
+    slide.addText(p.title, {
+      x: x + 0.15, y: startY + 0.25, w: pillarW - 0.3, h: 0.35,
+      fontSize: 14, bold: true, color: comp.C.navy, margin: 0
+    });
+    // Metric
+    slide.addText(p.metric, {
+      x: x + 0.15, y: startY + 0.7, w: pillarW - 0.3, h: 0.4,
+      fontSize: 16, bold: true, color: p.color, margin: 0
+    });
+    // Description
+    slide.addText(p.desc, {
+      x: x + 0.15, y: startY + 1.2, w: pillarW - 0.3, h: 0.5,
+      fontSize: 10, color: comp.C.gray, margin: 0
+    });
+  });
+
+  // Bottom summary bar
+  slide.addShape(pptx.ShapeType.roundRect, {
+    x: 0.7, y: 4.8, w: 11.4, h: 0.6,
+    rectRadius: 0.06,
+    fill: { color: comp.C.lightBlue },
+    line: { color: comp.C.blue, width: 1 }
+  });
+  slide.addText("数字病理 ROI 不仅是设备投入产出比，更是组织能力与数据资产的长期复利。", {
+    x: 0.9, y: 4.9, w: 11, h: 0.4,
+    fontSize: 11, color: comp.C.navy, margin: 0, bold: true
+  });
+
+  comp.makeFooter(slide, pptx, story, s.no);
+}
+
+function differentiation(s) {
+  const slide = getSlide(pptx);
+  bg(slide);
+  comp.makeTitle(slide, s.title, s.message);
+
+  // Comparison matrix: 3 columns (criteria vs traditional vs digital)
+  const criteria = [
+    { name: "建设重心", legacy: "扫描仪参数", digital: "平台能力" },
+    { name: "可替换性", legacy: "硬件可更换", digital: "软件难迁移" },
+    { name: "扩展性", legacy: "单点功能", digital: "模块化扩展" },
+    { name: "数据价值", legacy: "消耗型投入", digital: "生产型资产" },
+    { name: "合规能力", legacy: "事后追溯", digital: "全流程闭环" }
+  ];
+
+  const colW = 3.5;
+  const colX = [0.7, 4.5, 8.3];
+  const headers = ["评估维度", "传统病理", "数字病理"];
+  const headerColors = [comp.C.navy, comp.C.gray, comp.C.blue];
+
+  // Header row
+  headers.forEach((h, i) => {
+    slide.addShape(pptx.ShapeType.roundRect, {
+      x: colX[i], y: 2.0, w: colW, h: 0.45,
+      rectRadius: 0.06,
+      fill: { color: headerColors[i] },
+      line: { color: headerColors[i], width: 1 }
+    });
+    slide.addText(h, {
+      x: colX[i], y: 2.05, w: colW, h: 0.35,
+      fontSize: 13, bold: true,
+      color: headerColors[i] === comp.C.navy ? comp.C.white : comp.C.white,
+      align: i === 0 ? "left" : "center",
+      margin: 0
+    });
+  });
+
+  // Data rows
+  criteria.forEach((c, i) => {
+    const y = 2.55 + i * 0.85;
+    // Alternating row bg
+    slide.addShape(pptx.ShapeType.roundRect, {
+      x: colX[0], y, w: colW * 3, h: 0.75,
+      rectRadius: 0.04,
+      fill: { color: i % 2 === 0 ? comp.C.white : comp.C.lightGray },
+      line: { color: comp.C.border, width: 1 }
+    });
+    // Criteria name
+    slide.addText(c.name, {
+      x: colX[0] + 0.15, y: y + 0.15, w: colW - 0.3, h: 0.35,
+      fontSize: 11, bold: true, color: comp.C.navy, margin: 0
+    });
+    // Legacy value
+    slide.addText(c.legacy, {
+      x: colX[1], y: y + 0.15, w: colW - 0.2, h: 0.35,
+      fontSize: 10.5, color: comp.C.gray, align: "center", margin: 0
+    });
+    // Digital value
+    slide.addText(c.digital, {
+      x: colX[2], y: y + 0.15, w: colW - 0.2, h: 0.35,
+      fontSize: 10.5, bold: true, color: comp.C.blue, align: "center", margin: 0
+    });
+  });
+
+  comp.makeFooter(slide, pptx, story, s.no);
+}
+
+function recommendation(s) {
+  const slide = getSlide(pptx);
+  bg(slide);
+  comp.makeTitle(slide, s.title, s.message);
+
+  // Final recommendation: 3 action cards with emphasis
+  const actions = [
+    { title: "定位升级", desc: "从设备采购升级为平台能力建设，以软件为核心驱动力", color: comp.C.blue, priority: "首要" },
+    { title: "分步实施", desc: "按扫描→平台→AI→区域的节奏渐进式部署，控制风险", color: comp.C.green, priority: "关键" },
+    { title: "持续运营", desc: "建立数据资产运营体系，形成科研、教学、区域协同闭环", color: comp.C.orange, priority: "长期" }
+  ];
+
+  actions.forEach((a, i) => {
+    comp.card(slide, 0.7 + i * 4.0, 2.0, 3.6, 3.2, a.title, a.desc, a.color, pptx,
+      { variant: "badge", badgeText: a.priority });
+  });
+
+  // Bottom emphasis bar
+  slide.addShape(pptx.ShapeType.roundRect, {
+    x: 0.5, y: 5.8, w: 11.8, h: 0.6,
+    rectRadius: 0.06,
+    fill: { color: comp.C.navy },
+    line: { color: comp.C.navy }
+  });
+  slide.addText("建议将数字病理项目定位为 AI 与软件驱动的能力升级工程", {
+    x: 0.7, y: 5.9, w: 11.4, h: 0.4,
+    fontSize: 14, bold: true, color: comp.C.white,
+    align: "center", margin: 0
+  });
+
+  comp.makeFooter(slide, pptx, story, s.no);
+}
+
 function generic(s) {
   const slide = getSlide(pptx);
   bg(slide);
@@ -203,6 +555,13 @@ function renderSlide(s) {
   if (s.type === "solution") return platformHubSlide(s);
   if (s.type === "architecture") return layeredArchSlide(s);
   if (s.type === "roadmap") return roadmap(s);
+  if (s.type === "workflow") return workflow(s);
+  if (s.type === "governance") return governance(s);
+  if (s.type === "research") return research(s);
+  if (s.type === "collaboration") return collaboration(s);
+  if (s.type === "roi") return roi(s);
+  if (s.type === "differentiation") return differentiation(s);
+  if (s.type === "recommendation") return recommendation(s);
   return generic(s);
 }
 
