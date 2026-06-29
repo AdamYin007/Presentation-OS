@@ -1,0 +1,17 @@
+{
+  "name": "@awe/presentation-components",
+  "version": "1.0.0",
+  "description": "AWE Presentation Component Library v1 — card, timeline, platform hub, layered architecture",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "peerDependencies": {
+    "pptxgenjs": "^4.0.0"
+  },
+  "scripts": {
+    "test": "node ../../tests/run.js"
+  },
+  "keywords": ["awe", "presentation", "components", "pptx"],
+  "license": "ISC"
+}

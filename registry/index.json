@@ -19,6 +19,12 @@
       "version": "0.1.0",
       "type": "factory",
       "description": "Research to evidence brief pipeline"
+    },
+    {
+      "name": "presentation-components",
+      "version": "1.0.0",
+      "type": "library",
+      "description": "Presentation Component Library v1 — card, timeline, platform hub, layered architecture"
     }
   ]
 }
