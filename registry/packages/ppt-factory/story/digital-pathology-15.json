@@ -1,0 +1,23 @@
+{
+  "name": "digital-pathology-15",
+  "title": "数字病理的本质，是 AI 和软件驱动的能力升级",
+  "audience": "院长办公会 / 病理科 / 信息中心",
+  "style": "medical-consulting",
+  "slides": [
+    {"no":1,"type":"cover","pattern":"Hero Statement","title":"数字病理的本质，是 AI 和软件驱动的能力升级","message":"硬件是入口，软件是中枢，AI 是能力增量。"},
+    {"no":2,"type":"executive-summary","pattern":"Executive Three Takeaways","title":"核心结论","message":"数字病理建设应从设备采购升级为平台能力建设。"},
+    {"no":3,"type":"why-now","pattern":"Why Now","title":"为什么现在必须推进数字病理","message":"病理诊断需求增长、医生资源不足、区域协同和 AI 应用共同推动转型。"},
+    {"no":4,"type":"problem","pattern":"Pain Point Cluster","title":"传统病理流程面临结构性瓶颈","message":"效率、质控、协同、归档和科研利用均受到限制。"},
+    {"no":5,"type":"transformation","pattern":"From-To Transformation","title":"从硬件数字化走向软件智能化","message":"扫描仪解决图像采集，平台解决业务闭环，AI 提供增量能力。"},
+    {"no":6,"type":"solution","pattern":"Platform Hub","title":"未来数字病理平台应成为病理科业务中枢","message":"连接 LIS、扫描仪、AI、阅片、质控、归档和会诊。"},
+    {"no":7,"type":"architecture","pattern":"Layered Architecture","title":"平台架构：连接、流程、智能、治理四层能力","message":"真正的数字化平台必须具备可扩展架构和长期运营能力。"},
+    {"no":8,"type":"workflow","pattern":"AI Workflow","title":"AI 不是替代医生，而是嵌入诊断工作流","message":"AI 应用于筛查、提示、复核、质控和科研，而医生仍是最终决策者。"},
+    {"no":9,"type":"governance","pattern":"Governance Loop","title":"质控与合规是数字病理平台的底层能力","message":"平台应支撑 CAP、ISO 15189、日志追溯、权限管理和质控闭环。"},
+    {"no":10,"type":"research","pattern":"Data Flywheel","title":"病理数据资产将成为科研与教学基础设施","message":"数字切片、诊断标签和病例结构化数据可沉淀为长期资产。"},
+    {"no":11,"type":"collaboration","pattern":"Region Collaboration Network","title":"远程会诊与区域协同扩展优质病理资源","message":"中心医院能力可通过平台向基层医院和医联体延伸。"},
+    {"no":12,"type":"roadmap","pattern":"Roadmap Timeline","title":"建议采用分阶段建设路径","message":"从扫描阅片到平台协同，再到 AI 和区域化应用。"},
+    {"no":13,"type":"roi","pattern":"ROI Value Bridge","title":"项目价值体现在效率、质量、协同和科研四个方面","message":"数字病理不是一次性设备投入，而是持续运营能力建设。"},
+    {"no":14,"type":"differentiation","pattern":"Comparison Matrix","title":"选型应重点比较平台能力，而不只是扫描参数","message":"硬件可替换，软件能力决定长期价值。"},
+    {"no":15,"type":"recommendation","pattern":"Final Recommendation","title":"建议将数字病理项目定位为 AI 与软件驱动的能力升级工程","message":"以平台为核心，分阶段建设，形成可持续演进的数智病理体系。"}
+  ]
+}
