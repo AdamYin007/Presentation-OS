@@ -1,9 +1,14 @@
 /**
- * Layout Adapters Index — barrel export for all layout adapters.
+ * Layout Adapters Registry — barrel export and dispatcher.
  *
  * Phase 1: workflow adapter only.
  * Each adapter receives { slide, comp, pptx, story, layoutPlan }
  * and returns void (mutates slide directly).
+ *
+ * Pattern:
+ *   1. Import all adapters
+ *   2. Register in ADAPTERS object
+ *   3. dispatchAdapter() does lookup → execute → fallback
  */
 
 const coverAdapter = require("./cover");
@@ -11,8 +16,18 @@ const executiveAdapter = require("./executive");
 const workflowAdapter = require("./workflow");
 
 /**
- * Dispatcher — routes a slide to the appropriate adapter.
- * Returns true if an adapter handled the slide, false if caller should use legacy renderer.
+ * Adapter registry — slide type → adapter function.
+ * Add new adapters here; dispatchAdapter handles the rest.
+ */
+const ADAPTERS = {
+  cover: coverAdapter,
+  "executive-summary": executiveAdapter,
+  workflow: workflowAdapter,
+};
+
+/**
+ * Dispatch a slide to the appropriate adapter.
+ * Returns true if an adapter handled the slide, false for legacy fallback.
  *
  * @param {object} params
  * @param {object} params.slide - story slide object
@@ -23,17 +38,11 @@ const workflowAdapter = require("./workflow");
  * @returns {boolean} true if adapted, false for legacy fallback
  */
 function dispatchAdapter({ slide, comp, pptx, story, layoutPlan }) {
-  switch (slide.type) {
-    case "cover":
-      return coverAdapter({ slide, comp, pptx, story, layoutPlan });
-    case "executive-summary":
-      return executiveAdapter({ slide, comp, pptx, story, layoutPlan });
-    case "workflow":
-      return workflowAdapter({ slide, comp, pptx, story, layoutPlan });
-    // Future: case "governance": case "research": ...
-    default:
-      return false;
+  const adapter = ADAPTERS[slide.type];
+  if (adapter) {
+    return adapter({ slide, comp, pptx, story, layoutPlan });
   }
+  return false;
 }
 
 module.exports = { dispatchAdapter };
