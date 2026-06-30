@@ -15,7 +15,8 @@ AWE should help decide:
 ## 2. Current Mission
 The current mission is practical:
 Build a reliable presentation system that can generate consulting-grade medical and technology presentations.
-The first target domain is healthcare and medical technology.
+The Presentation OS Core is domain-agnostic.
+Healthcare and medical technology are simply the first production-grade Domain Packs.
 Priority use cases include:
 - Digital pathology project proposals
 - Medical AI platform presentations
@@ -34,25 +35,86 @@ Presentation quality comes from the combination of:
 - One hero per slide
 - Appropriate layout
 - Consistent theme
-- Professional medical style
+- Professional domain style
 - Reliable rendering
 AWE should optimize for useful, credible, decision-ready presentations.
 ## 4. The Architecture
-AWE Presentation OS currently follows a layered architecture:
-Story Layer
-↓
-Content Engine
-↓
-Hero Engine
-↓
-Layout Engine
-↓
-Theme Engine
-↓
-Renderer Engine
-↓
-PPTX Output
-Each layer has one responsibility.
+AWE Presentation OS is organized as a domain-agnostic Core Platform plus Domain Packs.
+Presentation OS = Core Platform + Domain Packs
+### Core Platform
+The Core Platform is domain-agnostic.
+It contains only engines that have zero knowledge of any industry:
+- Story Engine
+- Content Engine
+- Hero Engine
+- Layout Engine
+- Theme Engine
+- Renderer Engine
+- Future Compiler
+The Core does NOT know about:
+- Digital Pathology
+- BNCT
+- Ultrasonic Bone Scalpel
+- Finance
+- Education
+The Core only provides Presentation Computing.
+### Domain Packs
+Domain Packs are platform extensions that carry industry knowledge.
+Each Domain Pack may contain:
+- Story Templates
+- Hero Patterns
+- Content Planners
+- Theme Variants
+- Charts
+- Icons
+- Terminology
+- Validation Rules
+- Best Practices
+- Example Decks
+Examples of Domain Packs:
+- Medical AI Pack
+- Digital Pathology Pack
+- Medical Device Pack
+- Investor Pitch Pack
+- Enterprise Strategy Pack
+- Consulting Pack
+- Education Pack
+- Research Pack
+- Government Pack
+- Sales Pack
+Third-party developers will be able to create their own Domain Packs.
+### Platform Strategy Diagram
+Presentation OS
+├── Core (domain-agnostic engines)
+├── Domain Packs (industry knowledge)
+└── Applications (packaged solutions)
+Example:
+Presentation OS
+│
+├── Core
+│   ├── Story Engine
+│   ├── Content Engine
+│   ├── Hero Engine
+│   ├── Layout Engine
+│   ├── Theme Engine
+│   ├── Renderer Engine
+│   └── Future Compiler
+│
+├── Domain Packs
+│   ├── Medical AI
+│   ├── Digital Pathology
+│   ├── Medical Devices
+│   ├── Finance
+│   ├── Consulting
+│   ├── Education
+│   ├── Sales
+│   └── Research
+│
+└── Applications
+    ├── PPT Factory
+    ├── Medical Proposal Generator
+    ├── Investor Deck Builder
+    └── Hospital Presentation Studio
 ### Story Layer
 The Story Layer defines the original narrative.
 It answers:
@@ -155,43 +217,49 @@ Visual design should serve clarity, credibility, and decision-making.
 ### Medical-grade communication
 Healthcare presentations require trust, evidence, caution, and clarity.
 AWE should never sacrifice professionalism for visual novelty.
-## 7. Practical Product Direction
-The next stage should focus less on creating more engines and more on creating strong domain capability.
-The highest-value direction is to build excellent medical and healthcare presentation assets.
-Priority domains:
-### Digital Pathology
-AWE should become capable of generating strong decks for:
+### Platform over Product
+The Core is a platform. Domain Packs are products built on the platform.
+Never put industry knowledge into Core Engines.
+### Core over Domain
+The Core must always remain domain-agnostic.
+Industry knowledge belongs exclusively in Domain Packs.
+## 7. Domain Packs
+Domain Packs carry industry knowledge on top of the Core Platform.
+They are NOT the platform itself.
+They are extensions that sit on top of domain-agnostic engines.
+### Digital Pathology Pack
+The Digital Pathology Pack provides:
 - hospital digital pathology proposals
 - AI and software platform positioning
 - pathology workflow transformation
 - regional pathology collaboration
 - ISO 15189 and CAP quality systems
 - pathology data asset strategy
-### Medical AI
-AWE should support decks about:
+### Medical AI Pack
+The Medical AI Pack provides:
 - AI workflow integration
 - clinical decision support
 - algorithm validation
 - regulatory and compliance positioning
 - hospital AI platform strategy
-### Medical Devices
-AWE should support product and market decks for:
+### Medical Device Pack
+The Medical Device Pack provides:
 - ultrasonic bone scalpel
 - surgical robotics
 - pathology scanners
 - diagnostic equipment
 - clinical adoption strategy
 - tender response and implementation planning
-### Healthcare Informatization
-AWE should support:
+### Healthcare Informatization Pack
+The Healthcare Informatization Pack provides:
 - hospital information platform planning
 - department digitalization
 - regional medical collaboration
 - data governance
 - system integration
 - project implementation roadmap
-### Investment and Board Decks
-AWE should support:
+### Investment and Board Pack
+The Investment and Board Pack provides:
 - market opportunity
 - competitive landscape
 - product roadmap
@@ -216,27 +284,33 @@ The output should not feel like generated text placed into slides.
 It should feel like a professional presentation prepared by someone who understands both the industry and the decision context.
 ## 9. Near-Term Focus
 The near-term focus should be:
-1. Complete high-quality digital pathology deck generation.
+1. Complete high-quality digital pathology pack.
 2. Improve medical consulting visual style.
 3. Build reusable healthcare presentation patterns.
 4. Reduce remaining legacy renderer dependency.
-5. Move more business content into Content Engine.
+5. Move more business content into Domain Packs, not Core Engine.
 6. Establish regression testing for PPT output.
 7. Create several real example decks.
-8. Use real customer-facing scenarios to drive architecture decisions.
+8. Use real customer-facing scenarios to drive Domain Pack development.
 The next stage should be judged by output quality, not engine count.
 ## 10. Long-Term Vision
-In the long term, AWE Presentation OS can become a platform where:
-- AI agents research and draft content
-- Content Engine structures the material
-- Hero Engine clarifies the key message
-- Layout Engine plans the visual form
-- Theme Engine applies professional style
-- Renderer Engine outputs the presentation
-- future Compiler coordinates the full pipeline
+In the long term, AWE Presentation OS evolves through these stages:
+### Stage 1: Presentation OS
+Domain-agnostic Core Platform with engines.
+### Stage 2: Presentation Platform
+Core + multiple Domain Packs (medical, finance, education, etc.).
+### Stage 3: Domain Ecosystem
+Third-party Domain Packs from consulting firms, hospitals, developers.
+### Stage 4: Marketplace
+A platform where Domain Packs are discoverable, installable, and updatable.
+### Stage 5: Presentation Cloud
+Cloud-native compilation, multi-tenant, API-first.
+### Stage 6: Presentation Agent Network
+AI agents coordinate research, drafting, and presentation generation.
 The long-term goal is not simply to automate PowerPoint.
 The long-term goal is to help professionals communicate complex ideas clearly.
 AWE should become a system that turns knowledge, evidence, and intent into persuasive presentations.
+Third-party companies, consulting firms, hospitals, and developers will be able to build their own Domain Packs on top of the Core Platform.
 ## 11. What We Should Avoid
 AWE should avoid:
 - adding engines before there is a real need
@@ -248,10 +322,15 @@ AWE should avoid:
 - generating visually busy slides
 - copying generic AI slide styles
 - sacrificing evidence and professionalism
+- putting industry knowledge into Core Engines
+- treating the first Domain Pack as the platform itself
+- confusing Domain Packs with the Core Platform
 The project should remain practical.
 The best architecture is the one that improves output quality and keeps development sustainable.
 ## 12. Guiding Statement
 AWE Presentation OS exists to help professionals create better presentations from complex knowledge.
 It is not about drawing slides.
 It is about turning structured thinking into clear communication.
+The Core Platform is domain-agnostic.
+Domain Packs carry industry knowledge.
 The system should grow only when growth improves real presentation quality.
