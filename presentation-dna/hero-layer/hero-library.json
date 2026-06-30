@@ -1,0 +1,755 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-30",
+  "domain": "medical_ai_digital_pathology",
+  "purpose": "AWE Presentation OS - Hero Layer pattern catalog",
+  "categories": {
+    "narrative_opening": {
+      "label": "叙事开场",
+      "count": 5,
+      "patterns": [
+        "H-001",
+        "H-002",
+        "H-003",
+        "H-004",
+        "H-005"
+      ]
+    },
+    "value_proposition": {
+      "label": "价值主张",
+      "count": 6,
+      "patterns": [
+        "H-006",
+        "H-007",
+        "H-008",
+        "H-009",
+        "H-010",
+        "H-011"
+      ]
+    },
+    "technical_capability": {
+      "label": "技术能力",
+      "count": 7,
+      "patterns": [
+        "H-012",
+        "H-013",
+        "H-014",
+        "H-015",
+        "H-016",
+        "H-017",
+        "H-018"
+      ]
+    },
+    "compliance_trust": {
+      "label": "合规与信任",
+      "count": 5,
+      "patterns": [
+        "H-019",
+        "H-020",
+        "H-021",
+        "H-022",
+        "H-023"
+      ]
+    },
+    "ecosystem_partnership": {
+      "label": "生态与合作",
+      "count": 5,
+      "patterns": [
+        "H-024",
+        "H-025",
+        "H-026",
+        "H-027",
+        "H-028"
+      ]
+    },
+    "implementation_action": {
+      "label": "实施与行动",
+      "count": 5,
+      "patterns": [
+        "H-029",
+        "H-030",
+        "H-031",
+        "H-032",
+        "H-033"
+      ]
+    },
+    "competitive_differentiation": {
+      "label": "竞争差异化",
+      "count": 4,
+      "patterns": [
+        "H-034",
+        "H-035",
+        "H-036",
+        "H-037"
+      ]
+    }
+  },
+  "total_patterns": 37,
+  "patterns": [
+    {
+      "id": "H-001",
+      "name": "品牌宣言封面",
+      "category": "narrative_opening",
+      "use_case": "演讲开场，建立品牌认知",
+      "visual_focus": "超大品牌标语 + 极简背景（可选数字病理切片抽象图）",
+      "recommended_layout": "居中排版，留白 >= 60%，品牌色主视觉",
+      "hero_statement_template": "[品牌主张] — [副标题：价值承诺]",
+      "medical_example": "AI 驱动的数字病理新纪元 — 91360 · 让每位患者享有顶级病理诊断",
+      "audience": "all",
+      "slide_position": "cover",
+      "estimated_reveal_time_s": 3,
+      "tags": [
+        "brand",
+        "cover",
+        "opening"
+      ]
+    },
+    {
+      "id": "H-002",
+      "name": "痛点冲击",
+      "category": "narrative_opening",
+      "use_case": "用震撼数据引发共鸣，制造紧迫感",
+      "visual_focus": "单个大数字 + 一句话描述后果",
+      "recommended_layout": "全屏数字（字号 >= 120pt），下方配1行说明文字",
+      "hero_statement_template": "[数字] [人群] 正面临 [问题]",
+      "medical_example": "30,000+ — 中国病理医生缺口人数，每页报告平均超时48小时",
+      "audience": "院长/运营/科主任",
+      "slide_position": "early",
+      "estimated_reveal_time_s": 2,
+      "tags": [
+        "pain_point",
+        "data_shock",
+        "urgency"
+      ]
+    },
+    {
+      "id": "H-003",
+      "name": "Why Now 趋势窗口",
+      "category": "narrative_opening",
+      "use_case": "解释为什么现在是最佳时机",
+      "visual_focus": "三要素趋势图（政策+技术+需求）",
+      "recommended_layout": "三列等宽卡片，每列一个趋势，底部一句话总结",
+      "hero_statement_template": "[政策信号] × [技术突破] × [市场需求] = 窗口已打开",
+      "medical_example": "DRG/DIP支付改革倒逼效率 | AI精度突破98% | 癌早筛万亿市场",
+      "audience": "院长/投资人/政府",
+      "slide_position": "early",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "trend",
+        "timing",
+        "policy"
+      ]
+    },
+    {
+      "id": "H-004",
+      "name": "转型宣言",
+      "category": "narrative_opening",
+      "use_case": "展示行业范式转变",
+      "visual_focus": "左右对比箭头（旧→新）",
+      "recommended_layout": "左40%灰底(旧) + 右60%亮色(新) + 中间粗箭头",
+      "hero_statement_template": "从 [旧模式] 走向 [新模式]",
+      "medical_example": "人工阅片 → AI辅助+专家复核 | 单机扫描 → 云端协作",
+      "audience": "all",
+      "slide_position": "early",
+      "estimated_reveal_time_s": 4,
+      "tags": [
+        "transformation",
+        "paradigm_shift"
+      ]
+    },
+    {
+      "id": "H-005",
+      "name": "愿景大图",
+      "category": "narrative_opening",
+      "use_case": "结尾升华，描绘未来图景",
+      "visual_focus": "阶梯式演进图（现在→近未来→远未来）",
+      "recommended_layout": "横向三步时间轴，每步配图标和大字",
+      "hero_statement_template": "从 [现在] 到 [未来]：[关键转变]",
+      "medical_example": "AI辅助分诊 → AI辅助诊断 → 自主病理决策+医生监督",
+      "audience": "all",
+      "slide_position": "closing",
+      "estimated_reveal_time_s": 6,
+      "tags": [
+        "vision",
+        "future",
+        "closing"
+      ]
+    },
+    {
+      "id": "H-006",
+      "name": "ROI 价值桥",
+      "category": "value_proposition",
+      "use_case": "向院长/运营层证明投入产出",
+      "visual_focus": "价值维度卡片组（效率、质量、成本、科研）",
+      "recommended_layout": "四宫格卡片，每张含图标+数字+一行解释",
+      "hero_statement_template": "通过 [方案]，实现 [量化价值]",
+      "medical_example": "效率：TAT从48h→2h | 质量：灵敏度98.7% | 成本：年省280万 | 科研：论文+3篇/年",
+      "audience": "院长/运营总监",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "roi",
+        "value",
+        "executive"
+      ]
+    },
+    {
+      "id": "H-007",
+      "name": "效率提升柱状图",
+      "category": "value_proposition",
+      "use_case": "直观展示效率改善幅度",
+      "visual_focus": "Before/After对比柱状图",
+      "recommended_layout": "双柱对比，左侧灰色(传统)，右侧品牌色(数字化)，标注改善百分比",
+      "hero_statement_template": "传统 [指标] vs 数字化 [指标]：[差距]",
+      "medical_example": "报告出具：传统48h vs 数字化2h（↓96%）| 初筛效率：50片/h vs 300片/h（↑500%）",
+      "audience": "院长/科主任",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 4,
+      "tags": [
+        "efficiency",
+        "comparison",
+        "bar_chart"
+      ]
+    },
+    {
+      "id": "H-008",
+      "name": "成本拆解饼图",
+      "category": "value_proposition",
+      "use_case": "单例成本结构可视化",
+      "visual_focus": "饼图 + 改善前后对比",
+      "recommended_layout": "左饼图右箭头右数字，或上下两饼对比",
+      "hero_statement_template": "单例成本 [结构] → 数字化后 [改善]",
+      "medical_example": "单例成本：人力¥45+耗材¥12+折旧¥8=¥65 → 数字化后¥28（↓57%）",
+      "audience": "院长/CFO",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "cost",
+        "pie_chart",
+        "financial"
+      ]
+    },
+    {
+      "id": "H-009",
+      "name": "质量指标看板",
+      "category": "value_proposition",
+      "use_case": "展示质控能力和指标达成",
+      "visual_focus": "KPI数字卡片组",
+      "recommended_layout": "3×2网格，每张含指标名+当前值+目标值+进度条",
+      "hero_statement_template": "[指标] 达到 [数值]（目标 [数值]）",
+      "medical_example": "切片合格率99.2% | 蜡块保存率100% | 报告及时率97.8% | 疑难病例讨论率100%",
+      "audience": "科主任/质控员",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 6,
+      "tags": [
+        "quality",
+        "kpi_dashboard",
+        "iso15189"
+      ]
+    },
+    {
+      "id": "H-010",
+      "name": "患者体验旅程",
+      "category": "value_proposition",
+      "use_case": "从患者视角展示全流程改善",
+      "visual_focus": "横向旅程线 + 关键触点",
+      "recommended_layout": "横向6步旅程线，每步配图标和一句话",
+      "hero_statement_template": "从 [痛点触点] 到 [优化触点]：[改善幅度]",
+      "medical_example": "开单→采样→等待(3天→2h)→报告→复诊→随访 | 全程可追踪",
+      "audience": "院长/医务科",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "patient_journey",
+        "experience",
+        "service_rating"
+      ]
+    },
+    {
+      "id": "H-011",
+      "name": "收入周期影响",
+      "category": "value_proposition",
+      "use_case": "向CFO/运营总监展示财务影响",
+      "visual_focus": "漏斗+闭环图",
+      "recommended_layout": "左到右四步：检测量增长→周转加快→复诊率变化→收入影响",
+      "hero_statement_template": "[动作] 带来 [结果]，影响 [金额]",
+      "medical_example": "年检测量+40% → TAT-62% → 复诊率+15% → 年收入+¥1,200万",
+      "audience": "CFO/运营总监",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 6,
+      "tags": [
+        "revenue_cycle",
+        "financial_impact",
+        "closed_loop"
+      ]
+    },
+    {
+      "id": "H-012",
+      "name": "诊断精度四宫格",
+      "category": "technical_capability",
+      "use_case": "展示AI诊断性能",
+      "visual_focus": "灵敏度/特异度/ROC/AUC四宫格",
+      "recommended_layout": "2×2网格，每格一个大数字+标签",
+      "hero_statement_template": "[指标] 达到 [数值]（[数据集描述]）",
+      "medical_example": "灵敏度98.7% | 特异度97.3% | AUC 0.985 | F1-Score 0.980（17中心5,000+例）",
+      "audience": "科主任/临床医生/监管",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "accuracy",
+        "performance",
+        "clinical_validation"
+      ]
+    },
+    {
+      "id": "H-013",
+      "name": "AI工作流管道",
+      "category": "technical_capability",
+      "use_case": "展示AI辅助诊断全流程",
+      "visual_focus": "四步流程箭头链",
+      "recommended_layout": "从左到右：切片扫描→AI分析→医生确认→报告输出",
+      "hero_statement_template": "[输入] → [AI处理] → [人工审核] → [输出]",
+      "medical_example": "WSI扫描 → AI分类(良性/ASC-US/HSIL/SCC) → 病理医生复核 → LIS报告",
+      "audience": "科主任/临床医生",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "workflow",
+        "pipeline",
+        "human_in_the_loop"
+      ]
+    },
+    {
+      "id": "H-014",
+      "name": "平台架构分层图",
+      "category": "technical_capability",
+      "use_case": "展示整体技术架构",
+      "visual_focus": "五层架构堆叠",
+      "recommended_layout": "自上而下五层：应用层→平台层→数据层→基础设施层→治理层",
+      "hero_statement_template": "[层级1] 支撑 [层级2] 支撑 [层级3]",
+      "medical_example": "应用：分诊/诊断/质控/科研 | 平台：AI引擎/工作流/规则引擎 | 数据：WSI/临床/基因组",
+      "audience": "信息中心/技术决策者",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 6,
+      "tags": [
+        "architecture",
+        "platform",
+        "layered"
+      ]
+    },
+    {
+      "id": "H-015",
+      "name": "系统集成矩阵",
+      "category": "technical_capability",
+      "use_case": "展示医院系统集成能力",
+      "visual_focus": "标准协议×医院系统的矩阵",
+      "recommended_layout": "左侧标准协议列表，右侧系统列表，中间连线或网格着色",
+      "hero_statement_template": "支持 [协议数] 种标准，对接 [系统数] 家医院系统",
+      "medical_example": "HL7/FHIR/DICOM/IHE × HIS/LIS/PACS/RIS/EMR（已对接12家主流厂商）",
+      "audience": "信息中心",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "integration",
+        "interoperability",
+        "matrix"
+      ]
+    },
+    {
+      "id": "H-016",
+      "name": "数据安全架构",
+      "category": "technical_capability",
+      "use_case": "向信息中心/网信办展示安全保障",
+      "visual_focus": "安全分层图",
+      "recommended_layout": "从左到右数据流+每层安全措施标注",
+      "hero_statement_template": "[安全措施1] → [安全措施2] → [安全措施3]",
+      "medical_example": "脱敏 → TLS 1.3加密传输 → RBAC权限 → 全量审计日志 → 异地灾备 → 等保三级",
+      "audience": "信息中心/网信办",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "security",
+        "data_privacy",
+        "compliance"
+      ]
+    },
+    {
+      "id": "H-017",
+      "name": "多模态融合图",
+      "category": "technical_capability",
+      "use_case": "展示病理+基因组+影像的融合能力",
+      "visual_focus": "多层融合示意",
+      "recommended_layout": "左侧各模态输入 → 中间融合引擎 → 右侧统一输出",
+      "hero_statement_template": "[模态1] + [模态2] + [模态3] → [融合结果]",
+      "medical_example": "H&E形态 → IHC → FISH → NGS → 多模态AI融合 → 综合诊断报告",
+      "audience": "科研合作者/临床医生",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 6,
+      "tags": [
+        "multimodal",
+        "genomics",
+        "fusion"
+      ]
+    },
+    {
+      "id": "H-018",
+      "name": "模型版本生命周期",
+      "category": "technical_capability",
+      "use_case": "展示AI模型管理和迭代能力",
+      "visual_focus": "环形生命周期图",
+      "recommended_layout": "顺时针环形：训练→验证→测试→部署→监控→迭代→下线",
+      "hero_statement_template": "[阶段1] → [阶段2] → ... → [阶段N]（闭环迭代）",
+      "medical_example": "v3.2临床验证中(5,000例) → v3.1生产环境(17院) → v3.0已下线(数据漂移告警)",
+      "audience": "技术决策者/监管",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "model_lifecycle",
+        "governance",
+        "iteration"
+      ]
+    },
+    {
+      "id": "H-019",
+      "name": "合规资质徽章墙",
+      "category": "compliance_trust",
+      "use_case": "展示资质认证，打消合规顾虑",
+      "visual_focus": "资质徽章矩阵",
+      "recommended_layout": "3×2徽章网格，每个含图标+名称+编号+状态",
+      "hero_statement_template": "已获得 [证书1]、[证书2]、[证书3]",
+      "medical_example": "NMPA三类证(20233210272) | 等保三级 | ISO 13485 | CE Mark | HIPAA | SOC2",
+      "audience": "采购委员会/监管/信息中心",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "certification",
+        "badge_wall",
+        "trust_signal"
+      ]
+    },
+    {
+      "id": "H-020",
+      "name": "临床证据表",
+      "category": "compliance_trust",
+      "use_case": "展示多中心临床研究数据",
+      "visual_focus": "数据表格",
+      "recommended_layout": "左侧表格(中心/例数/灵敏度/特异度)，右侧总结卡片",
+      "hero_statement_template": "[中心数]家医院验证，综合灵敏度[数值]%，特异度[数值]%",
+      "medical_example": "北京协和(800例,99.1%/97.5%) | 上海瑞金(650例,98.5%/97.1%) | 四川华西(720例,98.8%/97.4%)",
+      "audience": "科主任/临床医生/监管",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 6,
+      "tags": [
+        "clinical_evidence",
+        "multi_center",
+        "table"
+      ]
+    },
+    {
+      "id": "H-021",
+      "name": "偏差与公平性分析",
+      "category": "compliance_trust",
+      "use_case": "展示AI伦理和公平性",
+      "visual_focus": "分层性能对比图",
+      "recommended_layout": "分组柱状图：性别/年龄/设备/种族各层性能对比",
+      "hero_statement_template": "各分层性能差异 < [阈值]%，符合公平性标准",
+      "medical_example": "男性灵敏度98.9% vs 女性98.5% | 设备A 99.1% vs 设备B 98.3% | 差异<1%(达标)",
+      "audience": "学术圈/监管/伦理委员会",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 6,
+      "tags": [
+        "ethics",
+        "bias_analysis",
+        "fairness"
+      ]
+    },
+    {
+      "id": "H-022",
+      "name": "异常案例归因树",
+      "category": "compliance_trust",
+      "use_case": "透明展示AI局限性和改进机制",
+      "visual_focus": "树形归因图",
+      "recommended_layout": "顶部假阳/假阴 → 分支原因分类 → 叶子改进措施",
+      "hero_statement_template": "假阳性率[数值]%，主要归因于[原因]，已纳入改进",
+      "medical_example": "假阳性(0.8%) → 炎症模拟(0.5%) / 染色异常(0.2%) / 罕见类型(0.1%) → 已加入难例库迭代",
+      "audience": "科主任/学术圈",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "error_analysis",
+        "transparency",
+        "attribution"
+      ]
+    },
+    {
+      "id": "H-023",
+      "name": "质量治理闭环",
+      "category": "compliance_trust",
+      "use_case": "展示持续质量保障体系",
+      "visual_focus": "PDCA循环图",
+      "recommended_layout": "环形五步：标准→执行→记录→复核→改进",
+      "hero_statement_template": "[标准] → [执行] → [记录] → [复核] → [改进]（闭环）",
+      "medical_example": "CAP标准 → 自动质控 → 全量审计 → 月度复核 → 季度模型更新 → 年度临床再验证",
+      "audience": "科主任/质控员/监管",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "quality_governance",
+        "pdca",
+        "continuous_improvement"
+      ]
+    },
+    {
+      "id": "H-024",
+      "name": "多中心协作地图",
+      "category": "ecosystem_partnership",
+      "use_case": "展示网络和覆盖范围",
+      "visual_focus": "中国地图 + 节点标注",
+      "recommended_layout": "全屏地图，节点大小=病例量，颜色=合作类型",
+      "hero_statement_template": "[医院数]家医院 | 覆盖[省份数]省 | 年共享[病例数]+",
+      "medical_example": "17家三甲医院 | 覆盖12省 | 年共享病例50,000+ | 平均响应时间2.3h",
+      "audience": "政府/院长/合作伙伴",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "network",
+        "map",
+        "multi_center"
+      ]
+    },
+    {
+      "id": "H-025",
+      "name": "MDT协作圆桌",
+      "category": "ecosystem_partnership",
+      "use_case": "展示多学科协作能力",
+      "visual_focus": "中心患者 + 多角色环绕",
+      "recommended_layout": "中心圆形(患者/病例) + 周围6角色节点连线",
+      "hero_statement_template": "[角色1] + [角色2] + ... + [角色N] → [综合方案]",
+      "medical_example": "病理+影像+肿瘤内科+外科+放疗+基因检测 → 综合治疗方案",
+      "audience": "临床医生/科主任",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "mdt",
+        "collaboration",
+        "oncology"
+      ]
+    },
+    {
+      "id": "H-026",
+      "name": "远程会诊流程",
+      "category": "ecosystem_partnership",
+      "use_case": "展示分级诊疗和远程服务能力",
+      "visual_focus": "端到端流程箭头",
+      "recommended_layout": "横向五步：基层上传→AI预筛→专家复核→报告回传→患者获取",
+      "hero_statement_template": "[基层] → [AI] → [专家] → [报告] → [患者]",
+      "medical_example": "县医院扫码上片 → AI 30s初筛 → 省级专家2h复核 → 报告回传 → 患者手机查看",
+      "audience": "科主任/医务科/政府",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "telepathology",
+        "tiered_diagnosis",
+        "consultation"
+      ]
+    },
+    {
+      "id": "H-027",
+      "name": "产学研合作管线",
+      "category": "ecosystem_partnership",
+      "use_case": "展示学术产出和科研合作能力",
+      "visual_focus": "管线时间轴",
+      "recommended_layout": "横向六步：病例→队列→统计→论文→投稿→发表",
+      "hero_statement_template": "[数据规模] → [研究成果] → [学术影响]",
+      "medical_example": "5,000+例队列 → 多中心回顾性研究 → Lancet Digital Health子刊 → IF 28.5",
+      "audience": "学术圈/科研合作者",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "academic",
+        "publication",
+        "research_pipeline"
+      ]
+    },
+    {
+      "id": "H-028",
+      "name": "生物样本库对接",
+      "category": "ecosystem_partnership",
+      "use_case": "展示科研基础设施能力",
+      "visual_focus": "样本流程链",
+      "recommended_layout": "横向七步：采集→条码→存储→申请→出库→关联→分析",
+      "hero_statement_template": "年入库[数量]+样本，[关联率]%与WSI/基因组数据关联",
+      "medical_example": "年入库10,000+样本 | 条码化率100% | 与WSI/基因组数据关联率95%",
+      "audience": "科研合作者/精准医学中心",
+      "slide_position": "mid",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "biobank",
+        "sample_management",
+        "precision_medicine"
+      ]
+    },
+    {
+      "id": "H-029",
+      "name": "实施路线图",
+      "category": "implementation_action",
+      "use_case": "展示分阶段实施计划",
+      "visual_focus": "阶段性时间轴",
+      "recommended_layout": "横向四阶段：试点→推广→深化→自治，每阶段含时间+里程碑",
+      "hero_statement_template": "[阶段1]([时间]) → [阶段2]([时间]) → [阶段3]([时间]) → [阶段4]([时间])",
+      "medical_example": "Q1单院试点(3月) → Q2 3院推广(6月) → Q3区域联网(9月) → Q4全面运营(12月)",
+      "audience": "院长/科主任/信息中心",
+      "slide_position": "late",
+      "estimated_reveal_time_s": 6,
+      "tags": [
+        "roadmap",
+        "timeline",
+        "phased_implementation"
+      ]
+    },
+    {
+      "id": "H-030",
+      "name": "学习曲线追踪器",
+      "category": "implementation_action",
+      "use_case": "展示系统采纳和熟练度提升",
+      "visual_focus": "曲线图 + 里程碑",
+      "recommended_layout": "四象限：上手期→熟练期→优化期→稳定期，标注关键指标",
+      "hero_statement_template": "[阶段]期：[指标]达到[数值]",
+      "medical_example": "上手期(1-2月,50片/天) → 熟练期(3-4月,150片/天) → 优化期(5-6月,250片/天) → 稳定期(7月+,300片/天)",
+      "audience": "科主任/一线医生",
+      "slide_position": "late",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "learning_curve",
+        "adoption",
+        "training"
+      ]
+    },
+    {
+      "id": "H-031",
+      "name": "成熟度雷达图",
+      "category": "implementation_action",
+      "use_case": "评估医院信息化成熟度",
+      "visual_focus": "六维雷达图",
+      "recommended_layout": "中心雷达图 + 右侧当前值/目标值对照表",
+      "hero_statement_template": "[维度1]: [当前]→[目标] | [维度2]: [当前]→[目标]",
+      "medical_example": "电子病历(3→4级) | 智慧服务(2→3级) | 智慧管理(2→3级) | NOAH(3→4级)",
+      "audience": "信息中心/评级办公室",
+      "slide_position": "late",
+      "estimated_reveal_time_s": 6,
+      "tags": [
+        "maturity",
+        "radar_chart",
+        "assessment"
+      ]
+    },
+    {
+      "id": "H-032",
+      "name": "试点启动号召",
+      "category": "implementation_action",
+      "use_case": "推动决策者采取行动",
+      "visual_focus": "大数字 + 时间承诺 + 行动步骤",
+      "recommended_layout": "左大数字(30天见效)，右三行行动步骤",
+      "hero_statement_template": "[时间]见效：[步骤1] → [步骤2] → [步骤3]",
+      "medical_example": "30天见效 | 第1周：环境部署 | 第2周：数据接入 | 第3周：AI试运行 | 第4周：正式切换",
+      "audience": "院长/决策者",
+      "slide_position": "closing",
+      "estimated_reveal_time_s": 4,
+      "tags": [
+        "call_to_action",
+        "pilot",
+        "quick_win"
+      ]
+    },
+    {
+      "id": "H-033",
+      "name": "最终行动建议",
+      "category": "implementation_action",
+      "use_case": "演讲收尾，给出明确下一步",
+      "visual_focus": "三条建议 + 联系人",
+      "recommended_layout": "三列建议卡片 + 底部联系信息",
+      "hero_statement_template": "建议：[行动1] | [行动2] | [行动3]",
+      "medical_example": "①签署试点协议 ②指定对接人 ③预约技术评估 | 联系：product@91360.com",
+      "audience": "all",
+      "slide_position": "closing",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "recommendation",
+        "next_steps",
+        "contact"
+      ]
+    },
+    {
+      "id": "H-034",
+      "name": "竞争格局矩阵",
+      "category": "competitive_differentiation",
+      "use_case": "客观展示市场定位",
+      "visual_focus": "2×2能力矩阵",
+      "recommended_layout": "横轴'单一功能→平台化'，纵轴'辅助工具→决策引擎'，气泡大小=市占",
+      "hero_statement_template": "在 [维度1] 和 [维度2] 交叉处占据 [位置]",
+      "medical_example": "91360位于右上(平台化+决策引擎)，竞品分布：91360宫颈AI(辅助工具)、赛维森(辅助工具)、安必平(单一功能)",
+      "audience": "投资人/政府/战略决策者",
+      "slide_position": "late",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "competition",
+        "market_positioning",
+        "matrix"
+      ]
+    },
+    {
+      "id": "H-035",
+      "name": "差异化优势清单",
+      "category": "competitive_differentiation",
+      "use_case": "清晰列出独特卖点",
+      "visual_focus": "打勾清单",
+      "recommended_layout": "左侧优势列表(带✓)，右侧竞品对比(带-/+/-)",
+      "hero_statement_template": "独有：[优势1] | [优势2] | [优势3]",
+      "medical_example": "✓AI三类证 | ✓信息化底座 | ✓全国会诊医生集团 | ✓50万+例训练数据 | ✗竞品无信息化平台",
+      "audience": "采购委员会/决策者",
+      "slide_position": "late",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "differentiation",
+        "unique_selling_points",
+        "checklist"
+      ]
+    },
+    {
+      "id": "H-036",
+      "name": "注册证对比",
+      "category": "competitive_differentiation",
+      "use_case": "用法规资质建立壁垒",
+      "visual_focus": "注册证信息卡",
+      "recommended_layout": "自上而下证件列表，每个含证号+发证日期+适用范围+有效期",
+      "hero_statement_template": "已获 [证书数] 张注册证，覆盖 [范围]",
+      "medical_example": "NMPA三类证20233210272(2023.3) | 二类证PIS已续展 | 等保三级备案 | CE Mark 2025",
+      "audience": "采购委员会/监管",
+      "slide_position": "late",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "registration",
+        "regulatory_barrier",
+        "certificates"
+      ]
+    },
+    {
+      "id": "H-037",
+      "name": "数据护城河",
+      "category": "competitive_differentiation",
+      "use_case": "展示数据规模和质量的壁垒",
+      "visual_focus": "数据量级对比",
+      "recommended_layout": "左侧自身数据量(大字)，右侧竞品估算(小字)，底部标注来源",
+      "hero_statement_template": "[数据规模]训练数据，覆盖 [标注类型数] 种标注",
+      "medical_example": "91360: 500万+标注切片 | 竞品公开数据: 数百例~数千例 | 来源：内部标注平台+11家合作医院",
+      "audience": "投资人/技术决策者",
+      "slide_position": "late",
+      "estimated_reveal_time_s": 5,
+      "tags": [
+        "data_moat",
+        "scale_barrier",
+        "competitive_advantage"
+      ]
+    }
+  ]
+}
