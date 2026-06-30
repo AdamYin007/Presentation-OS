@@ -13,6 +13,8 @@ function getArg(name, fallback) {
 }
 
 const storyName = getArg("story", "digital-pathology-15");
+const useHero = args.includes("--hero");
+const heroSeqArg = getArg("hero-sequence", null);
 const out = getArg("out", path.join(process.cwd(), "output", "ppt-factory"));
 const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
 
@@ -22,6 +24,33 @@ if (!fs.existsSync(storyPath)) {
 }
 
 const story = JSON.parse(fs.readFileSync(storyPath, "utf8"));
+
+// ── Hero Engine Integration ──────────────────────────────────────
+
+const { enrichStoryWithHero } = require("../src/hero-engine");
+
+let heroSequence = null;
+let heroSequencePath = null;
+
+if (useHero) {
+  if (heroSeqArg) {
+    heroSequencePath = path.join(process.cwd(), "registry/packages/ppt-factory/story", heroSeqArg + ".json");
+  } else {
+    heroSequencePath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + "-hero-sequence.json");
+  }
+
+  if (fs.existsSync(heroSequencePath)) {
+    heroSequence = JSON.parse(fs.readFileSync(heroSequencePath, "utf8"));
+    const enriched = enrichStoryWithHero(story, heroSequence, { overrideTitle: true });
+    // Replace story reference with enriched deep copy
+    Object.keys(story).forEach(k => delete story[k]);
+    Object.assign(story, enriched);
+    console.log("🦸 Hero Engine activated — narrative enrichment applied.");
+  } else {
+    console.warn("⚠️  Hero sequence file not found at:", heroSequencePath);
+    console.warn("   Falling back to original story without hero enrichment.");
+  }
+}
 
 fs.mkdirSync(out, { recursive: true });
 
