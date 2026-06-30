@@ -7,6 +7,7 @@
  * Output: a validated Layout Plan object conforming to schema.js
  */
 
+const { compileContent } = require("../content-engine");
 const {
   buildLayoutPlan,
   FLOW_TYPES,
@@ -46,7 +47,7 @@ function zone(position, priority, span, label) {
 /**
  * Cover — hero statement, minimal content
  */
-function planCover(slide, hero) {
+function planCover(slide, hero, _content) {
   return buildLayoutPlan({
     slideNo: slide.no,
     slideType: slide.type,
@@ -74,7 +75,7 @@ function planCover(slide, hero) {
 /**
  * Workflow — pipeline flow with arrows
  */
-function planWorkflow(slide, hero) {
+function planWorkflow(slide, hero, _content) {
   const stepCount = 5; // known from renderer
   const cardW = 2.0;
   const gap = 0.15;
@@ -110,7 +111,7 @@ function planWorkflow(slide, hero) {
 /**
  * Governance — quadrant cycle layout
  */
-function planGovernance(slide, hero) {
+function planGovernance(slide, hero, _content) {
   return buildLayoutPlan({
     slideNo: slide.no,
     slideType: slide.type,
@@ -141,7 +142,7 @@ function planGovernance(slide, hero) {
 /**
  * Research — data flywheel / radial layout
  */
-function planResearch(slide, hero) {
+function planResearch(slide, hero, _content) {
   return buildLayoutPlan({
     slideNo: slide.no,
     slideType: slide.type,
@@ -172,7 +173,7 @@ function planResearch(slide, hero) {
 /**
  * Collaboration — regional network / hub + satellites
  */
-function planCollaboration(slide, hero) {
+function planCollaboration(slide, hero, _content) {
   return buildLayoutPlan({
     slideNo: slide.no,
     slideType: slide.type,
@@ -203,7 +204,7 @@ function planCollaboration(slide, hero) {
 /**
  * ROI — value bridge / pillar cards
  */
-function planRoi(slide, hero) {
+function planRoi(slide, hero, _content) {
   return buildLayoutPlan({
     slideNo: slide.no,
     slideType: slide.type,
@@ -235,7 +236,7 @@ function planRoi(slide, hero) {
 /**
  * Differentiation — comparison matrix
  */
-function planDifferentiation(slide, hero) {
+function planDifferentiation(slide, hero, _content) {
   const rowCount = 5; // known from renderer
   return buildLayoutPlan({
     slideNo: slide.no,
@@ -267,7 +268,7 @@ function planDifferentiation(slide, hero) {
 /**
  * Recommendation — action cards with emphasis bar
  */
-function planRecommendation(slide, hero) {
+function planRecommendation(slide, hero, _content) {
   return buildLayoutPlan({
     slideNo: slide.no,
     slideType: slide.type,
@@ -296,36 +297,18 @@ function planRecommendation(slide, hero) {
 }
 
 /**
- * Executive Summary — 3 takeaway badge cards
+ * Executive Summary — 3 takeaway badge cards (layout only).
+ *
+ * Layout Engine does NOT own business content. Content comes from Content Engine.
  */
-function planExecutive(slide, hero) {
-  const TAKEAWAY_CONTENT = [
-    {
-      title: "不是设备采购",
-      desc: "数字病理建设不能停留在扫描仪参数比较，而应转向平台能力建设。",
-      color: "blue",
-      badge: "01",
-    },
-    {
-      title: "软件是中枢",
-      desc: "平台连接 LIS、阅片、AI、质控、归档与会诊，决定长期价值。",
-      color: "green",
-      badge: "02",
-    },
-    {
-      title: "AI 是增量能力",
-      desc: "AI 嵌入诊断工作流，提升效率、质量、科研和区域协同能力。",
-      color: "orange",
-      badge: "03",
-    },
-  ];
-
-  const zones = TAKEAWAY_CONTENT.map((tc, i) => ({
+function planExecutive(slide, hero, content) {
+  // Attach content cards to zones
+  const zones = content.cards.map((c, i) => ({
     position: [ZONE_POSITIONS.LEFT_PANEL, ZONE_POSITIONS.CENTER, ZONE_POSITIONS.RIGHT_PANEL][i],
     priority: i,
     span: "3.6x2.3",
     label: "takeaway-" + (i + 1),
-    content: tc,
+    content: c,
   }));
 
   return buildLayoutPlan({
@@ -336,16 +319,15 @@ function planExecutive(slide, hero) {
     density: DENSITY_LEVELS.MODERATE,
     zones: zones,
     visualHierarchy: {
-      primary: hero.statement || slide.title,
-      secondary: slide.message,
+      primary: hero.statement || content.headline || slide.title,
+      secondary: content.support || slide.message,
       tertiary: "three-takeaways",
     },
     constraints: {
-      maxCards: 3,
+      maxCards: content.cards.length,
       cardWidthIn: 3.6,
       cardHeightIn: 2.3,
       cardVariants: ["badge"],
-      badgeLabels: ["01", "02", "03"],
       cardGapIn: 0.5,
       hasEmphasisBar: false,
     },
@@ -355,24 +337,33 @@ function planExecutive(slide, hero) {
 /**
  * Generic fallback — 3-card badge layout
  */
-function planGeneric(slide, hero) {
+function planGeneric(slide, hero, content) {
+  // Use content.cards if available, otherwise fall back to hardcoded
+  const cards = content && content.cards ? content.cards : [
+    { title: "核心价值", body: "围绕业务流程形成持续改进能力。", color: "blue", badge: "01" },
+    { title: "平台能力", body: "连接数据、应用、AI 与治理体系。", color: "green", badge: "02" },
+    { title: "长期演进", body: "支撑科研、教学、区域协同与智能化升级。", color: "orange", badge: "03" },
+  ];
+
   return buildLayoutPlan({
     slideNo: slide.no,
     slideType: slide.type,
     patternId: hero.patternId,
     flow: FLOW_TYPES.LINEAR,
     density: DENSITY_LEVELS.MODERATE,
-    zones: [
-      zone(ZONE_POSITIONS.LEFT_PANEL, 0, "3.4x2.1", "核心价值"),
-      zone(ZONE_POSITIONS.CENTER, 1, "3.4x2.1", "平台能力"),
-      zone(ZONE_POSITIONS.RIGHT_PANEL, 2, "3.4x2.1", "长期演进"),
-    ],
+    zones: cards.map((c, i) => ({
+      position: [ZONE_POSITIONS.LEFT_PANEL, ZONE_POSITIONS.CENTER, ZONE_POSITIONS.RIGHT_PANEL][i],
+      priority: i,
+      span: "3.4x2.1",
+      label: c.badge,
+      content: c,
+    })),
     visualHierarchy: {
-      primary: hero.statement || slide.title,
-      secondary: "three-cards",
+      primary: hero.statement || content.headline || slide.title,
+      secondary: content.support || "three-cards",
     },
     constraints: {
-      maxCards: 3,
+      maxCards: cards.length,
       cardWidthIn: 3.4,
       cardHeightIn: 2.1,
       cardVariants: ["badge"],
@@ -391,6 +382,7 @@ function planGeneric(slide, hero) {
  */
 function compileLayoutPlan(slide, options = {}) {
   const hero = extractHeroInfo(slide);
+  const content = compileContent(slide);
 
   const planners = {
     cover: planCover,
@@ -406,11 +398,11 @@ function compileLayoutPlan(slide, options = {}) {
 
   const planner = planners[slide.type];
   if (planner) {
-    return planner(slide, hero);
+    return planner(slide, hero, content);
   }
 
   // Fallback to generic
-  return planGeneric(slide, hero);
+  return planGeneric(slide, hero, content);
 }
 
 module.exports = { compileLayoutPlan };
