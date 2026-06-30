@@ -590,34 +590,46 @@ function generic(s) {
   comp.makeFooter(slide, pptx, story, s.no);
 }
 
-function renderSlide(s) {
-  // Layout Engine: dispatch supported slide types through adapter
-  if (useLayoutEngine) {
-    const lp = layoutPlans.find(p => p.slide.no === s.no);
-    if (lp && dispatchAdapter({ slide: s, comp, pptx, story, layoutPlan: lp.plan })) {
-      return;
-    }
-  }
+const { createRendererEngine } = require("../src/renderer-engine");
+const { registerLegacyRenderer } = require("../src/renderer-engine/registry");
 
-  if (s.type === "cover") return cover(s);
-  if (s.type === "executive-summary") return executive(s);
-  if (s.type === "why-now") return whyNow(s);
-  if (s.type === "problem") return problem(s);
-  if (s.type === "transformation") return transformation(s);
-  if (s.type === "solution") return platformHubSlide(s);
-  if (s.type === "architecture") return layeredArchSlide(s);
-  if (s.type === "roadmap") return roadmap(s);
-  if (s.type === "workflow") return workflow(s);
-  if (s.type === "governance") return governance(s);
-  if (s.type === "research") return research(s);
-  if (s.type === "collaboration") return collaboration(s);
-  if (s.type === "roi") return roi(s);
-  if (s.type === "differentiation") return differentiation(s);
-  if (s.type === "recommendation") return recommendation(s);
-  return generic(s);
-}
+// ── Register legacy renderers ──────────────────────────────────
 
-story.slides.forEach(renderSlide);
+registerLegacyRenderer("cover", cover);
+registerLegacyRenderer("executive-summary", executive);
+registerLegacyRenderer("why-now", whyNow);
+registerLegacyRenderer("problem", problem);
+registerLegacyRenderer("transformation", transformation);
+registerLegacyRenderer("solution", platformHubSlide);
+registerLegacyRenderer("architecture", layeredArchSlide);
+registerLegacyRenderer("roadmap", roadmap);
+registerLegacyRenderer("workflow", workflow);
+registerLegacyRenderer("governance", governance);
+registerLegacyRenderer("research", research);
+registerLegacyRenderer("collaboration", collaboration);
+registerLegacyRenderer("roi", roi);
+registerLegacyRenderer("differentiation", differentiation);
+registerLegacyRenderer("recommendation", recommendation);
+registerLegacyRenderer("generic", generic);
+
+// ── Create renderer engine ─────────────────────────────────────
+
+const renderSlide = createRendererEngine({
+  useLayoutEngine,
+  layoutPlans,
+  legacyRenderer: (s, comp, pptx, story) => {
+    // Legacy renderers expect only slide, but we pass context
+    // This wrapper adapts the signature
+    const legacyFn = require("../src/renderer-engine/registry").getLegacyRenderer(s.type);
+    if (legacyFn) legacyFn(s);
+  },
+});
+
+// ── Render all slides ──────────────────────────────────────────
+
+story.slides.forEach(slide => {
+  renderSlide(slide, comp, pptx, story);
+});
 
 const pptPath = path.join(out, `${story.name}.pptx`);
 const planPath = path.join(out, `${story.name}-slide-plan.json`);
