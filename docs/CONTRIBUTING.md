@@ -40,10 +40,10 @@ Each pull request must have a single, clearly defined objective:
 
 ### Implementing a New Adapter
 
-1. Add planner function to `src/layout-engine/planner.js` (if not exists)
-2. Register in `compileLayoutPlan`'s `planners` object
+1. Add planner function to `src/layout-engine/planners/{type}.js`
+2. Register in `src/layout-engine/planner.js` planners object
 3. Create `src/layout-adapters/{type}.js`
-4. Register in `src/layout-adapters/index.js` dispatch switch
+4. Register in `src/layout-adapters/index.js` ADAPTERS object
 5. Test both modes
 
 ### Testing
