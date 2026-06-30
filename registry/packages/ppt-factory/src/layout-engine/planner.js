@@ -296,6 +296,37 @@ function planRecommendation(slide, hero) {
 }
 
 /**
+ * Executive Summary — 3 takeaway badge cards
+ */
+function planExecutive(slide, hero) {
+  return buildLayoutPlan({
+    slideNo: slide.no,
+    slideType: slide.type,
+    patternId: hero.patternId,
+    flow: FLOW_TYPES.LINEAR,
+    density: DENSITY_LEVELS.MODERATE,
+    zones: [
+      zone(ZONE_POSITIONS.LEFT_PANEL, 0, "3.6x2.3", "takeaway-01"),
+      zone(ZONE_POSITIONS.CENTER, 1, "3.6x2.3", "takeaway-02"),
+      zone(ZONE_POSITIONS.RIGHT_PANEL, 2, "3.6x2.3", "takeaway-03"),
+    ],
+    visualHierarchy: {
+      primary: hero.statement || slide.title,
+      secondary: slide.message,
+      tertiary: "three-takeaways",
+    },
+    constraints: {
+      maxCards: 3,
+      cardWidthIn: 3.6,
+      cardHeightIn: 2.3,
+      cardVariants: ["badge"],
+      badgeLabels: ["01", "02", "03"],
+      hasEmphasisBar: false,
+    },
+  });
+}
+
+/**
  * Generic fallback — 3-card badge layout
  */
 function planGeneric(slide, hero) {
@@ -337,6 +368,7 @@ function compileLayoutPlan(slide, options = {}) {
 
   const planners = {
     cover: planCover,
+    "executive-summary": planExecutive,
     workflow: planWorkflow,
     governance: planGovernance,
     research: planResearch,
