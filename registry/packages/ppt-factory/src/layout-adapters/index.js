@@ -7,6 +7,7 @@
  */
 
 const coverAdapter = require("./cover");
+const executiveAdapter = require("./executive");
 const workflowAdapter = require("./workflow");
 
 /**
@@ -25,6 +26,8 @@ function dispatchAdapter({ slide, comp, pptx, story, layoutPlan }) {
   switch (slide.type) {
     case "cover":
       return coverAdapter({ slide, comp, pptx, story, layoutPlan });
+    case "executive-summary":
+      return executiveAdapter({ slide, comp, pptx, story, layoutPlan });
     case "workflow":
       return workflowAdapter({ slide, comp, pptx, story, layoutPlan });
     // Future: case "governance": case "research": ...

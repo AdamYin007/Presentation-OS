@@ -299,17 +299,42 @@ function planRecommendation(slide, hero) {
  * Executive Summary — 3 takeaway badge cards
  */
 function planExecutive(slide, hero) {
+  const TAKEAWAY_CONTENT = [
+    {
+      title: "不是设备采购",
+      desc: "数字病理建设不能停留在扫描仪参数比较，而应转向平台能力建设。",
+      color: "blue",
+      badge: "01",
+    },
+    {
+      title: "软件是中枢",
+      desc: "平台连接 LIS、阅片、AI、质控、归档与会诊，决定长期价值。",
+      color: "green",
+      badge: "02",
+    },
+    {
+      title: "AI 是增量能力",
+      desc: "AI 嵌入诊断工作流，提升效率、质量、科研和区域协同能力。",
+      color: "orange",
+      badge: "03",
+    },
+  ];
+
+  const zones = TAKEAWAY_CONTENT.map((tc, i) => ({
+    position: [ZONE_POSITIONS.LEFT_PANEL, ZONE_POSITIONS.CENTER, ZONE_POSITIONS.RIGHT_PANEL][i],
+    priority: i,
+    span: "3.6x2.3",
+    label: "takeaway-" + (i + 1),
+    content: tc,
+  }));
+
   return buildLayoutPlan({
     slideNo: slide.no,
     slideType: slide.type,
     patternId: hero.patternId,
     flow: FLOW_TYPES.LINEAR,
     density: DENSITY_LEVELS.MODERATE,
-    zones: [
-      zone(ZONE_POSITIONS.LEFT_PANEL, 0, "3.6x2.3", "takeaway-01"),
-      zone(ZONE_POSITIONS.CENTER, 1, "3.6x2.3", "takeaway-02"),
-      zone(ZONE_POSITIONS.RIGHT_PANEL, 2, "3.6x2.3", "takeaway-03"),
-    ],
+    zones: zones,
     visualHierarchy: {
       primary: hero.statement || slide.title,
       secondary: slide.message,
@@ -321,6 +346,7 @@ function planExecutive(slide, hero) {
       cardHeightIn: 2.3,
       cardVariants: ["badge"],
       badgeLabels: ["01", "02", "03"],
+      cardGapIn: 0.5,
       hasEmphasisBar: false,
     },
   });
