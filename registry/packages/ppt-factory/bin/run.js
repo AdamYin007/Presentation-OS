@@ -15,6 +15,7 @@ function getArg(name, fallback) {
 const storyName = getArg("story", "digital-pathology-15");
 const useHero = args.includes("--hero");
 const heroSeqArg = getArg("hero-sequence", null);
+const useLayoutEngine = args.includes("--layout-engine");
 const out = getArg("out", path.join(process.cwd(), "output", "ppt-factory"));
 const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
 
@@ -42,7 +43,6 @@ if (useHero) {
   if (fs.existsSync(heroSequencePath)) {
     heroSequence = JSON.parse(fs.readFileSync(heroSequencePath, "utf8"));
     const enriched = enrichStoryWithHero(story, heroSequence, { overrideTitle: true });
-    // Replace story reference with enriched deep copy
     Object.keys(story).forEach(k => delete story[k]);
     Object.assign(story, enriched);
     console.log("🦸 Hero Engine activated — narrative enrichment applied.");
@@ -51,6 +51,21 @@ if (useHero) {
     console.warn("   Falling back to original story without hero enrichment.");
   }
 }
+
+// ── Layout Engine (optional) ──────────────────────────────────────
+
+const { compileLayoutPlan } = useLayoutEngine
+  ? require("../src/layout-engine")
+  : { compileLayoutPlan: () => null };
+
+const { dispatchAdapter } = useLayoutEngine
+  ? require("../src/layout-adapters")
+  : { dispatchAdapter: () => false };
+
+// Pre-compile layout plans when layout engine is enabled
+const layoutPlans = useLayoutEngine
+  ? story.slides.map(slide => ({ slide, plan: compileLayoutPlan(slide) }))
+  : [];
 
 fs.mkdirSync(out, { recursive: true });
 
@@ -576,6 +591,14 @@ function generic(s) {
 }
 
 function renderSlide(s) {
+  // Layout Engine: dispatch supported slide types through adapter
+  if (useLayoutEngine) {
+    const lp = layoutPlans.find(p => p.slide.no === s.no);
+    if (lp && dispatchAdapter({ slide: s, comp, pptx, story, layoutPlan: lp.plan })) {
+      return;
+    }
+  }
+
   if (s.type === "cover") return cover(s);
   if (s.type === "executive-summary") return executive(s);
   if (s.type === "why-now") return whyNow(s);
