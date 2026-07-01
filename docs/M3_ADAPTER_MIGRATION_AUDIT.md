@@ -11,7 +11,7 @@
 
 This audit maps all 16 registered legacy renderers in `run.js` against the current adapter system. It identifies:
 
-- **6 renderers** fully covered (planner + adapter): `cover`, `workflow`, `generic`, `recommendation`, `why-now`, `problem`
+- **9 renderers** fully covered (planner + adapter): `cover`, `workflow`, `generic`, `recommendation`, `why-now`, `problem`, `governance`, `research`, `collaboration`
 - **6 renderers** with planners only (no adapter): `governance`, `research`, `collaboration`, `roi`, `differentiation`
 - **6 renderers** with neither planner nor adapter (pure legacy): `transformation`, `solution`, `architecture`, `roadmap`
 

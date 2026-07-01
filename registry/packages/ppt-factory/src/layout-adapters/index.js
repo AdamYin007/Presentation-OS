@@ -18,6 +18,9 @@ const genericAdapter = require("./generic");
 const recommendationAdapter = require("./recommendation");
 const whyNowAdapter = require("./why-now");
 const problemAdapter = require("./problem");
+const governanceAdapter = require("./governance");
+const researchAdapter = require("./research");
+const collaborationAdapter = require("./collaboration");
 
 /**
  * Adapter registry — slide type → adapter function.
@@ -31,6 +34,9 @@ const ADAPTERS = {
   recommendation: recommendationAdapter,
   "why-now": whyNowAdapter,
   problem: problemAdapter,
+  governance: governanceAdapter,
+  research: researchAdapter,
+  collaboration: collaborationAdapter,
 };
 
 /**
