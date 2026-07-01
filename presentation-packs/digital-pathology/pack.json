@@ -11,8 +11,12 @@
     "rfc": ["RFC-0001", "RFC-0003"]
   },
   "contents": {
-    "stories": [],
-    "heroSequences": [],
+    "stories": [
+      "stories/digital-pathology-15.json"
+    ],
+    "heroSequences": [
+      "hero-sequences/digital-pathology-15-hero-sequence.json"
+    ],
     "content": [],
     "planners": [],
     "adapters": [],

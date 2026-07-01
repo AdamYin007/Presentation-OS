@@ -93,8 +93,8 @@
 ### M4 — Presentation Pack Foundation (In Progress)
 - [x] Audit domain-specific assets ([Audit](M4_PRESENTATION_PACK_FOUNDATION_AUDIT.md)) — PR34
 - [x] Create digital pathology pack skeleton — PR35
-- [ ] Copy story assets into pack — PR36
-- [ ] Copy hero-sequence assets into pack — PR37
+- [x] Copy story assets into pack — PR36 ✅
+- [x] Copy hero-sequence assets into pack — PR36 ✅
 - [ ] Copy terminology and reference docs — PR38
 - [ ] Pack loader proof of concept (optional) — PR39
 - [ ] Begin data-driven planner extraction — PR40

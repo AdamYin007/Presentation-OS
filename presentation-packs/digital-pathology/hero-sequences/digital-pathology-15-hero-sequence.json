@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "story_id": "digital-pathology-15",
+    "title": "数字病理的本质，是 AI 和软件驱动的能力升级",
+    "audience": "院长办公会 / 病理科 / 信息中心",
+    "hero_layer_version": "1.0.0",
+    "generated": "2026-06-30",
+    "total_slides": 15,
+    "narrative_arc": "开场(1-5) → 方案(6-8) → 信任(9-11) → 行动(12-15)"
+  },
+  "slides": [
+    {
+      "slide_no": 1,
+      "slide_type": "cover",
+      "existing_pattern": "Hero Statement",
+      "decision_goal": "建立品牌认知，传递核心定位",
+      "hero_pattern_id": "H-001",
+      "hero_statement": "数字病理的本质，是 AI 和软件驱动的能力升级",
+      "visual_focus": "超大品牌标语 + 极简背景（数字病理切片抽象图）",
+      "first_impression_5s": "这是一次关于数字病理的战略汇报，91360 是主角"
+    },
+    {
+      "slide_no": 2,
+      "slide_type": "executive-summary",
+      "existing_pattern": "Executive Three Takeaways",
+      "decision_goal": "让高层在开场即掌握三个核心结论",
+      "hero_pattern_id": "H-006",
+      "hero_statement": "效率、质量、成本、科研四维价值一次兑现",
+      "visual_focus": "四宫格价值卡片（效率/质量/成本/科研），每张含图标+数字",
+      "first_impression_5s": "这个项目能在四个维度同时产生可量化回报"
+    },
+    {
+      "slide_no": 3,
+      "slide_type": "why-now",
+      "existing_pattern": "Why Now",
+      "decision_goal": "制造紧迫感，让决策者认同推进时机已到",
+      "hero_pattern_id": "H-003",
+      "hero_statement": "政策+技术+需求三重窗口已打开",
+      "visual_focus": "三列等宽卡片：政策信号 / 技术突破 / 市场需求",
+      "first_impression_5s": "现在不做数字病理，未来会被竞争对手甩开"
+    },
+    {
+      "slide_no": 4,
+      "slide_type": "problem",
+      "existing_pattern": "Pain Point Cluster",
+      "decision_goal": "让听众意识到传统病理流程的结构性问题",
+      "hero_pattern_id": "H-002",
+      "hero_statement": "3万缺口，报告积压，质控盲区",
+      "visual_focus": "全屏大数字（30,000+）+ 一行后果描述",
+      "first_impression_5s": "病理医生缺口巨大，现有流程已经撑不住了"
+    },
+    {
+      "slide_no": 5,
+      "slide_type": "transformation",
+      "existing_pattern": "From-To Transformation",
+      "decision_goal": "帮助决策者理解范式转变的方向",
+      "hero_pattern_id": "H-004",
+      "hero_statement": "从硬件数字化走向软件智能化",
+      "visual_focus": "左右对比箭头：灰色旧模式 → 亮色新模式",
+      "first_impression_5s": "数字病理不只是买扫描仪，而是全面的能力升级"
+    },
+    {
+      "slide_no": 6,
+      "slide_type": "solution",
+      "existing_pattern": "Platform Hub",
+      "decision_goal": "让决策者理解平台作为病理科中枢的定位",
+      "hero_pattern_id": "H-014",
+      "hero_statement": "平台是病理科的连接中枢和智能引擎",
+      "visual_focus": "五层架构堆叠图（应用/平台/数据/基建/治理）",
+      "first_impression_5s": "这是一个完整的平台方案，不只是单一工具"
+    },
+    {
+      "slide_no": 7,
+      "slide_type": "architecture",
+      "existing_pattern": "Layered Architecture",
+      "decision_goal": "让信息中心和技术决策者认可架构的可行性和可扩展性",
+      "hero_pattern_id": "H-014",
+      "hero_statement": "四层能力支撑病理科长期演进",
+      "visual_focus": "分层架构图：连接层→流程层→智能层→治理层",
+      "first_impression_5s": "架构清晰、层次分明，支持长期迭代"
+    },
+    {
+      "slide_no": 8,
+      "slide_type": "workflow",
+      "existing_pattern": "AI Workflow",
+      "decision_goal": "消除医生对 AI 替代的恐惧，确认人机协作定位",
+      "hero_pattern_id": "H-013",
+      "hero_statement": "AI 嵌入工作流，医生仍是最终决策者",
+      "visual_focus": "四步流程箭头链：扫描→AI分析→医生确认→报告输出",
+      "first_impression_5s": "AI 是医生的助手，不是替代者"
+    },
+    {
+      "slide_no": 9,
+      "slide_type": "governance",
+      "existing_pattern": "Governance Loop",
+      "decision_goal": "让决策者确信平台具备合规和质量保障能力",
+      "hero_pattern_id": "H-023",
+      "hero_statement": "质量治理闭环是平台的底层能力",
+      "visual_focus": "PDCA环形图：标准→执行→记录→复核→改进",
+      "first_impression_5s": "平台内置质控和合规体系，不是事后补救"
+    },
+    {
+      "slide_no": 10,
+      "slide_type": "research",
+      "existing_pattern": "Data Flywheel",
+      "decision_goal": "让决策者看到数据资产的长期价值",
+      "hero_pattern_id": "H-027",
+      "hero_statement": "数据沉淀驱动科研产出持续增长",
+      "visual_focus": "管线时间轴：病例→队列→统计→论文→投稿→发表",
+      "first_impression_5s": "投入数字病理不仅是运营改善，更是科研基础设施"
+    },
+    {
+      "slide_no": 11,
+      "slide_type": "collaboration",
+      "existing_pattern": "Region Collaboration Network",
+      "decision_goal": "让决策者理解区域协同的扩展价值",
+      "hero_pattern_id": "H-024",
+      "hero_statement": "优质病理资源通过平台向区域延伸",
+      "visual_focus": "中国地图 + 节点标注（医院数/病例量/响应时间）",
+      "first_impression_5s": "一家医院的投入可以惠及周边多家基层医院"
+    },
+    {
+      "slide_no": 12,
+      "slide_type": "roadmap",
+      "existing_pattern": "Roadmap Timeline",
+      "decision_goal": "让决策者看到清晰的实施路径和风险可控",
+      "hero_pattern_id": "H-029",
+      "hero_statement": "分四阶段推进，一年全面运营",
+      "visual_focus": "横向四阶段时间轴：试点→推广→深化→自治",
+      "first_impression_5s": "实施路径清晰，风险可控，12个月内见效"
+    },
+    {
+      "slide_no": 13,
+      "slide_type": "roi",
+      "existing_pattern": "ROI Value Bridge",
+      "decision_goal": "用量化数据说服院长批准预算",
+      "hero_pattern_id": "H-007",
+      "hero_statement": "效率提升 500%，年省 280 万",
+      "visual_focus": "Before/After 对比柱状图（传统 vs 数字化）",
+      "first_impression_5s": "投入产出比清晰，14个月收回投资"
+    },
+    {
+      "slide_no": 14,
+      "slide_type": "differentiation",
+      "existing_pattern": "Comparison Matrix",
+      "decision_goal": "让采购委员会理解为什么选 91360",
+      "hero_pattern_id": "H-035",
+      "hero_statement": "AI三类证+信息化底座+会诊网络，竞品没有",
+      "visual_focus": "打勾清单：自身优势 vs 竞品对比",
+      "first_impression_5s": "91360 有独特的差异化优势，不是同质化产品"
+    },
+    {
+      "slide_no": 15,
+      "slide_type": "recommendation",
+      "existing_pattern": "Final Recommendation",
+      "decision_goal": "推动决策者当场做出下一步行动承诺",
+      "hero_pattern_id": "H-033",
+      "hero_statement": "签署试点协议，30天见效",
+      "visual_focus": "三列建议卡片 + 底部联系信息",
+      "first_impression_5s": "下一步很明确：签协议、派人对接、30天看结果"
+    }
+  ],
+  "narrative_flow": {
+    "act_1_opening": {"slides": [1, 2, 3, 4, 5], "purpose": "建立认知、制造紧迫感、指明方向", "hero_patterns": ["H-001", "H-006", "H-003", "H-002", "H-004"]},
+    "act_2_solution": {"slides": [6, 7, 8], "purpose": "展示平台方案、架构、AI工作流", "hero_patterns": ["H-014", "H-014", "H-013"]},
+    "act_3_trust": {"slides": [9, 10, 11], "purpose": "建立信任：质控、科研、网络", "hero_patterns": ["H-023", "H-027", "H-024"]},
+    "act_4_action": {"slides": [12, 13, 14, 15], "purpose": "推动行动：路线图、ROI、差异化、CTA", "hero_patterns": ["H-029", "H-007", "H-035", "H-033"]}
+  },
+  "transition_logic": [
+    {"from_slide": 1, "to_slide": 2, "connection": "品牌定位 → 核心价值概览"},
+    {"from_slide": 2, "to_slide": 3, "connection": "价值框架 → 为什么现在必须行动"},
+    {"from_slide": 3, "to_slide": 4, "connection": "趋势窗口 → 结构性痛点数据"},
+    {"from_slide": 4, "to_slide": 5, "connection": "痛点冲击 → 转型方向"},
+    {"from_slide": 5, "to_slide": 6, "connection": "转型宣言 → 平台方案"},
+    {"from_slide": 6, "to_slide": 7, "connection": "平台定位 → 架构详解"},
+    {"from_slide": 7, "to_slide": 8, "connection": "架构能力 → AI嵌入工作流"},
+    {"from_slide": 8, "to_slide": 9, "connection": "工作流程 → 质量治理"},
+    {"from_slide": 9, "to_slide": 10, "connection": "合规保障 → 数据资产价值"},
+    {"from_slide": 10, "to_slide": 11, "connection": "科研管线 → 区域协同网络"},
+    {"from_slide": 11, "to_slide": 12, "connection": "网络效应 → 实施路径"},
+    {"from_slide": 12, "to_slide": 13, "connection": "实施计划 → ROI量化回报"},
+    {"from_slide": 13, "to_slide": 14, "connection": "价值证明 → 为什么选我们"},
+    {"from_slide": 14, "to_slide": 15, "connection": "差异化优势 → 立即行动"}
+  ]
+}

@@ -34,8 +34,8 @@ Following **RFC-0003**, this pack provides the standard structure for future ass
 
 | Directory | Status | Contents |
 |---|---|---|
-| `stories/` | Placeholder | `.gitkeep` only |
-| `hero-sequences/` | Placeholder | `.gitkeep` only |
+| `stories/` | ✅ Populated | `digital-pathology-15.json` (copy from `story/`) |
+| `hero-sequences/` | ✅ Populated | `digital-pathology-15-hero-sequence.json` (copy from `story/`) |
 | `content/` | Placeholder | `.gitkeep` only |
 | `planners/` | Placeholder | `.gitkeep` only |
 | `adapters/` | Placeholder | `.gitkeep` only |
@@ -44,7 +44,9 @@ Following **RFC-0003**, this pack provides the standard structure for future ass
 | `references/` | Placeholder | `.gitkeep` only |
 | `examples/` | Placeholder | `.gitkeep` only |
 
-All directories contain only `.gitkeep` files to preserve the structure in version control.
+**Note:** These are pack-owned copies. The runtime still uses original files under `registry/packages/ppt-factory/story/`. This PR does not change rendering behavior. Future pack loader may read these assets directly.
+
+The hero-sequence file is a **companion metadata file** for the Hero Engine — it is not a standalone renderable story.
 
 ---
 
@@ -114,9 +116,10 @@ This pack follows:
 
 ## Known Limitations
 
-1. **Not runtime-connected** — Assets in this pack are not loaded by `run.js`.
+1. **Not runtime-connected** — Assets in this pack are not loaded by `run.js`. Runtime still uses originals in `story/`.
 2. **No pack loader** — Core does not yet know about `presentation-packs/`.
 3. **No validation** — Pack contents are not validated against RFC-0003 schema.
 4. **No SDK integration** — RFC-0002 SDK is not implemented.
 5. **No marketplace** — RFC-0004 Marketplace is not implemented.
 6. **Experimental** — This pack is a starting point, not a production artifact.
+7. **Hero-sequence format** — `digital-pathology-15-hero-sequence.json` uses `slide_type`/`slide_no` instead of `type`/`no`. It is a companion metadata file, not a standalone story. See [HERO_SEQUENCE_FORMAT_AUDIT.md](../docs/HERO_SEQUENCE_FORMAT_AUDIT.md).
