@@ -15,7 +15,8 @@ function getArg(name, fallback) {
 const storyName = getArg("story", "digital-pathology-15");
 const useHero = args.includes("--hero");
 const heroSeqArg = getArg("hero-sequence", null);
-const useLayoutEngine = args.includes("--layout-engine");
+const forceLegacy = args.includes("--legacy-renderer") || process.env.AWE_LEGACY_RENDERER === "1";
+const useLayoutEngine = !forceLegacy;
 const out = getArg("out", path.join(process.cwd(), "output", "ppt-factory"));
 const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
 
