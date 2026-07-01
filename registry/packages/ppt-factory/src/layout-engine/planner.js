@@ -30,6 +30,8 @@ const planners = {
   differentiation: require("./planners/differentiation"),
   transformation: require("./planners/transformation"),
   solution: require("./planners/solution"),
+  architecture: require("./planners/architecture"),
+  roadmap: require("./planners/roadmap"),
 };
 
 // ── Main dispatcher ──────────────────────────────────────────

@@ -25,6 +25,8 @@ const roiAdapter = require("./roi");
 const differentiationAdapter = require("./differentiation");
 const transformationAdapter = require("./transformation");
 const solutionAdapter = require("./solution");
+const architectureAdapter = require("./architecture");
+const roadmapAdapter = require("./roadmap");
 
 /**
  * Adapter registry — slide type → adapter function.
@@ -45,6 +47,8 @@ const ADAPTERS = {
   differentiation: differentiationAdapter,
   transformation: transformationAdapter,
   solution: solutionAdapter,
+  architecture: architectureAdapter,
+  roadmap: roadmapAdapter,
 };
 
 /**
