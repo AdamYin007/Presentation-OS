@@ -98,7 +98,8 @@
 - [x] Copy terminology and reference docs — PR37 ✅
 - [ ] Pack loader proof of concept (optional) — PR39
 - [x] Read-only pack manifest validator — PR39 ✅
-- [ ] Begin data-driven planner extraction — PR40
+- [x] Digital pathology pack asset index — PR40 ✅
+- [ ] Begin data-driven planner extraction — PR41
 
 ### M5 — Intelligence
 - [ ] Audience Engine adapts output per audience

@@ -46,6 +46,8 @@ Following **RFC-0003**, this pack provides the standard structure for future ass
 
 **Note:** These are pack-owned copies. The runtime still uses original files under `registry/packages/ppt-factory/story/`. This PR does not change rendering behavior. Future pack loader may read these assets directly.
 
+For a complete asset inventory with migration status, see [ASSET_INDEX.md](ASSET_INDEX.md).
+
 The hero-sequence file is a **companion metadata file** for the Hero Engine — it is not a standalone renderable story.
 
 ---
@@ -101,7 +103,8 @@ The following should remain in Core:
 | PR36 | Copy story assets into `stories/` and `hero-sequences/` | ✅ Done |
 | PR37 | Copy terminology and reference docs into `terminology/` and `references/` | ✅ Done |
 | PR38 | Evaluate pack loader proof of concept | Planned |
-| PR39 | Begin data-driven planner extraction | Planned |
+| PR39 | Read-only pack manifest validator | ✅ Done |
+| PR40 | Digital pathology pack asset index | ✅ Done |
 
 ---
 
