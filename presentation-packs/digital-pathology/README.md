@@ -40,8 +40,8 @@ Following **RFC-0003**, this pack provides the standard structure for future ass
 | `planners/` | Placeholder | `.gitkeep` only |
 | `adapters/` | Placeholder | `.gitkeep` only |
 | `themes/` | Placeholder | `.gitkeep` only |
-| `terminology/` | Placeholder | `.gitkeep` only |
-| `references/` | Placeholder | `.gitkeep` only |
+| `terminology/` | ✅ Populated | `digital-pathology-story-v1.md` (copy from `presentation-dna/grammar/`) |
+| `references/` | ✅ Populated | `medical-ai-layouts-v1.md`, `medical-ai-layouts-v2.md` (copies from `presentation-dna/layouts/`) |
 | `examples/` | Placeholder | `.gitkeep` only |
 
 **Note:** These are pack-owned copies. The runtime still uses original files under `registry/packages/ppt-factory/story/`. This PR does not change rendering behavior. Future pack loader may read these assets directly.
@@ -59,8 +59,8 @@ Digital pathology domain knowledge that should eventually live in this pack:
 - **Planners**: All 14 domain-specific planners (architecture, collaboration, etc.)
 - **Adapters**: All 15 domain-specific adapters
 - **Themes**: `medical-consulting` theme configuration
-- **Terminology**: Domain-specific terms (数字病理, 质控, CAP, ISO 15189, etc.)
-- **References**: `digital-pathology-story-v1.md`, `medical-ai-layouts-v*.md`
+- **Terminology**: `digital-pathology-story-v1.md` (story grammar, narrative structure)
+- **References**: `medical-ai-layouts-v1.md`, `medical-ai-layouts-v2.md` (layout design patterns)
 - **Examples**: Example decks and usage patterns
 
 ---
@@ -95,13 +95,13 @@ The following should remain in Core:
 
 ## Planned Migration Sequence
 
-| PR | Scope | Risk |
+| PR | Scope | Status |
 |---|---|---|
-| **PR36** | Copy standard story assets into `stories/` | Low |
-| **PR37** | Copy hero-sequence metadata into `hero-sequences/` | Low |
-| **PR38** | Copy terminology and reference docs into `terminology/` and `references/` | None |
-| **PR39** | Evaluate pack loader proof of concept | Medium |
-| **PR40** | Begin data-driven planner extraction | Medium |
+| PR35 | Create pack skeleton (`pack.json`, `README.md`, directory structure) | ✅ Done |
+| PR36 | Copy story assets into `stories/` and `hero-sequences/` | ✅ Done |
+| PR37 | Copy terminology and reference docs into `terminology/` and `references/` | ✅ Done |
+| PR38 | Evaluate pack loader proof of concept | Planned |
+| PR39 | Begin data-driven planner extraction | Planned |
 
 ---
 

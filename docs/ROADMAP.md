@@ -95,7 +95,7 @@
 - [x] Create digital pathology pack skeleton — PR35
 - [x] Copy story assets into pack — PR36 ✅
 - [x] Copy hero-sequence assets into pack — PR36 ✅
-- [ ] Copy terminology and reference docs — PR38
+- [x] Copy terminology and reference docs — PR37 ✅
 - [ ] Pack loader proof of concept (optional) — PR39
 - [ ] Begin data-driven planner extraction — PR40
 

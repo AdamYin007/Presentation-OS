@@ -21,8 +21,13 @@
     "planners": [],
     "adapters": [],
     "themes": [],
-    "terminology": [],
-    "references": [],
+    "terminology": [
+      "terminology/digital-pathology-story-v1.md"
+    ],
+    "references": [
+      "references/medical-ai-layouts-v1.md",
+      "references/medical-ai-layouts-v2.md"
+    ],
     "examples": []
   },
   "runtime": {
