@@ -84,7 +84,7 @@
 > **Note**: Before creating real Presentation Pack directory structures, SDK APIs, or Marketplace infrastructure, the relevant RFC should be completed first. All 6 RFCs are now complete.
 
 ### M3 — Adapter Migration (Next)
-- [ ] Migrate 10+ legacy renderers to adapters
+- [ ] Migrate 10+ legacy renderers to adapters ([Audit](M3_ADAPTER_MIGRATION_AUDIT.md))
 - [ ] Achieve 10+ adapter coverage
 - [ ] Reduce run.js legacy functions by 50%
 
