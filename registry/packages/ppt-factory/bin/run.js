@@ -78,6 +78,7 @@ var KNOWN_FLAGS = [
   "validate-pack",
   "list-packs",
   "list-packs-dir",
+  "inspect-pack",
 ];
 
 function hasUnknownFlag() {
@@ -93,7 +94,7 @@ function hasUnknownFlag() {
     // Check if next arg is a value for this flag (known flags take values)
     var takesValue = [
       "story", "out", "hero-sequence",
-      "validate-pack", "list-packs-dir"
+      "validate-pack", "list-packs-dir", "inspect-pack"
     ];
     if (takesValue.indexOf(flagName) >= 0 && i + 1 < args.length && args[i + 1].indexOf("--") !== 0) {
       continue; // flag with value, skip
@@ -113,6 +114,22 @@ if (unknown) {
   console.error("  --legacy-renderer");
   console.error("  --layout-engine");
   process.exit(1);
+}
+
+// ── Pack inspection (early exit, no runtime loading) ────────────
+
+var inspectPackPresent = args.includes("--inspect-pack");
+if (inspectPackPresent) {
+  var inspectPackArg = getArg("inspect-pack", null);
+  if (!inspectPackArg) {
+    console.error("Missing value for --inspect-pack");
+    console.error("Usage: --inspect-pack <pack-id>");
+    process.exit(1);
+  }
+  var { inspectPack, printPackInspection } = require("../src/pack-inspection");
+  var result = inspectPack(inspectPackArg);
+  var exitCode = printPackInspection(result);
+  process.exit(exitCode);
 }
 
 const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
