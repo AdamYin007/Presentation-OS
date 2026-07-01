@@ -16,6 +16,8 @@ const executiveAdapter = require("./executive");
 const workflowAdapter = require("./workflow");
 const genericAdapter = require("./generic");
 const recommendationAdapter = require("./recommendation");
+const whyNowAdapter = require("./why-now");
+const problemAdapter = require("./problem");
 
 /**
  * Adapter registry — slide type → adapter function.
@@ -27,6 +29,8 @@ const ADAPTERS = {
   workflow: workflowAdapter,
   generic: genericAdapter,
   recommendation: recommendationAdapter,
+  "why-now": whyNowAdapter,
+  problem: problemAdapter,
 };
 
 /**
