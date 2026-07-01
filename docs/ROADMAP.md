@@ -91,12 +91,13 @@
 - [ ] Resolve hero-sequence story format incompatibility (separate migration)
 
 ### M4 — Presentation Pack Foundation (In Progress)
-- [x] Audit domain-specific assets ([Audit](M4_PRESENTATION_PACK_FOUNDATION_AUDIT.md))
-- [ ] Create `presentation-packs/digital-pathology/` skeleton (PR35)
-- [ ] Copy story files to pack (PR36)
-- [ ] Copy documentation assets to pack (PR37)
-- [ ] Pack loader proof of concept (PR38)
-- [ ] Begin planner migration (PR39)
+- [x] Audit domain-specific assets ([Audit](M4_PRESENTATION_PACK_FOUNDATION_AUDIT.md)) — PR34
+- [x] Create digital pathology pack skeleton — PR35
+- [ ] Copy story assets into pack — PR36
+- [ ] Copy hero-sequence assets into pack — PR37
+- [ ] Copy terminology and reference docs — PR38
+- [ ] Pack loader proof of concept (optional) — PR39
+- [ ] Begin data-driven planner extraction — PR40
 
 ### M5 — Intelligence
 - [ ] Audience Engine adapts output per audience
