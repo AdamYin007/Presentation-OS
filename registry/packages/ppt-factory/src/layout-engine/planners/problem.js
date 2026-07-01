@@ -1,24 +1,30 @@
 /**
  * Problem Layout Planner — 2x2 icon cards grid.
+ *
+ * Content is hardcoded here because the Content Engine
+ * does not have a dedicated problem planner.
  */
 
-const { buildLayoutPlan, zone, ZONE_POSITIONS } = require("../schema");
+const { buildLayoutPlan, ZONE_POSITIONS } = require("../schema");
 
 function planProblem(slide, hero, content) {
-  const cards = content && content.cards
-    ? content.cards
-    : [
-        { title: "效率瓶颈", body: "玻片流转、人工阅片和报告周期压力增加", color: "blue", badge: "⏱" },
-        { title: "质控瓶颈", body: "过程记录分散，复核和追溯成本高", color: "orange", badge: "⚠" },
-        { title: "协同瓶颈", body: "远程会诊、区域病理和多院区协同困难", color: "blue", badge: "🔗" },
-        { title: "数据瓶颈", body: "切片、诊断和科研数据难以沉淀复用", color: "orange", badge: "📊" },
-      ];
+  // Hardcoded content matching legacy problem() renderer
+  const cards = [
+    { title: "效率瓶颈", body: "玻片流转、人工阅片和报告周期压力增加", color: "blue", badge: "⏱" },
+    { title: "质控瓶颈", body: "过程记录分散，复核和追溯成本高", color: "orange", badge: "⚠" },
+    { title: "协同瓶颈", body: "远程会诊、区域病理和多院区协同困难", color: "blue", badge: "🔗" },
+    { title: "数据瓶颈", body: "切片、诊断和科研数据难以沉淀复用", color: "orange", badge: "📊" },
+  ];
 
   const zones = cards.map((c, i) => {
-    const row = i < 2 ? 0 : 1;
-    const col = i % 2;
+    const positions = [
+      ZONE_POSITIONS.LEFT_PANEL,
+      ZONE_POSITIONS.RIGHT_PANEL,
+      ZONE_POSITIONS.LEFT_PANEL,
+      ZONE_POSITIONS.RIGHT_PANEL,
+    ];
     return {
-      position: col === 0 ? ZONE_POSITIONS.LEFT_PANEL : ZONE_POSITIONS.RIGHT_PANEL,
+      position: positions[i],
       priority: i,
       span: "5.1x1.55",
       label: c.badge,
@@ -34,7 +40,7 @@ function planProblem(slide, hero, content) {
     density: "moderate",
     zones,
     visualHierarchy: {
-      primary: hero.statement || content.headline || slide.title,
+      primary: hero.statement || slide.title,
       secondary: "two-by-two-grid",
     },
     constraints: {
