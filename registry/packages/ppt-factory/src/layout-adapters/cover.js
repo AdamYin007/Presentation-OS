@@ -71,9 +71,6 @@ function coverAdapter({ slide, comp, pptx, story, layoutPlan }) {
     fontSize: 10, color: "94A3B8", margin: 0
   });
 
-  // ── Footer ──────────────────────────────────────────────────
-  comp.makeFooter(s, pptx, story, slide.no);
-
   return true;
 }
 

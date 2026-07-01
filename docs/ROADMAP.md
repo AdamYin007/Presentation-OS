@@ -1,12 +1,12 @@
 # AWE Presentation OS — Roadmap
 
 > **Version**: 1.0.0  
-> **Date**: 2026-06-30  
-> **Status**: Architecture Frozen v1
+> **Date**: 2026-07-01  
+> **Status**: Architecture Frozen v1 — M3 Adapter Migration Complete
 
 ---
 
-## Current Status (2026-06-30)
+## Current Status (2026-07-01)
 
 ### Completed Components
 
@@ -18,9 +18,9 @@
 | **Layout Engine** | ✅ Done | PR11, PR15 | `compileLayoutPlan()`, `planners/` split (10 types) |
 | **Theme Engine Core** | ✅ Done | PR9 | `createTheme()`, `getTheme()`, `resolveColor()`, `applyTypography()` |
 | **Renderer Engine** | ✅ Done | PR16 | `createRendererEngine()`, adapter-first + legacy fallback |
-| **Workflow Adapter** | ✅ Done | PR5 | Pipeline layout from plan, covers `workflow` type |
-| **Cover Adapter** | ✅ Done | PR6 | Brand panel + hero statement from plan, covers `cover` type |
-| **Executive Adapter** | ✅ Done | PR13 | Badge cards from plan, covers `executive-summary` type |
+| **Layout Adapters** | ✅ Done | PR5–PR28 | 16 adapters covering all slide types (100%) |
+| **Adapter Default** | ✅ Done | PR31B | Adapter-first is now the default rendering path |
+| **Dead Code Removal** | ✅ Done | PR30 | Removed `dispatcher.js`, `dispatchLegacy()`, duplicate entries |
 | **Adapter Registry** | ✅ Done | PR15 | `ADAPTERS` object lookup, `dispatchAdapter()` |
 | **Legacy Registry** | ✅ Done | PR16 | `registerLegacyRenderer()`, centralized management |
 | **Architecture Docs** | ✅ Done | PR17 | This document + ARCHITECTURE.md |
@@ -37,8 +37,7 @@
 
 | Component | Status | Details |
 |---|---|---|
-| **Adapter Coverage** | 3/15 types | Cover, Executive, Workflow implemented |
-| **Legacy Migration** | 0/16 functions | All legacy renderers still in run.js |
+| **Legacy Removal** | ⏳ Future Hardening | PR32 — remove legacy renderers after production validation |
 
 ### Planned
 
@@ -83,10 +82,13 @@
 
 > **Note**: Before creating real Presentation Pack directory structures, SDK APIs, or Marketplace infrastructure, the relevant RFC should be completed first. All 6 RFCs are now complete.
 
-### M3 — Adapter Migration (Next)
-- [ ] Migrate 10+ legacy renderers to adapters ([Audit](M3_ADAPTER_MIGRATION_AUDIT.md))
-- [ ] Achieve 10+ adapter coverage
-- [ ] Reduce run.js legacy functions by 50%
+### M3 — Adapter Migration (Completed)
+- [x] Migrate 16 legacy renderers to adapters ([Audit](M3_ADAPTER_MIGRATION_AUDIT.md))
+- [x] Achieve 16/16 adapter coverage (100%)
+- [x] Enable adapter-first as default rendering path (PR31B)
+- [x] Remove dead code: `dispatcher.js`, `dispatchLegacy()` (PR30)
+- [ ] Remove legacy renderers from `run.js` (PR32 — pending production validation)
+- [ ] Resolve hero-sequence story format incompatibility (separate migration)
 
 ### M4 — Content & Compiler
 - [ ] Content Engine covers all 15 slide types
@@ -102,13 +104,13 @@
 
 ## Metrics
 
-| Metric | Current | M3 Target | M5 Target |
-|---|---|---|---|
-| Adapter coverage | 3/15 types | 10/15 types | 15/15 types |
-| Legacy renderers in run.js | 16 functions | 8 functions | 0 functions |
-| Plan-driven rendering | 20% | 70% | 100% |
-| Architecture debt items | 5 | 3 | 1 |
-| Docs coverage | 2 files | 3 files | 5 files |
+| Metric | Pre-PR23 | Post-PR31B |
+|---|---|---|
+| Adapter coverage | 3/15 types | 16/16 types (100%) |
+| Legacy renderers in run.js | 16 functions | 16 functions (preserved as fallback) |
+| Dead code removed | — | `dispatcher.js`, `dispatchLegacy()` |
+| Default rendering path | 100% legacy | Adapter-first |
+| Docs coverage | 2 files | 5 files |
 
 ---
 
