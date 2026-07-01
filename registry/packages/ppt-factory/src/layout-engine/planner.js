@@ -28,6 +28,8 @@ const planners = {
   problem: require("./planners/problem"),
   roi: require("./planners/roi"),
   differentiation: require("./planners/differentiation"),
+  transformation: require("./planners/transformation"),
+  solution: require("./planners/solution"),
 };
 
 // ── Main dispatcher ──────────────────────────────────────────
