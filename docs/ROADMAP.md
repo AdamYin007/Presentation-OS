@@ -97,6 +97,7 @@
 - [x] Copy hero-sequence assets into pack — PR36 ✅
 - [x] Copy terminology and reference docs — PR37 ✅
 - [ ] Pack loader proof of concept (optional) — PR39
+- [x] Read-only pack manifest validator — PR39 ✅
 - [ ] Begin data-driven planner extraction — PR40
 
 ### M5 — Intelligence

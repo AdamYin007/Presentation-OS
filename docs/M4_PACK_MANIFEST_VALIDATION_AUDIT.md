@@ -329,3 +329,13 @@ If PR39 passes validation without issues, the pack is ready for future runtime i
 | Risks documented | ✅ |
 
 **Next step:** Await user decision on PR39 scope.
+
+---
+
+## Implementation Note
+
+> **PR39 Implemented** — A read-only pack manifest validator was added to the project.
+> - Module: `registry/packages/ppt-factory/src/pack-validator.js`
+> - CLI: `node bin/run.js --validate-pack <path>`
+> - No runtime loading, no default behavior changes, no story modification.
+> - Validates all required manifest fields, path existence, path traversal security.

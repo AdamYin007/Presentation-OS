@@ -18,6 +18,43 @@ const heroSeqArg = getArg("hero-sequence", null);
 const forceLegacy = args.includes("--legacy-renderer") || process.env.AWE_LEGACY_RENDERER === "1";
 const useLayoutEngine = !forceLegacy;
 const out = getArg("out", path.join(process.cwd(), "output", "ppt-factory"));
+
+// ── Pack validator (early exit, no runtime loading) ─────────────
+
+const validatePackArg = getArg("validate-pack", null);
+if (validatePackArg) {
+  const { validatePack } = require("../src/pack-validator");
+  const result = validatePack(validatePackArg);
+  if (result.ok) {
+    console.log("Pack validation passed");
+    console.log("Pack: " + (result.manifest ? result.manifest.name : "(unknown)"));
+    console.log("Version: " + (result.manifest ? result.manifest.version : "(unknown)"));
+    console.log("Status: " + (result.manifest ? result.manifest.status : "(unknown)"));
+    console.log("Stories: " + ((result.assets.stories || []).length));
+    console.log("Hero sequences: " + ((result.assets.heroSequences || []).length));
+    console.log("Terminology: " + ((result.assets.terminology || []).length));
+    console.log("References: " + ((result.assets.references || []).length));
+    if (result.warnings.length > 0) {
+      console.log("Warnings: " + result.warnings.length);
+      for (const w of result.warnings) {
+        console.log("  " + w);
+      }
+    }
+    process.exit(0);
+  } else {
+    console.error("Pack validation failed");
+    for (const err of result.errors) {
+      console.error("  Error: " + err);
+    }
+    if (result.warnings.length > 0) {
+      for (const w of result.warnings) {
+        console.error("  Warning: " + w);
+      }
+    }
+    process.exit(1);
+  }
+}
+
 const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
 
 if (!fs.existsSync(storyPath)) {
