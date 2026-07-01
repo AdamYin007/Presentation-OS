@@ -55,6 +55,17 @@ if (validatePackArg) {
   }
 }
 
+// ── Pack discovery (early exit, no runtime loading) ─────────────
+
+const listPacksArg = args.includes("--list-packs");
+if (listPacksArg) {
+  const { discoverPacks, printPacks } = require("../src/pack-discovery");
+  var rootDir = getArg("list-packs-dir", "presentation-packs");
+  var packs = discoverPacks(rootDir);
+  var exitCode = printPacks(packs);
+  process.exit(exitCode);
+}
+
 const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
 
 if (!fs.existsSync(storyPath)) {
