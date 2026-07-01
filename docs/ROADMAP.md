@@ -24,6 +24,14 @@
 | **Adapter Registry** | ✅ Done | PR15 | `ADAPTERS` object lookup, `dispatchAdapter()` |
 | **Legacy Registry** | ✅ Done | PR16 | `registerLegacyRenderer()`, centralized management |
 | **Architecture Docs** | ✅ Done | PR17 | This document + ARCHITECTURE.md |
+| **Platform Strategy** | ✅ Done | PR19 | Core + Presentation Packs + Applications model |
+| **RFC-0001 Platform Spec** | ✅ Done | PR20 | docs/rfc/RFC-0001-platform.md |
+| **RFC-0002 SDK Spec** | ✅ Done | PR21 | docs/rfc/RFC-0002-sdk.md |
+| **RFC-0003 Pack Spec** | ✅ Done | PR21 | docs/rfc/RFC-0003-pack.md |
+| **RFC-0004 Marketplace Spec** | ✅ Done | PR21 | docs/rfc/RFC-0004-marketplace.md |
+| **RFC-0005 Compiler Spec** | ✅ Done | PR21 | docs/rfc/RFC-0005-compiler.md |
+| **RFC-0006 Audience Engine Spec** | ✅ Done | PR21 | docs/rfc/RFC-0006-audience.md |
+| **RFC Governance Integration** | ✅ Done | PR21 | CONTRIBUTING.md, ROADMAP.md, ARCHITECTURE.md updated |
 
 ### In Progress
 
@@ -38,8 +46,9 @@
 |---|---|---|
 | **Adapter Migration** | High | Migrate remaining legacy renderers to adapters |
 | **Content Data Migration** | High | Migrate story JSON data to Content Engine planners |
-| **Presentation Compiler** | Medium | Optimize render instructions, batch calls, cache plans |
-| **Audience Engine** | Medium | Adapt output based on `story.audience` metadata |
+| **Platform Specification Sprint** | High | All 6 RFCs completed. Next: implement SDK, Pack, Marketplace, Compiler, Audience Engine per RFC specs |
+| **Presentation Compiler** | Medium | Optimize render instructions, batch calls, cache plans (per RFC-0005) |
+| **Audience Engine** | Medium | Adapt output based on `story.audience` metadata (per RFC-0006) |
 | **Theme Engine Enforcement** | Low | Make Theme Engine mandatory for all rendering paths |
 | **Automated Testing** | High | PPTX comparison tests, regression detection |
 
@@ -54,12 +63,25 @@
 - [x] Layout Adapters (PoC → 3 types)
 - [x] Theme Engine Core
 
-### M2 — Architecture Freeze v1 (Current)
+### M2 — Architecture Freeze v1 (Completed)
 - [x] Content Engine Phase 1
 - [x] Renderer Engine Phase 1
 - [x] Module Split (planners/, registry pattern)
 - [x] Architecture Documentation
 - [x] Consistent Engine Structure
+- [x] Platform Strategy (Core + Domain Packs)
+- [x] RFC-0001 Platform Specification
+
+### RFC Sprint (Completed)
+- [x] RFC-0001 Platform Specification
+- [x] RFC-0002 SDK Specification
+- [x] RFC-0003 Presentation Pack Specification
+- [x] RFC-0004 Marketplace Specification
+- [x] RFC-0005 Presentation Compiler Specification
+- [x] RFC-0006 Audience Engine Specification
+- [x] RFC Governance Integration (CONTRIBUTING.md, ROADMAP.md, ARCHITECTURE.md)
+
+> **Note**: Before creating real Presentation Pack directory structures, SDK APIs, or Marketplace infrastructure, the relevant RFC should be completed first. All 6 RFCs are now complete.
 
 ### M3 — Adapter Migration (Next)
 - [ ] Migrate 10+ legacy renderers to adapters
@@ -97,3 +119,4 @@
 3. **Consistency Over Completeness** — 保持三个 Engine 结构一致
 4. **Document First** — 新功能必须先更新 ARCHITECTURE.md 和 ROADMAP.md
 5. **Test Before Ship** — 所有功能必须通过默认模式和 --layout-engine 双重验证
+6. **RFC Governance** — Core 修改必须先有 RFC 批准。Pack/Application 修改不需要 RFC。详见 CONTRIBUTING.md Section 0

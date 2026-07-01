@@ -255,12 +255,12 @@ renderSlide(slide, comp, pptx, story); // → boolean
 
 ## 3. Platform Strategy
 
-### Presentation OS = Core + Domain Packs + Applications
+### Presentation OS = Core + Presentation Packs + Applications
 
 ```
 Presentation OS
 ├── Core (domain-agnostic engines)
-├── Domain Packs (industry knowledge)
+├── Presentation Packs (industry knowledge)
 └── Applications (packaged solutions)
 ```
 
@@ -270,7 +270,7 @@ Presentation OS
 - Provides Presentation Computing only
 - Never changes for a specific domain
 
-**Domain Packs**
+**Presentation Packs**
 - Carry industry-specific knowledge
 - Sit on top of the Core
 - Can be added, removed, or replaced independently
@@ -290,9 +290,9 @@ Presentation OS
 | Layout Engine | Spatial planning | None |
 | Theme Engine | Design tokens | None |
 | Renderer Engine | Render dispatch | None |
-| Future Compiler | Constraint solving | None |
+| Future Compiler | Constraint solving, overflow detection | None |
 
-### Domain Pack Examples
+### Presentation Pack Examples
 
 | Pack | Industry |
 |---|---|
@@ -308,10 +308,10 @@ Presentation OS
 
 ### Third-Party Extensions
 
-The Core Platform is designed to allow third-party Domain Pack development:
+The Core Platform is designed to allow third-party Presentation Pack development:
 - Third-party companies can build industry-specific packs
 - Consulting firms can create branded presentation packs
-- Hospitals can develop internal domain packs
+- Hospitals can develop internal presentation packs
 - Individual developers can contribute to the ecosystem
 
 ---
@@ -462,17 +462,17 @@ Adapters 和 legacy renderers 使用相同的 `comp.*` 组件 API：
 2. 格式：`{ slides: [{ no, pattern_id, statement, visual_focus }] }`
 3. 运行时传入 `--hero` 自动加载
 
-### 6.4 新增 Domain Pack
+### 6.4 新增 Presentation Pack
 
 **步骤**：
-1. 创建 `domain-packs/{pack-name}/` 目录
+1. 创建 `presentation-packs/{pack-name}/` 目录
 2. 在 pack 中包含 story templates、hero patterns、content planners、theme variants
 3. 注册 pack 到 platform configuration
 4. 测试 pack 与 Core 引擎的兼容性
 
 **约束**：
-- Domain Pack 不得修改 Core 引擎代码
-- Domain Pack 不得包含行业知识到 Core
+- Presentation Pack 不得修改 Core 引擎代码
+- Presentation Pack 不得包含行业知识到 Core
 - 每个 pack 必须独立测试
 
 ---
@@ -489,9 +489,34 @@ Adapters 和 legacy renderers 使用相同的 `comp.*` 组件 API：
 
 ---
 
-## 8. Version History
+## 9. Governance
+
+### RFC-0001 Compliance
+
+- The architecture follows **RFC-0001 — Presentation OS Platform Specification**.
+- The Core is **domain-agnostic** — it contains zero industry-specific knowledge.
+- Industry knowledge belongs exclusively in **Presentation Packs**.
+- **Core modifications require RFC approval** before implementation. See CONTRIBUTING.md Section 0.
+- **Pack/Application changes should not modify Core** unless a Core capability gap is proven and documented via RFC.
+
+### Governing Principle
+
+> **Core is expensive. Extensions are cheap.**
+
+Every Core change costs more than a Pack change because:
+- Core changes affect all Packs and Applications
+- Core changes require RFC approval
+- Core changes must maintain backward compatibility
+- Core changes impact third-party developers
+
+Therefore: **always prefer extending via Packs before modifying the Core.**
+
+---
+
+## 10. Version History
 
 | Version | Date | Changes |
 |---|---|---|
+| 1.2.0 | 2026-07-01 | RFC governance integration: Core changes require RFC, Pack/Application changes do not. Added Section 9 Governance. |
 | 1.1.0 | 2026-06-30 | Platform strategy: Core + Domain Packs + Applications. Domain-agnostic Core declared. |
 | 1.0.0 | 2026-06-30 | Initial architecture freeze. Seven layers defined. |

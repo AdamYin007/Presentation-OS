@@ -399,6 +399,14 @@ Pack modifications do NOT require RFC approval. Packs are developed and maintain
 
 ---
 
+## 14. Implementation Status
+
+**Specification Ready**
+
+RFC-0001 establishes the binding platform specification. The Core architecture described here matches the current codebase (seven layers, domain-agnostic, adapter-first). No SDK code should be implemented until RFC-0002 is finalized.
+
+---
+
 ## Appendix A: Terminology
 
 | Term | Definition |
