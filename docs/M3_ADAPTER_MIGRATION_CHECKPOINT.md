@@ -2,12 +2,14 @@
 
 > **Date**: 2026-07-01
 > **Author**: Agnes-2.0-Flash (MD Senior Implementation Engineer)
-> **Context**: Post-PR31B — adapter-first rendering is now the default path
+> **Context**: M3 Adapter Migration officially completed
 > **Governance**: RFC-0001 — documentation only, no code changes
 
 ---
 
 ## 1 Summary
+
+### M3 Adapter Migration — COMPLETED
 
 **Current State:**
 - Adapter coverage: **16 / 16** slide types (100%)
@@ -22,6 +24,10 @@
 - No Core API changes across all PRs (PR23–PR31B)
 - No story JSON changes across all PRs
 - No package file changes across all PRs
+
+**Validation:** `digital-pathology-15` generates identically in adapter-default and legacy-rollback modes. 15/15 slides match textually.
+
+**Note:** Legacy renderer removal is **not** a prerequisite for M3 completion. It is a future hardening step (PR32).
 
 ---
 
@@ -106,6 +112,12 @@ Legacy renderers are preserved (not removed) because:
 2. **Rollback capability:** The `--legacy-renderer` flag and `AWE_LEGACY_RENDERER=1` env var provide immediate escape hatch if adapter default causes issues.
 3. **Future hardening:** PR32 will remove legacy renderers only after adapter default has been validated in production.
 
+**Important:** Legacy renderer removal is **not** a prerequisite for M3 completion. M3 is considered complete once:
+- All slide types are adapter-backed (16/16 ✅)
+- Adapter-first is the default rendering path (✅)
+- Legacy rollback mechanism exists (✅)
+- Validation passes on available stories (✅)
+
 ---
 
 ## 5 PR31B Status — COMPLETED
@@ -137,22 +149,40 @@ Before removing legacy renderers from `run.js`:
 | Content Engine not source of truth | Low | Known | Only `executive-summary` has dedicated CE planner |
 | Legacy renderers still in `run.js` | Informational | By design | PR32 will remove after production validation |
 | Default path not yet switched | **Resolved** | Fixed in PR31B | Adapter-first is now the default |
-| Hero-sequence story format incompatibility | High | Out of scope | Uses `slide_type` instead of `type`, no `name` field. Separate story format migration needed. |
+| Hero-sequence story format incompatibility | **Resolved** | Documented | `digital-pathology-15-hero-sequence.json` is a Hero Engine companion metadata file, NOT a renderable story. See [HERO_SEQUENCE_FORMAT_AUDIT.md](HERO_SEQUENCE_FORMAT_AUDIT.md) for details. |
 
 ---
 
 ## 7 Recommendation
 
-**M3 adapter-first migration is complete.** Legacy renderer removal remains future work.
+**M3 Adapter Migration is officially complete.**
 
-Recommended sequence:
+Legacy renderer removal is future hardening, not a completion requirement.
 
-| PR | Scope | Risk |
+### M3 Completion Criteria Met
+
+| Criterion | Status |
+|---|---|
+| All slide types adapter-backed (16/16) | ✅ |
+| Adapter-first rendering enabled as default | ✅ |
+| Legacy rollback mechanism (`--legacy-renderer`) | ✅ |
+| Legacy rollback mechanism (`AWE_LEGACY_RENDERER=1`) | ✅ |
+| Validation passes on available stories | ✅ |
+| No Core API changes | ✅ |
+| No story JSON changes | ✅ |
+| No package file changes | ✅ |
+| Dead code removed (PR30) | ✅ |
+| Cover footer difference resolved (PR31B) | ✅ |
+
+### Future Hardening (Not M3 Completion Blockers)
+
+| PR | Scope | Priority |
 |---|---|---|
-| **PR32** | Remove legacy renderer functions from `run.js` | Medium — requires production validation |
-| **PR33** | M3 completion note and final documentation | None |
-
-**Do NOT remove legacy renderers yet.** They serve as a safety net for unknown slide types and provide rollback capability.
+| **PR32** | Remove legacy renderer functions from `run.js` | Medium — after production validation |
+| **PR33** | Final completion note and documentation | Low — housekeeping |
+| **Future** | Move hero-sequence files to `hero-sequences/` directory | Low — documentation improvement |
+| **Future** | Add story format validation or clearer loader errors | Low — UX improvement |
+| **Future** | Expand standard story examples beyond `digital-pathology-15` | Low — content expansion |
 
 ---
 
@@ -160,6 +190,8 @@ Recommended sequence:
 
 | Commit | Scope |
 |---|---|
+| `2d6a8af` | docs: audit hero sequence story format (PR31D) |
+| `e2cf108` | docs: document adapter-first default rendering (PR31C) |
 | `6d0682d` | feat(renderer): enable adapter rendering by default with legacy rollback (PR31B) |
 | `0c8258a` | docs: audit all-story rendering validation (PR31A) |
 | `ba7b718` | refactor(renderer): remove dead dispatcher code (PR30) |
