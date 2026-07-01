@@ -11,9 +11,9 @@
 
 This audit maps all 16 registered legacy renderers in `run.js` against the current adapter system. It identifies:
 
-- **2 renderers** fully covered (planner + adapter): `cover`, `workflow`
-- **7 renderers** with planners only (no adapter): `governance`, `research`, `collaboration`, `roi`, `differentiation`, `recommendation`, `generic`
-- **7 renderers** with neither planner nor adapter (pure legacy): `executive-summary`, `why-now`, `problem`, `transformation`, `solution`, `architecture`, `roadmap`
+- **4 renderers** fully covered (planner + adapter): `cover`, `workflow`, `generic`, `recommendation`
+- **6 renderers** with planners only (no adapter): `governance`, `research`, `collaboration`, `roi`, `differentiation`
+- **6 renderers** with neither planner nor adapter (pure legacy): `why-now`, `problem`, `transformation`, `solution`, `architecture`, `roadmap`
 
 The Content Engine is disconnected from the Layout Engine and Adapters — its output is never consumed. The dispatcher.js module exists but is not wired into run.js. Three custom comp methods (`platformHub`, `layeredArchitecture`, `timeline`) are used exclusively by pure-legacy renderers and have no adapter counterpart.
 
@@ -94,8 +94,8 @@ The `ADAPTERS` object in `layout-adapters/index.js` contains 3 entries:
 | `collaboration` | `collaboration()` | L366-411 | ✅ | ❌ | ⚠️ PLANNER ONLY |
 | `roi` | `roi()` | L412-477 | ✅ | ❌ | ⚠️ PLANNER ONLY |
 | `differentiation` | `differentiation()` | L478-543 | ✅ | ❌ | ⚠️ PLANNER ONLY |
-| `recommendation` | `recommendation()` | L544-576 | ✅ | ❌ | ⚠️ PLANNER ONLY |
-| `generic` | `generic()` | L577-645 | ✅ | ❌ | ⚠️ PLANNER ONLY |
+| `recommendation` | `recommendation()` | L544-576 | ✅ | ✅ | ✅ YES |
+| `generic` | `generic()` | L577-645 | ✅ | ✅ | ✅ YES |
 | `why-now` | `whyNow()` | L128-144 | ❌ | ❌ | ❌ PURE LEGACY |
 | `problem` | `problem()` | L145-161 | ❌ | ❌ | ❌ PURE LEGACY |
 | `transformation` | `transformation()` | L162-181 | ❌ | ❌ | ❌ PURE LEGACY |

@@ -14,6 +14,8 @@
 const coverAdapter = require("./cover");
 const executiveAdapter = require("./executive");
 const workflowAdapter = require("./workflow");
+const genericAdapter = require("./generic");
+const recommendationAdapter = require("./recommendation");
 
 /**
  * Adapter registry — slide type → adapter function.
@@ -23,6 +25,8 @@ const ADAPTERS = {
   cover: coverAdapter,
   "executive-summary": executiveAdapter,
   workflow: workflowAdapter,
+  generic: genericAdapter,
+  recommendation: recommendationAdapter,
 };
 
 /**
