@@ -156,7 +156,35 @@ Available Presentation Packs:
 
 ---
 
-## 6 What This Pack Contains
+## 7 CLI Safety
+
+### Unsupported options fail fast
+
+Any CLI flag not recognized by `run.js` will cause an immediate exit with error code 1. No PPTX is generated. No rendering pipeline is invoked.
+
+Example:
+
+```bash
+node registry/packages/ppt-factory/bin/run.js --inspect-pack digital-pathology
+```
+
+Expected output:
+
+```
+Unsupported option: --inspect-pack
+Available options:
+  --story <id>
+  --validate-pack <path>
+  --list-packs
+  --legacy-renderer
+  --layout-engine
+```
+
+Note: `--inspect-pack` is **not implemented yet**. It will not trigger rendering.
+
+---
+
+## 8 What This Pack Contains
 
 ### Populated sections
 
@@ -179,7 +207,7 @@ Available Presentation Packs:
 
 ---
 
-## 7 What This Pack Does NOT Do Yet
+## 9 What This Pack Does NOT Do Yet
 
 | Capability | Status | Notes |
 |---|---|---|
@@ -193,7 +221,7 @@ Available Presentation Packs:
 
 ---
 
-## 8 Developer Workflow
+## 10 Developer Workflow
 
 ### Current recommended workflow
 
@@ -212,7 +240,7 @@ Available Presentation Packs:
 
 ---
 
-## 9 Future Workflow
+## 11 Future Workflow
 
 When pack loader is implemented, the workflow may evolve to:
 
@@ -225,7 +253,7 @@ When pack loader is implemented, the workflow may evolve to:
 
 ---
 
-## 10 Troubleshooting
+## 12 Troubleshooting
 
 ### Problem: Pack validation fails
 

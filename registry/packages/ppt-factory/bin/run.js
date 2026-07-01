@@ -66,6 +66,55 @@ if (listPacksArg) {
   process.exit(exitCode);
 }
 
+// ── CLI unknown argument guard (fail fast, no rendering) ────────
+
+var KNOWN_FLAGS = [
+  "story",
+  "out",
+  "hero",
+  "hero-sequence",
+  "legacy-renderer",
+  "layout-engine",
+  "validate-pack",
+  "list-packs",
+  "list-packs-dir",
+];
+
+function hasUnknownFlag() {
+  for (var i = 0; i < args.length; i++) {
+    var a = args[i];
+    if (a.indexOf("--") !== 0) {
+      continue; // positional value or non-flag, skip
+    }
+    var flagName = a.substring(2);
+    if (KNOWN_FLAGS.indexOf(flagName) >= 0) {
+      continue; // known flag, skip
+    }
+    // Check if next arg is a value for this flag (known flags take values)
+    var takesValue = [
+      "story", "out", "hero-sequence",
+      "validate-pack", "list-packs-dir"
+    ];
+    if (takesValue.indexOf(flagName) >= 0 && i + 1 < args.length && args[i + 1].indexOf("--") !== 0) {
+      continue; // flag with value, skip
+    }
+    return a; // unknown flag found
+  }
+  return null;
+}
+
+var unknown = hasUnknownFlag();
+if (unknown) {
+  console.error("Unsupported option: " + unknown);
+  console.error("Available options:");
+  console.error("  --story <id>");
+  console.error("  --validate-pack <path>");
+  console.error("  --list-packs");
+  console.error("  --legacy-renderer");
+  console.error("  --layout-engine");
+  process.exit(1);
+}
+
 const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
 
 if (!fs.existsSync(storyPath)) {
