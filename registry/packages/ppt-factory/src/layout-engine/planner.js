@@ -24,6 +24,14 @@ const planners = {
   roi: require("./planners/roi"),
   differentiation: require("./planners/differentiation"),
   recommendation: require("./planners/recommendation"),
+  "why-now": require("./planners/why-now"),
+  problem: require("./planners/problem"),
+  roi: require("./planners/roi"),
+  differentiation: require("./planners/differentiation"),
+  transformation: require("./planners/transformation"),
+  solution: require("./planners/solution"),
+  architecture: require("./planners/architecture"),
+  roadmap: require("./planners/roadmap"),
 };
 
 // ── Main dispatcher ──────────────────────────────────────────

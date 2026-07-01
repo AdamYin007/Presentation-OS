@@ -14,6 +14,19 @@
 const coverAdapter = require("./cover");
 const executiveAdapter = require("./executive");
 const workflowAdapter = require("./workflow");
+const genericAdapter = require("./generic");
+const recommendationAdapter = require("./recommendation");
+const whyNowAdapter = require("./why-now");
+const problemAdapter = require("./problem");
+const governanceAdapter = require("./governance");
+const researchAdapter = require("./research");
+const collaborationAdapter = require("./collaboration");
+const roiAdapter = require("./roi");
+const differentiationAdapter = require("./differentiation");
+const transformationAdapter = require("./transformation");
+const solutionAdapter = require("./solution");
+const architectureAdapter = require("./architecture");
+const roadmapAdapter = require("./roadmap");
 
 /**
  * Adapter registry — slide type → adapter function.
@@ -23,6 +36,19 @@ const ADAPTERS = {
   cover: coverAdapter,
   "executive-summary": executiveAdapter,
   workflow: workflowAdapter,
+  generic: genericAdapter,
+  recommendation: recommendationAdapter,
+  "why-now": whyNowAdapter,
+  problem: problemAdapter,
+  governance: governanceAdapter,
+  research: researchAdapter,
+  collaboration: collaborationAdapter,
+  roi: roiAdapter,
+  differentiation: differentiationAdapter,
+  transformation: transformationAdapter,
+  solution: solutionAdapter,
+  architecture: architectureAdapter,
+  roadmap: roadmapAdapter,
 };
 
 /**

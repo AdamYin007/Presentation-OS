@@ -253,7 +253,70 @@ renderSlide(slide, comp, pptx, story); // → boolean
 
 ---
 
-## 3. File Structure
+## 3. Platform Strategy
+
+### Presentation OS = Core + Presentation Packs + Applications
+
+```
+Presentation OS
+├── Core (domain-agnostic engines)
+├── Presentation Packs (industry knowledge)
+└── Applications (packaged solutions)
+```
+
+**Core**
+- Contains only domain-agnostic engines
+- Knows nothing about any industry
+- Provides Presentation Computing only
+- Never changes for a specific domain
+
+**Presentation Packs**
+- Carry industry-specific knowledge
+- Sit on top of the Core
+- Can be added, removed, or replaced independently
+- May contain story templates, hero patterns, content planners, theme variants, charts, icons, terminology, validation rules, best practices, example decks
+
+**Applications**
+- Packaged solutions combining Core + Domain Pack(s)
+- Examples: PPT Factory, Medical Proposal Generator, Investor Deck Builder
+
+### Core Platform Contents
+
+| Engine | Responsibility | Domain Knowledge |
+|---|---|---|
+| Story Engine | Define slide structure | None |
+| Content Engine | Organize content data | None |
+| Hero Engine | Narrative enrichment | None |
+| Layout Engine | Spatial planning | None |
+| Theme Engine | Design tokens | None |
+| Renderer Engine | Render dispatch | None |
+| Future Compiler | Constraint solving, overflow detection | None |
+
+### Presentation Pack Examples
+
+| Pack | Industry |
+|---|---|
+| Medical AI | Artificial intelligence in medicine |
+| Digital Pathology | Digital pathology workflows |
+| Medical Devices | Ultrasound bone scalpel, surgical robots |
+| Finance | Investment, board, market analysis |
+| Consulting | Strategy consulting presentations |
+| Education | Academic and teaching materials |
+| Sales | Product sales and proposals |
+| Research | Academic research communication |
+| Government | Government reporting and proposals |
+
+### Third-Party Extensions
+
+The Core Platform is designed to allow third-party Presentation Pack development:
+- Third-party companies can build industry-specific packs
+- Consulting firms can create branded presentation packs
+- Hospitals can develop internal presentation packs
+- Individual developers can contribute to the ecosystem
+
+---
+
+## 4. File Structure
 
 ```
 registry/packages/ppt-factory/
@@ -310,28 +373,28 @@ registry/packages/ppt-factory/
 
 ---
 
-## 4. Key Principles
+## 5. Key Principles
 
-### 4.1 默认模式永不改变
+### 5.1 默认模式永不改变
 
 - 不加任何 flag → 100% legacy renderer
 - 所有新能力都是 opt-in
 - `--layout-engine` 控制 Layout Engine + Adapters
 - `--hero` 控制 Hero Engine
 
-### 4.2 Adapter First, Legacy Fallback
+### 5.2 Adapter First, Legacy Fallback
 
 - Layout Adapters 优先尝试渲染
 - 不能处理的 slide type 自动 fallback 到 legacy
 - 两种路径输出必须完全一致
 
-### 4.3 Registry over Switch
+### 5.3 Registry over Switch
 
 - `layout-adapters/index.js`：`ADAPTERS[type]` 对象查找
 - `renderer-engine/registry.js`：`registerLegacyRenderer(type, fn)` 注册表
 - 禁止在 index.js 中使用超过 10 行的 switch
 
-### 4.4 统一模块结构
+### 5.4 统一模块结构
 
 三个 Engine 采用一致的结构模式：
 ```
@@ -343,7 +406,7 @@ engine-name/
     └── type-b.js
 ```
 
-### 4.5 run.js 逐步变成 Coordinator
+### 5.5 run.js 逐步变成 Coordinator
 
 当前 run.js 职责：
 1. CLI 参数解析
@@ -355,7 +418,7 @@ engine-name/
 
 禁止在 run.js 中添加新的渲染逻辑。
 
-### 4.6 组件共享
+### 5.6 组件共享
 
 Adapters 和 legacy renderers 使用相同的 `comp.*` 组件 API：
 - `comp.card()`
@@ -367,9 +430,9 @@ Adapters 和 legacy renderers 使用相同的 `comp.*` 组件 API：
 
 ---
 
-## 5. Extension Guide
+## 6. Extension Guide
 
-### 5.1 新增 Slide Type
+### 6.1 新增 Slide Type
 
 **步骤**：
 1. 在 story JSON 中添加新 slide（type 字段）
@@ -385,23 +448,36 @@ Adapters 和 legacy renderers 使用相同的 `comp.*` 组件 API：
 - 两种路径输出必须一致
 - 默认模式下 legacy 生效
 
-### 5.2 新增 Theme
+### 6.2 新增 Theme
 
 **步骤**：
 1. 在 `theme/registry.js` 中 `createTheme(name, definitions)`
 2. 在 `theme/helpers.js` 中配置 `resolveColor` 路径映射
 3. 在 `run.js` 中选择加载哪个 theme
 
-### 5.3 新增 Hero Sequence
+### 6.3 新增 Hero Sequence
 
 **步骤**：
 1. 在 `story/` 中创建 `{story-name}-hero-sequence.json`
 2. 格式：`{ slides: [{ no, pattern_id, statement, visual_focus }] }`
 3. 运行时传入 `--hero` 自动加载
 
+### 6.4 新增 Presentation Pack
+
+**步骤**：
+1. 创建 `presentation-packs/{pack-name}/` 目录
+2. 在 pack 中包含 story templates、hero patterns、content planners、theme variants
+3. 注册 pack 到 platform configuration
+4. 测试 pack 与 Core 引擎的兼容性
+
+**约束**：
+- Presentation Pack 不得修改 Core 引擎代码
+- Presentation Pack 不得包含行业知识到 Core
+- 每个 pack 必须独立测试
+
 ---
 
-## 6. Architecture Debt
+## 7. Architecture Debt
 
 | 债务 | 影响 | 解决方案 | 优先级 |
 |---|---|---|---|
@@ -413,8 +489,34 @@ Adapters 和 legacy renderers 使用相同的 `comp.*` 组件 API：
 
 ---
 
-## 7. Version History
+## 9. Governance
+
+### RFC-0001 Compliance
+
+- The architecture follows **RFC-0001 — Presentation OS Platform Specification**.
+- The Core is **domain-agnostic** — it contains zero industry-specific knowledge.
+- Industry knowledge belongs exclusively in **Presentation Packs**.
+- **Core modifications require RFC approval** before implementation. See CONTRIBUTING.md Section 0.
+- **Pack/Application changes should not modify Core** unless a Core capability gap is proven and documented via RFC.
+
+### Governing Principle
+
+> **Core is expensive. Extensions are cheap.**
+
+Every Core change costs more than a Pack change because:
+- Core changes affect all Packs and Applications
+- Core changes require RFC approval
+- Core changes must maintain backward compatibility
+- Core changes impact third-party developers
+
+Therefore: **always prefer extending via Packs before modifying the Core.**
+
+---
+
+## 10. Version History
 
 | Version | Date | Changes |
 |---|---|---|
+| 1.2.0 | 2026-07-01 | RFC governance integration: Core changes require RFC, Pack/Application changes do not. Added Section 9 Governance. |
+| 1.1.0 | 2026-06-30 | Platform strategy: Core + Presentation Packs + Applications. Domain-agnostic Core declared. |
 | 1.0.0 | 2026-06-30 | Initial architecture freeze. Seven layers defined. |
