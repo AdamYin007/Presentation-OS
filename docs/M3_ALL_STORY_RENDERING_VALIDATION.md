@@ -151,18 +151,18 @@ node bin/run.js --story digital-pathology-15-hero-sequence --layout-engine --out
 
 ## 6 PR31B Readiness Assessment
 
-| Story | PR31B Ready | Reason |
+| Story | PR31B Ready | Status |
 |---|---|---|
-| `digital-pathology-15` | ✅ **Ready** | All 14 content slides match. Cover footer difference is cosmetic and pre-existing. |
-| `digital-pathology-15-hero-sequence` | ❌ **Not ready** | Story format incompatible with current `run.js` and layout engine schema. |
+| `digital-pathology-15` | ✅ **Adopted** | PR31B completed. Adapter is now default. |
+| `digital-pathology-15-hero-sequence` | ❌ **Not applicable** | Story format incompatible. Separate migration needed. |
+
+**Overall status:** PR31B has been completed. Adapter-first rendering is the default path for standard-format stories.
 
 **Overall assessment:**
 
 The repository has **only 2 story files**. Of these, **1 story validates fully** and is ready for adapter default. The second story has a structural format issue that predates the adapter migration and must be fixed independently.
 
-**PR31B is conditionally ready:**
-- Safe to enable adapter default for stories using the standard format (like `digital-pathology-15`)
-- The hero-sequence story requires a separate fix to standardize its format
+**PR31B has been completed.** Adapter-first rendering is now the default path. See `M3_ADAPTER_MIGRATION_CHECKPOINT.md` for PR31B results.
 
 ---
 
