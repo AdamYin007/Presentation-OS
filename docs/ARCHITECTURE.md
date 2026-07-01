@@ -518,5 +518,5 @@ Therefore: **always prefer extending via Packs before modifying the Core.**
 | Version | Date | Changes |
 |---|---|---|
 | 1.2.0 | 2026-07-01 | RFC governance integration: Core changes require RFC, Pack/Application changes do not. Added Section 9 Governance. |
-| 1.1.0 | 2026-06-30 | Platform strategy: Core + Domain Packs + Applications. Domain-agnostic Core declared. |
+| 1.1.0 | 2026-06-30 | Platform strategy: Core + Presentation Packs + Applications. Domain-agnostic Core declared. |
 | 1.0.0 | 2026-06-30 | Initial architecture freeze. Seven layers defined. |

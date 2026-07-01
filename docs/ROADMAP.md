@@ -69,7 +69,7 @@
 - [x] Module Split (planners/, registry pattern)
 - [x] Architecture Documentation
 - [x] Consistent Engine Structure
-- [x] Platform Strategy (Core + Domain Packs)
+- [x] Platform Strategy (Core + Presentation Packs)
 - [x] RFC-0001 Platform Specification
 
 ### RFC Sprint (Completed)
