@@ -6,6 +6,7 @@
 > **Status**: Experimental
 > **Governance**: RFC-0001, RFC-0003 — documentation only, no runtime changes
 > **Guide**: [USAGE.md](USAGE.md) — how to inspect, validate, and use this pack
+> **Changelog**: [CHANGELOG.md](CHANGELOG.md) — version history and maintenance policy
 
 ---
 
@@ -35,6 +36,7 @@ This index documents all assets currently owned by the Digital Pathology Present
 | Pack Manifest | `pack.json` | Manifest | N/A (pack-owned) | ❌ No | Pack identity + loader config | **Pack-owned** — source of truth for pack structure |
 | Pack README | `README.md` | Documentation | N/A (pack-owned) | ❌ No | Pack documentation | **Pack-owned** — links to ASSET_INDEX.md |
 | Asset Index | `ASSET_INDEX.md` | Documentation | N/A (pack-owned) | ❌ No | Asset inventory + migration plan | **Pack-owned** — this document |
+| Changelog | `CHANGELOG.md` | Documentation | N/A (pack-owned) | ❌ No | Version history + maintenance policy | **Pack-owned** — this document |
 | Stories placeholder | `stories/.gitkeep` | Git placeholder | N/A | ❌ No | Directory marker | **Pack-owned** |
 | Hero placeholder | `hero-sequences/.gitkeep` | Git placeholder | N/A | ❌ No | Directory marker | **Pack-owned** |
 | Content placeholder | `content/.gitkeep` | Git placeholder | N/A | ❌ No | Future content engine input | **Pack-owned** |

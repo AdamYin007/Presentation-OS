@@ -100,7 +100,8 @@
 - [x] Read-only pack manifest validator — PR39 ✅
 - [x] Digital pathology pack asset index — PR40 ✅
 - [x] Pack usage documentation — PR41 ✅
-- [ ] Begin data-driven planner extraction — PR42
+- [x] Pack changelog and maintenance policy — PR42 ✅
+- [ ] Begin data-driven planner extraction — PR43
 
 ### M5 — Intelligence
 - [ ] Audience Engine adapts output per audience

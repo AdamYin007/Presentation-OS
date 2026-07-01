@@ -228,6 +228,7 @@ When pack loader is implemented, the workflow may evolve to:
 
 - [README.md](README.md) — Pack overview and migration principles
 - [ASSET_INDEX.md](ASSET_INDEX.md) — Complete asset inventory with migration status
+- [CHANGELOG.md](CHANGELOG.md) — Version history and maintenance policy
 - [pack.json](pack.json) — Pack manifest and configuration
 - [M4_PACK_MANIFEST_VALIDATION_AUDIT.md](../../docs/M4_PACK_MANIFEST_VALIDATION_AUDIT.md) — Manifest validation audit
 - [RFC-0001](../../docs/rfc/RFC-0001-platform.md) — Platform specification
