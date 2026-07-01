@@ -1,0 +1,41 @@
+{
+  "name": "digital-pathology",
+  "displayName": "Digital Pathology Presentation Pack",
+  "version": "0.1.0",
+  "status": "experimental",
+  "type": "presentation-pack",
+  "domain": "healthcare/digital-pathology",
+  "description": "Presentation templates, assets, and domain knowledge for digital pathology proposals. This pack provides story templates, hero sequences, content planners, adapters, themes, and terminology specific to the digital pathology domain.",
+  "compatibleWith": {
+    "presentationOS": ">=0.3.0",
+    "rfc": ["RFC-0001", "RFC-0003"]
+  },
+  "contents": {
+    "stories": [
+      "stories/digital-pathology-15.json"
+    ],
+    "heroSequences": [
+      "hero-sequences/digital-pathology-15-hero-sequence.json"
+    ],
+    "content": [],
+    "planners": [],
+    "adapters": [],
+    "themes": [],
+    "terminology": [
+      "terminology/digital-pathology-story-v1.md"
+    ],
+    "references": [
+      "references/medical-ai-layouts-v1.md",
+      "references/medical-ai-layouts-v2.md"
+    ],
+    "examples": []
+  },
+  "runtime": {
+    "loadedByDefault": false,
+    "requiresPackLoader": true
+  },
+  "governance": {
+    "coreChangesRequired": false,
+    "migrationMode": "copy-first"
+  }
+}

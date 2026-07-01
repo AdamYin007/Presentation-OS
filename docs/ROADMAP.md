@@ -90,10 +90,16 @@
 - [ ] Remove legacy renderers from `run.js` (PR32 — pending production validation)
 - [ ] Resolve hero-sequence story format incompatibility (separate migration)
 
-### M4 — Content & Compiler
-- [ ] Content Engine covers all 15 slide types
-- [ ] Presentation Compiler batches render calls
-- [ ] Layout Plan caching
+### M4 — Presentation Pack Foundation (In Progress)
+- [x] Audit domain-specific assets ([Audit](M4_PRESENTATION_PACK_FOUNDATION_AUDIT.md)) — PR34
+- [x] Create digital pathology pack skeleton — PR35
+- [x] Copy story assets into pack — PR36 ✅
+- [x] Copy hero-sequence assets into pack — PR36 ✅
+- [x] Copy terminology and reference docs — PR37 ✅
+- [ ] Pack loader proof of concept (optional) — PR39
+- [x] Read-only pack manifest validator — PR39 ✅
+- [x] Digital pathology pack asset index — PR40 ✅
+- [ ] Begin data-driven planner extraction — PR41
 
 ### M5 — Intelligence
 - [ ] Audience Engine adapts output per audience
