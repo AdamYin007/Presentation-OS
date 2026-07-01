@@ -4,6 +4,7 @@
 > **Version**: 0.1.0
 > **Created**: 2026-07-01
 > **RFC**: RFC-0001, RFC-0003
+> **Guide**: [USAGE.md](USAGE.md) — how to inspect, validate, and understand this pack
 
 ---
 

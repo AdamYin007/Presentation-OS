@@ -5,6 +5,7 @@
 > **Version**: 0.1.0
 > **Status**: Experimental
 > **Governance**: RFC-0001, RFC-0003 — documentation only, no runtime changes
+> **Guide**: [USAGE.md](USAGE.md) — how to inspect, validate, and use this pack
 
 ---
 
