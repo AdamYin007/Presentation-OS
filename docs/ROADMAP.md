@@ -37,7 +37,7 @@
 
 | Component | Status | Details |
 |---|---|---|
-| **Legacy Removal** | ⏳ Pending | PR32 — remove legacy renderers from `run.js` after production validation |
+| **Legacy Removal** | ⏳ Future Hardening | PR32 — remove legacy renderers after production validation |
 
 ### Planned
 
