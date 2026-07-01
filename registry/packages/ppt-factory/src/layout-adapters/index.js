@@ -21,6 +21,8 @@ const problemAdapter = require("./problem");
 const governanceAdapter = require("./governance");
 const researchAdapter = require("./research");
 const collaborationAdapter = require("./collaboration");
+const roiAdapter = require("./roi");
+const differentiationAdapter = require("./differentiation");
 
 /**
  * Adapter registry — slide type → adapter function.
@@ -37,6 +39,8 @@ const ADAPTERS = {
   governance: governanceAdapter,
   research: researchAdapter,
   collaboration: collaborationAdapter,
+  roi: roiAdapter,
+  differentiation: differentiationAdapter,
 };
 
 /**

@@ -26,6 +26,8 @@ const planners = {
   recommendation: require("./planners/recommendation"),
   "why-now": require("./planners/why-now"),
   problem: require("./planners/problem"),
+  roi: require("./planners/roi"),
+  differentiation: require("./planners/differentiation"),
 };
 
 // ── Main dispatcher ──────────────────────────────────────────
