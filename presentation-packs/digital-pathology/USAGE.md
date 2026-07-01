@@ -121,7 +121,42 @@ node registry/packages/ppt-factory/bin/run.js --story digital-pathology-15 --leg
 
 ---
 
-## 5 What This Pack Contains
+## 5 Read-only Pack Discovery
+
+### List all packs
+
+```bash
+node registry/packages/ppt-factory/bin/run.js --list-packs
+```
+
+### Expected output
+
+```
+Available Presentation Packs:
+- digital-pathology
+  name: Digital Pathology Presentation Pack
+  version: 0.1.0
+  status: experimental
+  path: presentation-packs/digital-pathology
+  validation: passed
+```
+
+### What discovery does
+
+1. Scans `presentation-packs/` for directories containing `pack.json`.
+2. Validates each pack manifest using the existing validator.
+3. Prints human-readable pack list with validation status.
+
+### What discovery does NOT do
+
+- ❌ Does not load pack assets into runtime
+- ❌ Does not generate PPTX
+- ❌ Does not modify rendering behavior
+- ❌ Does not register pack stories
+
+---
+
+## 6 What This Pack Contains
 
 ### Populated sections
 
@@ -144,7 +179,7 @@ node registry/packages/ppt-factory/bin/run.js --story digital-pathology-15 --leg
 
 ---
 
-## 6 What This Pack Does NOT Do Yet
+## 7 What This Pack Does NOT Do Yet
 
 | Capability | Status | Notes |
 |---|---|---|
@@ -158,7 +193,7 @@ node registry/packages/ppt-factory/bin/run.js --story digital-pathology-15 --leg
 
 ---
 
-## 7 Developer Workflow
+## 8 Developer Workflow
 
 ### Current recommended workflow
 
@@ -177,7 +212,7 @@ node registry/packages/ppt-factory/bin/run.js --story digital-pathology-15 --leg
 
 ---
 
-## 8 Future Workflow
+## 9 Future Workflow
 
 When pack loader is implemented, the workflow may evolve to:
 
@@ -190,7 +225,7 @@ When pack loader is implemented, the workflow may evolve to:
 
 ---
 
-## 9 Troubleshooting
+## 10 Troubleshooting
 
 ### Problem: Pack validation fails
 

@@ -101,7 +101,8 @@
 - [x] Digital pathology pack asset index — PR40 ✅
 - [x] Pack usage documentation — PR41 ✅
 - [x] Pack changelog and maintenance policy — PR42 ✅
-- [ ] Begin data-driven planner extraction — PR43
+- [x] Read-only pack discovery — PR43 ✅
+- [ ] Begin data-driven planner extraction — PR44
 
 ### M5 — Intelligence
 - [ ] Audience Engine adapts output per audience

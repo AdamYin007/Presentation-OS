@@ -107,6 +107,9 @@ The following should remain in Core:
 | PR38 | Evaluate pack loader proof of concept | Planned |
 | PR39 | Read-only pack manifest validator | ✅ Done |
 | PR40 | Digital pathology pack asset index | ✅ Done |
+| PR41 | Pack usage documentation | ✅ Done |
+| PR42 | Pack changelog and maintenance policy | ✅ Done |
+| PR43 | Read-only pack discovery | ✅ Done |
 
 ---
 
@@ -123,7 +126,7 @@ This pack follows:
 
 1. **Not runtime-connected** — Assets in this pack are not loaded by `run.js`. Runtime still uses originals in `story/`.
 2. **No pack loader** — Core does not yet know about `presentation-packs/`.
-3. **No validation** — Pack contents are not validated against RFC-0003 schema.
+3. **Validation available** — Use `--validate-pack` to validate pack manifests and asset paths.
 4. **No SDK integration** — RFC-0002 SDK is not implemented.
 5. **No marketplace** — RFC-0004 Marketplace is not implemented.
 6. **Experimental** — This pack is a starting point, not a production artifact.
