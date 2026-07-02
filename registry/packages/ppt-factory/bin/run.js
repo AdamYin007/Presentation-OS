@@ -66,9 +66,36 @@ if (listPacksArg) {
   process.exit(exitCode);
 }
 
+// ── CLI help (early exit, no rendering) ─────────────────────────
+
+if (args.includes("--help")) {
+  console.log("");
+  console.log("AWE Presentation OS CLI");
+  console.log("");
+  console.log("Usage:");
+  console.log("  node registry/packages/ppt-factory/bin/run.js [options]");
+  console.log("");
+  console.log("Options:");
+  console.log("  --help                  Show this help message.");
+  console.log("  --story <id>            Render a story by id from the existing registry story source.");
+  console.log("  --validate-pack <path>  Validate a Presentation Pack manifest and declared assets.");
+  console.log("  --list-packs            List available Presentation Packs under presentation-packs/.");
+  console.log("  --inspect-pack <id>     Inspect one Presentation Pack by id or directory name.");
+  console.log("  --legacy-renderer       Use legacy renderer rollback mode.");
+  console.log("  --layout-engine         Accepted for compatibility. Adapter-first rendering is now default.");
+  console.log("");
+  console.log("Notes:");
+  console.log("  - Pack commands are read-only.");
+  console.log("  - Packs are not loaded for rendering yet.");
+  console.log("  - Current --story rendering still uses registry story sources.");
+  console.log("");
+  process.exit(0);
+}
+
 // ── CLI unknown argument guard (fail fast, no rendering) ────────
 
 var KNOWN_FLAGS = [
+  "help",
   "story",
   "out",
   "hero",
@@ -108,9 +135,11 @@ var unknown = hasUnknownFlag();
 if (unknown) {
   console.error("Unsupported option: " + unknown);
   console.error("Available options:");
+  console.error("  --help");
   console.error("  --story <id>");
   console.error("  --validate-pack <path>");
   console.error("  --list-packs");
+  console.error("  --inspect-pack <id>");
   console.error("  --legacy-renderer");
   console.error("  --layout-engine");
   process.exit(1);

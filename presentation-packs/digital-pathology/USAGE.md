@@ -123,6 +123,29 @@ Generates identical PPTX for rollback verification.
 - The pack copy of `digital-pathology-15.json` is not yet loaded by runtime.
 - Pack loader integration is future work.
 
+## CLI Help
+
+### Show help
+
+```bash
+node registry/packages/ppt-factory/bin/run.js --help
+```
+
+This command:
+- Shows all supported CLI options with descriptions.
+- Does **not** render PPTX.
+- Does **not** load pack assets.
+- Is a safe, read-only command.
+- Exits with code 0.
+
+### Usage
+
+```
+node registry/packages/ppt-factory/bin/run.js [options]
+```
+
+All options are listed by `--help`. Unknown options fail fast with exit code 1.
+
 ---
 
 ## 5 Read-only Pack Discovery

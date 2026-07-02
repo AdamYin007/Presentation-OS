@@ -130,7 +130,8 @@ This pack follows:
 2. **No pack loader** — Core does not yet know about `presentation-packs/`.
 3. **Validation available** — Use `--validate-pack` to validate pack manifests and asset paths.
 4. **Pack inspection available** — Use `--inspect-pack <id>` to view pack metadata, assets, runtime and governance flags.
-5. **No SDK integration** — RFC-0002 SDK is not implemented.
-6. **No marketplace** — RFC-0004 Marketplace is not implemented.
-7. **Experimental** — This pack is a starting point, not a production artifact.
-8. **Hero-sequence format** — `digital-pathology-15-hero-sequence.json` uses `slide_type`/`slide_no` instead of `type`/`no`. It is a companion metadata file, not a standalone story. See [HERO_SEQUENCE_FORMAT_AUDIT.md](../docs/HERO_SEQUENCE_FORMAT_AUDIT.md).
+5. **CLI help available** — Use `--help` to list all supported commands.
+6. **No SDK integration** — RFC-0002 SDK is not implemented.
+7. **No marketplace** — RFC-0004 Marketplace is not implemented.
+8. **Experimental** — This pack is a starting point, not a production artifact.
+9. **Hero-sequence format** — `digital-pathology-15-hero-sequence.json` uses `slide_type`/`slide_no` instead of `type`/`no`. It is a companion metadata file, not a standalone story. See [HERO_SEQUENCE_FORMAT_AUDIT.md](../docs/HERO_SEQUENCE_FORMAT_AUDIT.md).
