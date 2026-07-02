@@ -6,6 +6,7 @@
 > **RFC**: RFC-0001, RFC-0003
 > **Guide**: [USAGE.md](USAGE.md) — how to inspect, validate, and understand this pack
 > **Changelog**: [CHANGELOG.md](CHANGELOG.md) — version history and maintenance policy
+> **Checkpoint**: [M4 PACK SYSTEM CHECKPOINT](../../docs/M4_PACK_SYSTEM_CHECKPOINT.md) — M4 read-only pack system baseline
 
 ---
 
