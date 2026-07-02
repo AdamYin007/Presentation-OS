@@ -109,13 +109,14 @@
 - [x] M5.0 Pack Runtime Integration Design Note — PR48 ✅
 - [x] M5.1 Pack Story Resolution Design Validation — PR49 ✅
 - [x] M5.2 Pack Story CLI Contract Guard — PR50 ✅
+- [x] M5.3 Read-only Pack Story Resolver — PR51 ✅
 
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
 - [x] M5.2 Pack Story CLI Contract Guard
-- [ ] M5.3 Read-only Pack Story Resolver
-- [ ] M5.4 Implement explicit --pack-story rendering
+- [x] M5.3 Read-only Pack Story Resolver
+- [ ] M5.4 Explicit Pack Story Rendering Prototype
 - [ ] M5.5 Pack story rendering parity validation
 - [ ] M5.6 Source-of-truth decision
 
