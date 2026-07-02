@@ -108,12 +108,13 @@
 - [x] M4 pack system checkpoint documentation — PR47 ✅
 - [x] M5.0 Pack Runtime Integration Design Note — PR48 ✅
 - [x] M5.1 Pack Story Resolution Design Validation — PR49 ✅
+- [x] M5.2 Pack Story CLI Contract Guard — PR50 ✅
 
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
-- [ ] M5.2 Pack Story CLI Contract Guard
-- [ ] M5.3 Implement read-only pack story resolver
+- [x] M5.2 Pack Story CLI Contract Guard
+- [ ] M5.3 Read-only Pack Story Resolver
 - [ ] M5.4 Implement explicit --pack-story rendering
 - [ ] M5.5 Pack story rendering parity validation
 - [ ] M5.6 Source-of-truth decision
