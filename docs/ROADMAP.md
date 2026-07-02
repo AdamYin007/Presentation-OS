@@ -105,7 +105,8 @@
 - [x] CLI unknown argument guard — PR44 ✅
 - [x] Read-only pack inspection — PR45 ✅
 - [x] CLI help for pack commands — PR46 ✅
-- [ ] Begin data-driven planner extraction — PR47
+- [x] M4 pack system checkpoint documentation — PR47 ✅
+- [ ] Begin data-driven planner extraction — PR48
 
 ### M5 — Intelligence
 - [ ] Audience Engine adapts output per audience
