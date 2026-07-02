@@ -220,7 +220,7 @@ governance:
 
 Any CLI flag not recognized by `run.js` will cause an immediate exit with error code 1. No PPTX is generated. No rendering pipeline is invoked.
 
-Example:
+Example of a supported option (no error):
 
 ```bash
 node registry/packages/ppt-factory/bin/run.js --inspect-pack digital-pathology
@@ -307,11 +307,8 @@ Available options:
 
 When pack loader is implemented, the workflow may evolve to:
 
-1. `--list-packs` → discover available packs
-2. `--inspect-pack <id>` → view pack metadata and assets
-3. `--pack-story <pack>/<story-id>` → render from pack (future)
-4. `--validate-pack` → ensure pack integrity before deployment
-5. Pack-driven content planning via terminology and references
+1. `--pack-story <pack>/<story-id>` → render from pack (future)
+2. Pack-driven content planning via terminology and references
 
 ---
 
