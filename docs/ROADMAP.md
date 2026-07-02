@@ -106,7 +106,16 @@
 - [x] Read-only pack inspection — PR45 ✅
 - [x] CLI help for pack commands — PR46 ✅
 - [x] M4 pack system checkpoint documentation — PR47 ✅
-- [ ] Begin data-driven planner extraction — PR48
+- [x] M5.0 Pack Runtime Integration Design Note — PR48 ✅
+
+### M5 — Pack Runtime Integration
+- [x] M5.0 Pack Runtime Integration Design Note
+- [ ] M5.1 Pack Story Resolution Design Validation
+- [ ] M5.2 Add --pack-story CLI guard and help entry
+- [ ] M5.3 Implement read-only pack story resolver
+- [ ] M5.4 Implement explicit --pack-story rendering
+- [ ] M5.5 Pack story rendering parity validation
+- [ ] M5.6 Source-of-truth decision
 
 ### M5 — Intelligence
 - [ ] Audience Engine adapts output per audience
