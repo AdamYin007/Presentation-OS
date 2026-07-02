@@ -81,6 +81,7 @@ if (args.includes("--help")) {
   console.log("  --validate-pack <path>  Validate a Presentation Pack manifest and declared assets.");
   console.log("  --list-packs            List available Presentation Packs under presentation-packs/.");
   console.log("  --inspect-pack <id>     Inspect one Presentation Pack by id or directory name.");
+  console.log("  --pack-story <pack>/<id> Future explicit pack story rendering entry point. Recognized but not implemented yet.");
   console.log("  --legacy-renderer       Use legacy renderer rollback mode.");
   console.log("  --layout-engine         Accepted for compatibility. Adapter-first rendering is now default.");
   console.log("");
@@ -88,6 +89,7 @@ if (args.includes("--help")) {
   console.log("  - Pack commands are read-only.");
   console.log("  - Packs are not loaded for rendering yet.");
   console.log("  - Current --story rendering still uses registry story sources.");
+  console.log("  - --pack-story is contract-only in M5.2. Not implemented yet.");
   console.log("");
   process.exit(0);
 }
@@ -106,6 +108,7 @@ var KNOWN_FLAGS = [
   "list-packs",
   "list-packs-dir",
   "inspect-pack",
+  "pack-story",
 ];
 
 function hasUnknownFlag() {
@@ -121,7 +124,7 @@ function hasUnknownFlag() {
     // Check if next arg is a value for this flag (known flags take values)
     var takesValue = [
       "story", "out", "hero-sequence",
-      "validate-pack", "list-packs-dir", "inspect-pack"
+      "validate-pack", "list-packs-dir", "inspect-pack", "pack-story"
     ];
     if (takesValue.indexOf(flagName) >= 0 && i + 1 < args.length && args[i + 1].indexOf("--") !== 0) {
       continue; // flag with value, skip
@@ -140,8 +143,25 @@ if (unknown) {
   console.error("  --validate-pack <path>");
   console.error("  --list-packs");
   console.error("  --inspect-pack <id>");
+  console.error("  --pack-story <pack>/<id>");
   console.error("  --legacy-renderer");
   console.error("  --layout-engine");
+  process.exit(1);
+}
+
+// ── Pack story contract guard (M5.2 — recognized but not implemented) ──
+
+var packStoryPresent = args.includes("--pack-story");
+if (packStoryPresent) {
+  var packStoryArg = getArg("pack-story", null);
+  if (!packStoryArg) {
+    console.error("Missing value for --pack-story");
+    console.error("Usage: --pack-story <pack-id>/<story-id>");
+    process.exit(1);
+  }
+  console.error("--pack-story is recognized but not implemented yet.");
+  console.error("Planned format: --pack-story <pack-id>/<story-id>");
+  console.error("Example: --pack-story digital-pathology/digital-pathology-15");
   process.exit(1);
 }
 

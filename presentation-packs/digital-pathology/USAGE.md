@@ -262,12 +262,38 @@ Expected output:
 ```
 Unsupported option: --unknown-flag
 Available options:
+  --help
   --story <id>
   --validate-pack <path>
   --list-packs
+  --inspect-pack <id>
+  --pack-story <pack>/<id>
   --legacy-renderer
   --layout-engine
 ```
+
+---
+
+## 7.1 Pack Story Contract Guard
+
+### Contract-only command
+
+```bash
+node registry/packages/ppt-factory/bin/run.js --pack-story digital-pathology/digital-pathology-15
+```
+
+This command:
+- Is **recognized** by the CLI but **not implemented** yet.
+- Does **not** resolve pack story.
+- Does **not** load pack assets.
+- Does **not** generate PPTX.
+- Does **not** affect `--story` rendering.
+- Exits with code 1 and a clear "not implemented yet" message.
+
+Planned format: `--pack-story <pack-id>/<story-id>`
+Example: `--pack-story digital-pathology/digital-pathology-15`
+
+Full resolution logic belongs to M5.3 (Pack Story Resolver).
 
 ---
 
