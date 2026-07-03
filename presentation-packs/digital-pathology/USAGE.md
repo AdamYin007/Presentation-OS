@@ -494,6 +494,14 @@ When pack loader is implemented, the workflow may evolve to:
 - Future source-of-truth and pack loader decisions are M6 work.
 - See [M5 PACK RUNTIME INTEGRATION CHECKPOINT](../../docs/M5_PACK_RUNTIME_INTEGRATION_CHECKPOINT.md) for the full M5 summary.
 
+## 13 M6 Progression
+
+- **M6.0** — Pack Loader Design RFC (RFC-0007). Documentation-only. No behavioral changes.
+- **M6.1** — Read-only Pack Loader Skeleton. Minimal implementation, no rendering changes.
+- Current commands remain unchanged after M6.0 RFC.
+- Pack loader implementation is future M6.1 work.
+- No automatic source-of-truth migration.
+
 ---
 
 ## Related Documents

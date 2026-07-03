@@ -262,6 +262,14 @@ No code changes until the RFC is reviewed and approved.
 
 ---
 
+## Post-Checkpoint Note
+
+**M6.0 begins with Pack Loader Design RFC (RFC-0007).**
+
+M5 behavior remains the baseline and rollback reference for all future pack runtime work.
+
+---
+
 ## Document History
 
 | Version | Date | Author | Changes |
