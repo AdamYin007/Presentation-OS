@@ -118,7 +118,8 @@
 - [x] M6.1 Read-only Pack Loader Skeleton — PR57 ✅
 - [x] M6.2 Pack Loader CLI Integration — PR58 ✅
 - [x] M6.3 Pack Loader Error Model Hardening — PR59 ✅
-- [ ] M6.4 Pack Loader Validation Contract
+- [x] M6.4 Pack Loader Validation Contract — PR60 ✅
+- [ ] M6.5 Pack Loader Contract Regression Guard
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
@@ -132,7 +133,8 @@
 - [x] M6.1 Read-only Pack Loader Skeleton — PR57 ✅
 - [x] M6.2 Pack Loader CLI Integration — PR58 ✅
 - [x] M6.3 Pack Loader Error Model Hardening — PR59 ✅
-- [ ] M6.4 Pack Loader Validation Contract
+- [x] M6.4 Pack Loader Validation Contract — PR60 ✅
+- [ ] M6.5 Pack Loader Contract Regression Guard
 - [ ] M5.8 Source-of-truth decision
 
 ### M5 — Intelligence
