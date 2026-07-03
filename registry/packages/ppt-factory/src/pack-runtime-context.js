@@ -33,6 +33,12 @@ function buildRuntimeContext(options) {
       ok: false,
       error: "Missing required fields for runtime context construction",
       errorCode: "VALIDATION_FAILED",
+      details: {
+        packId: packId,
+        packRoot: packRoot,
+        hasManifest: !!manifest,
+        hasAssets: !!assets,
+      },
     };
   }
 

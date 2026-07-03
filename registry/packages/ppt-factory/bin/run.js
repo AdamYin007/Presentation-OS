@@ -63,7 +63,19 @@ if (listPacksArg) {
 
   var allResult = loadAllPacks();
   if (!allResult.ok) {
-    console.error(allResult.error || "Failed to load Presentation Packs");
+    // Map loader errors to user-friendly messages (no stack traces)
+    var code = allResult.errorCode || "PACK_LOAD_FAILED";
+    switch (code) {
+      case "PACKS_DIR_NOT_FOUND":
+        console.error("Packs directory not found: " + (allResult.details ? allResult.details.scanDir : "presentation-packs"));
+        break;
+      case "PACK_LOAD_FAILED":
+        console.error(allResult.error || "Failed to load Presentation Packs");
+        break;
+      default:
+        console.error("Pack loader error: " + (allResult.error || code));
+        break;
+    }
     process.exit(1);
   }
 
@@ -264,15 +276,36 @@ if (inspectPackPresent) {
   var result = inspectPackFn(inspectPackArg);
 
   if (!result.ok) {
-    // Map loader errors to user-friendly output
-    if (result.errorCode === "PACK_NOT_FOUND") {
-      console.error("Presentation Pack not found: " + inspectPackArg);
-    } else if (result.errorCode === "MANIFEST_MISSING") {
-      console.error("No pack.json found in: " + inspectPackArg);
-    } else if (result.errorCode === "VALIDATION_FAILED") {
-      console.error("Pack validation failed: " + result.error);
-    } else {
-      console.error("Error inspecting pack: " + result.error);
+    // Map loader errors to user-friendly output (no stack traces)
+    var inspectCode = result.errorCode || "PACK_INSPECTION_FAILED";
+    switch (inspectCode) {
+      case "PACK_NOT_FOUND":
+        console.error("Presentation Pack not found: " + inspectPackArg);
+        break;
+      case "PACKS_DIR_NOT_FOUND":
+        console.error("Packs directory not found: " + (result.details ? result.details.scanDir : "presentation-packs"));
+        break;
+      case "MANIFEST_MISSING":
+        console.error("No pack.json found in: " + inspectPackArg);
+        break;
+      case "MANIFEST_INVALID_JSON":
+        console.error("Invalid pack.json: " + (result.details ? result.details.manifestPath || inspectPackArg : inspectPackArg));
+        break;
+      case "VALIDATION_FAILED":
+        console.error("Pack validation failed: " + result.error);
+        break;
+      case "ASSET_UNSAFE_PATH":
+        console.error("Unsafe asset path in pack: " + (result.details ? result.details.entry || inspectPackArg : inspectPackArg));
+        break;
+      case "ASSET_MISSING":
+        console.error("Pack asset missing: " + (result.details ? result.details.entry || inspectPackArg : inspectPackArg));
+        break;
+      case "DUPLICATE_PACK_ID":
+        console.error("Duplicate Presentation Pack id: " + (result.details ? result.details.packId || inspectPackArg : inspectPackArg));
+        break;
+      default:
+        console.error("Pack loader error: " + (result.error || inspectCode));
+        break;
     }
     process.exit(1);
   }

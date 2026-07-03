@@ -52,7 +52,7 @@ function resolveAssets(packRoot, contents) {
       var relPath = entries[i];
       var entryResult = resolveSingleAsset(packRoot, relPath, group, i);
       if (!entryResult.ok) {
-        errors.push(entryResult.error);
+        errors.push(entryResult);
       } else {
         resolvedEntries.push(entryResult.resolved);
       }
@@ -61,10 +61,12 @@ function resolveAssets(packRoot, contents) {
   }
 
   if (errors.length > 0) {
+    var firstError = errors[0];
     return {
       ok: false,
-      error: errors.join("; "),
-      errorCode: "ASSET_MISSING",
+      error: firstError.message,
+      errorCode: firstError.code,
+      details: firstError.details || null,
     };
   }
 
@@ -84,7 +86,14 @@ function resolveSingleAsset(packRoot, relPath, group, index) {
   if (path.isAbsolute(relPath)) {
     return {
       ok: false,
-      error: "contents." + group + "[" + index + "] is an absolute path (not allowed): '" + relPath + "'",
+      code: "ASSET_UNSAFE_PATH",
+      message: "contents." + group + "[" + index + "] is an absolute path (not allowed): '" + relPath + "'",
+      details: {
+        group: group,
+        entryIndex: index,
+        entry: relPath,
+        packRoot: packRoot,
+      },
     };
   }
 
@@ -92,7 +101,14 @@ function resolveSingleAsset(packRoot, relPath, group, index) {
   if (relPath.indexOf("..") !== -1) {
     return {
       ok: false,
-      error: "contents." + group + "[" + index + "] contains path traversal (not allowed): '" + relPath + "'",
+      code: "ASSET_UNSAFE_PATH",
+      message: "contents." + group + "[" + index + "] contains path traversal (not allowed): '" + relPath + "'",
+      details: {
+        group: group,
+        entryIndex: index,
+        entry: relPath,
+        packRoot: packRoot,
+      },
     };
   }
 
@@ -106,7 +122,15 @@ function resolveSingleAsset(packRoot, relPath, group, index) {
   ) {
     return {
       ok: false,
-      error: "contents." + group + "[" + index + "] escapes pack directory: '" + relPath + "'",
+      code: "ASSET_UNSAFE_PATH",
+      message: "contents." + group + "[" + index + "] escapes pack directory: '" + relPath + "'",
+      details: {
+        group: group,
+        entryIndex: index,
+        entry: relPath,
+        packRoot: packRoot,
+        resolvedPath: resolvedFull,
+      },
     };
   }
 
@@ -114,7 +138,15 @@ function resolveSingleAsset(packRoot, relPath, group, index) {
   if (!fs.existsSync(resolvedFull)) {
     return {
       ok: false,
-      error: "Asset not found: '" + relPath + "' (resolved: " + resolvedFull + ")",
+      code: "ASSET_MISSING",
+      message: "Asset not found: '" + relPath + "' (resolved: " + resolvedFull + ")",
+      details: {
+        group: group,
+        entryIndex: index,
+        entry: relPath,
+        packRoot: packRoot,
+        resolvedPath: resolvedFull,
+      },
     };
   }
 

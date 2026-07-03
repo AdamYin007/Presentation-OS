@@ -4,6 +4,7 @@
  * Responsibilities:
  * - Load and validate a pack.
  * - Return structured inspection data for CLI consumption.
+ * - Preserve error codes from loader for CLI error mapping.
  *
  * Does NOT render or modify anything. Read-only inspection.
  */
@@ -15,7 +16,7 @@ var loader = require("./pack-loader");
 /**
  * Inspect a pack by id or path.
  * @param {string} target - Pack id or directory path.
- * @returns {{ok: boolean, result?: object, error?: string, errorCode?: string}}
+ * @returns {{ok: boolean, result?: object, error?: string, errorCode?: string, details?: object|null}}
  */
 function inspectPack(target) {
   // Try to find the pack
@@ -31,6 +32,9 @@ function inspectPack(target) {
       ok: false,
       error: "Presentation Pack not found: " + target,
       errorCode: "PACK_NOT_FOUND",
+      details: {
+        target: target,
+      },
     };
   }
 
@@ -40,10 +44,12 @@ function inspectPack(target) {
   });
 
   if (!loadResult.ok) {
+    // Preserve error code and details from loader
     return {
       ok: false,
       error: loadResult.error,
       errorCode: loadResult.errorCode,
+      details: loadResult.details || null,
     };
   }
 
