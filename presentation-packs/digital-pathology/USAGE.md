@@ -274,26 +274,46 @@ Available options:
 
 ---
 
-## 7.1 Pack Story Contract Guard
+## 7.1 Pack Story Resolution
 
-### Contract-only command
+### Read-only resolver
 
 ```bash
 node registry/packages/ppt-factory/bin/run.js --pack-story digital-pathology/digital-pathology-15
 ```
 
 This command:
-- Is **recognized** by the CLI but **not implemented** yet.
-- Does **not** resolve pack story.
-- Does **not** load pack assets.
+- **Resolves** the pack story path using the read-only resolver.
+- **Validates** the pack manifest via existing `pack-validator`.
+- **Confirms** the story is declared in `pack.json.contents.stories`.
+- **Outputs** the resolved story path.
+- Does **not** load story JSON for rendering.
 - Does **not** generate PPTX.
 - Does **not** affect `--story` rendering.
-- Exits with code 1 and a clear "not implemented yet" message.
+- Exits 0 on successful resolution, 1 on error.
+
+#### Error cases
+
+```bash
+# Missing value
+node registry/packages/ppt-factory/bin/run.js --pack-story
+# → Missing value for --pack-story (exit 1)
+
+# Invalid format (no slash)
+node registry/packages/ppt-factory/bin/run.js --pack-story digital-pathology
+# → Invalid --pack-story value. Expected <pack-id>/<story-id> (exit 1)
+
+# Pack not found
+node registry/packages/ppt-factory/bin/run.js --pack-story not-exist/story
+# → Presentation Pack not found: not-exist (exit 1)
+
+# Story not declared
+node registry/packages/ppt-factory/bin/run.js --pack-story digital-pathology/not-exist
+# → Story not declared in pack: not-exist (exit 1)
+```
 
 Planned format: `--pack-story <pack-id>/<story-id>`
 Example: `--pack-story digital-pathology/digital-pathology-15`
-
-Full resolution logic belongs to M5.3 (Pack Story Resolver).
 
 ---
 

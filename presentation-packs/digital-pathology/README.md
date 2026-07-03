@@ -132,7 +132,7 @@ This pack follows:
 3. **Validation available** — Use `--validate-pack` to validate pack manifests and asset paths.
 4. **Pack inspection available** — Use `--inspect-pack <id>` to view pack metadata, assets, runtime and governance flags.
 5. **CLI help available** — Use `--help` to list all supported commands.
-6. **Pack story contract recognized** — `--pack-story <pack>/<id>` is recognized by CLI but not implemented (M5.2 contract guard).
+6. **Pack story resolver available** — `--pack-story <pack>/<id>` resolves pack story paths, validates manifest, confirms declared story exists. Does not render PPTX.
 7. **No SDK integration** — RFC-0002 SDK is not implemented.
 8. **No marketplace** — RFC-0004 Marketplace is not implemented.
 9. **Experimental** — This pack is a starting point, not a production artifact.
