@@ -6,15 +6,17 @@
 > **RFC**: RFC-0001, RFC-0003
 > **Guide**: [USAGE.md](USAGE.md) — how to inspect, validate, and understand this pack
 > **Changelog**: [CHANGELOG.md](CHANGELOG.md) — version history and maintenance policy
-> **Checkpoint**: [M4 PACK SYSTEM CHECKPOINT](../../docs/M4_PACK_SYSTEM_CHECKPOINT.md) — M4 read-only pack system baseline
+> **Checkpoint**: [M5 PACK RUNTIME INTEGRATION CHECKPOINT](../../docs/M5_PACK_RUNTIME_INTEGRATION_CHECKPOINT.md) — M5 formal checkpoint
 
 ---
 
 ## Status
 
-**Pack story rendering hardening completed.**
+**M5 runtime integration checkpoint completed.**
 
-This is the first Presentation Pack for the Digital Pathology domain. It now supports explicit pack story rendering via `--pack-story` with isolated output paths, and parity validation via `--validate-pack-story-parity`.
+This is the first Presentation Pack for the Digital Pathology domain. M5 formalized the pack runtime integration through explicit, opt-in CLI paths.
+
+**See**: [M5 Pack Runtime Integration Checkpoint](../../docs/M5_PACK_RUNTIME_INTEGRATION_CHECKPOINT.md) for the full M5 summary, CLI matrix, output path policy, and boundaries.
 
 ---
 
@@ -116,7 +118,7 @@ The following should remain in Core:
 | PR52 | Explicit pack story rendering prototype | ✅ Done |
 | PR53 | Pack story rendering parity validation | ✅ Done |
 | PR54 | Pack story rendering hardening | ✅ Done |
-| PR55 | Pack runtime integration checkpoint | Planned |
+| PR55 | Pack runtime integration checkpoint | ✅ Done |
 
 ---
 
@@ -140,8 +142,14 @@ This pack follows:
 7. **Pack story parity validation available** — `--validate-pack-story-parity <pack>/<id>` compares registry and pack slide plans.
 8. **Output path isolation** — `--pack-story` outputs under `output/ppt-factory/packs/<pack-id>/` to avoid collision with `--story` outputs.
 9. **No global prototype state** — Pack story resolution uses local variables instead of `global._PACK_STORY_*`.
-10. **No SDK integration** — RFC-0002 SDK is not implemented.
-11. **No marketplace** — RFC-0004 Marketplace is not implemented.
-11. **Experimental** — This pack is a starting point, not a production artifact.
+10. **M5 frozen** — M5.7 checkpoint freezes current pack runtime behavior. Future changes (source-of-truth, pack loader) are M6 work.
+11. **No SDK integration** — RFC-0002 SDK is not implemented.
+12. **No marketplace** — RFC-0004 Marketplace is not implemented.
+13. **Experimental** — This pack is a starting point, not a production artifact.
+
+---
+
+### Additional Notes
+
 11. **Hero-sequence format** — `digital-pathology-15-hero-sequence.json` uses `slide_type`/`slide_no` instead of `type`/`no`. It is a companion metadata file, not a standalone story. See [HERO_SEQUENCE_FORMAT_AUDIT.md](../docs/HERO_SEQUENCE_FORMAT_AUDIT.md).
 12. **PPTX binary comparison not performed** — Parity validation compares slide plans (titles, text, structure), not PPTX binary identity. Zip ordering, timestamps, and internal IDs may differ between renders.

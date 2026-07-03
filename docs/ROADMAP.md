@@ -113,7 +113,8 @@
 - [x] M5.4 Explicit Pack Story Rendering Prototype — PR52 ✅
 - [x] M5.5 Pack Story Rendering Parity Validation — PR53 ✅
 - [x] M5.6 Pack Story Rendering Hardening — PR54 ✅
-- [ ] M5.7 Pack runtime integration checkpoint
+- [x] M5.7 Pack Runtime Integration Checkpoint — PR55 ✅
+- [ ] M6.0 Pack Loader Design RFC
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
@@ -122,7 +123,8 @@
 - [x] M5.4 Explicit Pack Story Rendering Prototype — PR52 ✅
 - [x] M5.5 Pack Story Rendering Parity Validation — PR53 ✅
 - [x] M5.6 Pack Story Rendering Hardening — PR54 ✅
-- [ ] M5.7 Pack runtime integration checkpoint
+- [x] M5.7 Pack Runtime Integration Checkpoint — PR55 ✅
+- [ ] M6.0 Pack Loader Design RFC
 - [ ] M5.8 Source-of-truth decision
 
 ### M5 — Intelligence
