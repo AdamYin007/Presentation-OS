@@ -500,6 +500,7 @@ When pack loader is implemented, the workflow may evolve to:
 - **M6.1** — Read-only Pack Loader Skeleton. Six new modules in `src/`. No behavioral changes.
 - **M6.2** — Pack Loader CLI Integration. `--list-packs` and `--inspect-pack` now loader-backed.
 - **M6.3** — Pack Loader Error Model Hardening. Standardized error codes, structured `details` fields, enhanced CLI error mapping.
+- **M6.4** — Pack Loader Validation Contract. Formalized error contract + executable smoke validation script.
 - `--list-packs` and `--inspect-pack` are now loader-backed internally.
 - Error model standardized across all loader modules.
 - CLI maps structured errors to user-friendly messages (no stack traces).

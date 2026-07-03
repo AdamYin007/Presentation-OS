@@ -19,7 +19,7 @@ This is the first Presentation Pack for the Digital Pathology domain. M5 formali
 **See**: [M5 Pack Runtime Integration Checkpoint](../../docs/M5_PACK_RUNTIME_INTEGRATION_CHECKPOINT.md) for the full M5 summary, CLI matrix, output path policy, and boundaries.
 **See**: [RFC-0007: Pack Loader Design](../../docs/RFC-0007_PACK_LOADER_DESIGN.md) for the M6 pack loader architecture.
 
-**M6**: M6.0 designed Pack Loader architecture. M6.1 implemented read-only skeleton. M6.2 wired loader into CLI. M6.3 hardened error model with standardized codes, details fields, and CLI error mapping. The current pack remains explicit opt-in. No automatic source-of-truth migration.
+**M6**: M6.0 designed Pack Loader architecture. M6.1 implemented read-only skeleton. M6.2 wired loader into CLI. M6.3 hardened error model with standardized codes, details fields, and CLI error mapping. M6.4 formalized Pack Loader validation contract with smoke test script. The current pack remains explicit opt-in. No automatic source-of-truth migration.
 
 ---
 
