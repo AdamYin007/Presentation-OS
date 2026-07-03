@@ -485,6 +485,17 @@ When pack loader is implemented, the workflow may evolve to:
 
 ---
 
+## 12 Checkpoint Notes (M5.7)
+
+**M5.7 freezes current pack runtime behavior as a formal checkpoint.**
+
+- All M5 commands remain explicit opt-in. No automatic pack loading.
+- Output path policy is frozen: `--story` → `output/ppt-factory/`, `--pack-story` → `output/ppt-factory/packs/<pack-id>/`.
+- Future source-of-truth and pack loader decisions are M6 work.
+- See [M5 PACK RUNTIME INTEGRATION CHECKPOINT](../../docs/M5_PACK_RUNTIME_INTEGRATION_CHECKPOINT.md) for the full M5 summary.
+
+---
+
 ## Related Documents
 
 - [README.md](README.md) — Pack overview and migration principles
@@ -492,5 +503,6 @@ When pack loader is implemented, the workflow may evolve to:
 - [CHANGELOG.md](CHANGELOG.md) — Version history and maintenance policy
 - [pack.json](pack.json) — Pack manifest and configuration
 - [M4_PACK_MANIFEST_VALIDATION_AUDIT.md](../../docs/M4_PACK_MANIFEST_VALIDATION_AUDIT.md) — Manifest validation audit
+- [M5 PACK RUNTIME INTEGRATION CHECKPOINT](../../docs/M5_PACK_RUNTIME_INTEGRATION_CHECKPOINT.md) — M5 formal checkpoint
 - [RFC-0001](../../docs/rfc/RFC-0001-platform.md) — Platform specification
 - [RFC-0003](../../docs/rfc/RFC-0003-pack.md) — Pack specification
