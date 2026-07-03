@@ -81,15 +81,17 @@ if (args.includes("--help")) {
   console.log("  --validate-pack <path>  Validate a Presentation Pack manifest and declared assets.");
   console.log("  --list-packs            List available Presentation Packs under presentation-packs/.");
   console.log("  --inspect-pack <id>     Inspect one Presentation Pack by id or directory name.");
-  console.log("  --pack-story <pack>/<id> Resolve a pack story path without rendering. Rendering from packs is not implemented yet.");
+  console.log("  --pack-story <pack-id>/<story-id> Render a story explicitly from a Presentation Pack.");
+  console.log("                                    Pack story rendering is explicit opt-in.");
+  console.log("                                    Default --story still uses registry story sources.");
   console.log("  --legacy-renderer       Use legacy renderer rollback mode.");
   console.log("  --layout-engine         Accepted for compatibility. Adapter-first rendering is now default.");
   console.log("");
   console.log("Notes:");
-  console.log("  - Pack commands are read-only.");
-  console.log("  - Packs are not loaded for rendering yet.");
-  console.log("  - Current --story rendering still uses registry story sources.");
-  console.log("  - --pack-story resolves paths only. Does not render PPTX.");
+  console.log("  - Pack commands (--validate-pack, --list-packs, --inspect-pack) are read-only.");
+  console.log("  - --pack-story renders from pack stories (explicit opt-in).");
+  console.log("  - Default --story still uses registry story sources.");
+  console.log("  - Pack story rendering does not make packs the default source of truth.");
   console.log("");
   process.exit(0);
 }
@@ -149,7 +151,7 @@ if (unknown) {
   process.exit(1);
 }
 
-// ── Pack story resolution (read-only, no rendering) ─────────────
+// ── Pack story resolution and rendering (explicit opt-in) ────────
 
 var packStoryPresent = args.includes("--pack-story");
 if (packStoryPresent) {
@@ -160,9 +162,24 @@ if (packStoryPresent) {
     process.exit(1);
   }
   var { resolvePackStory, printPackStoryResolution } = require("../src/pack-story-resolver");
-  var result = resolvePackStory(packStoryArg);
-  var exitCode = printPackStoryResolution(result);
-  process.exit(exitCode);
+  var packResult = resolvePackStory(packStoryArg);
+  var printExit = printPackStoryResolution(packResult);
+  if (printExit !== 0) {
+    process.exit(printExit);
+  }
+  // Resolution succeeded — load the resolved story JSON and render
+  var resolvedStoryPath = packResult.storyAbsolutePath;
+  console.log("Rendering pack story...");
+  console.log("");
+
+  // Load the resolved pack story JSON
+  var packStoryJson = JSON.parse(fs.readFileSync(resolvedStoryPath, "utf8"));
+
+  // Store resolved story data for the rendering pipeline below.
+  // The story loading section checks these globals to skip registry loading.
+  global._PACK_STORY_RESOLVED = packStoryJson;
+  global._PACK_STORY_ABSOLUTE_PATH = resolvedStoryPath;
+  global._PACK_STORY_ID = packStoryArg;
 }
 
 // ── Pack inspection (early exit, no runtime loading) ────────────
@@ -181,14 +198,23 @@ if (inspectPackPresent) {
   process.exit(exitCode);
 }
 
-const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
+// ── Story Loading ──────────────────────────────────────────────
 
-if (!fs.existsSync(storyPath)) {
-  console.error("❌ story not found:", storyPath);
-  process.exit(1);
+// When --pack-story was used, skip registry loading and use resolved pack story
+var story;
+if (global._PACK_STORY_RESOLVED) {
+  story = global._PACK_STORY_RESOLVED;
+  console.log("Loaded pack story from: " + global._PACK_STORY_ABSOLUTE_PATH);
+} else {
+  const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
+
+  if (!fs.existsSync(storyPath)) {
+    console.error("❌ story not found:", storyPath);
+    process.exit(1);
+  }
+
+  story = JSON.parse(fs.readFileSync(storyPath, "utf8"));
 }
-
-const story = JSON.parse(fs.readFileSync(storyPath, "utf8"));
 
 // ── Hero Engine Integration ──────────────────────────────────────
 

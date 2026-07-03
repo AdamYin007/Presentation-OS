@@ -1,10 +1,11 @@
 /**
- * Pack Story Resolver — read-only, no rendering.
+ * Pack Story Resolver — resolves pack story paths and validates packs.
  *
  * Resolves a pack story path from --pack-story <pack-id>/<story-id>.
  * Validates pack manifest, matches story against declared assets,
- * and returns the resolved path. Does NOT load story JSON for
- * rendering, does NOT generate PPTX, does NOT mutate files.
+ * and returns the resolved path with absolute path for loading.
+ * Does NOT itself generate PPTX or mutate files.
+ * Rendering is handled by the caller (run.js) after resolution.
  */
 
 var fs = require("fs");
@@ -253,8 +254,6 @@ function printPackStoryResolution(result) {
   console.log("validation: passed");
   console.log("storyPath: " + result.storyPath);
   console.log("");
-  console.log("Rendering: not implemented yet");
-  console.log("This resolver is read-only. It does not load story content or trigger rendering.");
 
   return 0;
 }

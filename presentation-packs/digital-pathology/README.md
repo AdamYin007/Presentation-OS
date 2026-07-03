@@ -12,9 +12,9 @@
 
 ## Status
 
-**Experimental skeleton.**
+**Explicit pack story rendering prototype available.**
 
-This is the first Presentation Pack for the Digital Pathology domain. It currently contains placeholder directories only. No runtime connection has been implemented.
+This is the first Presentation Pack for the Digital Pathology domain. It now supports explicit pack story rendering via `--pack-story`.
 
 ---
 
@@ -113,6 +113,8 @@ The following should remain in Core:
 | PR43 | Read-only pack discovery | ✅ Done |
 | PR44 | CLI unknown argument guard | ✅ Done |
 | PR45 | Read-only pack inspection | ✅ Done |
+| PR52 | Explicit pack story rendering prototype | ✅ Done |
+| PR53 | Pack story rendering parity validation | Planned |
 
 ---
 
@@ -127,13 +129,14 @@ This pack follows:
 
 ## Known Limitations
 
-1. **Not runtime-connected** — Assets in this pack are not loaded by `run.js`. Runtime still uses originals in `story/`.
-2. **No pack loader** — Core does not yet know about `presentation-packs/`.
+1. **Not fully runtime-connected** — Assets outside of `--pack-story` rendering are not loaded by `run.js`. Runtime still uses originals in `story/` for `--story`.
+2. **No pack loader** — Core does not yet know about `presentation-packs/` for automatic discovery.
 3. **Validation available** — Use `--validate-pack` to validate pack manifests and asset paths.
 4. **Pack inspection available** — Use `--inspect-pack <id>` to view pack metadata, assets, runtime and governance flags.
 5. **CLI help available** — Use `--help` to list all supported commands.
-6. **Pack story resolver available** — `--pack-story <pack>/<id>` resolves pack story paths, validates manifest, confirms declared story exists. Does not render PPTX.
+6. **Pack story rendering available** — `--pack-story <pack>/<id>` resolves, loads, and renders pack stories. Does not make packs the default source of truth.
 7. **No SDK integration** — RFC-0002 SDK is not implemented.
 8. **No marketplace** — RFC-0004 Marketplace is not implemented.
 9. **Experimental** — This pack is a starting point, not a production artifact.
 10. **Hero-sequence format** — `digital-pathology-15-hero-sequence.json` uses `slide_type`/`slide_no` instead of `type`/`no`. It is a companion metadata file, not a standalone story. See [HERO_SEQUENCE_FORMAT_AUDIT.md](../docs/HERO_SEQUENCE_FORMAT_AUDIT.md).
+11. **Parity not yet validated** — Pack story rendering uses the same pipeline as registry story rendering, but visual parity between pack and registry outputs has not been formally validated (planned for M5.5).
