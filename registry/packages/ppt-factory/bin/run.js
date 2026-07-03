@@ -84,14 +84,17 @@ if (args.includes("--help")) {
   console.log("  --pack-story <pack-id>/<story-id> Render a story explicitly from a Presentation Pack.");
   console.log("                                    Pack story rendering is explicit opt-in.");
   console.log("                                    Default --story still uses registry story sources.");
+  console.log("  --validate-pack-story-parity <pack>/<id> Compare registry and pack story slide plans for parity.");
   console.log("  --legacy-renderer       Use legacy renderer rollback mode.");
   console.log("  --layout-engine         Accepted for compatibility. Adapter-first rendering is now default.");
   console.log("");
   console.log("Notes:");
   console.log("  - Pack commands (--validate-pack, --list-packs, --inspect-pack) are read-only.");
   console.log("  - --pack-story renders from pack stories (explicit opt-in).");
+  console.log("  - --validate-pack-story-parity compares registry and pack slide plans.");
   console.log("  - Default --story still uses registry story sources.");
   console.log("  - Pack story rendering does not make packs the default source of truth.");
+  console.log("  - Parity validation compares slide plans, not PPTX binary identity.");
   console.log("");
   process.exit(0);
 }
@@ -111,6 +114,7 @@ var KNOWN_FLAGS = [
   "list-packs-dir",
   "inspect-pack",
   "pack-story",
+  "validate-pack-story-parity",
 ];
 
 function hasUnknownFlag() {
@@ -126,7 +130,8 @@ function hasUnknownFlag() {
     // Check if next arg is a value for this flag (known flags take values)
     var takesValue = [
       "story", "out", "hero-sequence",
-      "validate-pack", "list-packs-dir", "inspect-pack", "pack-story"
+      "validate-pack", "list-packs-dir", "inspect-pack", "pack-story",
+      "validate-pack-story-parity"
     ];
     if (takesValue.indexOf(flagName) >= 0 && i + 1 < args.length && args[i + 1].indexOf("--") !== 0) {
       continue; // flag with value, skip
@@ -146,9 +151,31 @@ if (unknown) {
   console.error("  --list-packs");
   console.error("  --inspect-pack <id>");
   console.error("  --pack-story <pack>/<id>");
+  console.error("  --validate-pack-story-parity <pack>/<id>");
   console.error("  --legacy-renderer");
   console.error("  --layout-engine");
   process.exit(1);
+}
+
+// ── Pack story parity validation (M5.5) ─────────────────────────
+
+var parityValidationPresent = args.includes("--validate-pack-story-parity");
+if (parityValidationPresent) {
+  var parityValidationArg = getArg("validate-pack-story-parity", null);
+  if (!parityValidationArg) {
+    console.error("Missing value for --validate-pack-story-parity");
+    console.error("Usage: --validate-pack-story-parity <pack-id>/<story-id>");
+    process.exit(1);
+  }
+  var { validatePackStoryParity } = require("../src/pack-story-parity-validator");
+  var useLegacyForParity = args.includes("--legacy-renderer");
+  var validationResult = validatePackStoryParity(parityValidationArg, { useLegacy: useLegacyForParity });
+  if (validationResult.ok) {
+    process.exit(0);
+  } else {
+    console.error(validationResult.error);
+    process.exit(1);
+  }
 }
 
 // ── Pack story resolution and rendering (explicit opt-in) ────────
