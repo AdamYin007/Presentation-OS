@@ -111,15 +111,17 @@
 - [x] M5.2 Pack Story CLI Contract Guard — PR50 ✅
 - [x] M5.3 Read-only Pack Story Resolver — PR51 ✅
 - [x] M5.4 Explicit Pack Story Rendering Prototype — PR52 ✅
-
+- [x] M5.5 Pack Story Rendering Parity Validation — PR53 ✅
+- [ ] M5.6 Pack story rendering hardening
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
 - [x] M5.2 Pack Story CLI Contract Guard
 - [x] M5.3 Read-only Pack Story Resolver
-- [x] M5.4 Explicit Pack Story Rendering Prototype
-- [ ] M5.5 Pack story rendering parity validation
-- [ ] M5.6 Source-of-truth decision
+- [x] M5.4 Explicit Pack Story Rendering Prototype — PR52 ✅
+- [x] M5.5 Pack Story Rendering Parity Validation — PR53 ✅
+- [ ] M5.6 Pack story rendering hardening
+- [ ] M5.7 Source-of-truth decision
 
 ### M5 — Intelligence
 - [ ] Audience Engine adapts output per audience

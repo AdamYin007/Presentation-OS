@@ -338,8 +338,46 @@ node registry/packages/ppt-factory/bin/run.js --pack-story digital-pathology/not
 - Default `--story` still uses registry story sources (`registry/packages/ppt-factory/story/`).
 - Pack story rendering does **not** make packs the default source of truth.
 - `--pack-story` + `--legacy-renderer` works when the existing legacy renderer is available.
-- Parity validation between pack story and registry story rendering is planned for M5.5.
 - Planners and adapters remain existing runtime components — no extraction or modification.
+
+---
+
+## 7.2 Pack Story Parity Validation (M5.5)
+
+### Purpose
+
+Compare slide plans between registry story rendering and pack story rendering to prove parity.
+
+### Command
+
+```bash
+node registry/packages/ppt-factory/bin/run.js --validate-pack-story-parity digital-pathology/digital-pathology-15
+```
+
+### What is compared
+
+- **Slide count** — number of slides in each plan
+- **Slide order** — slide types in sequence
+- **Slide titles** — `title` field of each slide
+- **Slide text** — `title`, `message`, `pattern` fields of each slide
+- **Slide plan structure** — top-level keys and slide array structure
+
+### What is NOT compared
+
+- **PPTX binary identity** — zip ordering, timestamps, internal IDs may differ between renders. Byte-for-byte PPTX equality is not required.
+
+### Legacy mode
+
+```bash
+node registry/packages/ppt-factory/bin/run.js --validate-pack-story-parity digital-pathology/digital-pathology-15 --legacy-renderer
+```
+
+Renders both sides using legacy renderer and compares slide plans.
+
+### Expected pass/fail behavior
+
+- **Pass**: All comparison dimensions match. Exit code 0.
+- **Fail**: At least one dimension mismatches. Exit code 1. Failure output includes specific slide index, field name, expected vs actual values.
 
 ---
 
@@ -403,9 +441,9 @@ node registry/packages/ppt-factory/bin/run.js --pack-story digital-pathology/not
 When pack loader is implemented, the workflow may evolve to:
 
 1. `--pack-story <pack>/<story-id>` → render from pack (✅ now implemented)
-2. `--story <id>` → auto-resolve from pack or registry (future M5.6 decision)
-3. Pack-driven content planning via terminology and references
-4. Parity validation between pack story and registry story rendering (M5.5)
+2. `--validate-pack-story-parity <pack>/<story-id>` → validate parity (✅ now implemented)
+3. `--story <id>` → auto-resolve from pack or registry (future M5.6 decision)
+4. Pack-driven content planning via terminology and references
 
 ---
 

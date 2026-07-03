@@ -12,9 +12,9 @@
 
 ## Status
 
-**Explicit pack story rendering prototype available.**
+**Pack story parity validation available.**
 
-This is the first Presentation Pack for the Digital Pathology domain. It now supports explicit pack story rendering via `--pack-story`.
+This is the first Presentation Pack for the Digital Pathology domain. It now supports explicit pack story rendering via `--pack-story` and parity validation via `--validate-pack-story-parity`.
 
 ---
 
@@ -114,7 +114,8 @@ The following should remain in Core:
 | PR44 | CLI unknown argument guard | ✅ Done |
 | PR45 | Read-only pack inspection | ✅ Done |
 | PR52 | Explicit pack story rendering prototype | ✅ Done |
-| PR53 | Pack story rendering parity validation | Planned |
+| PR53 | Pack story rendering parity validation | ✅ Done |
+| PR54 | Pack story rendering hardening | Planned |
 
 ---
 
@@ -135,8 +136,9 @@ This pack follows:
 4. **Pack inspection available** — Use `--inspect-pack <id>` to view pack metadata, assets, runtime and governance flags.
 5. **CLI help available** — Use `--help` to list all supported commands.
 6. **Pack story rendering available** — `--pack-story <pack>/<id>` resolves, loads, and renders pack stories. Does not make packs the default source of truth.
-7. **No SDK integration** — RFC-0002 SDK is not implemented.
-8. **No marketplace** — RFC-0004 Marketplace is not implemented.
-9. **Experimental** — This pack is a starting point, not a production artifact.
-10. **Hero-sequence format** — `digital-pathology-15-hero-sequence.json` uses `slide_type`/`slide_no` instead of `type`/`no`. It is a companion metadata file, not a standalone story. See [HERO_SEQUENCE_FORMAT_AUDIT.md](../docs/HERO_SEQUENCE_FORMAT_AUDIT.md).
-11. **Parity not yet validated** — Pack story rendering uses the same pipeline as registry story rendering, but visual parity between pack and registry outputs has not been formally validated (planned for M5.5).
+7. **Pack story parity validation available** — `--validate-pack-story-parity <pack>/<id>` compares registry and pack slide plans.
+8. **No SDK integration** — RFC-0002 SDK is not implemented.
+9. **No marketplace** — RFC-0004 Marketplace is not implemented.
+10. **Experimental** — This pack is a starting point, not a production artifact.
+11. **Hero-sequence format** — `digital-pathology-15-hero-sequence.json` uses `slide_type`/`slide_no` instead of `type`/`no`. It is a companion metadata file, not a standalone story. See [HERO_SEQUENCE_FORMAT_AUDIT.md](../docs/HERO_SEQUENCE_FORMAT_AUDIT.md).
+12. **PPTX binary comparison not performed** — Parity validation compares slide plans (titles, text, structure), not PPTX binary identity. Zip ordering, timestamps, and internal IDs may differ between renders.
