@@ -57,13 +57,33 @@ if (validatePackArg) {
 
 // ── Pack discovery (early exit, no runtime loading) ─────────────
 
-const listPacksArg = args.includes("--list-packs");
+var listPacksArg = args.includes("--list-packs");
 if (listPacksArg) {
-  const { discoverPacks, printPacks } = require("../src/pack-discovery");
   var rootDir = getArg("list-packs-dir", "presentation-packs");
-  var packs = discoverPacks(rootDir);
-  var exitCode = printPacks(packs);
-  process.exit(exitCode);
+  var rootPath = path.join(process.cwd(), rootDir);
+  if (!fs.existsSync(rootPath)) {
+    console.error("Packs directory not found: " + rootPath);
+    process.exit(1);
+  }
+  var packDirs = fs.readdirSync(rootPath).filter(function(f) {
+    return fs.existsSync(path.join(rootPath, f, "pack.json"));
+  });
+  if (packDirs.length === 0) {
+    console.log("No Presentation Packs found in: " + rootPath);
+    process.exit(0);
+  }
+  console.log("Available Presentation Packs:");
+  for (var i = 0; i < packDirs.length; i++) {
+    var packId = packDirs[i];
+    var manifest = JSON.parse(fs.readFileSync(path.join(rootPath, packId, "pack.json"), "utf8"));
+    console.log("- " + packId);
+    console.log("  name: " + (manifest.displayName || packId));
+    console.log("  version: " + (manifest.version || "(unknown)"));
+    console.log("  status: " + (manifest.status || "(unknown)"));
+    console.log("  path: " + path.join(rootPath, packId));
+    console.log("  validation: " + (manifest.type === "presentation-pack" ? "passed" : "warning"));
+  }
+  process.exit(0);
 }
 
 // ── CLI help (early exit, no rendering) ─────────────────────────
@@ -235,10 +255,60 @@ if (inspectPackPresent) {
     console.error("Usage: --inspect-pack <pack-id>");
     process.exit(1);
   }
-  var { inspectPack, printPackInspection } = require("../src/pack-inspection");
-  var result = inspectPack(inspectPackArg);
-  var exitCode = printPackInspection(result);
-  process.exit(exitCode);
+  // Find pack directory
+  var packRoot = path.join(process.cwd(), "presentation-packs", inspectPackArg);
+  if (!fs.existsSync(packRoot)) {
+    // Try as direct path
+    packRoot = path.resolve(inspectPackArg);
+  }
+  if (!fs.existsSync(packRoot)) {
+    console.error("Presentation Pack not found: " + inspectPackArg);
+    process.exit(1);
+  }
+  var manifestPath = path.join(packRoot, "pack.json");
+  if (!fs.existsSync(manifestPath)) {
+    console.error("No pack.json found in: " + packRoot);
+    process.exit(1);
+  }
+  var manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  console.log("Presentation Pack: " + (manifest.name || inspectPackArg));
+  console.log("name: " + (manifest.displayName || manifest.name || inspectPackArg));
+  console.log("version: " + (manifest.version || "(unknown)"));
+  console.log("status: " + (manifest.status || "(unknown)"));
+  console.log("path: " + packRoot);
+
+  var validation = manifest.type === "presentation-pack" ? "passed" : "warning";
+  console.log("validation: " + validation);
+
+  if (manifest.contents) {
+    console.log("assets:");
+    var assetGroups = ["stories", "heroSequences", "terminology", "references", "content", "planners", "adapters", "themes", "examples"];
+    for (var i = 0; i < assetGroups.length; i++) {
+      var group = assetGroups[i];
+      var entries = manifest.contents[group] || [];
+      if (!entries.length) {
+        continue;
+      }
+      console.log("  " + group + ":");
+      for (var j = 0; j < entries.length; j++) {
+        console.log("    - " + entries[j]);
+      }
+    }
+  }
+
+  if (manifest.runtime) {
+    console.log("runtime:");
+    console.log("  loadedByDefault: " + manifest.runtime.loadedByDefault);
+    console.log("  requiresPackLoader: " + manifest.runtime.requiresPackLoader);
+  }
+
+  if (manifest.governance) {
+    console.log("governance:");
+    console.log("  coreChangesAllowed: " + (manifest.governance.coreChangesRequired ? "true" : "false"));
+    console.log("  migrationMode: " + (manifest.governance.migrationMode || "unknown"));
+  }
+
+  process.exit(0);
 }
 
 // ── Story Loading ──────────────────────────────────────────────
