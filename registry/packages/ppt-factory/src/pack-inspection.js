@@ -1,128 +1,79 @@
 /**
- * Pack Inspection — read-only, no runtime loading.
+ * Pack Inspection — inspects a loaded pack's runtime context.
  *
- * Inspects a single Presentation Pack by directory name.
- * Uses existing pack-validator for manifest validation.
+ * Responsibilities:
+ * - Load and validate a pack.
+ * - Return structured inspection data for CLI consumption.
+ *
+ * Does NOT render or modify anything. Read-only inspection.
  */
 
-var fs = require("fs");
 var path = require("path");
-var validatePack = require("./pack-validator").validatePack;
+var discovery = require("./pack-discovery");
+var loader = require("./pack-loader");
 
 /**
- * Inspect a single presentation pack by directory name.
- *
- * @param {string} packId - Directory name under presentation-packs/.
- * @param {string} rootDir - Root directory (default: presentation-packs/).
- * @returns {object|null} Inspection result or null if not found.
+ * Inspect a pack by id or path.
+ * @param {string} target - Pack id or directory path.
+ * @returns {{ok: boolean, result?: object, error?: string, errorCode?: string}}
  */
-function inspectPack(packId, rootDir) {
-  rootDir = rootDir || "presentation-packs";
-  var resolved = path.resolve(rootDir);
-
-  // Try directory name match first
-  var candidate = path.join(resolved, packId);
-  if (!fs.existsSync(candidate)) {
-    // Try case-insensitive fallback
-    var dirs = fs.readdirSync(resolved);
-    for (var i = 0; i < dirs.length; i++) {
-      if (dirs[i].toLowerCase() === packId.toLowerCase()) {
-        candidate = path.join(resolved, dirs[i]);
-        break;
-      }
-    }
+function inspectPack(target) {
+  // Try to find the pack
+  var found = discovery.findPack(target);
+  if (!found) {
+    // Maybe it's a direct path
+    var candidatePath = path.resolve(target);
+    found = discovery.findPackByPath(candidatePath);
   }
 
-  if (!fs.existsSync(candidate)) {
+  if (!found) {
     return {
-      found: false,
-      packId: packId,
-      searchedDir: candidate,
+      ok: false,
+      error: "Presentation Pack not found: " + target,
+      errorCode: "PACK_NOT_FOUND",
     };
   }
 
-  var validationResult = validatePack(candidate);
-  var manifest = validationResult.manifest || {};
+  // Load the pack via loader
+  var loadResult = loader.loadPack(found.packId, {
+    packRoot: found.packRoot,
+  });
 
-  return {
-    found: true,
-    id: packId,
-    displayName: manifest.displayName || "(unknown)",
-    version: manifest.version || "(unknown)",
-    status: manifest.status || "(unknown)",
-    path: candidate,
-    validation: validationResult.ok,
-    errors: validationResult.errors,
-    warnings: validationResult.warnings,
-    assets: validationResult.assets,
-    runtime: manifest.runtime || {},
-    governance: manifest.governance || {},
+  if (!loadResult.ok) {
+    return {
+      ok: false,
+      error: loadResult.error,
+      errorCode: loadResult.errorCode,
+    };
+  }
+
+  var ctx = loadResult.context;
+  var manifest = ctx.manifest;
+  var contents = manifest.contents || {};
+
+  // Build inspection result
+  var result = {
+    packId: ctx.packId,
+    name: manifest.name || ctx.packId,
+    displayName: manifest.displayName || "",
+    version: manifest.version || "",
+    status: manifest.status || "",
+    path: ctx.packRoot,
+    validation: ctx.validation ? (ctx.validation.ok ? "passed" : "failed") : "unknown",
+    assets: {},
+    runtime: ctx.runtime || {},
+    governance: ctx.governance || {},
   };
+
+  // Summarize asset groups
+  var assetGroups = ["stories", "heroSequences", "terminology", "references", "content", "planners", "adapters", "themes", "examples"];
+  for (var i = 0; i < assetGroups.length; i++) {
+    var group = assetGroups[i];
+    var entries = contents[group] || [];
+    result.assets[group] = entries.map(function(e) { return e; });
+  }
+
+  return { ok: true, result: result };
 }
 
-/**
- * Print pack inspection result to stdout.
- *
- * @param {object} result - Result from inspectPack().
- * @returns {number} - 0 if found and valid, 1 otherwise.
- */
-function printPackInspection(result) {
-  if (!result.found) {
-    console.error("Presentation Pack not found: " + result.packId);
-    return 1;
-  }
-
-  console.log("Presentation Pack: " + result.id);
-  console.log("name: " + result.displayName);
-  console.log("version: " + result.version);
-  console.log("status: " + result.status);
-  console.log("path: " + result.path);
-  console.log("validation: " + (result.validation ? "passed" : "failed"));
-
-  if (result.errors && result.errors.length > 0) {
-    console.log("errors:");
-    for (var i = 0; i < result.errors.length; i++) {
-      console.log("  - " + result.errors[i]);
-    }
-  }
-
-  if (result.assets) {
-    console.log("assets:");
-    var sections = [
-      "stories",
-      "heroSequences",
-      "content",
-      "planners",
-      "adapters",
-      "themes",
-      "terminology",
-      "references",
-      "examples",
-    ];
-    for (var s = 0; s < sections.length; s++) {
-      var arr = result.assets[sections[s]];
-      if (arr && arr.length > 0) {
-        console.log("  " + sections[s] + ":");
-        for (var j = 0; j < arr.length; j++) {
-          console.log("    - " + arr[j]);
-        }
-      }
-    }
-  }
-
-  if (result.runtime) {
-    console.log("runtime:");
-    console.log("  loadedByDefault: " + result.runtime.loadedByDefault);
-    console.log("  requiresPackLoader: " + result.runtime.requiresPackLoader);
-  }
-
-  if (result.governance) {
-    console.log("governance:");
-    console.log("  coreChangesAllowed: " + result.governance.coreChangesRequired);
-    console.log("  migrationMode: " + result.governance.migrationMode);
-  }
-
-  return result.validation ? 0 : 1;
-}
-
-module.exports = { inspectPack, printPackInspection };
+module.exports = { inspectPack };

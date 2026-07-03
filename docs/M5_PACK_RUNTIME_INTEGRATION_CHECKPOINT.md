@@ -264,7 +264,7 @@ No code changes until the RFC is reviewed and approved.
 
 ## Post-Checkpoint Note
 
-**M6.0 begins with Pack Loader Design RFC (RFC-0007).**
+**M6.0 began with Pack Loader Design RFC (RFC-0007).** M6.1 implemented the read-only skeleton.
 
 M5 behavior remains the baseline and rollback reference for all future pack runtime work.
 

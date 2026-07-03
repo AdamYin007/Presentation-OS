@@ -491,3 +491,19 @@ For this RFC, the following decisions are recommended:
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0 | 2026-07-03 | Hermes | Initial RFC proposal |
+| 1.1 | 2026-07-03 | Hermes | M6.1 skeleton implemented: 6 new modules, no behavioral changes |
+
+---
+
+## Implementation Note (M6.1)
+
+M6.1 implements this RFC as a read-only skeleton. Six new modules added to `src/`:
+
+- `pack-loader.js` — Central orchestrator (discover → read → validate → resolve → build → register)
+- `pack-manifest-reader.js` — Read and parse pack.json
+- `pack-asset-resolver.js` — Resolve declared asset paths with safety checks
+- `pack-runtime-context.js` — Build immutable PackRuntimeContext
+- `pack-registry.js` — In-memory registry for loaded pack contexts
+- `pack-discovery.js` — Scan known directories for pack.json files
+
+No rendering path changes. No `--story` behavior change. No planner/adapter extraction.

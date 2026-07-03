@@ -12,13 +12,14 @@
 
 ## Status
 
-**M5 runtime integration checkpoint completed.**
+**M5 runtime integration checkpoint completed.** M6.1 added read-only Pack Loader Skeleton per RFC-0007.
 
-This is the first Presentation Pack for the Digital Pathology domain. M5 formalized the pack runtime integration through explicit, opt-in CLI paths.
+This is the first Presentation Pack for the Digital Pathology domain. M5 formalized the pack runtime integration through explicit, opt-in CLI paths. M6.1 added internal pack loading infrastructure.
 
 **See**: [M5 Pack Runtime Integration Checkpoint](../../docs/M5_PACK_RUNTIME_INTEGRATION_CHECKPOINT.md) for the full M5 summary, CLI matrix, output path policy, and boundaries.
+**See**: [RFC-0007: Pack Loader Design](../../docs/RFC-0007_PACK_LOADER_DESIGN.md) for the M6 pack loader architecture.
 
-**M6**: Starts with Pack Loader Design RFC (RFC-0007). The current pack remains explicit opt-in. No automatic source-of-truth migration yet.
+**M6**: M6.0 designed Pack Loader architecture (RFC-0007). M6.1 implemented read-only skeleton. The current pack remains explicit opt-in. No automatic source-of-truth migration.
 
 ---
 
