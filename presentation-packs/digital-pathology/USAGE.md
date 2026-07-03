@@ -498,7 +498,9 @@ When pack loader is implemented, the workflow may evolve to:
 
 - **M6.0** — Pack Loader Design RFC (RFC-0007). Documentation-only.
 - **M6.1** — Read-only Pack Loader Skeleton. Six new modules in `src/`. No behavioral changes.
-- Loader skeleton exists for internal runtime context construction.
+- **M6.2** — Pack Loader CLI Integration. `--list-packs` and `--inspect-pack` now loader-backed.
+- `--list-packs` and `--inspect-pack` are now loader-backed internally.
+- Output format remains compatible with M6.1 baseline.
 - No new user-facing command required.
 - Existing commands remain unchanged.
 - Pack loader is read-only: it loads metadata, does not render.
