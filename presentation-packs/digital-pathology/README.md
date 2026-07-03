@@ -12,9 +12,9 @@
 
 ## Status
 
-**Pack story parity validation available.**
+**Pack story rendering hardening completed.**
 
-This is the first Presentation Pack for the Digital Pathology domain. It now supports explicit pack story rendering via `--pack-story` and parity validation via `--validate-pack-story-parity`.
+This is the first Presentation Pack for the Digital Pathology domain. It now supports explicit pack story rendering via `--pack-story` with isolated output paths, and parity validation via `--validate-pack-story-parity`.
 
 ---
 
@@ -115,7 +115,8 @@ The following should remain in Core:
 | PR45 | Read-only pack inspection | ✅ Done |
 | PR52 | Explicit pack story rendering prototype | ✅ Done |
 | PR53 | Pack story rendering parity validation | ✅ Done |
-| PR54 | Pack story rendering hardening | Planned |
+| PR54 | Pack story rendering hardening | ✅ Done |
+| PR55 | Pack runtime integration checkpoint | Planned |
 
 ---
 
@@ -137,8 +138,10 @@ This pack follows:
 5. **CLI help available** — Use `--help` to list all supported commands.
 6. **Pack story rendering available** — `--pack-story <pack>/<id>` resolves, loads, and renders pack stories. Does not make packs the default source of truth.
 7. **Pack story parity validation available** — `--validate-pack-story-parity <pack>/<id>` compares registry and pack slide plans.
-8. **No SDK integration** — RFC-0002 SDK is not implemented.
-9. **No marketplace** — RFC-0004 Marketplace is not implemented.
-10. **Experimental** — This pack is a starting point, not a production artifact.
+8. **Output path isolation** — `--pack-story` outputs under `output/ppt-factory/packs/<pack-id>/` to avoid collision with `--story` outputs.
+9. **No global prototype state** — Pack story resolution uses local variables instead of `global._PACK_STORY_*`.
+10. **No SDK integration** — RFC-0002 SDK is not implemented.
+11. **No marketplace** — RFC-0004 Marketplace is not implemented.
+11. **Experimental** — This pack is a starting point, not a production artifact.
 11. **Hero-sequence format** — `digital-pathology-15-hero-sequence.json` uses `slide_type`/`slide_no` instead of `type`/`no`. It is a companion metadata file, not a standalone story. See [HERO_SEQUENCE_FORMAT_AUDIT.md](../docs/HERO_SEQUENCE_FORMAT_AUDIT.md).
 12. **PPTX binary comparison not performed** — Parity validation compares slide plans (titles, text, structure), not PPTX binary identity. Zip ordering, timestamps, and internal IDs may differ between renders.

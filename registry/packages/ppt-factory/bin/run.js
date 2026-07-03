@@ -17,7 +17,7 @@ const useHero = args.includes("--hero");
 const heroSeqArg = getArg("hero-sequence", null);
 const forceLegacy = args.includes("--legacy-renderer") || process.env.AWE_LEGACY_RENDERER === "1";
 const useLayoutEngine = !forceLegacy;
-const out = getArg("out", path.join(process.cwd(), "output", "ppt-factory"));
+var out = getArg("out", path.join(process.cwd(), "output", "ppt-factory"));
 
 // ── Pack validator (early exit, no runtime loading) ─────────────
 
@@ -85,13 +85,16 @@ if (args.includes("--help")) {
   console.log("                                    Pack story rendering is explicit opt-in.");
   console.log("                                    Default --story still uses registry story sources.");
   console.log("  --validate-pack-story-parity <pack>/<id> Compare registry and pack story slide plans for parity.");
+  console.log("                                    Temp outputs isolated under .parity-temp/.");
   console.log("  --legacy-renderer       Use legacy renderer rollback mode.");
   console.log("  --layout-engine         Accepted for compatibility. Adapter-first rendering is now default.");
   console.log("");
   console.log("Notes:");
   console.log("  - Pack commands (--validate-pack, --list-packs, --inspect-pack) are read-only.");
   console.log("  - --pack-story renders from pack stories (explicit opt-in).");
+  console.log("  - --pack-story output goes under output/ppt-factory/packs/<pack-id>/ to avoid collision.");
   console.log("  - --validate-pack-story-parity compares registry and pack slide plans.");
+  console.log("  - --validate-pack-story-parity temp outputs are isolated under .parity-temp/.");
   console.log("  - Default --story still uses registry story sources.");
   console.log("  - Pack story rendering does not make packs the default source of truth.");
   console.log("  - Parity validation compares slide plans, not PPTX binary identity.");
@@ -180,6 +183,10 @@ if (parityValidationPresent) {
 
 // ── Pack story resolution and rendering (explicit opt-in) ────────
 
+var packStoryResolved = null;
+var packStoryResolvedPath = null;
+var packStoryResolvedId = null;
+
 var packStoryPresent = args.includes("--pack-story");
 if (packStoryPresent) {
   var packStoryArg = getArg("pack-story", null);
@@ -202,11 +209,20 @@ if (packStoryPresent) {
   // Load the resolved pack story JSON
   var packStoryJson = JSON.parse(fs.readFileSync(resolvedStoryPath, "utf8"));
 
-  // Store resolved story data for the rendering pipeline below.
-  // The story loading section checks these globals to skip registry loading.
-  global._PACK_STORY_RESOLVED = packStoryJson;
-  global._PACK_STORY_ABSOLUTE_PATH = resolvedStoryPath;
-  global._PACK_STORY_ID = packStoryArg;
+  // Store resolved story data in local variables for the rendering pipeline below.
+  packStoryResolved = packStoryJson;
+  packStoryResolvedPath = resolvedStoryPath;
+  packStoryResolvedId = packStoryArg;
+
+  // Isolate pack-story output under output/ppt-factory/packs/<pack-id>/
+  // to avoid accidental overwrite of --story outputs.
+  // Only override if --out was not explicitly provided (e.g., parity validation).
+  var packId = packResult.packId;
+  var userProvidedOut = args.indexOf("--out") >= 0;
+  if (!userProvidedOut) {
+    var packOutDir = path.join(process.cwd(), "output", "ppt-factory", "packs", packId);
+    out = packOutDir;
+  }
 }
 
 // ── Pack inspection (early exit, no runtime loading) ────────────
@@ -229,9 +245,9 @@ if (inspectPackPresent) {
 
 // When --pack-story was used, skip registry loading and use resolved pack story
 var story;
-if (global._PACK_STORY_RESOLVED) {
-  story = global._PACK_STORY_RESOLVED;
-  console.log("Loaded pack story from: " + global._PACK_STORY_ABSOLUTE_PATH);
+if (packStoryResolved) {
+  story = packStoryResolved;
+  console.log("Loaded pack story from: " + packStoryResolvedPath);
 } else {
   const storyPath = path.join(process.cwd(), "registry/packages/ppt-factory/story", storyName + ".json");
 

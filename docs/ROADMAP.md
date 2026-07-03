@@ -112,7 +112,8 @@
 - [x] M5.3 Read-only Pack Story Resolver — PR51 ✅
 - [x] M5.4 Explicit Pack Story Rendering Prototype — PR52 ✅
 - [x] M5.5 Pack Story Rendering Parity Validation — PR53 ✅
-- [ ] M5.6 Pack story rendering hardening
+- [x] M5.6 Pack Story Rendering Hardening — PR54 ✅
+- [ ] M5.7 Pack runtime integration checkpoint
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
@@ -120,8 +121,9 @@
 - [x] M5.3 Read-only Pack Story Resolver
 - [x] M5.4 Explicit Pack Story Rendering Prototype — PR52 ✅
 - [x] M5.5 Pack Story Rendering Parity Validation — PR53 ✅
-- [ ] M5.6 Pack story rendering hardening
-- [ ] M5.7 Source-of-truth decision
+- [x] M5.6 Pack Story Rendering Hardening — PR54 ✅
+- [ ] M5.7 Pack runtime integration checkpoint
+- [ ] M5.8 Source-of-truth decision
 
 ### M5 — Intelligence
 - [ ] Audience Engine adapts output per audience

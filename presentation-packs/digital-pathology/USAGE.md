@@ -340,6 +340,13 @@ node registry/packages/ppt-factory/bin/run.js --pack-story digital-pathology/not
 - `--pack-story` + `--legacy-renderer` works when the existing legacy renderer is available.
 - Planners and adapters remain existing runtime components — no extraction or modification.
 
+#### Output path isolation (M5.6 hardening)
+
+- `--story` outputs to `output/ppt-factory/<story-name>.pptx`.
+- `--pack-story` outputs to `output/ppt-factory/packs/<pack-id>/<story-name>.pptx`.
+- This prevents accidental overwrite between registry and pack renders.
+- `--validate-pack-story-parity` uses isolated temp dirs under `output/ppt-factory/.parity-temp/`.
+
 ---
 
 ## 7.2 Pack Story Parity Validation (M5.5)
@@ -378,6 +385,8 @@ Renders both sides using legacy renderer and compares slide plans.
 
 - **Pass**: All comparison dimensions match. Exit code 0.
 - **Fail**: At least one dimension mismatches. Exit code 1. Failure output includes specific slide index, field name, expected vs actual values.
+- **Temp isolation**: Registry and pack renders happen in separate temp directories. Failure output includes the temp directory path for inspection.
+- **Auto-cleanup**: Temp directory is cleaned before each parity validation run. Old outputs are removed.
 
 ---
 
@@ -442,7 +451,7 @@ When pack loader is implemented, the workflow may evolve to:
 
 1. `--pack-story <pack>/<story-id>` → render from pack (✅ now implemented)
 2. `--validate-pack-story-parity <pack>/<story-id>` → validate parity (✅ now implemented)
-3. `--story <id>` → auto-resolve from pack or registry (future M5.6 decision)
+3. `--story <id>` → future source-of-truth decision, not implemented in M5.6
 4. Pack-driven content planning via terminology and references
 
 ---
