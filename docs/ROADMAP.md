@@ -116,7 +116,8 @@
 - [x] M5.7 Pack Runtime Integration Checkpoint — PR55 ✅
 - [x] M6.0 Pack Loader Design RFC — PR56 ✅
 - [x] M6.1 Read-only Pack Loader Skeleton — PR57 ✅
-- [ ] M6.2 Pack Loader CLI Integration
+- [x] M6.2 Pack Loader CLI Integration — PR58 ✅
+- [ ] M6.3 Pack Loader Error Model Hardening
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
@@ -128,7 +129,8 @@
 - [x] M5.7 Pack Runtime Integration Checkpoint — PR55 ✅
 - [x] M6.0 Pack Loader Design RFC — PR56 ✅
 - [x] M6.1 Read-only Pack Loader Skeleton — PR57 ✅
-- [ ] M6.2 Pack Loader CLI Integration
+- [x] M6.2 Pack Loader CLI Integration — PR58 ✅
+- [ ] M6.3 Pack Loader Error Model Hardening
 - [ ] M5.8 Source-of-truth decision
 
 ### M5 — Intelligence

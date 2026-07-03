@@ -492,6 +492,7 @@ For this RFC, the following decisions are recommended:
 |---|---|---|---|
 | 1.0 | 2026-07-03 | Hermes | Initial RFC proposal |
 | 1.1 | 2026-07-03 | Hermes | M6.1 skeleton implemented: 6 new modules, no behavioral changes |
+| 1.2 | 2026-07-03 | Hermes | M6.2 CLI integration: --list-packs and --inspect-pack wired to loader |
 
 ---
 

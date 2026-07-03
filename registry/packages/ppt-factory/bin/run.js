@@ -55,33 +55,36 @@ if (validatePackArg) {
   }
 }
 
-// ── Pack discovery (early exit, no runtime loading) ─────────────
+// ── Pack discovery (early exit, loader-backed) ─────────────────
 
 var listPacksArg = args.includes("--list-packs");
 if (listPacksArg) {
-  var rootDir = getArg("list-packs-dir", "presentation-packs");
-  var rootPath = path.join(process.cwd(), rootDir);
-  if (!fs.existsSync(rootPath)) {
-    console.error("Packs directory not found: " + rootPath);
+  var { loadAllPacks } = require("../src/pack-loader");
+
+  var allResult = loadAllPacks();
+  if (!allResult.ok) {
+    console.error(allResult.error || "Failed to load Presentation Packs");
     process.exit(1);
   }
-  var packDirs = fs.readdirSync(rootPath).filter(function(f) {
-    return fs.existsSync(path.join(rootPath, f, "pack.json"));
-  });
-  if (packDirs.length === 0) {
+
+  var packs = allResult.contexts || [];
+  if (packs.length === 0) {
+    var rootDir = getArg("list-packs-dir", "presentation-packs");
+    var rootPath = path.join(process.cwd(), rootDir);
     console.log("No Presentation Packs found in: " + rootPath);
     process.exit(0);
   }
+
   console.log("Available Presentation Packs:");
-  for (var i = 0; i < packDirs.length; i++) {
-    var packId = packDirs[i];
-    var manifest = JSON.parse(fs.readFileSync(path.join(rootPath, packId, "pack.json"), "utf8"));
-    console.log("- " + packId);
-    console.log("  name: " + (manifest.displayName || packId));
-    console.log("  version: " + (manifest.version || "(unknown)"));
-    console.log("  status: " + (manifest.status || "(unknown)"));
-    console.log("  path: " + path.join(rootPath, packId));
-    console.log("  validation: " + (manifest.type === "presentation-pack" ? "passed" : "warning"));
+  for (var i = 0; i < packs.length; i++) {
+    var ctx = packs[i];
+    var m = ctx.manifest;
+    console.log("- " + ctx.packId);
+    console.log("  name: " + (m.displayName || ctx.packId));
+    console.log("  version: " + (m.version || "(unknown)"));
+    console.log("  status: " + (m.status || "(unknown)"));
+    console.log("  path: " + ctx.packRoot);
+    console.log("  validation: " + (ctx.validation && ctx.validation.ok ? "passed" : "warning"));
   }
   process.exit(0);
 }
@@ -245,7 +248,7 @@ if (packStoryPresent) {
   }
 }
 
-// ── Pack inspection (early exit, no runtime loading) ────────────
+// ── Pack inspection (early exit, loader-backed) ────────────────
 
 var inspectPackPresent = args.includes("--inspect-pack");
 if (inspectPackPresent) {
@@ -255,57 +258,71 @@ if (inspectPackPresent) {
     console.error("Usage: --inspect-pack <pack-id>");
     process.exit(1);
   }
-  // Find pack directory
-  var packRoot = path.join(process.cwd(), "presentation-packs", inspectPackArg);
-  if (!fs.existsSync(packRoot)) {
-    // Try as direct path
-    packRoot = path.resolve(inspectPackArg);
-  }
-  if (!fs.existsSync(packRoot)) {
-    console.error("Presentation Pack not found: " + inspectPackArg);
+
+  // Use loader-backed inspection
+  var { inspectPack: inspectPackFn } = require("../src/pack-inspection");
+  var result = inspectPackFn(inspectPackArg);
+
+  if (!result.ok) {
+    // Map loader errors to user-friendly output
+    if (result.errorCode === "PACK_NOT_FOUND") {
+      console.error("Presentation Pack not found: " + inspectPackArg);
+    } else if (result.errorCode === "MANIFEST_MISSING") {
+      console.error("No pack.json found in: " + inspectPackArg);
+    } else if (result.errorCode === "VALIDATION_FAILED") {
+      console.error("Pack validation failed: " + result.error);
+    } else {
+      console.error("Error inspecting pack: " + result.error);
+    }
     process.exit(1);
   }
-  var manifestPath = path.join(packRoot, "pack.json");
-  if (!fs.existsSync(manifestPath)) {
-    console.error("No pack.json found in: " + packRoot);
-    process.exit(1);
-  }
-  var manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-  console.log("Presentation Pack: " + (manifest.name || inspectPackArg));
-  console.log("name: " + (manifest.displayName || manifest.name || inspectPackArg));
-  console.log("version: " + (manifest.version || "(unknown)"));
-  console.log("status: " + (manifest.status || "(unknown)"));
-  console.log("path: " + packRoot);
 
-  var validation = manifest.type === "presentation-pack" ? "passed" : "warning";
-  console.log("validation: " + validation);
+  var r = result.result;
+  console.log("Presentation Pack: " + r.name);
+  console.log("name: " + (r.displayName || r.name));
+  console.log("version: " + (r.version || "(unknown)"));
+  console.log("status: " + (r.status || "(unknown)"));
+  console.log("path: " + r.path);
+  console.log("validation: " + r.validation);
 
-  if (manifest.contents) {
-    console.log("assets:");
+  // Print assets — only non-empty groups
+  if (r.assets) {
     var assetGroups = ["stories", "heroSequences", "terminology", "references", "content", "planners", "adapters", "themes", "examples"];
+    var hasAnyAsset = false;
     for (var i = 0; i < assetGroups.length; i++) {
-      var group = assetGroups[i];
-      var entries = manifest.contents[group] || [];
-      if (!entries.length) {
-        continue;
+      if (r.assets[assetGroups[i]] && r.assets[assetGroups[i]].length > 0) {
+        hasAnyAsset = true;
+        break;
       }
-      console.log("  " + group + ":");
-      for (var j = 0; j < entries.length; j++) {
-        console.log("    - " + entries[j]);
+    }
+    if (hasAnyAsset) {
+      console.log("assets:");
+      for (var i = 0; i < assetGroups.length; i++) {
+        var group = assetGroups[i];
+        var entries = r.assets[group] || [];
+        if (!entries.length) {
+          continue;
+        }
+        console.log("  " + group + ":");
+        for (var j = 0; j < entries.length; j++) {
+          console.log("    - " + entries[j]);
+        }
       }
     }
   }
 
-  if (manifest.runtime) {
+  if (r.runtime) {
     console.log("runtime:");
-    console.log("  loadedByDefault: " + manifest.runtime.loadedByDefault);
-    console.log("  requiresPackLoader: " + manifest.runtime.requiresPackLoader);
+    console.log("  loadedByDefault: " + r.runtime.loadedByDefault);
+    console.log("  requiresPackLoader: " + r.runtime.requiresPackLoader);
   }
 
-  if (manifest.governance) {
+  if (r.governance) {
     console.log("governance:");
-    console.log("  coreChangesAllowed: " + (manifest.governance.coreChangesRequired ? "true" : "false"));
-    console.log("  migrationMode: " + (manifest.governance.migrationMode || "unknown"));
+    // Output field is coreChangesAllowed (opposite of coreChangesRequired)
+    var coreAllowed = r.governance.coreChangesRequired === false || r.governance.coreChangesRequired === undefined ? "false" : "true";
+    console.log("  coreChangesAllowed: " + coreAllowed);
+    console.log("  migrationMode: " + (r.governance.migrationMode || "unknown"));
   }
 
   process.exit(0);
