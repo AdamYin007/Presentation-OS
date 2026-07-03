@@ -18,6 +18,8 @@ This is the first Presentation Pack for the Digital Pathology domain. M5 formali
 
 **See**: [M5 Pack Runtime Integration Checkpoint](../../docs/M5_PACK_RUNTIME_INTEGRATION_CHECKPOINT.md) for the full M5 summary, CLI matrix, output path policy, and boundaries.
 
+**M6**: Starts with Pack Loader Design RFC (RFC-0007). The current pack remains explicit opt-in. No automatic source-of-truth migration yet.
+
 ---
 
 ## Purpose
