@@ -66,6 +66,64 @@ function discoverPacks() {
 }
 
 /**
+ * Discover packs with structured error reporting.
+ * @returns {{ok: boolean, packs?: Array<{packId: string, packRoot: string}>, error?: string, errorCode?: string, details?: object|null}}
+ */
+function discoverPacksWithError() {
+  var discovered = [];
+  var seenIds = {};
+  var scanDirNotFound = null;
+
+  for (var i = 0; i < SCAN_DIRECTORIES.length; i++) {
+    var scanDir = path.join(process.cwd(), SCAN_DIRECTORIES[i]);
+    if (!fs.existsSync(scanDir) || !fs.statSync(scanDir).isDirectory()) {
+      scanDirNotFound = scanDir;
+      continue;
+    }
+
+    var entries = fs.readdirSync(scanDir);
+    for (var j = 0; j < entries.length; j++) {
+      var entry = entries[j];
+      var candidatePath = path.join(scanDir, entry);
+
+      if (!fs.existsSync(candidatePath) || !fs.statSync(candidatePath).isDirectory()) {
+        continue;
+      }
+
+      var manifestPath = path.join(candidatePath, "pack.json");
+      if (!fs.existsSync(manifestPath)) {
+        continue;
+      }
+
+      var packId = entry;
+
+      if (seenIds[packId]) {
+        continue;
+      }
+
+      seenIds[packId] = true;
+      discovered.push({
+        packId: packId,
+        packRoot: path.resolve(candidatePath),
+      });
+    }
+  }
+
+  if (discovered.length === 0 && scanDirNotFound) {
+    return {
+      ok: false,
+      error: "Packs directory not found: " + scanDirNotFound,
+      errorCode: "PACKS_DIR_NOT_FOUND",
+      details: {
+        scanDir: scanDirNotFound,
+      },
+    };
+  }
+
+  return { ok: true, packs: discovered };
+}
+
+/**
  * Find a specific pack by id.
  * @param {string} packId - Pack identifier.
  * @returns {{packId: string, packRoot: string}|null}
@@ -99,4 +157,4 @@ function findPackByPath(packPath) {
   };
 }
 
-module.exports = { discoverPacks, findPack, findPackByPath, SCAN_DIRECTORIES };
+module.exports = { discoverPacks, discoverPacksWithError, findPack, findPackByPath, SCAN_DIRECTORIES };

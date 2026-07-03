@@ -32,6 +32,9 @@ function register(context) {
       ok: false,
       error: "Duplicate pack id in registry: " + context.packId,
       errorCode: "DUPLICATE_PACK_ID",
+      details: {
+        packId: context.packId,
+      },
     };
   }
 

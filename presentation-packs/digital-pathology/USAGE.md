@@ -499,7 +499,10 @@ When pack loader is implemented, the workflow may evolve to:
 - **M6.0** — Pack Loader Design RFC (RFC-0007). Documentation-only.
 - **M6.1** — Read-only Pack Loader Skeleton. Six new modules in `src/`. No behavioral changes.
 - **M6.2** — Pack Loader CLI Integration. `--list-packs` and `--inspect-pack` now loader-backed.
+- **M6.3** — Pack Loader Error Model Hardening. Standardized error codes, structured `details` fields, enhanced CLI error mapping.
 - `--list-packs` and `--inspect-pack` are now loader-backed internally.
+- Error model standardized across all loader modules.
+- CLI maps structured errors to user-friendly messages (no stack traces).
 - Output format remains compatible with M6.1 baseline.
 - No new user-facing command required.
 - Existing commands remain unchanged.

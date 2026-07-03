@@ -26,8 +26,13 @@ function readManifest(packRoot) {
     return {
       ok: false,
       packRoot: resolved,
+      manifestPath: manifestPath,
       error: "pack.json not found in: " + resolved,
       errorCode: "MANIFEST_MISSING",
+      details: {
+        target: resolved,
+        manifestPath: manifestPath,
+      },
     };
   }
 
@@ -38,8 +43,13 @@ function readManifest(packRoot) {
     return {
       ok: false,
       packRoot: resolved,
+      manifestPath: manifestPath,
       error: "Cannot read pack.json: " + e.message,
       errorCode: "MANIFEST_MISSING",
+      details: {
+        target: resolved,
+        manifestPath: manifestPath,
+      },
     };
   }
 
@@ -50,8 +60,13 @@ function readManifest(packRoot) {
     return {
       ok: false,
       packRoot: resolved,
+      manifestPath: manifestPath,
       error: "Invalid JSON in pack.json: " + e.message,
       errorCode: "MANIFEST_INVALID_JSON",
+      details: {
+        target: resolved,
+        manifestPath: manifestPath,
+      },
     };
   }
 
