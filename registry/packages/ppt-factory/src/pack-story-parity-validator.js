@@ -42,11 +42,19 @@ function deriveRegistryStoryId(packStoryValue) {
 
 /**
  * Create a temporary directory for parity comparison outputs.
+ * Cleans any previous temp contents before creating fresh dirs.
  * @returns {string} Path to temp directory
  */
 function createTempDir() {
-  if (TEMP_DIR) return TEMP_DIR;
   TEMP_DIR = path.join(process.cwd(), "output", "ppt-factory", ".parity-temp");
+  // Clean previous temp contents
+  if (fs.existsSync(TEMP_DIR)) {
+    try {
+      fs.rmSync(TEMP_DIR, { recursive: true, force: true });
+    } catch (e) {
+      // Non-fatal: continue even if cleanup fails
+    }
+  }
   fs.mkdirSync(TEMP_DIR, { recursive: true });
   return TEMP_DIR;
 }
@@ -264,6 +272,7 @@ function validatePackStoryParity(packStoryValue, options) {
   if (useLegacy) registryCmd.push("--legacy-renderer");
   var registryOutput = runCli(registryCmd);
   if (registryOutput.exitCode !== 0) {
+    console.error("  Temp output written to: " + tempDir);
     cleanupTempDir();
     return { ok: false, error: "Registry render failed (exit " + registryOutput.exitCode + "): " + registryOutput.stderr };
   }
@@ -276,6 +285,7 @@ function validatePackStoryParity(packStoryValue, options) {
   if (useLegacy) packCmd.push("--legacy-renderer");
   var packOutput = runCli(packCmd);
   if (packOutput.exitCode !== 0) {
+    console.error("  Temp output written to: " + tempDir);
     cleanupTempDir();
     return { ok: false, error: "Pack render failed (exit " + packOutput.exitCode + "): " + packOutput.stderr };
   }
@@ -334,6 +344,7 @@ function validatePackStoryParity(packStoryValue, options) {
     console.log("Parity: FAILED");
     console.log("");
     console.log("Registry and pack story rendering DO NOT produce identical slide plans.");
+    console.log("Temp output written to: " + tempDir);
     cleanupTempDir();
     return { ok: false, error: "Parity validation failed", result: comparison };
   }
