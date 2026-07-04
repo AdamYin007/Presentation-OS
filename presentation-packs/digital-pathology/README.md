@@ -19,7 +19,7 @@ This is the first Presentation Pack for the Digital Pathology domain. M5 formali
 **See**: [M5 Pack Runtime Integration Checkpoint](../../docs/M5_PACK_RUNTIME_INTEGRATION_CHECKPOINT.md) for the full M5 summary, CLI matrix, output path policy, and boundaries.
 **See**: [RFC-0007: Pack Loader Design](../../docs/RFC-0007_PACK_LOADER_DESIGN.md) for the M6 pack loader architecture.
 
-**M6**: M6.0 designed Pack Loader architecture. M6.1 implemented read-only skeleton. M6.2 wired loader into CLI. M6.3 hardened error model with standardized codes, details fields, and CLI error mapping. M6.4 formalized Pack Loader validation contract with smoke test script. The current pack remains explicit opt-in. No automatic source-of-truth migration.
+**M6**: M6.0 designed Pack Loader architecture. M6.1 implemented read-only skeleton. M6.2 wired loader into CLI. M6.3 hardened error model with standardized codes, details fields, and CLI error mapping. M6.4 formalized Pack Loader validation contract with smoke test script. M6.5 documented Pack Loader contract regression guard (manual, no CI/npm script added). The current pack remains explicit opt-in. No automatic source-of-truth migration.
 
 ---
 
@@ -122,6 +122,9 @@ The following should remain in Core:
 | PR53 | Pack story rendering parity validation | ✅ Done |
 | PR54 | Pack story rendering hardening | ✅ Done |
 | PR55 | Pack runtime integration checkpoint | ✅ Done |
+| PR60 | Pack Loader validation contract | ✅ Done |
+| PR61 | Pack Loader contract regression guard (M6.5) | ✅ Done |
+| PR62 | M6 Pack Loader Checkpoint (M6.6) | Planned |
 
 ---
 
@@ -137,7 +140,7 @@ This pack follows:
 ## Known Limitations
 
 1. **Not fully runtime-connected** — Assets outside of `--pack-story` rendering are not loaded by `run.js`. Runtime still uses originals in `story/` for `--story`.
-2. **No pack loader** — Core does not yet know about `presentation-packs/` for automatic discovery.
+2. **Pack loader skeleton exists but not auto-discovered** — M6.1–M6.2 added read-only Pack Loader and CLI wiring. Core does not yet auto-discover `presentation-packs/`. Packs remain explicit opt-in via `--pack-story` or `--inspect-pack`.
 3. **Validation available** — Use `--validate-pack` to validate pack manifests and asset paths.
 4. **Pack inspection available** — Use `--inspect-pack <id>` to view pack metadata, assets, runtime and governance flags.
 5. **CLI help available** — Use `--help` to list all supported commands.
@@ -146,6 +149,7 @@ This pack follows:
 8. **Output path isolation** — `--pack-story` outputs under `output/ppt-factory/packs/<pack-id>/` to avoid collision with `--story` outputs.
 9. **No global prototype state** — Pack story resolution uses local variables instead of `global._PACK_STORY_*`.
 10. **M5 frozen** — M5.7 checkpoint freezes current pack runtime behavior. Future changes (source-of-truth, pack loader) are M6 work.
+10a. **M6.5 regression guard manual only** — Pack Loader contract smoke script is documented as a required manual check. No `package.json` script or CI integration added.
 11. **No SDK integration** — RFC-0002 SDK is not implemented.
 12. **No marketplace** — RFC-0004 Marketplace is not implemented.
 13. **Experimental** — This pack is a starting point, not a production artifact.

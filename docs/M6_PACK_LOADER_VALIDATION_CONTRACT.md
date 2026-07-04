@@ -287,6 +287,17 @@ The smoke script (`scripts/pack-loader-contract-smoke.js`) verifies these cases 
 
 ---
 
+## Regression Guard
+
+The contract smoke script (`scripts/pack-loader-contract-smoke.js`) is the **executable enforcement mechanism** for this contract.
+
+- **Manual guard in M6.5**: The smoke script must be run before merging any loader-related change. See [`M6_PACK_LOADER_REGRESSION_GUARD.md`](M6_PACK_LOADER_REGRESSION_GUARD.md) for the full process.
+- **Not a replacement for rendering validation**: This guard checks error model correctness, not visual output. Use `--validate-pack-story-parity` for rendering parity.
+- **Not a PPTX binary validator**: This guard does not compare generated PPTX files.
+- **Future CI integration may add**: A `package.json` script or pipeline step, but M6.5 intentionally keeps the guard manual.
+
+---
+
 ## Boundary Guarantees
 
 1. **No rendering**: The loader never imports or invokes Content Engine, Theme Engine, or Renderer Engine.
