@@ -501,6 +501,7 @@ When pack loader is implemented, the workflow may evolve to:
 - **M6.2** — Pack Loader CLI Integration. `--list-packs` and `--inspect-pack` now loader-backed.
 - **M6.3** — Pack Loader Error Model Hardening. Standardized error codes, structured `details` fields, enhanced CLI error mapping.
 - **M6.4** — Pack Loader Validation Contract. Formalized error contract + executable smoke validation script.
+- **M6.5** — Pack Loader Contract Regression Guard. Documented manual guard process, no CI/npm scripts added.
 - `--list-packs` and `--inspect-pack` are now loader-backed internally.
 - Error model standardized across all loader modules.
 - CLI maps structured errors to user-friendly messages (no stack traces).
