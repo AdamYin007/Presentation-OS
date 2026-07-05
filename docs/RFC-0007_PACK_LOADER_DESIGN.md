@@ -496,6 +496,7 @@ For this RFC, the following decisions are recommended:
 | 1.3 | 2026-07-03 | Hermes | M6.3 error model hardening: standardized error codes, details fields, CLI error mapping |
 | 1.4 | 2026-07-04 | Hermes | M6.4 validation contract: documented contract spec + smoke validation script |
 | 1.5 | 2026-07-04 | Hermes | M6.5 regression guard: documented manual guard process, no CI/npm scripts, no runtime changes |
+| 1.6 | 2026-07-04 | Hermes | M6.6 checkpoint: M6 closed, capabilities frozen, M7 entry criteria defined, no runtime changes |
 
 ---
 
