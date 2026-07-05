@@ -405,6 +405,12 @@ The following are **immediately blocked** (not selected for M7 or early M8):
 
 **M8 — Pack Runtime RFC / Post-M7 Platform Direction Decision**
 
+M8.0 (PR69) has initiated Post-M7 Platform Direction:
+
+- RFC-0009 selects Option A — Pack Runtime Contract Hardening.
+- M7 frozen boundaries remain in force.
+- Next task: M8.1 Pack Runtime Contract Hardening Design.
+
 - Evaluate whether to implement any M7.3 proposed alignment.
 - Decide on multi-pack expansion strategy.
 - Consider SDK boundary design.

@@ -93,6 +93,11 @@ M7.4 (PR67) adds a **manual smoke check** for frozen M7 boundaries:
 - Existing public CLI commands remain unchanged.
 - No new command added.
 - Next phase: M8 — Pack Runtime RFC / Post-M7 Platform Direction Decision.
+- **M8.0 Post-M7 Platform Direction RFC** — RFC-0009 selects Pack Runtime Contract Hardening.
+- M8.0 selects Option A — Pack Runtime Contract Hardening.
+- Pack remains explicit opt-in.
+- All existing commands remain unchanged.
+- Next task: M8.1 Pack Runtime Contract Hardening Design.
 
 ---
 
