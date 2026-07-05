@@ -29,6 +29,16 @@ M6.6 (PR62) completed the M6 Pack Loader checkpoint:
 - No npm script added.
 - Existing successful commands remain unchanged.
 
+## 1.2 M7.0 Planning Note
+
+M7.0 (PR63, RFC-0008) is a **planning-only** milestone:
+
+- **M7.0 is planning-only.** No runtime changes, no CLI changes, no package.json modifications.
+- **No new public CLI command.** All existing commands remain unchanged.
+- **Existing successful commands remain unchanged.** `--story`, `--pack-story`, `--list-packs`, `--inspect-pack` all behave identically.
+- **Pack remains explicit opt-in.** No automatic source-of-truth migration.
+- **M7.1 is Pack Runtime Boundary Design** — design document only.
+
 ---
 
 ## 2 How to Inspect the Pack
