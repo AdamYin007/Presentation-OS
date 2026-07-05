@@ -17,7 +17,17 @@ This pack is an **experimental** Presentation Pack for the Digital Pathology dom
 - Current rendering still reads from `registry/packages/ppt-factory/story/` for `--story`.
 - Pack validation is available via `--validate-pack`.
 - **Pack story rendering is now available via `--pack-story` (M5.4).**
-- Pack loader is **not implemented**.
+- Pack loader is **implemented** (M6.1–M6.2). M6.6 completed Pack Loader checkpoint — current capabilities frozen.
+
+## 1.1 M6.6 Checkpoint Note
+
+M6.6 (PR62) completed the M6 Pack Loader checkpoint:
+
+- M6 Pack Loader checkpoint completed.
+- Regression guard remains manual (`node registry/packages/ppt-factory/scripts/pack-loader-contract-smoke.js`).
+- No new public CLI command added.
+- No npm script added.
+- Existing successful commands remain unchanged.
 
 ---
 

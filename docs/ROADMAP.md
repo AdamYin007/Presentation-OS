@@ -120,7 +120,8 @@
 - [x] M6.3 Pack Loader Error Model Hardening — PR59 ✅
 - [x] M6.4 Pack Loader Validation Contract — PR60 ✅
 - [x] M6.5 Pack Loader Contract Regression Guard — PR61 ✅
-- [ ] M6.6 M6 Pack Loader Checkpoint
+- [x] M6.6 M6 Pack Loader Checkpoint — PR62 ✅
+- [ ] M7 Planning
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
@@ -136,7 +137,7 @@
 - [x] M6.3 Pack Loader Error Model Hardening — PR59 ✅
 - [x] M6.4 Pack Loader Validation Contract — PR60 ✅
 - [x] M6.5 Pack Loader Contract Regression Guard — PR61 ✅
-- [ ] M6.6 M6 Pack Loader Checkpoint
+- [x] M6.6 M6 Pack Loader Checkpoint — PR62 ✅
 - [ ] M5.8 Source-of-truth decision
 
 ### M5 — Intelligence
