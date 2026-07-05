@@ -125,7 +125,8 @@
 - [x] M7.1 Pack Runtime Boundary Design — PR64 ✅
 - [x] M7.2 Pack Runtime Context Inspection Hardening — PR65 ✅
 - [x] M7.3 Pack Story Resolver / Loader Boundary Alignment Design — PR66 ✅
-- [ ] M7.4 Pack Runtime Boundary Smoke Checks
+- [x] M7.4 Pack Runtime Boundary Smoke Checks — PR67 ✅
+- [ ] M7.5 Pack Runtime Boundary Checkpoint
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation

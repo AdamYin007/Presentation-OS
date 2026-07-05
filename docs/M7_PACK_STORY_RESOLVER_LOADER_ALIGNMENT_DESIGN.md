@@ -172,9 +172,19 @@ The Pack Story Resolver (existing in `src/pack-story-resolver.js`) operates as f
 - **Explicit only.** `--pack-story` requires a full `<pack-id>/<story-id>` argument.
 - **Independent from loader.** The resolver does not call `loadPack()` or use `PackRuntimeContext`.
 - **Independent from `--story`.** The resolver does not interact with the story registry.
-- **Separate error handling.** The resolver has its own error codes and messages.
-- **Separate validation.** The resolver validates story existence but does not share pack validation logic.
-- **Direct rendering path.** The resolver loads story JSON and hands it directly to the rendering pipeline.
+|- **Separate error handling.** The resolver has its own error codes and messages.
+|- **Separate validation.** The resolver validates story existence but does not share pack validation logic.
+|- **Direct rendering path.** The resolver loads story JSON and hands it directly to the rendering pipeline.
+
+### M7.4 Boundary Smoke Protection
+
+M7.4 (PR67) adds a **manual smoke script** that protects this separation:
+
+- Boundary smoke checks protect the current resolver/loader separation.
+- Resolver still does not consume PackRuntimeContext in M7.4.
+- Future alignment remains design-only until separately approved.
+- 60/60 checks pass across 7 categories.
+- No CLI behavior change. No rendering behavior change.
 
 ### What the Resolver Does NOT Do
 
