@@ -121,7 +121,8 @@
 - [x] M6.4 Pack Loader Validation Contract — PR60 ✅
 - [x] M6.5 Pack Loader Contract Regression Guard — PR61 ✅
 - [x] M6.6 M6 Pack Loader Checkpoint — PR62 ✅
-- [ ] M7 Planning
+- [x] M7.0 Post-M6 Direction Decision RFC — PR63 ✅
+- [ ] M7.1 Pack Runtime Boundary Design
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation

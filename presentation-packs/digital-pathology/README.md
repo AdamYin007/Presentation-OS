@@ -19,7 +19,7 @@ This is the first Presentation Pack for the Digital Pathology domain. M5 formali
 **See**: [M5 Pack Runtime Integration Checkpoint](../../docs/M5_PACK_RUNTIME_INTEGRATION_CHECKPOINT.md) for the full M5 summary, CLI matrix, output path policy, and boundaries.
 **See**: [RFC-0007: Pack Loader Design](../../docs/RFC-0007_PACK_LOADER_DESIGN.md) for the M6 pack loader architecture.
 
-**M6**: M6.0 designed Pack Loader architecture. M6.1 implemented read-only skeleton. M6.2 wired loader into CLI. M6.3 hardened error model with standardized codes, details fields, and CLI error mapping. M6.4 formalized Pack Loader validation contract with smoke test script. M6.5 documented Pack Loader contract regression guard (manual, no CI/npm script added). M6.6 completed M6 Pack Loader checkpoint — current capabilities and boundaries frozen. The current pack remains explicit opt-in. No automatic source-of-truth migration.
+**M6**: M6.0 designed Pack Loader architecture. M6.1 implemented read-only skeleton. M6.2 wired loader into CLI. M6.3 hardened error model with standardized codes, details fields, and CLI error mapping. M6.4 formalized Pack Loader validation contract with smoke test script. M6.5 documented Pack Loader contract regression guard (manual, no CI/npm script added). M6.6 completed M6 Pack Loader checkpoint — current capabilities and boundaries frozen. M7.0 selected Pack Runtime Boundary Deepening as the next mainline. The current pack remains explicit opt-in. No automatic source-of-truth migration.
 
 ---
 
@@ -125,7 +125,8 @@ The following should remain in Core:
 | PR60 | Pack Loader validation contract | ✅ Done |
 | PR61 | Pack Loader contract regression guard (M6.5) | ✅ Done |
 | PR62 | M6 Pack Loader Checkpoint (M6.6) | ✅ Done |
-| PR63 | M7 Post-M6 Direction Decision RFC | Planned |
+| PR63 | M7 Post-M6 Direction Decision RFC | ✅ Done |
+| PR64 | M7.1 Pack Runtime Boundary Design | Planned |
 
 ---
 
@@ -161,3 +162,17 @@ This pack follows:
 
 11. **Hero-sequence format** — `digital-pathology-15-hero-sequence.json` uses `slide_type`/`slide_no` instead of `type`/`no`. It is a companion metadata file, not a standalone story. See [HERO_SEQUENCE_FORMAT_AUDIT.md](../docs/HERO_SEQUENCE_FORMAT_AUDIT.md).
 12. **PPTX binary comparison not performed** — Parity validation compares slide plans (titles, text, structure), not PPTX binary identity. Zip ordering, timestamps, and internal IDs may differ between renders.
+
+---
+
+## M7.0 Planning Status
+
+M7.0 (RFC-0008) selected **Pack Runtime Boundary Deepening** as the next mainline direction.
+
+- **M7.0 selected Pack Runtime Boundary Deepening as the next mainline.**
+- **Pack remains explicit opt-in.** No automatic source-of-truth migration.
+- **`--story` remains registry-backed.** Default story source unchanged.
+- **`--pack-story` remains explicit pack story rendering.** No behavioral change.
+- **No planner/adapter extraction selected.** These remain core components.
+- **No new public CLI commands.** No `package.json` changes.
+- **M7.1 is Pack Runtime Boundary Design** — design document only, no implementation.
