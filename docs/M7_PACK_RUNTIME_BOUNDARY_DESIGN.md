@@ -662,6 +662,14 @@ M7.2 (PR65) implemented Pack Runtime Context Inspection Hardening:
 - No npm script added. No package.json changes. No CI config changes.
 - M7.5 set to Pack Runtime Boundary Checkpoint.
 
+### M7.5 Pack Runtime Boundary Checkpoint
+
+- M7.5 (PR68) is a **documentation-only checkpoint**.
+- M7 Pack Runtime Boundary Deepening is now **complete**.
+- Frozen boundary state is stable and documented.
+- Manual smoke (60/60), contract smoke (31/31), and parity guard are the approved review checks.
+- Next phase: M8 — Pack Runtime RFC / Post-M7 Platform Direction Decision.
+
 ---
 
 ## Document History

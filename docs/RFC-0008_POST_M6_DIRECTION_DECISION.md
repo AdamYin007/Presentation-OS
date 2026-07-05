@@ -253,9 +253,14 @@ M7 should deepen Pack Runtime boundaries **without** making packs the default so
    - No source-of-truth migration. No planner/adapter/theme extraction.
    - Verify `--story` remains independent.
 
-5. **M7.5 — M7 Runtime Boundary Checkpoint**
-   - Formal checkpoint documenting M7 runtime boundary state.
-   - Frozen boundaries for M8 entry.
+5. **M7.5 — Pack Runtime Boundary Checkpoint**
+   - **PR68 implements this as a documentation-only checkpoint.**
+   - Freezes M7 boundary state after M7.0–M7.4.
+   - Documents stable CLI contract, PackRuntimeContext contract, guard policies.
+   - Lists frozen red lines and future RFC requirements.
+   - Sets next phase to M8 — Pack Runtime RFC / Post-M7 Decision.
+   - No runtime behavior change. No CLI behavior change.
+   - No source-of-truth migration. No planner/adapter/theme extraction.
 
 ### Explicit Non-goals for M7
 
@@ -337,7 +342,7 @@ The following M6 frozen boundaries carry forward into M7:
 | M7.2 | Pack Runtime Context Inspection Hardening | Implementation | **PR65** — Hardened PackRuntimeContext with normalized read-only sections |
 | M7.3 | Pack Story Resolver / Loader Boundary Alignment Design | Design | **PR66** — Documents alignment without changing resolver behavior |
 | M7.4 | Pack Runtime Boundary Smoke Checks | Testing | **PR67** — Adds manual smoke script validating frozen M7 boundaries (60/60 checks) |
-| M7.5 | M7 Runtime Boundary Checkpoint | Documentation | Formal checkpoint, frozen boundaries |
+| M7.5 | Pack Runtime Boundary Checkpoint | Documentation | **PR68** — Freezes M7 boundary state, marks M7 complete |
 
 **Important:** These are **proposed milestones only**. They are not implemented in PR63. M7.1 is set to **Pack Runtime Boundary Design**, NOT planner extraction, NOT adapter extraction, NOT source-of-truth migration.
 
@@ -419,3 +424,4 @@ Before merging PR63, verify:
 | 1.2 | 2026-07-05 | Hermes | M7.2 implemented: Pack Runtime Context Inspection Hardening (PR65) |
 | 1.3 | 2026-07-05 | Hermes | M7.3 implemented: Pack Story Resolver / Loader Alignment Design (PR66) |
 | 1.4 | 2026-07-05 | Hermes | M7.4 implemented: Pack Runtime Boundary Smoke Checks (PR67) — 60/60 checks pass |
+| 1.5 | 2026-07-05 | Hermes | M7.5 implemented: Pack Runtime Boundary Checkpoint (PR68) — M7 complete |

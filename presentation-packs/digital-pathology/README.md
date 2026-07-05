@@ -130,6 +130,8 @@ The following should remain in Core:
 | PR65 | M7.2 Pack Runtime Context Inspection Hardening | ✅ Done |
 | PR66 | M7.3 Pack Story Resolver / Loader Boundary Alignment Design | ✅ Done |
 | PR67 | M7.4 Pack Runtime Boundary Smoke Checks | ✅ Done |
+| PR68 | M7.5 Pack Runtime Boundary Checkpoint | ✅ Done |
+| — | M8 Pack Runtime RFC / Post-M7 Decision | Proposed |
 
 ---
 
@@ -203,3 +205,11 @@ M7.0 (RFC-0008) selected **Pack Runtime Boundary Deepening** as the next mainlin
 - No CLI behavior change.
 - No rendering behavior change.
 - No source-of-truth change.
+- **M7.5 Pack Runtime Boundary Checkpoint** — M7 Pack Runtime Boundary Deepening complete.
+- M7 Pack Runtime Boundary checkpoint completed.
+- Frozen boundary state is now stable and documented.
+- Pack remains explicit opt-in.
+- --story remains registry-backed.
+- --pack-story remains explicit pack story rendering.
+- Manual boundary smoke (60/60) and contract smoke (31/31) guard current behavior.
+- Next phase: M8 — Pack Runtime RFC / Post-M7 Platform Direction Decision.

@@ -260,3 +260,4 @@ M7.5 does **not** implement:
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0.0 | 2026-07-05 | Hermes | Initial Pack Runtime Boundary Smoke Checks (M7.4) |
+| 1.1 | 2026-07-05 | Hermes | M7.5 Checkpoint: smoke script now part of M7 checkpoint guard. Still manual, not CI. |

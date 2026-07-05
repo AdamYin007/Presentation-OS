@@ -740,7 +740,20 @@ Before merging PR66, verify:
 - [ ] No adapters/planners/story JSON changed
 - [ ] Packs NOT made default source of truth
 - [ ] No CI or npm script added
-- [ ] M7.4 set to Pack Runtime Boundary Smoke Checks
+- [x] M7.4 set to Pack Runtime Boundary Smoke Checks
+- [x] M7.5 set to Pack Runtime Boundary Checkpoint — M7 complete
+
+---
+
+## M7.5 Checkpoint Note
+
+M7.5 (PR68) completed M7 Pack Runtime Boundary Deepening:
+
+- Alignment remains design-only at M7.5.
+- Resolver does not yet consume PackRuntimeContext.
+- Future resolver/context consolidation requires RFC.
+- M7 boundary state is frozen and documented.
+- Next phase: M8 — Pack Runtime RFC / Post-M7 Decision.
 
 ---
 
