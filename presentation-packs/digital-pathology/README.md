@@ -128,6 +128,7 @@ The following should remain in Core:
 | PR63 | M7 Post-M6 Direction Decision RFC | ✅ Done |
 | PR64 | M7.1 Pack Runtime Boundary Design | ✅ Done |
 | PR65 | M7.2 Pack Runtime Context Inspection Hardening | ✅ Done |
+| PR66 | M7.3 Pack Story Resolver / Loader Boundary Alignment Design | ✅ Done |
 
 ---
 
@@ -178,6 +179,13 @@ M7.0 (RFC-0008) selected **Pack Runtime Boundary Deepening** as the next mainlin
 - **No new public CLI commands.** No `package.json` changes.
 - **M7.2 Pack Runtime Context Inspection Hardening** — implemented normalized read-only context sections.
 - Pack Runtime Context inspection hardened with normalized sections (governance, runtime, boundaries, sourceOfTruth, outputPolicy).
+- Existing successful outputs remain compatible.
+- Pack remains explicit opt-in.
+- --story remains registry-backed.
+- --pack-story remains explicit pack story rendering.
+- No planner/adapter/theme extraction.
+- **M7.3 Pack Story Resolver / Loader Boundary Alignment Design** — design document only.
+- Pack Story Resolver / Loader boundary alignment design documented.
 - Existing successful outputs remain compatible.
 - Pack remains explicit opt-in.
 - --story remains registry-backed.

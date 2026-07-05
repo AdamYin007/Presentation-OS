@@ -60,7 +60,20 @@ M7.2 (PR65) is the first **implementation** milestone of M7:
 - **Existing successful commands remain unchanged.** `--story`, `--pack-story`, `--list-packs`, `--inspect-pack` all behave identically.
 - **Pack remains explicit opt-in.** No automatic source-of-truth migration.
 - **Contract smoke extended from 17 to 31 checks.** All checks pass.
-- **M7.3 is Pack Story Resolver / Loader Boundary Alignment Design.**
+- **M7.3 is Pack Story Resolver / Loader Boundary Alignment Design** — design document only.
+
+## 1.5 M7.3 Design Note
+
+M7.3 (PR66) is a **design-only** milestone:
+
+- **M7.3 is design-only.** No runtime changes, no CLI changes, no package.json modifications.
+- **No new public CLI command.** All existing commands remain unchanged.
+- **Existing successful commands remain unchanged.** `--story`, `--pack-story`, `--list-packs`, `--inspect-pack` all behave identically.
+- **Pack remains explicit opt-in.** No automatic source-of-truth migration.
+- **M7.4 is Pack Runtime Boundary Smoke Checks** — design document for boundary verification.
+- **Pack Story Resolver / Loader alignment design documented** — proposes future alignment without implementing it.
+- **Responsibility split defined** — loader owns metadata, resolver owns story path, context owns immutable sections.
+- **Future resolver contract defined as proposed only** — no implementation.
 
 ---
 

@@ -624,6 +624,7 @@ Before merging PR64, verify:
 - [ ] Packs NOT made default source of truth
 - [ ] No CI or npm script added
 - [x] M7.2 set to Pack Runtime Context Inspection Hardening
+- [x] M7.3 set to Pack Story Resolver / Loader Boundary Alignment Design
 
 ---
 
@@ -631,12 +632,26 @@ Before merging PR64, verify:
 
 M7.2 (PR65) implemented Pack Runtime Context Inspection Hardening:
 
-- PackRuntimeContext hardened with normalized read-only sections (governance, runtime, boundaries, sourceOfTruth, outputPolicy, validation).
+- Pack Runtime Context inspection hardened with normalized read-only sections (governance, runtime, boundaries, sourceOfTruth, outputPolicy, validation).
 - Pack inspection derives from normalized context internally.
 - CLI visible output remains compatible.
 - Rendering unchanged.
 - Source-of-truth unchanged.
 - Contract smoke extended from 17 to 31 checks.
+
+### M7.3 Pack Story Resolver / Loader Boundary Alignment Design
+
+- M7.3 (PR66) is a **design document only**.
+- Pack Story Resolver / Loader alignment design documented.
+- No resolver behavior change.
+- No CLI behavior change.
+- No rendering behavior change.
+- Source-of-truth unchanged.
+- Boundary mismatch analyzed between resolver and loader.
+- Desired future alignment model defined.
+- Responsibility split documented (loader/metadata, resolver/story-path, context/immutable-sections).
+- Future resolver contract proposed (not implemented).
+- Migration phases defined (M7.3 design → M7.4 smoke → M7.5 checkpoint → M8+ implementation).
 
 ---
 
