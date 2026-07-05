@@ -87,7 +87,12 @@ M7.4 (PR67) adds a **manual smoke check** for frozen M7 boundaries:
 - **Existing public CLI commands remain unchanged.** No new commands added.
 - **No npm script added.** Script is invoked directly via `node`.
 - **Pack remains explicit opt-in.** No automatic source-of-truth migration.
-- **M7.5 is Pack Runtime Boundary Checkpoint** — upcoming documentation-only checkpoint.
+- **M7.5 is Pack Runtime Boundary Checkpoint** — M7 Pack Runtime Boundary Deepening complete.
+- M7 boundary state is now frozen and documented.
+- Use boundary smoke / contract smoke / parity validation before future pack runtime changes.
+- Existing public CLI commands remain unchanged.
+- No new command added.
+- Next phase: M8 — Pack Runtime RFC / Post-M7 Platform Direction Decision.
 
 ---
 

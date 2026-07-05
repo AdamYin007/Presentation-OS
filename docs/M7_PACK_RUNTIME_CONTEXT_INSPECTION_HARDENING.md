@@ -373,6 +373,15 @@ M7.3 (PR66) defined Pack Story Resolver / Loader boundary alignment:
 
 ---
 
+## M7.5 Checkpoint Note
+
+M7.5 (PR68) completed M7 Pack Runtime Boundary Deepening:
+
+- Context sections are now part of M7 checkpoint contract.
+- Context remains read-only and frozen.
+- M7 boundary state is frozen and documented.
+- Next phase: M8 — Pack Runtime RFC / Post-M7 Decision.
+
 ## M7.4 Implementation Note
 
 M7.4 (PR67) added Pack Runtime Boundary Smoke Checks:
