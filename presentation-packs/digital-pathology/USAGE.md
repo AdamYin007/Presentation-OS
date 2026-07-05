@@ -39,6 +39,18 @@ M7.0 (PR63, RFC-0008) is a **planning-only** milestone:
 - **Pack remains explicit opt-in.** No automatic source-of-truth migration.
 - **M7.1 is Pack Runtime Boundary Design** — design document only.
 
+## 1.3 M7.1 Design Note
+
+M7.1 (PR64) is a **design-only** milestone:
+
+- **M7.1 is design-only.** No runtime changes, no CLI changes, no package.json modifications.
+- **No new public CLI command.** All existing commands remain unchanged.
+- **Existing successful commands remain unchanged.** `--story`, `--pack-story`, `--list-packs`, `--inspect-pack` all behave identically.
+- **Pack remains explicit opt-in.** No automatic source-of-truth migration.
+- **M7.2 is Pack Runtime Context Inspection Hardening** — first implementation milestone after the boundary design.
+- **17 runtime boundary participants defined** across loader-owned, bridge-owned, and core-owned layers.
+- **Data ownership model documented** — pack-owned, registry-owned, core-owned, bridge-owned.
+
 ---
 
 ## 2 How to Inspect the Pack

@@ -216,9 +216,14 @@ M7 should deepen Pack Runtime boundaries **without** making packs the default so
 ### Scope for Near-term M7
 
 1. **M7.1 — Pack Runtime Boundary Design**
+   - **PR64 implements this as a documentation-only design document.**
    - Define what Pack Loader owns vs. what Core owns.
    - Document runtime boundary interfaces.
    - No implementation — design document only.
+   - No runtime behavior change.
+   - No CLI behavior change.
+   - No source-of-truth migration.
+   - No planner/adapter/theme extraction.
 
 2. **M7.2 — Pack Runtime Context Inspection Hardening**
    - Improve `PackRuntimeContext` usefulness for pack metadata and governance.
@@ -315,7 +320,7 @@ The following M6 frozen boundaries carry forward into M7:
 | Milestone | Title | Type | Notes |
 |---|---|---|---|
 | **M7.0** | Post-M6 Direction Decision RFC | **Documentation** | **PR63** — This RFC |
-| M7.1 | Pack Runtime Boundary Design | Design | Define boundary interfaces, no implementation |
+| M7.1 | Pack Runtime Boundary Design | Design | **PR64** — M7.1 begins Option A with documentation-only Pack Runtime Boundary Design |
 | M7.2 | Pack Runtime Context Inspection Hardening | Implementation | Improve context usefulness |
 | M7.3 | Pack Story Resolver / Loader Boundary Alignment Design | Design | Align resolver with loader interfaces |
 | M7.4 | Pack Runtime Boundary Smoke Checks | Testing | Verify boundary assumptions |
@@ -397,3 +402,4 @@ Before merging PR63, verify:
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0 | 2026-07-05 | Hermes | Initial Post-M6 Direction Decision RFC (M7.0) |
+| 1.1 | 2026-07-05 | Hermes | M7.1 implemented: Pack Runtime Boundary Design documented (PR64) |

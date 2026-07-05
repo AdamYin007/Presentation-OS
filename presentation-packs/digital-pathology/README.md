@@ -126,7 +126,7 @@ The following should remain in Core:
 | PR61 | Pack Loader contract regression guard (M6.5) | ✅ Done |
 | PR62 | M6 Pack Loader Checkpoint (M6.6) | ✅ Done |
 | PR63 | M7 Post-M6 Direction Decision RFC | ✅ Done |
-| PR64 | M7.1 Pack Runtime Boundary Design | Planned |
+| PR64 | M7.1 Pack Runtime Boundary Design | ✅ Done |
 
 ---
 
@@ -176,3 +176,5 @@ M7.0 (RFC-0008) selected **Pack Runtime Boundary Deepening** as the next mainlin
 - **No planner/adapter extraction selected.** These remain core components.
 - **No new public CLI commands.** No `package.json` changes.
 - **M7.1 is Pack Runtime Boundary Design** — design document only, no implementation.
+- M7.1 documented Pack Runtime Boundary Design (docs/M7_PACK_RUNTIME_BOUNDARY_DESIGN.md).
+- Pack Runtime Boundary defines 17 participants across loader-owned, bridge-owned, and core-owned layers.
