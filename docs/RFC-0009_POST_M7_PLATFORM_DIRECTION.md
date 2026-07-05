@@ -260,7 +260,7 @@ The following M8 sequence is proposed:
 | Milestone | Type | Description |
 |---|---|---|
 | M8.0 | RFC | **This document** — Post-M7 Platform Direction |
-| M8.1 | Design | Pack Runtime Contract Hardening Design |
+| M8.1 | Design | **PR70** — Documents hardened contracts (PackRuntimeContext, Loader, Resolver, Output, SoT, Compatibility, Validation) |
 | M8.2 | Design | PackRuntimeContext Contract Schema Documentation |
 | M8.3 | Design | Multi-Pack Discovery Assumptions Design |
 | M8.4 | RFC | Resolver/Context Consumption RFC |

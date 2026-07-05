@@ -218,3 +218,8 @@ M7.0 (RFC-0008) selected **Pack Runtime Boundary Deepening** as the next mainlin
 - Pack remains explicit opt-in.
 - All existing commands remain unchanged.
 - Next task: M8.1 Pack Runtime Contract Hardening Design.
+- **M8.1 Pack Runtime Contract Hardening Design** — PR70 documents hardened contracts.
+- No command behavior changed.
+- Pack remains explicit opt-in.
+- Boundary smoke / contract smoke / parity remain review guards.
+- Next task: M8.2 PackRuntimeContext Contract Schema Documentation.

@@ -132,6 +132,9 @@
 - [x] M8.0 Post-M7 Platform Direction RFC — PR69 ✅
 - M8.0 selects Option A — Pack Runtime Contract Hardening.
 - Next task: M8.1 Pack Runtime Contract Hardening Design
+- [x] M8.1 Pack Runtime Contract Hardening Design — PR70 ✅
+- M8.1 hardens Pack Runtime Contract through documentation.
+- Next task: M8.2 PackRuntimeContext Contract Schema Documentation
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
