@@ -223,3 +223,9 @@ M7.0 (RFC-0008) selected **Pack Runtime Boundary Deepening** as the next mainlin
 - Pack remains explicit opt-in.
 - Boundary smoke / contract smoke / parity remain review guards.
 - Next task: M8.2 PackRuntimeContext Contract Schema Documentation.
+- **M8.2 PackRuntimeContext Contract Schema Documentation** — PR71 documents conceptual schema.
+- PackRuntimeContext schema fully documented (8 sections, 11 required values).
+- No executable schema validation. No JSON schema files. No runtime shape change.
+- Pack remains explicit opt-in.
+- Boundary smoke / contract smoke / parity remain review guards.
+- Next task: M8.3 Multi-Pack Discovery Assumptions Design.

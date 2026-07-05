@@ -260,8 +260,8 @@ Safe sequence for M8+:
 
 | Phase | Milestone | Type | Status |
 |---|---|---|---|
-| M8.1 | Pack Runtime Contract Hardening Design | Documentation | **This PR** |
-| M8.2 | PackRuntimeContext Contract Schema Documentation | Design | Proposed |
+| M8.1 | Pack Runtime Contract Hardening Design | Documentation | **PR70** — Contract hardening design |
+| M8.2 | PackRuntimeContext Contract Schema Documentation | Documentation | **PR71** — Full conceptual schema (8 sections, 11 required values) |
 | M8.3 | Multi-Pack Discovery Assumptions Design | Design | Proposed |
 | M8.4 | Resolver/Context Consumption RFC | RFC | Proposed |
 | M8.5 | M8 Runtime Contract Checkpoint | Checkpoint | Proposed |

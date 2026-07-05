@@ -261,7 +261,7 @@ The following M8 sequence is proposed:
 |---|---|---|
 | M8.0 | RFC | **This document** — Post-M7 Platform Direction |
 | M8.1 | Design | **PR70** — Documents hardened contracts (PackRuntimeContext, Loader, Resolver, Output, SoT, Compatibility, Validation) |
-| M8.2 | Design | PackRuntimeContext Contract Schema Documentation |
+| M8.2 | Design | **PR71** — Documents PackRuntimeContext conceptual schema (8 sections, 11 required values) |
 | M8.3 | Design | Multi-Pack Discovery Assumptions Design |
 | M8.4 | RFC | Resolver/Context Consumption RFC |
 | M8.5 | Checkpoint | M8 Runtime Contract Checkpoint |

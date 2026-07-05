@@ -414,6 +414,10 @@ The following are **immediately blocked** (not selected for M7 or early M8):
 - Documents hardened contracts for PackRuntimeContext, Loader, Resolver, Output, SoT, Compatibility, Validation.
 - No runtime behavior change. No resolver/context consumption.
 - Next task: M8.2 PackRuntimeContext Contract Schema Documentation.
+- **M8.2 (PR71) completed PackRuntimeContext Contract Schema Documentation.**
+- Full conceptual schema documented: 8 sections, 11 required values, compatibility/versioning/deprecation policies.
+- No executable schema validation. No JSON schema files. No runtime shape change.
+- Next task: M8.3 Multi-Pack Discovery Assumptions Design.
 
 - Evaluate whether to implement any M7.3 proposed alignment.
 - Decide on multi-pack expansion strategy.
