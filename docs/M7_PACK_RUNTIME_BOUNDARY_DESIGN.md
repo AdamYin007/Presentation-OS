@@ -623,7 +623,20 @@ Before merging PR64, verify:
 - [ ] No adapters/planners/story JSON changed
 - [ ] Packs NOT made default source of truth
 - [ ] No CI or npm script added
-- [ ] M7.2 set to Pack Runtime Context Inspection Hardening
+- [x] M7.2 set to Pack Runtime Context Inspection Hardening
+
+---
+
+## M7.2 Implementation Note
+
+M7.2 (PR65) implemented Pack Runtime Context Inspection Hardening:
+
+- PackRuntimeContext hardened with normalized read-only sections (governance, runtime, boundaries, sourceOfTruth, outputPolicy, validation).
+- Pack inspection derives from normalized context internally.
+- CLI visible output remains compatible.
+- Rendering unchanged.
+- Source-of-truth unchanged.
+- Contract smoke extended from 17 to 31 checks.
 
 ---
 

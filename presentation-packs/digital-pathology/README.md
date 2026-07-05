@@ -127,6 +127,7 @@ The following should remain in Core:
 | PR62 | M6 Pack Loader Checkpoint (M6.6) | ✅ Done |
 | PR63 | M7 Post-M6 Direction Decision RFC | ✅ Done |
 | PR64 | M7.1 Pack Runtime Boundary Design | ✅ Done |
+| PR65 | M7.2 Pack Runtime Context Inspection Hardening | ✅ Done |
 
 ---
 
@@ -175,6 +176,10 @@ M7.0 (RFC-0008) selected **Pack Runtime Boundary Deepening** as the next mainlin
 - **`--pack-story` remains explicit pack story rendering.** No behavioral change.
 - **No planner/adapter extraction selected.** These remain core components.
 - **No new public CLI commands.** No `package.json` changes.
-- **M7.1 is Pack Runtime Boundary Design** — design document only, no implementation.
-- M7.1 documented Pack Runtime Boundary Design (docs/M7_PACK_RUNTIME_BOUNDARY_DESIGN.md).
-- Pack Runtime Boundary defines 17 participants across loader-owned, bridge-owned, and core-owned layers.
+- **M7.2 Pack Runtime Context Inspection Hardening** — implemented normalized read-only context sections.
+- Pack Runtime Context inspection hardened with normalized sections (governance, runtime, boundaries, sourceOfTruth, outputPolicy).
+- Existing successful outputs remain compatible.
+- Pack remains explicit opt-in.
+- --story remains registry-backed.
+- --pack-story remains explicit pack story rendering.
+- No planner/adapter/theme extraction.

@@ -9,9 +9,14 @@
  * - Load all discovered packs.
  * - Register loaded packs in the in-memory registry.
  * - Propagate structured errors with errorCode and details.
+ * - Pass normalized context sections to inspection (M7.2).
  *
  * Does NOT render. Does NOT import engines/adapters/planners.
  * Does NOT change --story or --pack-story behavior.
+ *
+ * M7.2: Context now includes normalized read-only sections (boundaries,
+ * sourceOfTruth, outputPolicy) that inspection derives from. These sections
+ * are internal-only and do not affect CLI visible output.
  */
 
 var path = require("path");
@@ -173,9 +178,9 @@ function loadPack(target, options) {
 
   var context = contextResult.context;
 
-  // Step 6: Register in memory
+  // Step 6: Register in memory (tolerate duplicates — loadAllPacks may have pre-registered)
   var regResult = packRegistry.register(context);
-  if (!regResult.ok) {
+  if (!regResult.ok && regResult.errorCode !== "DUPLICATE_PACK_ID") {
     return normalizeError(regResult);
   }
 

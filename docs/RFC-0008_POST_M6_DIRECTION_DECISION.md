@@ -226,9 +226,11 @@ M7 should deepen Pack Runtime boundaries **without** making packs the default so
    - No planner/adapter/theme extraction.
 
 2. **M7.2 — Pack Runtime Context Inspection Hardening**
-   - Improve `PackRuntimeContext` usefulness for pack metadata and governance.
-   - Add read-only inspection capabilities.
-   - No rendering changes.
+   - **PR65 implements this with normalized read-only context sections.**
+   - Add normalized read-only sections to `PackRuntimeContext`: governance, runtime, boundaries, sourceOfTruth, outputPolicy, validation.
+   - Derive inspection from normalized context.
+   - Extend contract smoke from 17 to 31 checks.
+   - No CLI output change. No rendering change. No source-of-truth migration.
 
 3. **M7.3 — Pack Story Resolver / Loader Boundary Alignment Design**
    - Align `pack-story-resolver.js` with Pack Loader interfaces.
@@ -321,7 +323,7 @@ The following M6 frozen boundaries carry forward into M7:
 |---|---|---|---|
 | **M7.0** | Post-M6 Direction Decision RFC | **Documentation** | **PR63** — This RFC |
 | M7.1 | Pack Runtime Boundary Design | Design | **PR64** — M7.1 begins Option A with documentation-only Pack Runtime Boundary Design |
-| M7.2 | Pack Runtime Context Inspection Hardening | Implementation | Improve context usefulness |
+| M7.2 | Pack Runtime Context Inspection Hardening | Implementation | **PR65** — Hardened PackRuntimeContext with normalized read-only sections |
 | M7.3 | Pack Story Resolver / Loader Boundary Alignment Design | Design | Align resolver with loader interfaces |
 | M7.4 | Pack Runtime Boundary Smoke Checks | Testing | Verify boundary assumptions |
 | M7.5 | M7 Runtime Boundary Checkpoint | Documentation | Formal checkpoint, frozen boundaries |
@@ -403,3 +405,4 @@ Before merging PR63, verify:
 |---|---|---|---|
 | 1.0 | 2026-07-05 | Hermes | Initial Post-M6 Direction Decision RFC (M7.0) |
 | 1.1 | 2026-07-05 | Hermes | M7.1 implemented: Pack Runtime Boundary Design documented (PR64) |
+| 1.2 | 2026-07-05 | Hermes | M7.2 implemented: Pack Runtime Context Inspection Hardening (PR65) |

@@ -123,7 +123,8 @@
 - [x] M6.6 M6 Pack Loader Checkpoint — PR62 ✅
 - [x] M7.0 Post-M6 Direction Decision RFC — PR63 ✅
 - [x] M7.1 Pack Runtime Boundary Design — PR64 ✅
-- [ ] M7.2 Pack Runtime Context Inspection Hardening
+- [x] M7.2 Pack Runtime Context Inspection Hardening — PR65 ✅
+- [ ] M7.3 Pack Story Resolver / Loader Boundary Alignment Design
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
