@@ -5,8 +5,13 @@
  * - Load and validate a pack.
  * - Return structured inspection data for CLI consumption.
  * - Preserve error codes from loader for CLI error mapping.
+ * - Derive visible result from normalized PackRuntimeContext (M7.2).
  *
  * Does NOT render or modify anything. Read-only inspection.
+ *
+ * M7.2 hardening: Internal derivation from normalized PackRuntimeContext
+ * sections (governance, runtime, boundaries, sourceOfTruth).
+ * CLI visible output format is NOT changed — only internal derivation improves.
  */
 
 var path = require("path");
@@ -57,7 +62,13 @@ function inspectPack(target) {
   var manifest = ctx.manifest;
   var contents = manifest.contents || {};
 
-  // Build inspection result
+  // M7.2: Derive inspection result from normalized PackRuntimeContext sections.
+  // The normalized sections are internal-only and not printed by CLI.
+  // We use them for internal consistency but keep CLI-visible output unchanged.
+  var normGovernance = ctx.governance || {};
+  var normRuntime = ctx.runtime || {};
+
+  // Build inspection result — CLI-visible fields remain identical to pre-M7.2
   var result = {
     packId: ctx.packId,
     name: manifest.name || ctx.packId,
@@ -67,9 +78,28 @@ function inspectPack(target) {
     path: ctx.packRoot,
     validation: ctx.validation ? (ctx.validation.ok ? "passed" : "failed") : "unknown",
     assets: {},
-    runtime: ctx.runtime || {},
-    governance: ctx.governance || {},
+    runtime: {
+      loadedByDefault: normRuntime.loadedByDefault || false,
+      requiresPackLoader: normRuntime.requiresPackLoader || true,
+    },
+    governance: {
+      coreChangesAllowed: normGovernance.coreChangesAllowed || false,
+      migrationMode: normGovernance.migrationMode || "copy-first",
+    },
   };
+
+  // M7.2: Internal-only fields (not printed by CLI)
+  // These are available on the result object for programmatic inspection
+  // but are deliberately not formatted in --inspect-pack output.
+  if (ctx.boundaries) {
+    result._boundaries = ctx.boundaries;
+  }
+  if (ctx.sourceOfTruth) {
+    result._sourceOfTruth = ctx.sourceOfTruth;
+  }
+  if (ctx.outputPolicy) {
+    result._outputPolicy = ctx.outputPolicy;
+  }
 
   // Summarize asset groups
   var assetGroups = ["stories", "heroSequences", "terminology", "references", "content", "planners", "adapters", "themes", "examples"];

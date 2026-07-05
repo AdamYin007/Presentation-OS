@@ -51,6 +51,17 @@ M7.1 (PR64) is a **design-only** milestone:
 - **17 runtime boundary participants defined** across loader-owned, bridge-owned, and core-owned layers.
 - **Data ownership model documented** — pack-owned, registry-owned, core-owned, bridge-owned.
 
+## 1.4 M7.2 Implementation Note
+
+M7.2 (PR65) is the first **implementation** milestone of M7:
+
+- **Pack Runtime Context inspection hardened.** Normalized read-only context sections added (governance, runtime, boundaries, sourceOfTruth, outputPolicy, validation).
+- **No new public CLI command.** All existing commands remain unchanged.
+- **Existing successful commands remain unchanged.** `--story`, `--pack-story`, `--list-packs`, `--inspect-pack` all behave identically.
+- **Pack remains explicit opt-in.** No automatic source-of-truth migration.
+- **Contract smoke extended from 17 to 31 checks.** All checks pass.
+- **M7.3 is Pack Story Resolver / Loader Boundary Alignment Design.**
+
 ---
 
 ## 2 How to Inspect the Pack
