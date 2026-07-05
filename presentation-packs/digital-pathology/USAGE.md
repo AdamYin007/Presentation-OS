@@ -75,6 +75,20 @@ M7.3 (PR66) is a **design-only** milestone:
 - **Responsibility split defined** — loader owns metadata, resolver owns story path, context owns immutable sections.
 - **Future resolver contract defined as proposed only** — no implementation.
 
+## 1.6 M7.4 Smoke Check Note
+
+M7.4 (PR67) adds a **manual smoke check** for frozen M7 boundaries:
+
+- **Manual boundary smoke check command:**
+  ```bash
+  node registry/packages/ppt-factory/scripts/pack-runtime-boundary-smoke.js
+  ```
+- **60/60 checks pass.** All frozen boundary assumptions validated.
+- **Existing public CLI commands remain unchanged.** No new commands added.
+- **No npm script added.** Script is invoked directly via `node`.
+- **Pack remains explicit opt-in.** No automatic source-of-truth migration.
+- **M7.5 is Pack Runtime Boundary Checkpoint** — upcoming documentation-only checkpoint.
+
 ---
 
 ## 2 How to Inspect the Pack

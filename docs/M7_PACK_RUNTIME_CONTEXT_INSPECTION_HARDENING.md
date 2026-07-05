@@ -371,6 +371,19 @@ M7.3 (PR66) defined Pack Story Resolver / Loader boundary alignment:
 - Future resolver contract proposed (not implemented).
 - M7.4 set to Pack Runtime Boundary Smoke Checks.
 
+---
+
+## M7.4 Implementation Note
+
+M7.4 (PR67) added Pack Runtime Boundary Smoke Checks:
+
+- **Manual smoke script created:** `scripts/pack-runtime-boundary-smoke.js`.
+- **60/60 checks pass** across 7 categories (A–G).
+- Validates PackRuntimeContext sections, CLI compatibility, rendering isolation.
+- No CLI behavior change. No rendering behavior change. No source-of-truth change.
+- No npm script added. No package.json changes. No CI config changes.
+- M7.5 set to Pack Runtime Boundary Checkpoint.
+
 ## Document History
 
 | Version | Date | Author | Changes |

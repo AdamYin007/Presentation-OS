@@ -129,6 +129,7 @@ The following should remain in Core:
 | PR64 | M7.1 Pack Runtime Boundary Design | ✅ Done |
 | PR65 | M7.2 Pack Runtime Context Inspection Hardening | ✅ Done |
 | PR66 | M7.3 Pack Story Resolver / Loader Boundary Alignment Design | ✅ Done |
+| PR67 | M7.4 Pack Runtime Boundary Smoke Checks | ✅ Done |
 
 ---
 
@@ -191,3 +192,14 @@ M7.0 (RFC-0008) selected **Pack Runtime Boundary Deepening** as the next mainlin
 - --story remains registry-backed.
 - --pack-story remains explicit pack story rendering.
 - No planner/adapter/theme extraction.
+- **M7.4 Pack Runtime Boundary Smoke Checks** — added repeatable manual smoke script.
+- Pack Runtime Boundary Smoke Checks added via `scripts/pack-runtime-boundary-smoke.js`.
+- Frozen boundary assumptions now have repeatable manual smoke coverage.
+- 60/60 checks pass.
+- Pack remains explicit opt-in.
+- --story remains registry-backed.
+- --pack-story remains explicit pack story rendering.
+- Successful outputs remain compatible.
+- No CLI behavior change.
+- No rendering behavior change.
+- No source-of-truth change.

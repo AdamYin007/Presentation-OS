@@ -625,6 +625,7 @@ Before merging PR64, verify:
 - [ ] No CI or npm script added
 - [x] M7.2 set to Pack Runtime Context Inspection Hardening
 - [x] M7.3 set to Pack Story Resolver / Loader Boundary Alignment Design
+- [x] M7.4 set to Pack Runtime Boundary Smoke Checks
 
 ---
 
@@ -651,7 +652,15 @@ M7.2 (PR65) implemented Pack Runtime Context Inspection Hardening:
 - Desired future alignment model defined.
 - Responsibility split documented (loader/metadata, resolver/story-path, context/immutable-sections).
 - Future resolver contract proposed (not implemented).
-- Migration phases defined (M7.3 design → M7.4 smoke → M7.5 checkpoint → M8+ implementation).
+- **Migration phases defined** (M7.3 design → M7.4 smoke → M7.5 checkpoint → M8+ implementation).
+
+### M7.4 Pack Runtime Boundary Smoke Checks
+
+- M7.4 (PR67) adds a **manual smoke script** for frozen M7 boundaries.
+- `scripts/pack-runtime-boundary-smoke.js` validates 60 checks across 7 categories.
+- No CLI behavior change. No rendering behavior change. No source-of-truth change.
+- No npm script added. No package.json changes. No CI config changes.
+- M7.5 set to Pack Runtime Boundary Checkpoint.
 
 ---
 
