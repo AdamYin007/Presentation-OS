@@ -354,6 +354,23 @@ Passed through from pack-validator result. Deep-frozen.
 - [x] No CI or npm script added
 - [x] M7.3 set to Pack Story Resolver / Loader Boundary Alignment Design
 
+---
+
+## M7.3 Implementation Note
+
+M7.3 (PR66) defined Pack Story Resolver / Loader boundary alignment:
+
+- Pack Story Resolver / Loader alignment design documented.
+- No resolver behavior change.
+- No CLI behavior change.
+- No rendering behavior change.
+- Source-of-truth unchanged.
+- Boundary mismatch analyzed between resolver and loader.
+- Desired future alignment model defined.
+- Responsibility split documented.
+- Future resolver contract proposed (not implemented).
+- M7.4 set to Pack Runtime Boundary Smoke Checks.
+
 ## Document History
 
 | Version | Date | Author | Changes |

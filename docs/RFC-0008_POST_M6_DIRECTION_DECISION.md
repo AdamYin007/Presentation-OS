@@ -233,9 +233,15 @@ M7 should deepen Pack Runtime boundaries **without** making packs the default so
    - No CLI output change. No rendering change. No source-of-truth migration.
 
 3. **M7.3 — Pack Story Resolver / Loader Boundary Alignment Design**
-   - Align `pack-story-resolver.js` with Pack Loader interfaces.
-   - Document the relationship between explicit pack story resolution and loader.
-   - No behavioral changes.
+   - **PR66 implements this as a documentation-only design document.**
+   - Document boundary mismatch between resolver and loader.
+   - Define desired future alignment model.
+   - Propose future resolver contract shape (not implemented).
+   - No implementation — design document only.
+   - No runtime behavior change.
+   - No CLI behavior change.
+   - No source-of-truth migration.
+   - No planner/adapter/theme extraction.
 
 4. **M7.4 — Pack Runtime Boundary Smoke Checks**
    - Add smoke tests verifying boundary assumptions.
@@ -324,7 +330,7 @@ The following M6 frozen boundaries carry forward into M7:
 | **M7.0** | Post-M6 Direction Decision RFC | **Documentation** | **PR63** — This RFC |
 | M7.1 | Pack Runtime Boundary Design | Design | **PR64** — M7.1 begins Option A with documentation-only Pack Runtime Boundary Design |
 | M7.2 | Pack Runtime Context Inspection Hardening | Implementation | **PR65** — Hardened PackRuntimeContext with normalized read-only sections |
-| M7.3 | Pack Story Resolver / Loader Boundary Alignment Design | Design | Align resolver with loader interfaces |
+| M7.3 | Pack Story Resolver / Loader Boundary Alignment Design | Design | **PR66** — Documents alignment without changing resolver behavior |
 | M7.4 | Pack Runtime Boundary Smoke Checks | Testing | Verify boundary assumptions |
 | M7.5 | M7 Runtime Boundary Checkpoint | Documentation | Formal checkpoint, frozen boundaries |
 
@@ -406,3 +412,4 @@ Before merging PR63, verify:
 | 1.0 | 2026-07-05 | Hermes | Initial Post-M6 Direction Decision RFC (M7.0) |
 | 1.1 | 2026-07-05 | Hermes | M7.1 implemented: Pack Runtime Boundary Design documented (PR64) |
 | 1.2 | 2026-07-05 | Hermes | M7.2 implemented: Pack Runtime Context Inspection Hardening (PR65) |
+| 1.3 | 2026-07-05 | Hermes | M7.3 implemented: Pack Story Resolver / Loader Alignment Design (PR66) |
