@@ -138,7 +138,9 @@
 - [x] M8.2 PackRuntimeContext Contract Schema Documentation — PR71 ✅
 - M8.2 documents PackRuntimeContext conceptual schema (identity, metadata, governance, runtime, boundaries, sourceOfTruth, outputPolicy, validation).
 - No executable schema validation. No JSON schema files. No runtime shape change.
-- Next task: M8.3 Multi-Pack Discovery Assumptions Design
+- Next task: M8.3 Multi-Pack Discovery Assumptions Design — PR72 ✅
+- M8.3 defines multi-pack discovery assumptions (9 areas).
+- Next task: M8.4 Resolver Boundary & Error Semantics Design
 ### M5 — Pack Runtime Integration
 - [x] M5.0 Pack Runtime Integration Design Note
 - [x] M5.1 Pack Story Resolution Design Validation
