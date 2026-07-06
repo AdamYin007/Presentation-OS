@@ -182,6 +182,8 @@
 
 - [ ] M9.0 Contract Version Readiness Design — PR43 ✅
 - [ ] M9.1 PackRuntimeContext Soft Validator Design — PR44 ✅
+- [ ] M9.2 PackRuntimeContext Soft Validator Skeleton — PR45 ✅
+- [ ] M9.3 Soft Validation Report Format Design — PR46 ✅
 
 ## Rules for Future Work
 
