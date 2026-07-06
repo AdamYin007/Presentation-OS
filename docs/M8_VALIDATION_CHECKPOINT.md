@@ -145,7 +145,7 @@ M9 work may begin only after preserving the following constraints:
 Recommended M9 sequence:
 
 1. M9.0 Contract Version Readiness Design ✅ (PR43)
-2. M9.1 PackRuntimeContext Soft Schema Validator
+2. M9.1 PackRuntimeContext Soft Schema Validator ✅ (PR44)
 3. M9.2 Resolver ErrorCode Soft Validation
 4. M9.3 Multi-Pack Fixture Library
 5. M9.4 CI Soft Validation Report

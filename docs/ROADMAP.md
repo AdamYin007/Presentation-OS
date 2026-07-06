@@ -181,6 +181,7 @@
 ## M9 — Contract Version Readiness
 
 - [ ] M9.0 Contract Version Readiness Design — PR43 ✅
+- [ ] M9.1 PackRuntimeContext Soft Validator Design — PR44 ✅
 
 ## Rules for Future Work
 
