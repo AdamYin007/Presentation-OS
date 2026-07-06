@@ -187,6 +187,7 @@
 - [ ] M9.4 Soft Validation Report Writer Skeleton — PR47 ✅
 - [ ] M9.5 Standalone Soft Validation Report Script — PR48 ✅
 - [ ] M9.6 Soft Validation Checkpoint — PR49 ✅
+- [ ] M9.7 Doctor Summary Preview Design — PR50 ✅
 
 ## Rules for Future Work
 
