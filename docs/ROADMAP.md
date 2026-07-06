@@ -184,6 +184,9 @@
 - [ ] M9.1 PackRuntimeContext Soft Validator Design — PR44 ✅
 - [ ] M9.2 PackRuntimeContext Soft Validator Skeleton — PR45 ✅
 - [ ] M9.3 Soft Validation Report Format Design — PR46 ✅
+- [ ] M9.4 Soft Validation Report Writer Skeleton — PR47 ✅
+- [ ] M9.5 Standalone Soft Validation Report Script — PR48 ✅
+- [ ] M9.6 Soft Validation Checkpoint — PR49 ✅
 
 ## Rules for Future Work
 
