@@ -493,14 +493,13 @@ switch (inspectCode) {
 | M8.3 (PR72) | Discovery assumptions | None | No |
 | **M8.4 (PR72)** | **Error semantics design** | **None** | **No** |
 | M8.5 (future) | Error implementation | Add new codes, deprecate legacy names | No (additive) |
-| M8.5 (PR74) | Validation gates | Document enforcement framework | No (documentation) |
 | M9.0 (future) | Error code renaming | Rename legacy codes to prefixed versions | Yes (requires deprecation period) |
 
 ### MIG2. Deprecation Strategy
 
 **Phase 1 (M8.4)**: Document desired naming convention. Keep all existing codes stable.
 
-**Phase 2 (M8.5)**: Introduce prefixed aliases alongside legacy codes. M8.5 (PR74) defines validation gates that enforce error semantics. Both resolve to the same error.
+**Phase 2 (M8.5)**: Introduce prefixed aliases alongside legacy codes. Both resolve to the same error.
 - Example: `INVALID_FORMAT` continues to work; `INPUT_INVALID_FORMAT` is also accepted.
 - CLI switch statements handle both legacy and prefixed codes.
 

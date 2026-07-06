@@ -234,7 +234,9 @@ Design only:
 
 - M8.1 does not implement multi-pack discovery changes.
 - Current discovery still supports existing pack behavior.
-- Future M8.3 should define multi-pack discovery assumptions.
+- M8.3 (PR72) defines multi-pack discovery assumptions.
+- M8.4 (PR73) defines resolver boundary and error semantics.
+- Future M8.5 should implement resolver error codes.
 - Duplicate pack ids, invalid manifests, missing assets, and version differences need formalized policy.
 - No source-of-truth migration.
 

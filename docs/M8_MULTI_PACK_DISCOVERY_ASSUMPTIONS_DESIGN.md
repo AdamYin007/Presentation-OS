@@ -377,7 +377,6 @@ Before M8.4+ implements multi-pack discovery changes, the following gates must p
 
 - Gate 1-3: Can be reviewed in parallel (they cover different subsystems).
 - Gate 4-6: Must be reviewed sequentially (Gate 4 depends on Gate 2, Gate 6 depends on Gate 5).
-- M8.5 (PR74) defines validation gates that enforce these assumptions.
 
 ### G3. Risk Assessment Matrix
 
