@@ -17,30 +17,57 @@ const forbiddenDocs = [
   "registry/docs/M8_VALIDATION_GATES_CONTRACT_ENFORCEMENT_DESIGN.md",
 ];
 
-let failed = false;
+function checkM8Docs(options = {}) {
+  const { verbose = true, cwd = process.cwd() } = options;
+  const failures = [];
 
-console.log("M8 docs smoke check");
+  if (verbose) {
+    console.log("M8 docs smoke check");
+  }
 
-for (const file of requiredDocs) {
-  if (!fs.existsSync(path.resolve(file))) {
-    console.error(`FAIL missing required doc: ${file}`);
-    failed = true;
-  } else {
-    console.log(`PASS required doc exists: ${file}`);
+  for (const file of requiredDocs) {
+    const exists = fs.existsSync(path.resolve(cwd, file));
+
+    if (!exists) {
+      failures.push(`missing required doc: ${file}`);
+      if (verbose) console.error(`FAIL missing required doc: ${file}`);
+    } else if (verbose) {
+      console.log(`PASS required doc exists: ${file}`);
+    }
+  }
+
+  for (const file of forbiddenDocs) {
+    const exists = fs.existsSync(path.resolve(cwd, file));
+
+    if (exists) {
+      failures.push(`misplaced registry doc exists: ${file}`);
+      if (verbose) console.error(`FAIL misplaced registry doc exists: ${file}`);
+    } else if (verbose) {
+      console.log(`PASS no misplaced registry doc: ${file}`);
+    }
+  }
+
+  if (verbose && failures.length === 0) {
+    console.log("M8 docs smoke check passed");
+  }
+
+  return {
+    ok: failures.length === 0,
+    failures,
+    requiredDocs,
+    forbiddenDocs,
+  };
+}
+
+if (require.main === module) {
+  const result = checkM8Docs({ verbose: true });
+  if (!result.ok) {
+    process.exit(1);
   }
 }
 
-for (const file of forbiddenDocs) {
-  if (fs.existsSync(path.resolve(file))) {
-    console.error(`FAIL misplaced registry doc exists: ${file}`);
-    failed = true;
-  } else {
-    console.log(`PASS no misplaced registry doc: ${file}`);
-  }
-}
-
-if (failed) {
-  process.exit(1);
-}
-
-console.log("M8 docs smoke check passed");
+module.exports = {
+  checkM8Docs,
+  requiredDocs,
+  forbiddenDocs,
+};

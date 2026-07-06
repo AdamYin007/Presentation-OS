@@ -48,6 +48,9 @@ Commands:
 
 if (cmd === "doctor") {
   console.log("== AWE Doctor ==");
+
+  let failed = false;
+
   [
     "package.json",
     "packages/cli/src/index.js",
@@ -59,9 +62,26 @@ if (cmd === "doctor") {
     "docs",
     "tests"
   ].forEach(p => {
-    exists(p) ? ok(p) : fail(p);
+    if (exists(p)) {
+      ok(p);
+    } else {
+      fail(p);
+      failed = true;
+    }
   });
-  process.exit(0);
+
+  const { checkM8Docs } = require("../../../scripts/check-m8-docs.cjs");
+  const m8DocsResult = checkM8Docs({ verbose: false, cwd: root });
+
+  if (m8DocsResult.ok) {
+    ok("M8 docs smoke");
+  } else {
+    fail("M8 docs smoke");
+    m8DocsResult.failures.forEach(reason => console.log(`  - ${reason}`));
+    failed = true;
+  }
+
+  process.exit(failed ? 1 : 0);
 }
 
 if (cmd === "list") {
