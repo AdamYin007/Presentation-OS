@@ -11,7 +11,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "doctor": "node packages/cli/src/index.js doctor",
     "start": "node packages/cli/src/index.js",
-    "check:m8-docs": "node scripts/check-m8-docs.cjs"
+    "check:m8-docs": "node scripts/check-m8-docs.cjs",
+    "check": "npm run check:m8-docs",
+    "check:docs": "npm run check:m8-docs",
+    "check:all": "npm run check:m8-docs && npm run doctor"
   },
   "keywords": [],
   "author": "",
