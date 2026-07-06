@@ -234,7 +234,9 @@ Design only:
 
 - M8.1 does not implement multi-pack discovery changes.
 - Current discovery still supports existing pack behavior.
-- M8.3 (PR72) defines multi-pack discovery assumptions: duplicate policy, version conflicts, ordering, output paths, resolver implications, CLI compatibility, validation gates, migration sequence.
+- M8.3 (PR72) defines multi-pack discovery assumptions.
+- M8.4 (PR73) defines resolver boundary and error semantics.
+- Future M8.5 should implement resolver error codes.
 - Duplicate pack ids, invalid manifests, missing assets, and version differences need formalized policy.
 - No source-of-truth migration.
 
@@ -262,7 +264,7 @@ Safe sequence for M8+:
 |---|---|---|---|
 | M8.1 | Pack Runtime Contract Hardening Design | Documentation | **PR70** — Contract hardening design |
 | M8.2 | PackRuntimeContext Contract Schema Documentation | Documentation | **PR71** — Full conceptual schema (8 sections, 11 required values) |
-| [x] M8.3 | Multi-Pack Discovery Assumptions Design | Documentation | **PR72** — Multi-pack discovery assumptions design |
+| M8.3 | Multi-Pack Discovery Assumptions Design | Design | Proposed |
 | M8.4 | Resolver/Context Consumption RFC | RFC | Proposed |
 | M8.5 | M8 Runtime Contract Checkpoint | Checkpoint | Proposed |
 

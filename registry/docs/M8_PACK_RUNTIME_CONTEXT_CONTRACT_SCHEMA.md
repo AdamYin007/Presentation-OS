@@ -30,8 +30,7 @@ This document defines the conceptual schema contract for PackRuntimeContext:
 - Future schema validation gates
 - Invalid and valid conceptual examples
 - Resolver/context consumption implications
-- Multi-pack implications: See M8.3 (PR72) for detailed multi-pack discovery assumptions. M8.2 documents PackRuntimeContext schema; M8.3 documents how discovery interacts with the schema.
-- M8.3 assumes PackRuntimeContext sections (boundaries, sourceOfTruth, outputPolicy) are consumed by resolver. M8.2 does not implement this consumption.
+- Multi-pack implications
 - Error model implications
 
 ## Non-goals
