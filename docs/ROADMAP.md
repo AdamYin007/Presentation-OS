@@ -178,6 +178,10 @@
 
 ---
 
+## M9 — Contract Version Readiness
+
+- [ ] M9.0 Contract Version Readiness Design — PR43 ✅
+
 ## Rules for Future Work
 
 1. **One PR = One Goal** — 每个 PR 只做一个明确的事情
