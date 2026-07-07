@@ -192,6 +192,7 @@
 - [x] M9.9 Package Script Entrypoint Implementation — PR52 ✅
 - [ ] M9.10 Soft Validation Package Entrypoint Checkpoint — PR53 ✅
 - [ ] M10.0 Hard Gate Readiness Design — PR55 ✅
+- [ ] M10.1 Fixtures and Snapshot Test Design — PR56 ✅
 
 ## Rules for Future Work
 
