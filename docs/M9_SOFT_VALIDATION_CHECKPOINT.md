@@ -27,6 +27,8 @@ This checkpoint covers:
 | M9.3 | Complete | docs/M9_SOFT_VALIDATION_REPORT_FORMAT_DESIGN.md |
 | M9.4 | Complete | packages/cli/src/validation/soft-validation-report-writer.js |
 | M9.5 | Complete | scripts/generate-pack-runtime-context-soft-report.cjs |
+| M9.8 | Complete | docs/M9_PACKAGE_SCRIPT_ENTRYPOINT_DESIGN.md |
+| M9.9 | Complete | package.json scripts + check script |
 
 ## 4. Current Capability
 
@@ -163,6 +165,10 @@ Design how `awe doctor` could display a soft validation summary line. Does not m
 ### Option C — M9.9 Package Script Entrypoint Design (documentation-only)
 
 Design whether to add an `npm run` script for soft validation. Does not modify `package.json`.
+
+### Option C — M9.9 Package Script Entrypoint Implementation (done)
+
+Added `pack-context:soft-report` script alias in package.json. Preserves all boundaries: no check:all, no doctor, no CI coupling.
 
 ### Option D — M10.0 Hard Gate Candidate Readiness (documentation-only)
 

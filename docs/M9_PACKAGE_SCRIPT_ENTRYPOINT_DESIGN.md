@@ -78,7 +78,15 @@ A future package script entrypoint should:
 | `npm run pack-context:soft-report` | Precise, emphasizes report | Longer name | **Recommended** |
 | `npm run validate:pack-context` | Sounds authoritative | Implies hard gate | Avoid |
 | `npm run check:soft-report` | Descriptive | Suggests check semantics | Avoid initially |
-| `npm run report:pack-context` | Report-oriented | Less obvious soft validation | Possible |
+
+## 7. Implementation (M9.9)
+
+M9.9 implements the recommended entrypoint:
+
+- Added `pack-context:soft-report` to package.json scripts
+- Value: `node scripts/generate-pack-runtime-context-soft-report.cjs`
+- Added `scripts/check-package-script-entrypoint.cjs` for local validation
+- No coupling into check:all, doctor, or CI
 
 **Recommendation:** Prioritize `pack-context:soft-report` because it clearly associates with PackRuntimeContext and emphasizes report (not validation).
 
@@ -233,8 +241,9 @@ Before modifying package.json in any future milestone:
 
 Future milestone options (NOT implemented here):
 
-### Option A — M9.9 Package Script Entrypoint Implementation
-- Add only `pack-context:soft-report` to package.json
+### Option A — M9.9 Package Script Entrypoint Implementation ✅ DONE
+
+- Added only `pack-context:soft-report` to package.json
 - No check:all coupling
 - No CI changes
 - Conservative, low-risk
@@ -248,8 +257,8 @@ Future milestone options (NOT implemented here):
 - Opt-in / hidden preview in doctor
 - No exit code changes
 
-**Recommendation:** If improving usability is the priority, proceed with M9.9 Package Script Entrypoint Implementation. It adds only a standalone script alias, preserves all boundaries, and requires no behavioral changes.
+**Recommendation:** M9.9 implemented Option A. Proceed to M10+ if hard gate promotion is desired.
 
 ## 18. Checkpoint Conclusion
 
-M9.8 only defines the package script entrypoint strategy. It does NOT modify package.json. Any future implementation must remain explicit, manual, non-blocking, and separate from check:all, doctor, and CI.
+M9.8 defined the package script entrypoint strategy. M9.9 implemented it: `pack-context:soft-report` is now a package.json script alias, preserving all boundaries (no check:all, no doctor, no CI coupling). Any future implementation must remain explicit, manual, non-blocking, and separate from check:all, doctor, and CI.
