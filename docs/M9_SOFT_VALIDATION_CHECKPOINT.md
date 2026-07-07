@@ -29,6 +29,7 @@ This checkpoint covers:
 | M9.5 | Complete | scripts/generate-pack-runtime-context-soft-report.cjs |
 | M9.8 | Complete | docs/M9_PACKAGE_SCRIPT_ENTRYPOINT_DESIGN.md |
 | M9.9 | Complete | package.json scripts + check script |
+| M9.10 | Complete | docs/M9_SOFT_VALIDATION_PACKAGE_ENTRYPOINT_CHECKPOINT.md |
 
 ## 4. Current Capability
 

@@ -189,6 +189,8 @@
 - [ ] M9.6 Soft Validation Checkpoint — PR49 ✅
 - [ ] M9.7 Doctor Summary Preview Design — PR50 ✅
 - [ ] M9.8 Package Script Entrypoint Design — PR51 ✅
+- [x] M9.9 Package Script Entrypoint Implementation — PR52 ✅
+- [ ] M9.10 Soft Validation Package Entrypoint Checkpoint — PR53 ✅
 
 ## Rules for Future Work
 
