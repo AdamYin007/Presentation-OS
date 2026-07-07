@@ -42,6 +42,7 @@ var SNAPSHOT_COMPARE_STATUS = Object.freeze({
   FIXTURE_JSON_ERROR: "fixture-json-error",
   CANDIDATE_GENERATION_ERROR: "candidate-generation-error",
   INTERNAL_ERROR: "internal-error",
+  ORPHAN_SNAPSHOT: "orphan-snapshot",
 });
 
 /**
@@ -502,6 +503,212 @@ function compareSnapshotForFixture(fixturePath, options) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  discoverFixtureFiles                                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Recursively discover all .json files under a directory.
+ * Ignores hidden files, symlinks, README, .gitkeep.
+ * Returns sorted array of repo-relative paths.
+ */
+function discoverFixtureFiles(fixtureRoot, cwd) {
+  var absRoot = path.resolve(cwd, fixtureRoot);
+  var results = [];
+
+  function walk(relPrefix) {
+    var entries = fs.readdirSync(path.join(absRoot, relPrefix || ""), { withFileTypes: true });
+    entries.sort(function (a, b) { return a.name < b.name ? -1 : 1; });
+    for (var i = 0; i < entries.length; i++) {
+      var entry = entries[i];
+      if (entry.name.charAt(0) === ".") continue;
+      if (entry.name === "README.md" || entry.name === ".gitkeep") continue;
+      var rel = relPrefix ? relPrefix + "/" + entry.name : entry.name;
+      var abs = path.join(absRoot, rel);
+      if (entry.isDirectory()) {
+        walk(rel);
+      } else if (entry.isFile() && entry.name.endsWith(".json")) {
+        results.push(rel);
+      }
+    }
+  }
+
+  walk("");
+  // Prepend fixtureRoot to make them repo-relative
+  for (var i = 0; i < results.length; i++) {
+    results[i] = fixtureRoot + "/" + results[i];
+  }
+  return results;
+}
+
+/* ------------------------------------------------------------------ */
+/*  findOrphanSnapshots                                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Find snapshot files with no corresponding fixture.
+ * Read-only — never deletes files.
+ *
+ * @param {object} [options]
+ * @param {string} [options.cwd]
+ * @param {string} [options.fixtureRoot]
+ * @param {string} [options.snapshotRoot]
+ * @returns {Array} Sorted array of orphan snapshot paths
+ */
+function findOrphanSnapshots(options) {
+  options = options || {};
+  var cwd = options.cwd || process.cwd();
+  var fixtureRoot = options.fixtureRoot || SNAPSHOT_WRITER.DEFAULT_FIXTURE_ROOT;
+  var snapshotRoot = options.snapshotRoot || SNAPSHOT_WRITER.DEFAULT_SNAPSHOT_ROOT;
+
+  // Build set of expected snapshot paths
+  var expectedSnapshots = new Set();
+  var fixtureFiles = discoverFixtureFiles(fixtureRoot, cwd);
+  for (var i = 0; i < fixtureFiles.length; i++) {
+    var mapping = SNAPSHOT_WRITER.mapFixturePathToSnapshotPath(fixtureFiles[i], {
+      fixtureRoot: fixtureRoot,
+      snapshotRoot: snapshotRoot,
+      cwd: cwd,
+    });
+    expectedSnapshots.add(mapping.snapshotPath);
+  }
+
+  // Discover actual snapshot files
+  var absSnapRoot = path.resolve(cwd, snapshotRoot);
+  var orphans = [];
+
+  function walkSnap(relPrefix) {
+    var entries = fs.readdirSync(path.join(absSnapRoot, relPrefix || ""), { withFileTypes: true });
+    entries.sort(function (a, b) { return a.name < b.name ? -1 : 1; });
+    for (var i = 0; i < entries.length; i++) {
+      var entry = entries[i];
+      if (entry.name.charAt(0) === ".") continue;
+      if (entry.name === "README.md" || entry.name === ".gitkeep") continue;
+      var rel = relPrefix ? relPrefix + "/" + entry.name : entry.name;
+      var abs = path.join(absSnapRoot, rel);
+      if (entry.isDirectory()) {
+        walkSnap(rel);
+      } else if (entry.isFile() && entry.name.endsWith(".report.json")) {
+        // Prepend snapshotRoot to make repo-relative
+        var fullPath = snapshotRoot + "/" + rel;
+        if (!expectedSnapshots.has(fullPath)) {
+          orphans.push(fullPath);
+        }
+      }
+    }
+  }
+
+  walkSnap("");
+  orphans.sort();
+  return orphans;
+}
+
+/* ------------------------------------------------------------------ */
+/*  compareAllSnapshots                                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Compare all fixtures against their committed snapshots.
+ *
+ * Read-only — never writes files.
+ *
+ * @param {object} [options]
+ * @param {string} [options.cwd]
+ * @param {string} [options.fixtureRoot]
+ * @param {string} [options.snapshotRoot]
+ * @param {boolean} [options.includeDiff]
+ * @param {number} [options.maxDifferences]
+ * @param {number} [options.maxValueLength]
+ * @param {boolean} [options.detectOrphans]
+ * @returns {object} Structured comparison result
+ */
+function compareAllSnapshots(options) {
+  options = options || {};
+  var cwd = options.cwd || process.cwd();
+  var fixtureRoot = options.fixtureRoot || SNAPSHOT_WRITER.DEFAULT_FIXTURE_ROOT;
+  var snapshotRoot = options.snapshotRoot || SNAPSHOT_WRITER.DEFAULT_SNAPSHOT_ROOT;
+  var includeDiff = options.includeDiff !== false;
+  var maxDiffs = options.maxDifferences || DEFAULT_MAX_DIFFERENCES;
+  var maxValLen = options.maxValueLength || DEFAULT_MAX_VALUE_LENGTH;
+  var detectOrphans = options.detectOrphans !== false;
+
+  var fixtureFiles = discoverFixtureFiles(fixtureRoot, cwd);
+  var results = [];
+  var summary = {
+    total: fixtureFiles.length,
+    matched: 0,
+    missingSnapshots: 0,
+    invalidSnapshots: 0,
+    contentDrift: 0,
+    formatDrift: 0,
+    fixtureErrors: 0,
+    candidateErrors: 0,
+    orphanSnapshots: 0,
+    failed: 0,
+  };
+
+  for (var i = 0; i < fixtureFiles.length; i++) {
+    var r = compareSnapshotForFixture(fixtureFiles[i], {
+      cwd: cwd,
+      fixtureRoot: fixtureRoot,
+      snapshotRoot: snapshotRoot,
+      includeDiff: includeDiff,
+      maxDifferences: maxDiffs,
+      maxValueLength: maxValLen,
+    });
+
+    results.push(r);
+
+    if (r.status === SNAPSHOT_COMPARE_STATUS.MATCH) {
+      summary.matched++;
+    } else if (r.status === SNAPSHOT_COMPARE_STATUS.MISSING_SNAPSHOT) {
+      summary.missingSnapshots++;
+      summary.failed++;
+    } else if (r.status === SNAPSHOT_COMPARE_STATUS.INVALID_SNAPSHOT_JSON) {
+      summary.invalidSnapshots++;
+      summary.failed++;
+    } else if (r.status === SNAPSHOT_COMPARE_STATUS.CONTENT_DRIFT) {
+      summary.contentDrift++;
+      summary.failed++;
+    } else if (r.status === SNAPSHOT_COMPARE_STATUS.FORMAT_DRIFT) {
+      summary.formatDrift++;
+      summary.failed++;
+    } else if (r.status === SNAPSHOT_COMPARE_STATUS.CANDIDATE_GENERATION_ERROR) {
+      summary.candidateErrors++;
+      summary.failed++;
+    } else {
+      summary.fixtureErrors++;
+      summary.failed++;
+    }
+  }
+
+  var orphans = [];
+  if (detectOrphans) {
+    orphans = findOrphanSnapshots({ cwd: cwd, fixtureRoot: fixtureRoot, snapshotRoot: snapshotRoot });
+    summary.orphanSnapshots = orphans.length;
+    if (orphans.length > 0) summary.failed++;
+  }
+
+  var overallStatus = summary.failed === 0 ? SNAPSHOT_COMPARE_STATUS.MATCH : SNAPSHOT_COMPARE_STATUS.CONTENT_DRIFT;
+
+  return {
+    status: overallStatus,
+    ok: summary.failed === 0,
+    fixtureRoot: fixtureRoot,
+    snapshotRoot: snapshotRoot,
+    summary: summary,
+    results: results,
+    orphans: orphans.map(function (p) {
+      return {
+        status: SNAPSHOT_COMPARE_STATUS.ORPHAN_SNAPSHOT,
+        snapshotPath: p,
+        fixturePath: null,
+        migrationHint: "Review and remove intentionally in a dedicated PR.",
+      };
+    }),
+  };
+}
+
+/* ------------------------------------------------------------------ */
 /*  Exports                                                             */
 /* ------------------------------------------------------------------ */
 
@@ -514,4 +721,6 @@ module.exports = {
   compareSnapshotObjects: compareSnapshotObjects,
   formatSnapshotDifference: formatSnapshotDifference,
   compareSnapshotForFixture: compareSnapshotForFixture,
+  compareAllSnapshots: compareAllSnapshots,
+  findOrphanSnapshots: findOrphanSnapshots,
 };
