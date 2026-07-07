@@ -14,7 +14,8 @@
     "check:m8-docs": "node scripts/check-m8-docs.cjs",
     "check": "npm run check:m8-docs",
     "check:docs": "npm run check:m8-docs",
-    "check:all": "npm run check:m8-docs && npm run doctor"
+    "check:all": "npm run check:m8-docs && npm run doctor",
+    "pack-context:soft-report": "node scripts/generate-pack-runtime-context-soft-report.cjs"
   },
   "keywords": [],
   "author": "",
