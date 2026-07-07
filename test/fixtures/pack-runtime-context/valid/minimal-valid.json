@@ -1,0 +1,27 @@
+{
+  "identity": {},
+  "metadata": {},
+  "governance": {
+    "coreChangesAllowed": false,
+    "migrationMode": "copy-first"
+  },
+  "runtime": {
+    "loadedByDefault": false,
+    "requiresPackLoader": true
+  },
+  "boundaries": {
+    "storyRegistryDefault": true,
+    "packStoryExplicit": true,
+    "automaticPackLookup": false,
+    "plannerExtraction": false,
+    "adapterExtraction": false,
+    "themeExtraction": false,
+    "sourceOfTruthMigration": false
+  },
+  "sourceOfTruth": {
+    "packsAreDefault": false
+  },
+  "outputPolicy": {},
+  "validation": {},
+  "contractVersion": "1.0.0"
+}

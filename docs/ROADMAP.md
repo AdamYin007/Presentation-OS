@@ -194,6 +194,7 @@
 - [ ] M10.0 Hard Gate Readiness Design — PR55 ✅
 - [ ] M10.1 Fixtures and Snapshot Test Design — PR56 ✅
 - [ ] M10.2 Fixture Directory Skeleton — PR57 ✅
+- [ ] M10.3 Minimal Fixture Set — PR58 ✅
 
 ## Rules for Future Work
 

@@ -6,10 +6,24 @@ This directory stores canonical PackRuntimeContext validation fixtures for soft 
 
 ## Current Status
 
-- This directory is a **skeleton only**.
-- No fixture JSON files are added in M10.2.
-- Fixture contents will be added in future small PRs.
+- This directory is a **skeleton with minimal fixtures**.
+- 3 fixture files added in M10.3.
+- More fixtures will be added in future small PRs.
 - Fixtures are not wired into `check:all`, CI, doctor, or runtime.
+
+## Current Fixtures
+
+| Fixture | Category | Intent | Expected Primary Finding |
+|---|---|---|---|
+| valid/minimal-valid.json | valid | smallest currently accepted PackRuntimeContext | none |
+| invalid/context-not-object.json | invalid | valid JSON with non-object root | ERROR_CONTEXT_NOT_OBJECT |
+| edge/missing-contract-version.json | edge | structurally valid context without contractVersion | INFO_CONTRACT_VERSION_ABSENT |
+
+**Notes:**
+
+- No snapshots are added in M10.3.
+- Fixtures are not wired into `check:all` or CI.
+- Expected behavior is based on the current soft validator skeleton.
 
 ## Directory Layout
 
