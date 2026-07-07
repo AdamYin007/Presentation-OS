@@ -195,6 +195,7 @@
 - [ ] M10.1 Fixtures and Snapshot Test Design — PR56 ✅
 - [ ] M10.2 Fixture Directory Skeleton — PR57 ✅
 - [ ] M10.3 Minimal Fixture Set — PR58 ✅
+- [ ] M10.4 Snapshot Writer Design — PR59 ✅
 
 ## Rules for Future Work
 
