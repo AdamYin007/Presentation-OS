@@ -193,6 +193,7 @@
 - [ ] M9.10 Soft Validation Package Entrypoint Checkpoint — PR53 ✅
 - [ ] M10.0 Hard Gate Readiness Design — PR55 ✅
 - [ ] M10.1 Fixtures and Snapshot Test Design — PR56 ✅
+- [ ] M10.2 Fixture Directory Skeleton — PR57 ✅
 
 ## Rules for Future Work
 
