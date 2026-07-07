@@ -489,8 +489,8 @@ Design only — no files created in M10.4.
 
 ## 31. Minimal Implementation Sequence
 
-- **Phase 1 — M10.4 Design**: documentation-only
-- **Phase 2 — M10.5 Snapshot Writer Skeleton**: normalization + dry-run only
+- **Phase 1 — M10.4 Design**: documentation-only ✅ DONE
+- **Phase 2 — M10.5 Snapshot Writer Skeleton**: normalization + dry-run only ✅ DONE
 - **Phase 3 — M10.6 Initial Snapshot Generation**: generate 3 snapshots explicitly
 - **Phase 4 — M10.7 Snapshot Comparator**: standalone compare script
 - **Phase 5 — M10.8 Snapshot Checkpoint**: freeze behavior
