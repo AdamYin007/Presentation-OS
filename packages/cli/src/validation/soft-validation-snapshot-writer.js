@@ -453,6 +453,95 @@ function createNormalizedSnapshotReport(fixturePath, options) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  writeSnapshotReport                                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Write a normalized snapshot report to disk.
+ *
+ * Requires explicit options.update === true.
+ * Without update: true, returns dry-run info without writing.
+ *
+ * Creates parent directories if needed.
+ * Does NOT delete any other snapshots.
+ * Does NOT scan or clean orphan snapshots.
+ *
+ * @param {object} candidate - Result from createNormalizedSnapshotReport
+ * @param {object} [options]
+ * @param {boolean} [options.update] - Must be true to write files
+ * @param {string} [options.cwd]
+ * @returns {{action: string, fixturePath: string, snapshotPath: string, bytes: number, report: object}}
+ */
+function writeSnapshotReport(candidate, options) {
+  options = options || {};
+  var cwd = options.cwd || process.cwd();
+  var shouldUpdate = options.update === true;
+
+  var fixturePath = candidate.fixture.path;
+  var snapshotPath = candidate.target.snapshotPath;
+  var report = candidate.report;
+
+  // Serialize with deterministic formatting
+  var serialized = serializeSnapshotReport(report, { pretty: true, trailingNewline: true });
+  var buffer = Buffer.from(serialized, "utf8");
+  var bytes = buffer.length;
+
+  // Resolve absolute paths
+  var absSnapshotPath = path.resolve(cwd, snapshotPath);
+  var absSnapshotDir = path.dirname(absSnapshotPath);
+
+  if (!shouldUpdate) {
+    return {
+      action: "dry-run",
+      fixturePath: fixturePath,
+      snapshotPath: snapshotPath,
+      bytes: bytes,
+      report: report,
+    };
+  }
+
+  // Ensure parent directory exists
+  if (!fs.existsSync(absSnapshotDir)) {
+    fs.mkdirSync(absSnapshotDir, { recursive: true });
+  }
+
+  // Determine action: created / updated / unchanged
+  if (!fs.existsSync(absSnapshotPath)) {
+    // File doesn't exist: create
+    fs.writeFileSync(absSnapshotPath, serialized, "utf8");
+    return {
+      action: "created",
+      fixturePath: fixturePath,
+      snapshotPath: snapshotPath,
+      bytes: bytes,
+      report: report,
+    };
+  }
+
+  // File exists: compare
+  var existing = fs.readFileSync(absSnapshotPath);
+  if (existing.equals(buffer)) {
+    return {
+      action: "unchanged",
+      fixturePath: fixturePath,
+      snapshotPath: snapshotPath,
+      bytes: bytes,
+      report: report,
+    };
+  }
+
+  // Content differs: update
+  fs.writeFileSync(absSnapshotPath, serialized, "utf8");
+  return {
+    action: "updated",
+    fixturePath: fixturePath,
+    snapshotPath: snapshotPath,
+    bytes: bytes,
+    report: report,
+  };
+}
+
+/* ------------------------------------------------------------------ */
 /*  serializeSnapshotReport                                             */
 /* ------------------------------------------------------------------ */
 
@@ -496,4 +585,5 @@ module.exports = {
   regenerateFindingIds: regenerateFindingIds,
   createNormalizedSnapshotReport: createNormalizedSnapshotReport,
   serializeSnapshotReport: serializeSnapshotReport,
+  writeSnapshotReport: writeSnapshotReport,
 };

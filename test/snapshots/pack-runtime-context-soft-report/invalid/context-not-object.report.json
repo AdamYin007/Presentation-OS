@@ -1,0 +1,38 @@
+{
+  "reportVersion": "0.1",
+  "reportType": "soft-validation",
+  "validatorId": "pack-runtime-context-soft-validator",
+  "contractName": "PackRuntimeContext",
+  "contractVersion": null,
+  "status": "soft-fail",
+  "severity": "error",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "source": "test/fixtures/pack-runtime-context/invalid/context-not-object.json",
+  "summary": {
+    "total": 1,
+    "info": 0,
+    "warnings": 0,
+    "errors": 1,
+    "gatesChecked": 1,
+    "gatesWithFindings": 1
+  },
+  "results": [
+    {
+      "id": "ERROR_CONTEXT_NOT_OBJECT:$:0",
+      "gateId": "CONTEXT_REQUIRED_SECTIONS_GATE",
+      "code": "ERROR_CONTEXT_NOT_OBJECT",
+      "severity": "error",
+      "message": "PackRuntimeContext must be a non-null, non-array object",
+      "path": "$",
+      "expected": "object",
+      "actual": "array",
+      "migrationHint": "Ensure context is constructed as a plain object literal or via Object.create(null).",
+      "sourceDocument": "docs/M8_PACK_RUNTIME_CONTEXT_CONTRACT_SCHEMA.md",
+      "introducedIn": "M9.2",
+      "blocking": false
+    }
+  ],
+  "metadata": {
+    "fixturePath": "test/fixtures/pack-runtime-context/invalid/context-not-object.json"
+  }
+}

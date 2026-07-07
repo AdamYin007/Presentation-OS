@@ -1,0 +1,23 @@
+{
+  "reportVersion": "0.1",
+  "reportType": "soft-validation",
+  "validatorId": "pack-runtime-context-soft-validator",
+  "contractName": "PackRuntimeContext",
+  "contractVersion": null,
+  "status": "pass",
+  "severity": "info",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "source": "test/fixtures/pack-runtime-context/valid/minimal-valid.json",
+  "summary": {
+    "total": 0,
+    "info": 0,
+    "warnings": 0,
+    "errors": 0,
+    "gatesChecked": 0,
+    "gatesWithFindings": 0
+  },
+  "results": [],
+  "metadata": {
+    "fixturePath": "test/fixtures/pack-runtime-context/valid/minimal-valid.json"
+  }
+}

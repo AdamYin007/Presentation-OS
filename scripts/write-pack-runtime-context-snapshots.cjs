@@ -146,25 +146,22 @@ function main(argv) {
       "  --fixture, -f <path>   Path to fixture JSON file (required)",
       "  --compact, -c          Compact JSON output (with --json)",
       "  --json                 Output candidate snapshot JSON to stdout",
+      "  --update               Write snapshot file (explicit opt-in)",
       "  --help,   -h           Show this help and exit",
       "",
       "Notes:",
-      "  --update is NOT supported (dry-run only)",
+      "  Default behavior is dry-run (no files written)",
+      "  --update is required to write snapshot files",
       "  --all is NOT supported (single fixture only)",
       "",
       "Examples:",
       "  node scripts/write-pack-runtime-context-snapshots.cjs --fixture test/fixtures/pack-runtime-context/valid/minimal-valid.json",
       "  node scripts/write-pack-runtime-context-snapshots.cjs --fixture <path> --json",
+      "  node scripts/write-pack-runtime-context-snapshots.cjs --fixture <path> --update",
       "  node scripts/write-pack-runtime-context-snapshots.cjs --fixture <path> --json --compact",
     ];
     console.log(help.join("\n"));
     process.exit(0);
-  }
-
-  // Reject --update
-  if (args.update) {
-    process.stderr.write("Error: --update is not supported. This script is dry-run only.\n");
-    process.exit(1);
   }
 
   // Reject --all
@@ -178,6 +175,42 @@ function main(argv) {
     process.exit(1);
   }
 
+  if (args.update) {
+    // Write mode: generate candidate and write snapshot file
+    try {
+      var candidate = snapshotWriter.createNormalizedSnapshotReport(args.fixture);
+      var writeResult = snapshotWriter.writeSnapshotReport(candidate, { update: true });
+      var status = writeResult.report.status;
+
+      if (args.json) {
+        var jsonOutput = {
+          action: writeResult.action,
+          fixture: writeResult.fixturePath,
+          target: writeResult.snapshotPath,
+          status: status,
+          bytes: writeResult.bytes,
+        };
+        console.log(JSON.stringify(jsonOutput, null, 2));
+      } else {
+        var lines = [
+          "Snapshot " + writeResult.action,
+          "Fixture: " + writeResult.fixturePath,
+          "Target: " + writeResult.snapshotPath,
+          "Status: " + status,
+        ];
+        if (writeResult.action === "created" || writeResult.action === "updated") {
+          lines.push("Bytes: " + writeResult.bytes);
+        }
+        console.log(lines.join("\n"));
+      }
+      process.exit(0);
+    } catch (e) {
+      process.stderr.write("Error: " + e.message + "\n");
+      process.exit(1);
+    }
+  }
+
+  // Dry-run mode
   var result = runDryRun(args.fixture, { compact: args.compact, json: args.json });
   process.stdout.write(result.output);
   process.exit(result.exitCode);
