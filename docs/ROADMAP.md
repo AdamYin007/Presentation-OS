@@ -194,8 +194,9 @@
 - [ ] M10.0 Hard Gate Readiness Design — PR55 ✅
 - [ ] M10.1 Fixtures and Snapshot Test Design — PR56 ✅
 - [ ] M10.2 Fixture Directory Skeleton — PR57 ✅
-- [ ] M10.3 Minimal Fixture Set — PR58 ✅
-- [ ] M10.4 Snapshot Writer Design — PR59 ✅
+- [ ] M10.5 Snapshot Writer Skeleton — PR60 ✅
+- [ ] M10.6 Initial Snapshot Generation — PR61 ✅
+- [ ] M10.7 Snapshot Comparator Design — PR62 ✅
 
 ## Rules for Future Work
 
