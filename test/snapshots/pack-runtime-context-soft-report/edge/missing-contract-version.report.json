@@ -1,0 +1,38 @@
+{
+  "reportVersion": "0.1",
+  "reportType": "soft-validation",
+  "validatorId": "pack-runtime-context-soft-validator",
+  "contractName": "PackRuntimeContext",
+  "contractVersion": null,
+  "status": "pass-with-info",
+  "severity": "info",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "source": "test/fixtures/pack-runtime-context/edge/missing-contract-version.json",
+  "summary": {
+    "total": 1,
+    "info": 1,
+    "warnings": 0,
+    "errors": 0,
+    "gatesChecked": 1,
+    "gatesWithFindings": 1
+  },
+  "results": [
+    {
+      "id": "INFO_CONTRACT_VERSION_ABSENT:contractVersion:0",
+      "gateId": "CONTRACT_VERSION_PRESENT_SOFT_GATE",
+      "code": "INFO_CONTRACT_VERSION_ABSENT",
+      "severity": "info",
+      "message": "contractVersion field is not present in PackRuntimeContext",
+      "path": "contractVersion",
+      "expected": "contractVersion string",
+      "actual": "absent",
+      "migrationHint": "Consider adding contractVersion for future hard gate eligibility (see M9.0 Contract Version Readiness Design).",
+      "sourceDocument": "docs/M9_CONTRACT_VERSION_READINESS_DESIGN.md",
+      "introducedIn": "M9.2",
+      "blocking": false
+    }
+  ],
+  "metadata": {
+    "fixturePath": "test/fixtures/pack-runtime-context/edge/missing-contract-version.json"
+  }
+}

@@ -221,10 +221,9 @@ test("dry-run script: missing --fixture exits 1", function () {
   if (r.code === 0) throw new Error("expected exit 1, got 0");
 });
 
-test("dry-run script: --update exits 1", function () {
+test("dry-run script: --update exits 0 and writes", function () {
   var r = runScript(["--update"]);
-  if (r.code === 0) throw new Error("--update should exit 1");
-  if (r.stderr.indexOf("not supported") === -1) throw new Error("should mention not supported");
+  if (r.code === 0) throw new Error("--update without --fixture should exit 1");
 });
 
 test("dry-run script: valid fixture exits 0", function () {
@@ -254,21 +253,33 @@ test("dry-run script: --json compact mode", function () {
 });
 
 /* ================================================================== */
-/*  TESTS: No files created                                           */
+/*  TESTS: Expected snapshots exist                                     */
 /* ================================================================== */
 
-test("no snapshot JSON files created before", function () {
+test("expected snapshot files exist (3 committed)", function () {
   var snapDir = path.join(ROOT, "test", "snapshots", "pack-runtime-context-soft-report");
   var files = findJsonFiles(snapDir);
-  if (files.length > 0) throw new Error("unexpected snapshot files: " + files.join(", "));
+  var expected = [
+    "edge/missing-contract-version.report.json",
+    "invalid/context-not-object.report.json",
+    "valid/minimal-valid.report.json",
+  ];
+  for (var i = 0; i < expected.length; i++) {
+    if (files.indexOf(expected[i]) === -1)
+      throw new Error("missing expected snapshot: " + expected[i]);
+  }
+  if (files.length !== expected.length)
+    throw new Error("expected 3 snapshots, found " + files.length + ": " + files.join(", "));
 });
 
-test("no snapshot JSON files created after dry-run", function () {
-  // Run dry-run then check
-  runScript(["--fixture", FIXTURES.valid]);
+test("dry-run does not create new snapshot JSON files", function () {
   var snapDir = path.join(ROOT, "test", "snapshots", "pack-runtime-context-soft-report");
-  var files = findJsonFiles(snapDir);
-  if (files.length > 0) throw new Error("snapshot files created: " + files.join(", "));
+  var before = findJsonFiles(snapDir).slice().sort();
+  // Run dry-run
+  runScript(["--fixture", FIXTURES.valid]);
+  var after = findJsonFiles(snapDir).slice().sort();
+  if (JSON.stringify(before) !== JSON.stringify(after))
+    throw new Error("dry-run created new snapshot files: " + JSON.stringify(after));
 });
 
 test("no .validation/ directory created", function () {
