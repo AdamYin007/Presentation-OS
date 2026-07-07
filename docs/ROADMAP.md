@@ -188,6 +188,7 @@
 - [ ] M9.5 Standalone Soft Validation Report Script — PR48 ✅
 - [ ] M9.6 Soft Validation Checkpoint — PR49 ✅
 - [ ] M9.7 Doctor Summary Preview Design — PR50 ✅
+- [ ] M9.8 Package Script Entrypoint Design — PR51 ✅
 
 ## Rules for Future Work
 
