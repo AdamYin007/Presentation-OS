@@ -224,8 +224,17 @@
   - Determinism and read-only guarantees verified
   - Failure domain separation documented
   - Risks before CI integration catalogued
-|- [ ] M11.8 CI Informational Design
-- [ ] M11.9 CI Informational Check
+|- [x] M11.8 CI Informational Design — PR75 ✅
+  - Two independent CI domains defined (strict validation + snapshot verification)
+  - Stable job names frozen
+  - Advisory informational rollout strategy
+  - Trigger, path-filter, fork, draft PR strategies documented
+  - Summary output contracts defined
+  - Observation period: 10-20 PRs or 2 weeks
+  - Required promotion preconditions catalogued
+  - Rollback strategy defined
+  - Security constraints documented
+|- [ ] M11.9 CI Informational Check
 - [ ] M11.10 Hard Gate Readiness Checkpoint
 
 ## Rules for Future Work
