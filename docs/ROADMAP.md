@@ -207,16 +207,24 @@
 - [x] M11.1 Strict Mode Policy Module Design — PR67 ✅
 - [x] M11.2 Strict Mode Policy Module Skeleton — PR68 ✅
 - [x] M11.3 Strict Mode Validation Promotion Allowlist Design — PR69 ✅
-- [x] M11.4 Allowlist Architecture Reconciliation — PR70 ✅
+|- [x] M11.4 Allowlist Architecture Reconciliation — PR70 ✅
   - JS strict policy module confirmed as only runtime source of truth
   - Promotion allowlist defined as governance documentation only
   - No JSON allowlist created
   - Emergency suspension via expedited audited PR
   - Unknown findings remain non-blocking
-- [ ] M11.5 Strict Mode Library Skeleton — recommended next step
-- [ ] M11.6 Strict Mode CLI
-- [ ] M11.7 Strict Mode Validation Matrix
-- [ ] M11.8 CI Informational Design
+|- [x] M11.5 Strict Mode Library Skeleton — PR71 ✅
+|- [x] M11.5.1 Fix Strict Validation Status Mapping — PR72 ✅
+|- [x] M11.6 Strict Mode CLI — PR73 ✅
+|- [x] M11.7 Strict Mode Validation Matrix & Checkpoint — PR74 ✅
+  - Frozen validation matrix verified against library + CLI
+  - 3 fixtures: minimal-valid, context-not-object, missing-contract-version
+  - CLI contract frozen: supported/rejected parameters documented
+  - Exit code freeze: soft always 0, strict hard-fail exits 1
+  - Determinism and read-only guarantees verified
+  - Failure domain separation documented
+  - Risks before CI integration catalogued
+|- [ ] M11.8 CI Informational Design
 - [ ] M11.9 CI Informational Check
 - [ ] M11.10 Hard Gate Readiness Checkpoint
 
