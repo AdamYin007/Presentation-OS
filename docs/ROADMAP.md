@@ -206,7 +206,19 @@
 - [x] M11.0 Hard Gate Integration Readiness Design — PR66 ✅
 - [x] M11.1 Strict Mode Policy Module Design — PR67 ✅
 - [x] M11.2 Strict Mode Policy Module Skeleton — PR68 ✅
-- [ ] M11.3 Strict Mode Validation Promotion Allowlist Design — recommended next step
+- [x] M11.3 Strict Mode Validation Promotion Allowlist Design — PR69 ✅
+- [x] M11.4 Allowlist Architecture Reconciliation — PR70 ✅
+  - JS strict policy module confirmed as only runtime source of truth
+  - Promotion allowlist defined as governance documentation only
+  - No JSON allowlist created
+  - Emergency suspension via expedited audited PR
+  - Unknown findings remain non-blocking
+- [ ] M11.5 Strict Mode Library Skeleton — recommended next step
+- [ ] M11.6 Strict Mode CLI
+- [ ] M11.7 Strict Mode Validation Matrix
+- [ ] M11.8 CI Informational Design
+- [ ] M11.9 CI Informational Check
+- [ ] M11.10 Hard Gate Readiness Checkpoint
 
 ## Rules for Future Work
 
