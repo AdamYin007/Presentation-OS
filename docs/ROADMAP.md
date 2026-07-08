@@ -203,9 +203,10 @@
 
 ## M11 — Hard Gate Integration
 
-- [ ] M11.0 Hard Gate Integration Readiness Design — PR66 ✅
-- [ ] M11.1 Strict Mode Policy Module Design — PR67 ✅
-- [ ] M11.2 Strict Mode Policy Module Skeleton — recommended next step
+- [x] M11.0 Hard Gate Integration Readiness Design — PR66 ✅
+- [x] M11.1 Strict Mode Policy Module Design — PR67 ✅
+- [x] M11.2 Strict Mode Policy Module Skeleton — PR68 ✅
+- [ ] M11.3 Strict Mode Validation Promotion Allowlist Design — recommended next step
 
 ## Rules for Future Work
 
