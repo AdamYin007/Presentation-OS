@@ -201,6 +201,11 @@
 - [ ] M10.9 Snapshot Comparator CLI — PR64 ✅
 - [ ] M10.10 Comparator Validation Checkpoint — PR65 ✅
 
+## M11 — Hard Gate Integration
+
+- [ ] M11.0 Hard Gate Integration Readiness Design — PR66 ✅
+- [ ] M11.1 Strict Mode Policy Module Design — recommended next step
+
 ## Rules for Future Work
 
 1. **One PR = One Goal** — 每个 PR 只做一个明确的事情
