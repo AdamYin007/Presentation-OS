@@ -204,7 +204,8 @@
 ## M11 — Hard Gate Integration
 
 - [ ] M11.0 Hard Gate Integration Readiness Design — PR66 ✅
-- [ ] M11.1 Strict Mode Policy Module Design — recommended next step
+- [ ] M11.1 Strict Mode Policy Module Design — PR67 ✅
+- [ ] M11.2 Strict Mode Policy Module Skeleton — recommended next step
 
 ## Rules for Future Work
 
