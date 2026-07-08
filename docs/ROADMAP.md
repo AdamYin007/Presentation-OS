@@ -234,7 +234,13 @@
   - Required promotion preconditions catalogued
   - Rollback strategy defined
   - Security constraints documented
-|- [ ] M11.9 CI Informational Check
+|- [x] M11.9 CI Informational Check
+  - Non-required informational CI checks added
+  - Two independent jobs: strict validation + snapshot verification
+  - GitHub Step Summaries with PASS/ADVISORY FAILURE distinction
+  - Original exit codes preserved
+  - No secrets, no write operations, fork-safe
+  - Workflow safety checker script added
 - [ ] M11.10 Hard Gate Readiness Checkpoint
 
 ## Rules for Future Work
