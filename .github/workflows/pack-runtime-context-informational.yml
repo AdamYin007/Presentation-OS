@@ -1,0 +1,192 @@
+name: PackRuntimeContext Informational Checks
+
+on:
+  pull_request:
+    branches:
+      - develop
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pack-runtime-context-informational-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  strict-validation-informational:
+    name: pack-runtime-context-strict-validation-informational
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run strict policy check
+        id: policy-check
+        run: |
+          set +e
+          node scripts/check-strict-mode-policy-module-skeleton.cjs
+          echo "exit-code=$?" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: Run strict library check
+        id: library-check
+        run: |
+          set +e
+          node scripts/check-strict-mode-library-skeleton.cjs
+          echo "exit-code=$?" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: Run strict CLI check
+        id: cli-check
+        run: |
+          set +e
+          node scripts/check-strict-mode-cli.cjs
+          echo "exit-code=$?" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: Write GitHub Step Summary
+        if: always()
+        run: |
+          # Build the summary
+          cat << 'EOF' >> "$GITHUB_STEP_SUMMARY"
+          # PackRuntimeContext Strict Validation
+          - Domain: validation
+          - Mode: informational
+          - Required: no
+          - Blocking merge: no
+          
+          | Check | Exit code | Result |
+          |---|---:|---|
+          | Strict policy | ${{ steps.policy-check.outputs.exit-code }} | ${{ steps.policy-check.outputs.exit-code == '0' && 'PASS' || 'ADVISORY FAILURE' }} |
+          | Strict library | ${{ steps.library-check.outputs.exit-code }} | ${{ steps.library-check.outputs.exit-code == '0' && 'PASS' || 'ADVISORY FAILURE' }} |
+          | Strict CLI | ${{ steps.cli-check.outputs.exit-code }} | ${{ steps.cli-check.outputs.exit-code == '0' && 'PASS' || 'ADVISORY FAILURE' }} |
+          EOF
+          
+          # Determine overall result
+          if [ "${{ steps.policy-check.outputs.exit-code }}" -eq "0" ] && \
+             [ "${{ steps.library-check.outputs.exit-code }}" -eq "0" ] && \
+             [ "${{ steps.cli-check.outputs.exit-code }}" -eq "0" ]; then
+            echo "Overall: PASS" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Overall: ADVISORY FAILURE" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  snapshot-verification-informational:
+    name: pack-runtime-context-snapshot-verification-informational
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run snapshot comparator module check
+        id: module-check
+        run: |
+          set +e
+          node scripts/check-snapshot-comparator-module-skeleton.cjs
+          echo "exit-code=$?" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: Run snapshot comparator CLI check
+        id: cli-check
+        run: |
+          set +e
+          node scripts/check-snapshot-comparator-cli.cjs
+          echo "exit-code=$?" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: Run compare-all (JSON)
+        id: compare-all
+        run: |
+          set +e
+          COMPARE_ALL_JSON=$(node scripts/check-pack-runtime-context-snapshots.cjs --all --json --compact)
+          EXIT_CODE=$?
+          echo "exit-code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+          echo "json-output=$COMPARE_ALL_JSON" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: Write GitHub Step Summary
+        if: always()
+        run: |
+          # Parse JSON output for summary
+          JSON_OUTPUT="${{ steps.compare-all.outputs.json-output }}"
+          
+          # Build summary
+          cat << 'EOF' >> "$GITHUB_STEP_SUMMARY"
+          # PackRuntimeContext Snapshot Verification
+          - Domain: snapshot-verification
+          - Mode: informational
+          - Required: no
+          - Blocking merge: no
+          
+          | Check | Exit code | Result |
+          |---|---:|---|
+          | Snapshot comparator module | ${{ steps.module-check.outputs.exit-code }} | ${{ steps.module-check.outputs.exit-code == '0' && 'PASS' || 'ADVISORY FAILURE' }} |
+          | Snapshot comparator CLI | ${{ steps.cli-check.outputs.exit-code }} | ${{ steps.cli-check.outputs.exit-code == '0' && 'PASS' || 'ADVISORY FAILURE' }} |
+          | Compare all | ${{ steps.compare-all.outputs.exit-code }} | ${{ steps.compare-all.outputs.exit-code == '0' && 'PASS' || 'ADVISORY FAILURE' }} |
+          EOF
+          
+          # Extract and display comparison stats if JSON is available
+          if [ -n "$JSON_OUTPUT" ]; then
+            # Try to extract summary using basic string parsing (avoid jq for compatibility)
+            TOTAL=$(echo "$JSON_OUTPUT" | grep -o '"total":[0-9]*' | head -1 | cut -d: -f2)
+            MATCHED=$(echo "$JSON_OUTPUT" | grep -o '"matched":[0-9]*' | head -1 | cut -d: -f2)
+            MISSING=$(echo "$JSON_OUTPUT" | grep -o '"missingSnapshots":[0-9]*' | head -1 | cut -d: -f2)
+            INVALID=$(echo "$JSON_OUTPUT" | grep -o '"invalidSnapshots":[0-9]*' | head -1 | cut -d: -f2)
+            CONTENT_DRIFT=$(echo "$JSON_OUTPUT" | grep -o '"contentDrift":[0-9]*' | head -1 | cut -d: -f2)
+            FORMAT_DRIFT=$(echo "$JSON_OUTPUT" | grep -o '"formatDrift":[0-9]*' | head -1 | cut -d: -f2)
+            ORPHAN=$(echo "$JSON_OUTPUT" | grep -o '"orphanSnapshots":[0-9]*' | head -1 | cut -d: -f2)
+            
+            # Default values if not found
+            TOTAL=${TOTAL:-"N/A"}
+            MATCHED=${MATCHED:-"N/A"}
+            MISSING=${MISSING:-"N/A"}
+            INVALID=${INVALID:-"N/A"}
+            CONTENT_DRIFT=${CONTENT_DRIFT:-"N/A"}
+            FORMAT_DRIFT=${FORMAT_DRIFT:-"N/A"}
+            ORPHAN=${ORPHAN:-"N/A"}
+            
+            cat << EOF >> "$GITHUB_STEP_SUMMARY"
+          
+          ## Comparison Stats
+          - Total: $TOTAL
+          - Matched: $MATCHED
+          - Missing snapshots: $MISSING
+          - Invalid snapshots: $INVALID
+          - Content drift: $CONTENT_DRIFT
+          - Format drift: $FORMAT_DRIFT
+          - Orphan snapshots: $ORPHAN
+          EOF
+          fi
+          
+          # Determine overall result
+          if [ "${{ steps.module-check.outputs.exit-code }}" -eq "0" ] && \
+             [ "${{ steps.cli-check.outputs.exit-code }}" -eq "0" ] && \
+             [ "${{ steps.compare-all.outputs.exit-code }}" -eq "0" ]; then
+            echo "Overall: PASS" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Overall: ADVISORY FAILURE" >> "$GITHUB_STEP_SUMMARY"
+          fi
