@@ -197,6 +197,9 @@
 - [ ] M10.5 Snapshot Writer Skeleton — PR60 ✅
 - [ ] M10.6 Initial Snapshot Generation — PR61 ✅
 - [ ] M10.7 Snapshot Comparator Design — PR62 ✅
+- [ ] M10.8 Snapshot Comparator Module Skeleton — PR63 ✅
+- [ ] M10.9 Snapshot Comparator CLI — PR64 ✅
+- [ ] M10.10 Comparator Validation Checkpoint — PR65 ✅
 
 ## Rules for Future Work
 
