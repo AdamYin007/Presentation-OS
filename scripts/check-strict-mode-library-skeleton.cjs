@@ -90,7 +90,8 @@ check("default mode=soft", function () {
   var result = strictMod.validatePackRuntimeContext(minimalValid);
   assert.strictEqual(result.mode, "soft");
   assert.strictEqual(result.blocking, false);
-  assert.strictEqual(result.status, "pass");
+  // inline minimalValid lacks contractVersion → soft validator emits INFO_CONTRACT_VERSION_ABSENT → pass-with-info
+  assert.strictEqual(result.status, "pass-with-info");
 });
 
 // 3. strict helper forces strict
@@ -98,14 +99,14 @@ check("strict helper forces strict", function () {
   var result = strictMod.validatePackRuntimeContextStrict(minimalValid);
   assert.strictEqual(result.mode, "strict");
   assert.strictEqual(result.blocking, false);
-  // minimalValid has INFO_CONTRACT_VERSION_ABSENT → pass-with-info in strict
+  // inline minimalValid lacks contractVersion → triggers INFO_CONTRACT_VERSION_ABSENT → pass-with-info
   assert.strictEqual(result.status, "pass-with-info");
 });
 
-// 4. minimal-valid: soft pass / strict pass-with-info (due to missing contractVersion)
-check("minimal-valid soft pass", function () {
+// 4. minimal-valid: soft pass-with-info / strict pass-with-info (inline data lacks contractVersion)
+check("minimal-valid soft pass-with-info", function () {
   var result = strictMod.validatePackRuntimeContext(minimalValid, { mode: "soft" });
-  assert.strictEqual(result.status, "pass");
+  assert.strictEqual(result.status, "pass-with-info");
   assert.strictEqual(result.blocking, false);
 });
 
@@ -144,9 +145,9 @@ var warningsOnly = {
   __internal: {},
 };
 
-check("warnings-only soft pass non-blocking", function () {
+check("warnings-only soft pass-with-info non-blocking", function () {
   var result = strictMod.validatePackRuntimeContext(warningsOnly, { mode: "soft" });
-  assert.strictEqual(result.status, "pass");
+  assert.strictEqual(result.status, "pass-with-info");
   assert.strictEqual(result.blocking, false);
 });
 

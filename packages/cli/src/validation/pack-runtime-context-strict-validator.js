@@ -95,24 +95,45 @@ function validatePackRuntimeContext(context, options) {
  * Build soft mode result (always non-blocking).
  */
 function buildSoftResult(softReport) {
+  var errors = softReport.errors || [];
+  var warnings = softReport.warnings || [];
+  var totalErrors = errors.length;
+  var totalWarnings = warnings.length;
+
+  // Preserve the original soft validator status mapping:
+  // - ok=true + severity="warning" → pass-with-info (info-only findings)
+  // - ok=true + severity="info" → pass
+  // - ok=false → soft-fail
+  var status;
+  if (!softReport.ok) {
+    status = STRICT_VALIDATION_STATUS.SOFT_FAIL;
+  } else if (totalErrors > 0 && totalWarnings === 0) {
+    // Should not happen per current soft validator, but handle it
+    status = STRICT_VALIDATION_STATUS.SOFT_FAIL;
+  } else if (totalWarnings > 0 || totalErrors > 0) {
+    status = STRICT_VALIDATION_STATUS.PASS_WITH_INFO;
+  } else {
+    status = STRICT_VALIDATION_STATUS.PASS;
+  }
+
   return {
     domain: "validation",
     mode: "soft",
-    status: softReport.ok ? STRICT_VALIDATION_STATUS.PASS : STRICT_VALIDATION_STATUS.SOFT_FAIL,
+    status: status,
     blocking: false,
     policyVersion: 0,
     summary: {
-      total: (softReport.warnings || []).length + (softReport.errors || []).length,
+      total: totalErrors + totalWarnings,
       blocking: 0,
-      nonBlocking: (softReport.warnings || []).length + (softReport.errors || []).length,
+      nonBlocking: totalErrors + totalWarnings,
       unknown: 0,
-      errors: (softReport.errors || []).length,
-      warnings: (softReport.warnings || []).length,
+      errors: totalErrors,
+      warnings: totalWarnings,
       info: 0,
     },
-    results: cloneFindings(softReport.warnings || []),
-    warnings: softReport.warnings || [],
-    errors: softReport.errors || [],
+    results: cloneFindings(warnings),
+    warnings: warnings,
+    errors: errors,
     ok: softReport.ok,
     severity: softReport.severity,
   };
