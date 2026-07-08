@@ -1,2 +1,5 @@
 output/
 .hermes/
+
+# Local-only external MCP workspace
+/skills/chatgpt-desktop-mcp/
