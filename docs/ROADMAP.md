@@ -271,7 +271,14 @@
   - Assumption recording for defaulted and inferred decisions
   - Domain-agnostic defaults with no rendering or Story Planner behavior
   - Next: M12.3 Story Planner
-- [ ] M12.3 Story Planner
+- [x] M12.3 Story Planner
+  - Narrative pattern selection (10 patterns) based on purpose, audience, domain, slide budget
+  - DeckPlan generation: sections, slide allocation, roles, visual suggestions
+  - Source reference preservation via keyword-based matching
+  - Assumptions and warnings recording
+  - Domain-agnostic, deterministic heuristics only, no LLM/cloud dependency
+  - Full test suite (18 tests), spec document, sample fixture
+  - Next: M12.4 SlideSpec Contract
 - [ ] M12.4 SlideSpec Contract
 - [ ] M12.5 Theme and Layout System
 - [ ] M12.6 Editable PPTX Renderer

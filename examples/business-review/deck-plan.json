@@ -1,0 +1,224 @@
+{
+  "schemaVersion": "1.0.0",
+  "deckTitle": "2025年度经营分析报告",
+  "subtitle": "for 管理层 · review",
+  "audience": "管理层",
+  "purpose": "review",
+  "language": "zh-CN",
+  "narrativePattern": "exec-summary-evidence-recommendation",
+  "sections": [
+    {
+      "id": "exec-summary",
+      "title": "Executive Summary",
+      "purpose": "Bottom line up front",
+      "keyMessage": "Key conclusion and recommendation",
+      "slideAllocation": 5,
+      "sourceRefs": []
+    },
+    {
+      "id": "evidence",
+      "title": "Evidence",
+      "purpose": "Supporting data",
+      "keyMessage": "Facts and figures that justify the conclusion",
+      "slideAllocation": 7,
+      "sourceRefs": []
+    },
+    {
+      "id": "recommendation",
+      "title": "Recommendation",
+      "purpose": "Actionable next steps",
+      "keyMessage": "What decision is needed",
+      "slideAllocation": 3,
+      "sourceRefs": []
+    }
+  ],
+  "slides": [
+    {
+      "slideId": "slide-001",
+      "index": 1,
+      "role": "executive-summary",
+      "section": "Executive Summary",
+      "objective": "Executive Summary — Part 1",
+      "keyMessage": "Key conclusion and recommendation",
+      "candidateVisual": "metric-cards",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-002",
+      "index": 2,
+      "role": "content",
+      "section": "Executive Summary",
+      "objective": "Executive Summary — Part 2",
+      "keyMessage": "Key conclusion and recommendation",
+      "candidateVisual": "metric-cards",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-003",
+      "index": 3,
+      "role": "content",
+      "section": "Executive Summary",
+      "objective": "Executive Summary — Part 3",
+      "keyMessage": "Key conclusion and recommendation",
+      "candidateVisual": "metric-cards",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-004",
+      "index": 4,
+      "role": "content",
+      "section": "Executive Summary",
+      "objective": "Executive Summary — Part 4",
+      "keyMessage": "Key conclusion and recommendation",
+      "candidateVisual": "metric-cards",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-005",
+      "index": 5,
+      "role": "content",
+      "section": "Executive Summary",
+      "objective": "Executive Summary — Part 5",
+      "keyMessage": "Key conclusion and recommendation",
+      "candidateVisual": "metric-cards",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-006",
+      "index": 6,
+      "role": "section-divider",
+      "section": "Evidence",
+      "objective": "Transition to Evidence",
+      "keyMessage": "Facts and figures that justify the conclusion",
+      "candidateVisual": "none",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-007",
+      "index": 7,
+      "role": "content",
+      "section": "Evidence",
+      "objective": "Evidence — Part 1",
+      "keyMessage": "Facts and figures that justify the conclusion",
+      "candidateVisual": "bar-chart",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-008",
+      "index": 8,
+      "role": "data-chart",
+      "section": "Evidence",
+      "objective": "Evidence — Part 2",
+      "keyMessage": "Facts and figures that justify the conclusion",
+      "candidateVisual": "bar-chart",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-009",
+      "index": 9,
+      "role": "data-chart",
+      "section": "Evidence",
+      "objective": "Evidence — Part 3",
+      "keyMessage": "Facts and figures that justify the conclusion",
+      "candidateVisual": "bar-chart",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-010",
+      "index": 10,
+      "role": "data-chart",
+      "section": "Evidence",
+      "objective": "Evidence — Part 4",
+      "keyMessage": "Facts and figures that justify the conclusion",
+      "candidateVisual": "bar-chart",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-011",
+      "index": 11,
+      "role": "data-chart",
+      "section": "Evidence",
+      "objective": "Evidence — Part 5",
+      "keyMessage": "Facts and figures that justify the conclusion",
+      "candidateVisual": "bar-chart",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-012",
+      "index": 12,
+      "role": "table",
+      "section": "Evidence",
+      "objective": "Evidence — Part 6",
+      "keyMessage": "Facts and figures that justify the conclusion",
+      "candidateVisual": "bar-chart",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-013",
+      "index": 13,
+      "role": "table",
+      "section": "Evidence",
+      "objective": "Evidence — Part 7",
+      "keyMessage": "Facts and figures that justify the conclusion",
+      "candidateVisual": "bar-chart",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-014",
+      "index": 14,
+      "role": "section-divider",
+      "section": "Recommendation",
+      "objective": "Transition to Recommendation",
+      "keyMessage": "What decision is needed",
+      "candidateVisual": "none",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-015",
+      "index": 15,
+      "role": "recommendation",
+      "section": "Recommendation",
+      "objective": "Recommendation — Part 1",
+      "keyMessage": "What decision is needed",
+      "candidateVisual": "none",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-016",
+      "index": 16,
+      "role": "recommendation",
+      "section": "Recommendation",
+      "objective": "Recommendation — Part 2",
+      "keyMessage": "What decision is needed",
+      "candidateVisual": "none",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-017",
+      "index": 17,
+      "role": "recommendation",
+      "section": "Recommendation",
+      "objective": "Recommendation — Part 3",
+      "keyMessage": "What decision is needed",
+      "candidateVisual": "none",
+      "sourceRefs": []
+    },
+    {
+      "slideId": "slide-018",
+      "index": 18,
+      "role": "closing",
+      "section": "Closing",
+      "objective": "Thank you and Q&A",
+      "keyMessage": "Summary and contact information",
+      "candidateVisual": "none",
+      "sourceRefs": []
+    }
+  ],
+  "assumptions": [
+    "Deck title inferred from SourceDocumentModel title"
+  ],
+  "warnings": [
+    "mustInclude item \"收入增长\" may not be adequately addressed in the current plan.",
+    "mustInclude item \"风险\" may not be adequately addressed in the current plan."
+  ]
+}

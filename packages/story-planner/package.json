@@ -1,0 +1,13 @@
+{
+  "name": "@awe/story-planner",
+  "version": "1.0.0",
+  "description": "Story Planner — selects narrative patterns and generates DeckPlan from PresentationIntent + SourceDocumentModel",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node ../../tests/story-planner/story-planner.test.js"
+  },
+  "dependencies": {},
+  "keywords": ["presentation", "story-planner", "deck-plan"],
+  "author": "",
+  "license": "ISC"
+}
