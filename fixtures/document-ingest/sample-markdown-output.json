@@ -1,0 +1,840 @@
+{
+  "schemaVersion": "1.0.0",
+  "title": "Project Phoenix: Technical Architecture Review",
+  "metadata": {
+    "sourceType": "markdown"
+  },
+  "sections": [
+    {
+      "sourceId": "sec-001",
+      "sourceType": "heading",
+      "sourceOrder": 1,
+      "originalText": "Project Phoenix: Technical Architecture Review",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-002",
+      "sourceType": "heading",
+      "sourceOrder": 2,
+      "originalText": "Executive Summary",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Executive Summary"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-004",
+      "sourceType": "heading",
+      "sourceOrder": 4,
+      "originalText": "Current Challenges",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Current Challenges"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-007",
+      "sourceType": "heading",
+      "sourceOrder": 7,
+      "originalText": "Proposed Architecture",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Proposed Architecture"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-008",
+      "sourceType": "heading",
+      "sourceOrder": 8,
+      "originalText": "Service Boundaries",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Proposed Architecture",
+        "Service Boundaries"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-011",
+      "sourceType": "heading",
+      "sourceOrder": 11,
+      "originalText": "Technology Stack",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Proposed Architecture",
+        "Technology Stack"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-013",
+      "sourceType": "heading",
+      "sourceOrder": 13,
+      "originalText": "Data Flow",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Proposed Architecture",
+        "Data Flow"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-016",
+      "sourceType": "heading",
+      "sourceOrder": 16,
+      "originalText": "Implementation Phases",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Implementation Phases"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-017",
+      "sourceType": "heading",
+      "sourceOrder": 17,
+      "originalText": "Phase 1: Foundation (Weeks 1-4)",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Implementation Phases",
+        "Phase 1: Foundation (Weeks 1-4)"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-019",
+      "sourceType": "heading",
+      "sourceOrder": 19,
+      "originalText": "Phase 2: Core Processing (Weeks 5-8)",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Implementation Phases",
+        "Phase 2: Core Processing (Weeks 5-8)"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-021",
+      "sourceType": "heading",
+      "sourceOrder": 21,
+      "originalText": "Phase 3: Hardening (Weeks 9-12)",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Implementation Phases",
+        "Phase 3: Hardening (Weeks 9-12)"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-023",
+      "sourceType": "heading",
+      "sourceOrder": 23,
+      "originalText": "Expected Outcomes",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Expected Outcomes"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-026",
+      "sourceType": "heading",
+      "sourceOrder": 26,
+      "originalText": "Risks and Mitigations",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Risks and Mitigations"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-028",
+      "sourceType": "heading",
+      "sourceOrder": 28,
+      "originalText": "Conclusion",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Conclusion"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    }
+  ],
+  "paragraphs": [
+    {
+      "sourceId": "para-000",
+      "sourceType": "paragraph",
+      "sourceOrder": 2,
+      "originalText": "Project Phoenix is a next-generation distributed system designed to handle high-throughput event processing with guaranteed delivery and sub-second latency. This document outlines the architectural decisions, technology stack, and implementation roadmap.",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Executive Summary"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "para-001",
+      "sourceType": "paragraph",
+      "sourceOrder": 4,
+      "originalText": "Our existing monolithic architecture faces several critical limitations:",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Current Challenges"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "para-002",
+      "sourceType": "paragraph",
+      "sourceOrder": 8,
+      "originalText": "We propose decomposing the system into six bounded contexts:",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Proposed Architecture",
+        "Service Boundaries"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "para-003",
+      "sourceType": "paragraph",
+      "sourceOrder": 13,
+      "originalText": "The system follows an event-driven architecture:",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Proposed Architecture",
+        "Data Flow"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "para-004",
+      "sourceType": "paragraph",
+      "sourceOrder": 23,
+      "originalText": "After full implementation, we project:",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Expected Outcomes"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "para-005",
+      "sourceType": "paragraph",
+      "sourceOrder": 28,
+      "originalText": "Project Phoenix represents a fundamental shift from our current reactive architecture to a proactive, event-driven system. The phased approach minimizes risk while delivering incremental value at each stage.",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Conclusion"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    }
+  ],
+  "lists": [
+    {
+      "sourceId": "list-000",
+      "sourceType": "list",
+      "sourceOrder": 5,
+      "listType": "unordered",
+      "items": [
+        "Single point of failure in the central message broker",
+        "Inability to scale database writes independently",
+        "Deployment cycles averaging 4 hours per release",
+        "Debugging distributed transactions across 12 microservices"
+      ],
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Current Challenges"
+      ],
+      "confidence": 0.95,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "list-001",
+      "sourceType": "list",
+      "sourceOrder": 9,
+      "listType": "ordered",
+      "items": [
+        "Event Ingestion Service — handles incoming event streams",
+        "Processing Engine — transforms and enriches events",
+        "Storage Layer — persistent event storage with tiered retention",
+        "Query Service — read-optimized API for downstream consumers",
+        "Monitoring & Observability — metrics, tracing, alerting",
+        "Administration — configuration, user management, audit logs"
+      ],
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Proposed Architecture",
+        "Service Boundaries"
+      ],
+      "confidence": 0.95,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "list-002",
+      "sourceType": "list",
+      "sourceOrder": 14,
+      "listType": "ordered",
+      "items": [
+        "Events enter through the Ingestion Service",
+        "Kafka topics partition events by tenant and event type",
+        "Flink consumers process events in real-time",
+        "Processed results are written to PostgreSQL with Redis cache invalidation",
+        "Query Service provides RESTful access to processed data"
+      ],
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Proposed Architecture",
+        "Data Flow"
+      ],
+      "confidence": 0.95,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "list-003",
+      "sourceType": "list",
+      "sourceOrder": 17,
+      "listType": "unordered",
+      "items": [
+        "Set up Kafka cluster and monitoring infrastructure",
+        "Implement Event Ingestion Service with basic validation",
+        "Deploy CI/CD pipeline with automated testing"
+      ],
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Implementation Phases",
+        "Phase 1: Foundation (Weeks 1-4)"
+      ],
+      "confidence": 0.95,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "list-004",
+      "sourceType": "list",
+      "sourceOrder": 19,
+      "listType": "unordered",
+      "items": [
+        "Build Flink processing pipelines for primary event types",
+        "Implement Storage Layer with tiered retention policy",
+        "Develop Query Service with GraphQL API"
+      ],
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Implementation Phases",
+        "Phase 2: Core Processing (Weeks 5-8)"
+      ],
+      "confidence": 0.95,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "list-005",
+      "sourceType": "list",
+      "sourceOrder": 21,
+      "listType": "unordered",
+      "items": [
+        "Load testing and performance optimization",
+        "Disaster recovery drills and failover testing",
+        "Security audit and penetration testing"
+      ],
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Implementation Phases",
+        "Phase 3: Hardening (Weeks 9-12)"
+      ],
+      "confidence": 0.95,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "list-006",
+      "sourceType": "list",
+      "sourceOrder": 24,
+      "listType": "unordered",
+      "items": [
+        "99.99% availability SLA",
+        "Sub-100ms end-to-end event processing latency",
+        "10x improvement in deployment frequency",
+        "50% reduction in operational incidents"
+      ],
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Expected Outcomes"
+      ],
+      "confidence": 0.95,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    }
+  ],
+  "tables": [
+    {
+      "header": [
+        "Component",
+        "Technology",
+        "Rationale"
+      ],
+      "rows": [
+        [
+          "Message Broker",
+          "Apache Kafka",
+          "Proven at scale, exactly-once semantics"
+        ],
+        [
+          "Processing",
+          "Flink",
+          "Stream processing with state management"
+        ],
+        [
+          "Storage",
+          "PostgreSQL + Redis",
+          "ACID compliance with caching layer"
+        ],
+        [
+          "API Gateway",
+          "Kong",
+          "Plugin ecosystem, rate limiting"
+        ],
+        [
+          "Monitoring",
+          "Prometheus + Grafana",
+          "Native Kubernetes integration"
+        ]
+      ],
+      "lineRange": [
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37
+      ],
+      "columnCount": 3,
+      "sourceOrder": 11,
+      "sourceId": "tbl-000",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Proposed Architecture",
+        "Technology Stack"
+      ],
+      "confidence": 0.95,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    },
+    {
+      "header": [
+        "Risk",
+        "Impact",
+        "Mitigation"
+      ],
+      "rows": [
+        [
+          "Kafka cluster scaling issues",
+          "High",
+          "Start with managed service, plan for self-hosted"
+        ],
+        [
+          "Flink state management complexity",
+          "Medium",
+          "Implement regular state checkpoints, document recovery procedures"
+        ],
+        [
+          "Team learning curve",
+          "Medium",
+          "Dedicated training sprint, pair programming sessions"
+        ]
+      ],
+      "lineRange": [
+        77,
+        78,
+        79,
+        80,
+        81
+      ],
+      "columnCount": 3,
+      "sourceOrder": 26,
+      "sourceId": "tbl-001",
+      "sectionPath": [
+        "",
+        "Project Phoenix: Technical Architecture Review",
+        "Risks and Mitigations"
+      ],
+      "confidence": 0.95,
+      "fileReference": "sample-markdown.md",
+      "origin": "sourced"
+    }
+  ],
+  "images": [],
+  "dataBlocks": [],
+  "sourceMap": [
+    {
+      "sourceId": "sec-001",
+      "sourceType": "heading",
+      "sourceOrder": 1,
+      "lineNumbers": [
+        1
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-002",
+      "sourceType": "heading",
+      "sourceOrder": 2,
+      "lineNumbers": [
+        3
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "para-000",
+      "sourceType": "paragraph",
+      "sourceOrder": 2,
+      "lineNumbers": [
+        5
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-004",
+      "sourceType": "heading",
+      "sourceOrder": 4,
+      "lineNumbers": [
+        7
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "para-001",
+      "sourceType": "paragraph",
+      "sourceOrder": 4,
+      "lineNumbers": [
+        9
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "list-000",
+      "sourceType": "list",
+      "sourceOrder": 5,
+      "lineNumbers": [
+        11,
+        12,
+        13,
+        14
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-007",
+      "sourceType": "heading",
+      "sourceOrder": 7,
+      "lineNumbers": [
+        16
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-008",
+      "sourceType": "heading",
+      "sourceOrder": 8,
+      "lineNumbers": [
+        18
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "para-002",
+      "sourceType": "paragraph",
+      "sourceOrder": 8,
+      "lineNumbers": [
+        20
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "list-001",
+      "sourceType": "list",
+      "sourceOrder": 9,
+      "lineNumbers": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-011",
+      "sourceType": "heading",
+      "sourceOrder": 11,
+      "lineNumbers": [
+        29
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "tbl-000",
+      "sourceType": "table",
+      "sourceOrder": 11,
+      "lineNumbers": [
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-013",
+      "sourceType": "heading",
+      "sourceOrder": 13,
+      "lineNumbers": [
+        39
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "para-003",
+      "sourceType": "paragraph",
+      "sourceOrder": 13,
+      "lineNumbers": [
+        41
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "list-002",
+      "sourceType": "list",
+      "sourceOrder": 14,
+      "lineNumbers": [
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-016",
+      "sourceType": "heading",
+      "sourceOrder": 16,
+      "lineNumbers": [
+        49
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-017",
+      "sourceType": "heading",
+      "sourceOrder": 17,
+      "lineNumbers": [
+        51
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "list-003",
+      "sourceType": "list",
+      "sourceOrder": 17,
+      "lineNumbers": [
+        52,
+        53,
+        54
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-019",
+      "sourceType": "heading",
+      "sourceOrder": 19,
+      "lineNumbers": [
+        56
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "list-004",
+      "sourceType": "list",
+      "sourceOrder": 19,
+      "lineNumbers": [
+        57,
+        58,
+        59
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-021",
+      "sourceType": "heading",
+      "sourceOrder": 21,
+      "lineNumbers": [
+        61
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "list-005",
+      "sourceType": "list",
+      "sourceOrder": 21,
+      "lineNumbers": [
+        62,
+        63,
+        64
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-023",
+      "sourceType": "heading",
+      "sourceOrder": 23,
+      "lineNumbers": [
+        66
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "para-004",
+      "sourceType": "paragraph",
+      "sourceOrder": 23,
+      "lineNumbers": [
+        68
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "list-006",
+      "sourceType": "list",
+      "sourceOrder": 24,
+      "lineNumbers": [
+        70,
+        71,
+        72,
+        73
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-026",
+      "sourceType": "heading",
+      "sourceOrder": 26,
+      "lineNumbers": [
+        75
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "tbl-001",
+      "sourceType": "table",
+      "sourceOrder": 26,
+      "lineNumbers": [
+        77,
+        78,
+        79,
+        80,
+        81
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "sec-028",
+      "sourceType": "heading",
+      "sourceOrder": 28,
+      "lineNumbers": [
+        83
+      ],
+      "fileReference": "sample-markdown.md"
+    },
+    {
+      "sourceId": "para-005",
+      "sourceType": "paragraph",
+      "sourceOrder": 28,
+      "lineNumbers": [
+        85
+      ],
+      "fileReference": "sample-markdown.md"
+    }
+  ]
+}

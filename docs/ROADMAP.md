@@ -257,7 +257,13 @@
   - Scope is general-purpose across business, education, research, technical, and professional domains
   - M8-M11 remain as runtime and quality foundations
   - Next: M12.1 General Document Ingestion
-- [ ] M12.1 General Document Ingestion
+- [x] M12.1 General Document Ingestion
+  - Plain text and Markdown ingestion to SourceDocumentModel
+  - Schema definition with validation (schemaVersion, sourceMap, traceability)
+  - Unified ingestDocument() API with auto-detection
+  - Domain-agnostic, minimal dependencies (Node.js builtins only)
+  - Comprehensive unit tests and sample output fixtures
+  - Next: M12.2 Presentation Intent Parser
 - [ ] M12.2 Presentation Intent Parser
 - [ ] M12.3 Story Planner
 - [ ] M12.4 SlideSpec Contract

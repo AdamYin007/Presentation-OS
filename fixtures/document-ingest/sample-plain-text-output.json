@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "1.0.0",
+  "title": "Q3 2026 Business Review",
+  "metadata": {
+    "sourceType": "plain-text"
+  },
+  "sections": [
+    {
+      "sourceId": "sec-001",
+      "sourceType": "section",
+      "sourceOrder": 1,
+      "originalText": "REVENUE PERFORMANCE",
+      "sectionPath": [
+        "REVENUE PERFORMANCE"
+      ],
+      "confidence": 0.9,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-002",
+      "sourceType": "section",
+      "sourceOrder": 3,
+      "originalText": "KEY METRICS",
+      "sectionPath": [
+        "KEY METRICS"
+      ],
+      "confidence": 0.9,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-003",
+      "sourceType": "section",
+      "sourceOrder": 5,
+      "originalText": "PRODUCT UPDATES",
+      "sectionPath": [
+        "PRODUCT UPDATES"
+      ],
+      "confidence": 0.9,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-004",
+      "sourceType": "section",
+      "sourceOrder": 7,
+      "originalText": "RISK FACTORS",
+      "sectionPath": [
+        "RISK FACTORS"
+      ],
+      "confidence": 0.9,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "sec-005",
+      "sourceType": "section",
+      "sourceOrder": 9,
+      "originalText": "NEXT STEPS",
+      "sectionPath": [
+        "NEXT STEPS"
+      ],
+      "confidence": 0.9,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    }
+  ],
+  "paragraphs": [
+    {
+      "sourceId": "para-000",
+      "sourceType": "paragraph",
+      "sourceOrder": 0,
+      "originalText": "Q3 2026 Business Review",
+      "sectionPath": [
+        ""
+      ],
+      "confidence": 1,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "para-001",
+      "sourceType": "paragraph",
+      "sourceOrder": 2,
+      "originalText": "Total revenue for Q3 2026 reached $42.5M, representing 18% year-over-year growth. The enterprise segment drove the majority of growth with 24% increase, while SMB segment grew 12%.",
+      "sectionPath": [
+        "REVENUE PERFORMANCE"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "para-002",
+      "sourceType": "paragraph",
+      "sourceOrder": 4,
+      "originalText": "Customer acquisition cost decreased by 8% due to improved marketing efficiency. Monthly recurring revenue stabilized at $3.6M with a churn rate of 2.1%. Net revenue retention improved to 112%.",
+      "sectionPath": [
+        "KEY METRICS"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "para-003",
+      "sourceType": "paragraph",
+      "sourceOrder": 6,
+      "originalText": "Released version 3.2 with enhanced dashboard analytics and improved mobile experience. Customer satisfaction score (CSAT) increased from 4.1 to 4.5 out of 5.0.",
+      "sectionPath": [
+        "PRODUCT UPDATES"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "para-004",
+      "sourceType": "paragraph",
+      "sourceOrder": 8,
+      "originalText": "Increased competition in the mid-market segment. Supply chain delays affecting hardware-dependent product lines. Currency fluctuation impacting international revenue by approximately 3%.",
+      "sectionPath": [
+        "RISK FACTORS"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    },
+    {
+      "sourceId": "para-005",
+      "sourceType": "paragraph",
+      "sourceOrder": 10,
+      "originalText": "Expand sales team in APAC region. Launch new self-service onboarding flow. Invest in customer success to reduce churn below 2%.",
+      "sectionPath": [
+        "NEXT STEPS"
+      ],
+      "confidence": 1,
+      "fileReference": "sample-plain-text.txt",
+      "origin": "sourced"
+    }
+  ],
+  "lists": [],
+  "tables": [],
+  "images": [],
+  "dataBlocks": [],
+  "sourceMap": [
+    {
+      "sourceId": "para-000",
+      "sourceType": "paragraph",
+      "sourceOrder": 0,
+      "lineNumbers": [
+        1
+      ],
+      "fileReference": "sample-plain-text.txt"
+    },
+    {
+      "sourceId": "sec-001",
+      "sourceType": "section",
+      "sourceOrder": 1,
+      "lineNumbers": [
+        3
+      ],
+      "fileReference": "sample-plain-text.txt"
+    },
+    {
+      "sourceId": "para-001",
+      "sourceType": "paragraph",
+      "sourceOrder": 2,
+      "lineNumbers": [
+        4
+      ],
+      "fileReference": "sample-plain-text.txt"
+    },
+    {
+      "sourceId": "sec-002",
+      "sourceType": "section",
+      "sourceOrder": 3,
+      "lineNumbers": [
+        6
+      ],
+      "fileReference": "sample-plain-text.txt"
+    },
+    {
+      "sourceId": "para-002",
+      "sourceType": "paragraph",
+      "sourceOrder": 4,
+      "lineNumbers": [
+        7
+      ],
+      "fileReference": "sample-plain-text.txt"
+    },
+    {
+      "sourceId": "sec-003",
+      "sourceType": "section",
+      "sourceOrder": 5,
+      "lineNumbers": [
+        9
+      ],
+      "fileReference": "sample-plain-text.txt"
+    },
+    {
+      "sourceId": "para-003",
+      "sourceType": "paragraph",
+      "sourceOrder": 6,
+      "lineNumbers": [
+        10
+      ],
+      "fileReference": "sample-plain-text.txt"
+    },
+    {
+      "sourceId": "sec-004",
+      "sourceType": "section",
+      "sourceOrder": 7,
+      "lineNumbers": [
+        12
+      ],
+      "fileReference": "sample-plain-text.txt"
+    },
+    {
+      "sourceId": "para-004",
+      "sourceType": "paragraph",
+      "sourceOrder": 8,
+      "lineNumbers": [
+        13
+      ],
+      "fileReference": "sample-plain-text.txt"
+    },
+    {
+      "sourceId": "sec-005",
+      "sourceType": "section",
+      "sourceOrder": 9,
+      "lineNumbers": [
+        15
+      ],
+      "fileReference": "sample-plain-text.txt"
+    },
+    {
+      "sourceId": "para-005",
+      "sourceType": "paragraph",
+      "sourceOrder": 10,
+      "lineNumbers": [
+        16
+      ],
+      "fileReference": "sample-plain-text.txt"
+    }
+  ]
+}
