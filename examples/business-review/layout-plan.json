@@ -1,0 +1,1158 @@
+{
+  "schemaVersion": "1.0.0",
+  "theme": "minimal-modern",
+  "themeTokens": {
+    "name": "Minimal Modern",
+    "colors": {
+      "primary": "#1A1A1A",
+      "secondary": "#6B7280",
+      "accent": "#3B82F6",
+      "background": "#FFFFFF",
+      "surface": "#F9FAFB",
+      "border": "#E5E7EB",
+      "text": "#111827",
+      "muted": "#9CA3AF"
+    },
+    "fonts": {
+      "heading": "Inter, -apple-system, sans-serif",
+      "body": "Inter, -apple-system, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "spacing": {
+      "unit": 8,
+      "scale": [
+        0,
+        4,
+        8,
+        16,
+        24,
+        32,
+        48,
+        64
+      ]
+    },
+    "borderRadius": 8,
+    "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+  },
+  "totalSlides": 18,
+  "layoutFamiliesUsed": [
+    "executive-summary",
+    "title-and-bullets",
+    "section-divider",
+    "chart-and-insight",
+    "closing"
+  ],
+  "layouts": [
+    {
+      "slideId": "slide-001",
+      "index": 1,
+      "role": "executive-summary",
+      "layoutFamily": "executive-summary",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#3B82F6",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 24,
+        "body": 15
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    },
+    {
+      "slideId": "slide-002",
+      "index": 2,
+      "role": "content",
+      "layoutFamily": "title-and-bullets",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 24,
+        "body": 15
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    },
+    {
+      "slideId": "slide-003",
+      "index": 3,
+      "role": "content",
+      "layoutFamily": "title-and-bullets",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 24,
+        "body": 15
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    },
+    {
+      "slideId": "slide-004",
+      "index": 4,
+      "role": "content",
+      "layoutFamily": "title-and-bullets",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 24,
+        "body": 15
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    },
+    {
+      "slideId": "slide-005",
+      "index": 5,
+      "role": "content",
+      "layoutFamily": "title-and-bullets",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 24,
+        "body": 15
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    },
+    {
+      "slideId": "slide-006",
+      "index": 6,
+      "role": "section-divider",
+      "layoutFamily": "section-divider",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "paddingTop": 160,
+        "paddingBottom": 160,
+        "margin": 0,
+        "gap": 32
+      },
+      "fontSize": {
+        "heading": 36,
+        "body": 16
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    },
+    {
+      "slideId": "slide-007",
+      "index": 7,
+      "role": "content",
+      "layoutFamily": "chart-and-insight",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 22,
+        "body": 14
+      },
+      "maxWidth": 960,
+      "visualSpec": {
+        "type": "bar-chart",
+        "hasDataLabel": true,
+        "hasLegend": true
+      }
+    },
+    {
+      "slideId": "slide-008",
+      "index": 8,
+      "role": "data-chart",
+      "layoutFamily": "chart-and-insight",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 22,
+        "body": 14
+      },
+      "maxWidth": 960,
+      "visualSpec": {
+        "type": "bar-chart",
+        "hasDataLabel": true,
+        "hasLegend": true
+      }
+    },
+    {
+      "slideId": "slide-009",
+      "index": 9,
+      "role": "data-chart",
+      "layoutFamily": "chart-and-insight",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 22,
+        "body": 14
+      },
+      "maxWidth": 960,
+      "visualSpec": {
+        "type": "bar-chart",
+        "hasDataLabel": true,
+        "hasLegend": true
+      }
+    },
+    {
+      "slideId": "slide-010",
+      "index": 10,
+      "role": "data-chart",
+      "layoutFamily": "chart-and-insight",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 22,
+        "body": 14
+      },
+      "maxWidth": 960,
+      "visualSpec": {
+        "type": "bar-chart",
+        "hasDataLabel": true,
+        "hasLegend": true
+      }
+    },
+    {
+      "slideId": "slide-011",
+      "index": 11,
+      "role": "data-chart",
+      "layoutFamily": "chart-and-insight",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 22,
+        "body": 14
+      },
+      "maxWidth": 960,
+      "visualSpec": {
+        "type": "bar-chart",
+        "hasDataLabel": true,
+        "hasLegend": true
+      }
+    },
+    {
+      "slideId": "slide-012",
+      "index": 12,
+      "role": "table",
+      "layoutFamily": "chart-and-insight",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 22,
+        "body": 14
+      },
+      "maxWidth": 960,
+      "visualSpec": {
+        "type": "bar-chart",
+        "hasDataLabel": true,
+        "hasLegend": true
+      }
+    },
+    {
+      "slideId": "slide-013",
+      "index": 13,
+      "role": "table",
+      "layoutFamily": "chart-and-insight",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 22,
+        "body": 14
+      },
+      "maxWidth": 960,
+      "visualSpec": {
+        "type": "bar-chart",
+        "hasDataLabel": true,
+        "hasLegend": true
+      }
+    },
+    {
+      "slideId": "slide-014",
+      "index": 14,
+      "role": "section-divider",
+      "layoutFamily": "section-divider",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "paddingTop": 160,
+        "paddingBottom": 160,
+        "margin": 0,
+        "gap": 32
+      },
+      "fontSize": {
+        "heading": 36,
+        "body": 16
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    },
+    {
+      "slideId": "slide-015",
+      "index": 15,
+      "role": "recommendation",
+      "layoutFamily": "title-and-bullets",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#3B82F6",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 24,
+        "body": 15
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    },
+    {
+      "slideId": "slide-016",
+      "index": 16,
+      "role": "recommendation",
+      "layoutFamily": "title-and-bullets",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#3B82F6",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 24,
+        "body": 15
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    },
+    {
+      "slideId": "slide-017",
+      "index": 17,
+      "role": "recommendation",
+      "layoutFamily": "title-and-bullets",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#3B82F6",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "padding": 48,
+        "margin": 24,
+        "gap": 20
+      },
+      "fontSize": {
+        "heading": 24,
+        "body": 15
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    },
+    {
+      "slideId": "slide-018",
+      "index": 18,
+      "role": "closing",
+      "layoutFamily": "closing",
+      "theme": "minimal-modern",
+      "themeTokens": {
+        "name": "Minimal Modern",
+        "colors": {
+          "primary": "#1A1A1A",
+          "secondary": "#6B7280",
+          "accent": "#3B82F6",
+          "background": "#FFFFFF",
+          "surface": "#F9FAFB",
+          "border": "#E5E7EB",
+          "text": "#111827",
+          "muted": "#9CA3AF"
+        },
+        "fonts": {
+          "heading": "Inter, -apple-system, sans-serif",
+          "body": "Inter, -apple-system, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "spacing": {
+          "unit": 8,
+          "scale": [
+            0,
+            4,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "borderRadius": 8,
+        "shadow": "0 1px 3px rgba(0,0,0,0.1)"
+      },
+      "colors": {
+        "background": "#FFFFFF",
+        "text": "#1A1A1A",
+        "secondaryText": "#6B7280",
+        "mutedText": "#9CA3AF",
+        "accent": "#E5E7EB",
+        "surface": "#F9FAFB",
+        "border": "#E5E7EB"
+      },
+      "spacing": {
+        "paddingTop": 120,
+        "paddingBottom": 80,
+        "margin": 0,
+        "gap": 24
+      },
+      "fontSize": {
+        "heading": 36,
+        "body": 16
+      },
+      "maxWidth": 800,
+      "visualSpec": {}
+    }
+  ]
+}

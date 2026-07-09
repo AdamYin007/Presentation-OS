@@ -1,0 +1,13 @@
+{
+  "name": "@awe/theme-layout",
+  "version": "1.0.0",
+  "description": "Theme and Layout System — maps SlideSpec into concrete theme tokens and layout families",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node ../../tests/theme-layout/theme-layout.test.js"
+  },
+  "dependencies": {},
+  "keywords": ["presentation", "theme", "layout"],
+  "author": "",
+  "license": "ISC"
+}
