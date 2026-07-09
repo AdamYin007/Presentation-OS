@@ -247,6 +247,30 @@
   - PR sample size insufficient
   - Next: M11.11 Informational Observation & Evidence Collection
 
+## M12 — General-Purpose Presentation Product
+
+- M11 infrastructure phase is complete as a runtime and quality baseline.
+- Hard gate remains informational. Required checks are not enabled.
+- M12 begins the product delivery phase for a usable general-purpose presentation system.
+- [x] M12.0 General PPT Product Specification
+  - Product direction: documents and natural-language intent to editable PowerPoint decks
+  - Scope is general-purpose across business, education, research, technical, and professional domains
+  - M8-M11 remain as runtime and quality foundations
+  - Next: M12.1 General Document Ingestion
+- [ ] M12.1 General Document Ingestion
+- [ ] M12.2 Presentation Intent Parser
+- [ ] M12.3 Story Planner
+- [ ] M12.4 SlideSpec Contract
+- [ ] M12.5 Theme and Layout System
+- [ ] M12.6 Editable PPTX Renderer
+- [ ] M12.7 End-to-End General PPT MVP
+- [ ] M12.8 Content and Visual QA
+- [ ] M12.9 Natural-Language Revision
+- [ ] M12.10 Asset, Chart, and Diagram Enhancement
+- [ ] M12.11 CLI and Skill Packaging
+- [ ] M12.12 Multi-Domain Real-Document Pilot
+- [ ] M12.13 Usability and Reliability Release
+
 ## Rules for Future Work
 
 1. **One PR = One Goal** — 每个 PR 只做一个明确的事情
