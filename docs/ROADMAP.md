@@ -264,7 +264,13 @@
   - Domain-agnostic, minimal dependencies (Node.js builtins only)
   - Comprehensive unit tests and sample output fixtures
   - Next: M12.2 Presentation Intent Parser
-- [ ] M12.2 Presentation Intent Parser
+- [x] M12.2 Presentation Intent Parser
+  - Prompt plus optional SourceDocumentModel to PresentationIntent
+  - Chinese and English heuristic parsing
+  - Explicit prompt precedence over source inference
+  - Assumption recording for defaulted and inferred decisions
+  - Domain-agnostic defaults with no rendering or Story Planner behavior
+  - Next: M12.3 Story Planner
 - [ ] M12.3 Story Planner
 - [ ] M12.4 SlideSpec Contract
 - [ ] M12.5 Theme and Layout System

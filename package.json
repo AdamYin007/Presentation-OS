@@ -13,7 +13,8 @@
     "start": "node packages/cli/src/index.js",
     "check:m8-docs": "node scripts/check-m8-docs.cjs",
     "check:m12-1-document-ingestion": "node scripts/check-m12-1-document-ingestion.cjs",
-    "check": "npm run check:m8-docs && npm run check:m12-1-document-ingestion",
+    "check:m12-2-presentation-intent-parser": "node scripts/check-m12-2-presentation-intent-parser.cjs",
+    "check": "npm run check:m8-docs && npm run check:m12-1-document-ingestion && npm run check:m12-2-presentation-intent-parser",
     "check:docs": "npm run check:m8-docs",
     "check:all": "npm run check && npm run doctor",
     "pack-context:soft-report": "node scripts/generate-pack-runtime-context-soft-report.cjs"

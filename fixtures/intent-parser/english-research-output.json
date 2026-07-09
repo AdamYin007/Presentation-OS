@@ -1,0 +1,28 @@
+{
+  "topic": "battery recycling for university researchers",
+  "audience": "university researchers",
+  "purpose": "summarize",
+  "language": "en-US",
+  "targetSlideCount": 10,
+  "durationMinutes": 13,
+  "tone": "professional",
+  "style": "academic-clean",
+  "contentDensity": "medium",
+  "visualPreference": "balanced",
+  "speakerNotes": true,
+  "mustInclude": [],
+  "mustEmphasize": [
+    "methods",
+    "results"
+  ],
+  "mustAvoid": [
+    "market hype"
+  ],
+  "domain": "research",
+  "assumptions": [
+    "Duration inferred from target slide count.",
+    "tone defaulted to professional.",
+    "Content density defaulted to medium.",
+    "Visual preference defaulted to balanced."
+  ]
+}
