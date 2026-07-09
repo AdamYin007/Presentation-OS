@@ -1,0 +1,13 @@
+{
+  "name": "@awe/slidespec",
+  "version": "1.0.0",
+  "description": "SlideSpec Contract — converts DeckPlan into page-level SlideSpec[]",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node ../../tests/slidespec/slidespec.test.js"
+  },
+  "dependencies": {},
+  "keywords": ["presentation", "slidespec", "slide-contract"],
+  "author": "",
+  "license": "ISC"
+}

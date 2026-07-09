@@ -51,6 +51,15 @@ const ALLOWED_DIFF_FILES = new Set([
   "package.json",
   "scripts/check-m12-3-story-planner.cjs",
   "packages/story-planner/package.json",
+  // M12.4 SlideSpec Contract
+  "packages/slidespec/package.json",
+  "packages/slidespec/src/index.js",
+  "packages/slidespec/src/schema.js",
+  "packages/slidespec/src/generator.js",
+  "tests/slidespec/slidespec.test.js",
+  "examples/business-review/slidespec.json",
+  "scripts/check-m12-4-slidespec-contract.cjs",
+  "docs/M12_4_SLIDESPEC_SPEC.md",
 ]);
 
 // ── Checks ──

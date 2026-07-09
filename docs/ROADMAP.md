@@ -279,8 +279,17 @@
   - Domain-agnostic, deterministic heuristics only, no LLM/cloud dependency
   - Full test suite (18 tests), spec document, sample fixture
   - Next: M12.4 SlideSpec Contract
-- [ ] M12.4 SlideSpec Contract
-- [ ] M12.5 Theme and Layout System
+- [x] M12.4 SlideSpec Contract
+  - Schema validation with 12 required fields, role/visualType/layout enums
+  - DeckPlan → SlideSpec[] conversion with deterministic layout mapping
+  - Speaker notes generation (purpose, key argument, transition, duration)
+  - Body content from keyMessage + source refs + role-based templates
+  - Visual spec generation (chart params, table dimensions, process steps)
+  - Design hints (density, emphasis, section color)
+  - SourceRefs preserved through pipeline
+  - 16 passing tests covering schema, integration, edge cases, scope boundaries
+  - Full spec document, business-review fixture with 18 SlideSpec entries
+  - Next: M12.5 Theme and Layout System
 - [ ] M12.6 Editable PPTX Renderer
 - [ ] M12.7 End-to-End General PPT MVP
 - [ ] M12.8 Content and Visual QA
