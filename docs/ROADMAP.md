@@ -290,6 +290,16 @@
   - 16 passing tests covering schema, integration, edge cases, scope boundaries
   - Full spec document, business-review fixture with 18 SlideSpec entries
   - Next: M12.5 Theme and Layout System
+- [x] M12.5 Theme and Layout System
+  - 3 theme tokens (minimal-modern, business-consulting, academic-clean) with colors, fonts, spacing
+  - 24 layout families mapped from SlideSpec roles and visual types
+  - Deterministic layout resolution: role + density + body length → layout family
+  - Per-slide color palettes derived from theme + emphasis hints
+  - Spacing by density (sparse/medium/dense) and layout type
+  - Font size and max width per layout family
+  - 20 passing tests covering schema, integration, edge cases, scope boundaries
+  - Full spec document, business-review layout-plan.json fixture
+  - Next: M12.6 Editable PPTX Renderer
 - [ ] M12.6 Editable PPTX Renderer
 - [ ] M12.7 End-to-End General PPT MVP
 - [ ] M12.8 Content and Visual QA
