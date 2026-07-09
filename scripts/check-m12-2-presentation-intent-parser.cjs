@@ -34,6 +34,15 @@ const ALLOWED_DIFF_FILES = new Set([
   "package.json",
   "scripts/check-m12-1-document-ingestion.cjs",
   "scripts/check-m12-2-presentation-intent-parser.cjs",
+  "scripts/check-m12-3-story-planner.cjs",
+  "docs/M12_3_STORY_PLANNER_SPEC.md",
+  "packages/story-planner/package.json",
+  "packages/story-planner/src/index.js",
+  "packages/story-planner/src/planner.js",
+  "packages/story-planner/src/schema.js",
+  "packages/story-planner/src/narrative-patterns.js",
+  "tests/story-planner/story-planner.test.js",
+  "examples/business-review/deck-plan.json",
 ]);
 
 function fail(message) {
