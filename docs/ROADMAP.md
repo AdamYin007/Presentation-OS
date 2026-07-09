@@ -300,7 +300,15 @@
   - 20 passing tests covering schema, integration, edge cases, scope boundaries
   - Full spec document, business-review layout-plan.json fixture
   - Next: M12.6 Editable PPTX Renderer
-- [ ] M12.6 Editable PPTX Renderer
+- [x] M12.6 Editable PPTX Renderer
+  - pptxgenjs v4 integration — real editable .pptx output from SlideSpec + LayoutPlan
+  - Role-based rendering: title, section-divider, content, executive-summary, data-chart, closing
+  - Per-slide colors from theme tokens, spacing from layout plan
+  - Speaker notes support, source reference footers
+  - 15 passing tests covering exports, content verification, buffer generation, ZIP validation
+  - 142KB business-review output.pptx fixture (verified: 18 slides, valid PPTX)
+  - Full spec document, checker script
+  - Next: M12.7 End-to-End General PPT MVP
 - [ ] M12.7 End-to-End General PPT MVP
 - [ ] M12.8 Content and Visual QA
 - [ ] M12.9 Natural-Language Revision
