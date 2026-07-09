@@ -51,15 +51,25 @@ const ALLOWED_DIFF_FILES = new Set([
   "package.json",
   "scripts/check-m12-3-story-planner.cjs",
   "packages/story-planner/package.json",
-  // M12.4 SlideSpec Contract
-  "packages/slidespec/package.json",
-  "packages/slidespec/src/index.js",
-  "packages/slidespec/src/schema.js",
-  "packages/slidespec/src/generator.js",
-  "tests/slidespec/slidespec.test.js",
-  "examples/business-review/slidespec.json",
-  "scripts/check-m12-4-slidespec-contract.cjs",
   "docs/M12_4_SLIDESPEC_SPEC.md",
+  // M12.5 Theme and Layout System
+  "packages/theme-layout/package.json",
+  "packages/theme-layout/src/index.js",
+  "packages/theme-layout/src/schema.js",
+  "packages/theme-layout/src/generator.js",
+  "tests/theme-layout/theme-layout.test.js",
+  "examples/business-review/layout-plan.json",
+  "scripts/check-m12-5-theme-layout.cjs",
+  "docs/M12_5_THEME_LAYOUT_SPEC.md",
+  // M12.6 Editable PPTX Renderer
+  "packages/pptx-renderer/package.json",
+  "packages/pptx-renderer/src/index.js",
+  "packages/pptx-renderer/src/schema.js",
+  "packages/pptx-renderer/src/renderer.js",
+  "tests/pptx-renderer/pptx-renderer.test.js",
+  "examples/business-review/output.pptx",
+  "scripts/check-m12-6-pptx-renderer.cjs",
+  "docs/M12_6_PPTX_RENDERER_SPEC.md",
 ]);
 
 // ── Checks ──

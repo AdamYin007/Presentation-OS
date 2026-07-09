@@ -1,0 +1,15 @@
+{
+  "name": "@awe/pptx-renderer",
+  "version": "1.0.0",
+  "description": "Editable PPTX Renderer — renders SlideSpec + LayoutPlan to real .pptx using pptxgenjs",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node ../../tests/pptx-renderer/pptx-renderer.test.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  },
+  "keywords": ["presentation", "pptx", "renderer"],
+  "author": "",
+  "license": "ISC"
+}
