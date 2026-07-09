@@ -7,6 +7,12 @@ const cp = require("child_process");
 
 const ROOT = path.join(__dirname, "..");
 const DOC_PATH = path.join(ROOT, "docs", "M12_0_GENERAL_PPT_PRODUCT_SPEC.md");
+const ROADMAP_PATH = path.join(ROOT, "docs", "ROADMAP.md");
+const CHECKER_PATH = path.join(
+  ROOT,
+  "scripts",
+  "check-m12-general-ppt-product-spec.cjs"
+);
 
 function fail(message) {
   throw new Error(message);
@@ -29,17 +35,26 @@ function hasRegex(text, regex) {
   return regex.test(text);
 }
 
+function runGit(args, failureMessage) {
+  try {
+    return cp.execFileSync("git", args, {
+      cwd: ROOT,
+      encoding: "utf8",
+    });
+  } catch (error) {
+    fail(failureMessage + ": " + error.message);
+  }
+}
+
 function getChangedFiles() {
-  const branchDiffOutput = cp.execFileSync(
-    "git",
+  const branchDiffOutput = runGit(
     ["diff", "--name-only", "origin/develop...HEAD"],
-    { cwd: ROOT, encoding: "utf8" }
+    "Unable to determine changed files against origin/develop; run `git fetch origin`"
   );
 
-  const statusOutput = cp.execFileSync(
-    "git",
+  const statusOutput = runGit(
     ["status", "--porcelain"],
-    { cwd: ROOT, encoding: "utf8" }
+    "Unable to determine working tree status"
   );
 
   const changed = new Set();
@@ -64,6 +79,20 @@ function getChangedFiles() {
   return Array.from(changed);
 }
 
+function validateChangedFiles(changedFiles, allowed) {
+  if (changedFiles.length === 0) {
+    return "baseline";
+  }
+
+  for (const file of changedFiles) {
+    if (!allowed.has(file)) {
+      fail("Unexpected changed file: " + file);
+    }
+  }
+
+  return "feature";
+}
+
 function checkAllowedDiff() {
   const changedFiles = getChangedFiles();
   const allowed = new Set([
@@ -72,14 +101,75 @@ function checkAllowedDiff() {
     "docs/ROADMAP.md",
   ]);
 
-  if (changedFiles.length === 0) {
-    fail("No diff found for M12.0 specification work");
+  const mode = validateChangedFiles(changedFiles, allowed);
+  if (mode === "baseline") {
+    console.log("No feature diff detected; validating merged baseline");
+  }
+}
+
+function checkRequiredFilesExist() {
+  const requiredFiles = [DOC_PATH, CHECKER_PATH, ROADMAP_PATH];
+
+  for (const filePath of requiredFiles) {
+    if (!fs.existsSync(filePath)) {
+      fail("Required file missing: " + filePath);
+    }
+  }
+}
+
+function checkRoadmap() {
+  const roadmap = readText(ROADMAP_PATH);
+
+  if (!has(roadmap, "M11 infrastructure phase is complete as a runtime and quality baseline.")) {
+    fail("ROADMAP must preserve M11 infrastructure completion");
   }
 
-  for (const file of changedFiles) {
-    if (!allowed.has(file)) {
-      fail("Unexpected changed file: " + file);
-    }
+  if (!has(roadmap, "Hard gate remains informational. Required checks are not enabled.")) {
+    fail("ROADMAP must preserve informational hard gate status");
+  }
+
+  if (!has(roadmap, "M12 begins the product delivery phase for a usable general-purpose presentation system.")) {
+    fail("ROADMAP must describe the M12 product phase");
+  }
+
+  if (!has(roadmap, "[x] M12.0 General PPT Product Specification")) {
+    fail("ROADMAP must mark M12.0 as complete");
+  }
+
+  if (!has(roadmap, "Next: M12.1 General Document Ingestion")) {
+    fail("ROADMAP must point to M12.1 as the next step");
+  }
+}
+
+function runSelfChecks() {
+  const allowed = new Set([
+    "docs/M12_0_GENERAL_PPT_PRODUCT_SPEC.md",
+    "scripts/check-m12-general-ppt-product-spec.cjs",
+    "docs/ROADMAP.md",
+  ]);
+
+  if (validateChangedFiles([], allowed) !== "baseline") {
+    fail("Self-check failed: baseline mode must pass with no diff");
+  }
+
+  if (
+    validateChangedFiles(
+      ["scripts/check-m12-general-ppt-product-spec.cjs"],
+      allowed
+    ) !== "feature"
+  ) {
+    fail("Self-check failed: allowed diff must remain valid");
+  }
+
+  let rejectedForbiddenDiff = false;
+  try {
+    validateChangedFiles(["package.json"], allowed);
+  } catch (error) {
+    rejectedForbiddenDiff = /Unexpected changed file/.test(error.message);
+  }
+
+  if (!rejectedForbiddenDiff) {
+    fail("Self-check failed: forbidden diff must be rejected");
   }
 }
 
@@ -117,9 +207,8 @@ function checkSnapshots() {
 }
 
 function main() {
-  if (!fs.existsSync(DOC_PATH)) {
-    fail("Specification document missing: " + DOC_PATH);
-  }
+  checkRequiredFilesExist();
+  runSelfChecks();
 
   const doc = readText(DOC_PATH);
 
@@ -216,9 +305,17 @@ function main() {
   }
 
   checkAllowedDiff();
+  checkRoadmap();
   checkSnapshots();
 
   console.log("M12 general PPT product specification check passed");
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  getChangedFiles,
+  validateChangedFiles,
+};
