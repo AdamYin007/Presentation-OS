@@ -260,6 +260,8 @@ function checkAllowedDiff() {
     ...SAMPLE_OUTPUT_FILES,
     ...SAMPLE_INPUT_FILES,
     "docs/M12_1_DOCUMENT_INGESTION_SPEC.md",
+    "docs/ROADMAP.md",
+    "package.json",
     "scripts/check-m12-1-document-ingestion.cjs",
     "scripts/generate-sample-ingestion-output.cjs",
     "packages/document-ingest/package.json",
