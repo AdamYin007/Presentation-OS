@@ -1,0 +1,26 @@
+{
+  "topic": "12 页的人工智能入门课件",
+  "audience": "高中生",
+  "purpose": "teach",
+  "language": "zh-CN",
+  "targetSlideCount": 12,
+  "durationMinutes": 15,
+  "tone": "educational",
+  "style": "education-friendly",
+  "contentDensity": "medium",
+  "visualPreference": "visual-heavy",
+  "speakerNotes": true,
+  "mustInclude": [
+    "案例",
+    "流程图",
+    "总结",
+    "互动问题"
+  ],
+  "mustEmphasize": [],
+  "mustAvoid": [],
+  "domain": "education",
+  "assumptions": [
+    "Duration inferred from target slide count.",
+    "Content density defaulted to medium."
+  ]
+}

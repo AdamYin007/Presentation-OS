@@ -1,0 +1,5 @@
+{
+    "name": "@awe/intent-parser",
+    "version": "1.0.0",
+    "description": "Domain-agnostic PresentationIntent parser"
+}
