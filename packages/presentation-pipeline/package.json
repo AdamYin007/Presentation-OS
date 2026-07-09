@@ -1,0 +1,7 @@
+{
+  "name": "@awe/presentation-pipeline",
+  "version": "1.0.0",
+  "description": "End-to-end presentation pipeline: input.md → .pptx",
+  "main": "src/index.js",
+  "scripts": { "test": "node ../../tests/pipeline/pipeline.test.js" }
+}
