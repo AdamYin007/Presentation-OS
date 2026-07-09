@@ -1,0 +1,16 @@
+Q3 2026 Business Review
+
+REVENUE PERFORMANCE
+Total revenue for Q3 2026 reached $42.5M, representing 18% year-over-year growth. The enterprise segment drove the majority of growth with 24% increase, while SMB segment grew 12%.
+
+KEY METRICS
+Customer acquisition cost decreased by 8% due to improved marketing efficiency. Monthly recurring revenue stabilized at $3.6M with a churn rate of 2.1%. Net revenue retention improved to 112%.
+
+PRODUCT UPDATES
+Released version 3.2 with enhanced dashboard analytics and improved mobile experience. Customer satisfaction score (CSAT) increased from 4.1 to 4.5 out of 5.0.
+
+RISK FACTORS
+Increased competition in the mid-market segment. Supply chain delays affecting hardware-dependent product lines. Currency fluctuation impacting international revenue by approximately 3%.
+
+NEXT STEPS
+Expand sales team in APAC region. Launch new self-service onboarding flow. Invest in customer success to reduce churn below 2%.

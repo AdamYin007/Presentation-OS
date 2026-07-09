@@ -1,0 +1,5 @@
+{
+  "name": "@awe/document-ingest",
+  "version": "1.0.0",
+  "description": "General document ingestion — plain text and Markdown to SourceDocumentModel"
+}
