@@ -70,6 +70,15 @@ const ALLOWED_DIFF_FILES = new Set([
   "examples/business-review/output.pptx",
   "scripts/check-m12-6-pptx-renderer.cjs",
   "docs/M12_6_PPTX_RENDERER_SPEC.md",
+  // M12.7 End-to-End General PPT MVP
+  "packages/presentation-pipeline/package.json",
+  "packages/presentation-pipeline/src/index.js",
+  "packages/presentation-pipeline/src/pipeline.js",
+  "tests/pipeline/pipeline.test.js",
+  "examples/business-review/e2e-output.pptx",
+  "scripts/generate-pptx.js",
+  "scripts/check-m12-7-end-to-end.cjs",
+  "docs/M12_7_END_TO_END_MVP_SPEC.md",
 ]);
 
 // ── Checks ──

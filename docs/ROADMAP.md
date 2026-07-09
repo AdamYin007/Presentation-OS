@@ -309,7 +309,14 @@
   - 142KB business-review output.pptx fixture (verified: 18 slides, valid PPTX)
   - Full spec document, checker script
   - Next: M12.7 End-to-End General PPT MVP
-- [ ] M12.7 End-to-End General PPT MVP
+- [x] M12.7 End-to-End General PPT MVP
+  - Full pipeline module (`packages/presentation-pipeline/`) — chains all 6 modules: ingest → intent → story-planner → slidespec → theme-layout → renderer
+  - Single API call: `runPipeline(markdownInput)` returns sourceDoc, intent, deckPlan, slideSpecs, layoutPlan, pptxBuffer
+  - CLI entry point (`scripts/generate-pptx.js input.md output.pptx`)
+  - 10 passing tests covering exports, full pipeline, different styles, edge cases, fixture validation
+  - 130KB e2e-output.pptx fixture (verified: 16 slides, valid PPTX)
+  - Full spec document
+  - Next: M12.8 Content and Visual QA
 - [ ] M12.8 Content and Visual QA
 - [ ] M12.9 Natural-Language Revision
 - [ ] M12.10 Asset, Chart, and Diagram Enhancement
