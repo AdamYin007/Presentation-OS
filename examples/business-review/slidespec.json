@@ -1,0 +1,420 @@
+[
+  {
+    "id": "slide-001",
+    "index": 1,
+    "section": "Executive Summary",
+    "role": "executive-summary",
+    "title": "Key conclusion and recommendation",
+    "subtitle": "",
+    "keyMessage": "Key conclusion and recommendation",
+    "body": [
+      "Key conclusion and recommendation"
+    ],
+    "visualType": "metric-cards",
+    "visualSpec": {},
+    "layout": "executive-summary",
+    "speakerNotes": "Purpose: Executive Summary — Part 1\nKey argument: Key conclusion and recommendation\nTransition: Next slide covers Key conclusion and recommendation\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "high",
+      "sectionColorHint": "Executive Summary"
+    }
+  },
+  {
+    "id": "slide-002",
+    "index": 2,
+    "section": "Executive Summary",
+    "role": "content",
+    "title": "Key conclusion and recommendation",
+    "subtitle": "",
+    "keyMessage": "Key conclusion and recommendation",
+    "body": [
+      "Key conclusion and recommendation"
+    ],
+    "visualType": "metric-cards",
+    "visualSpec": {},
+    "layout": "title-and-bullets",
+    "speakerNotes": "Purpose: Executive Summary — Part 2\nKey argument: Key conclusion and recommendation\nTransition: Next slide covers Key conclusion and recommendation\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "low",
+      "sectionColorHint": "Executive Summary"
+    }
+  },
+  {
+    "id": "slide-003",
+    "index": 3,
+    "section": "Executive Summary",
+    "role": "content",
+    "title": "Key conclusion and recommendation",
+    "subtitle": "",
+    "keyMessage": "Key conclusion and recommendation",
+    "body": [
+      "Key conclusion and recommendation"
+    ],
+    "visualType": "metric-cards",
+    "visualSpec": {},
+    "layout": "title-and-bullets",
+    "speakerNotes": "Purpose: Executive Summary — Part 3\nKey argument: Key conclusion and recommendation\nTransition: Next slide covers Key conclusion and recommendation\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "low",
+      "sectionColorHint": "Executive Summary"
+    }
+  },
+  {
+    "id": "slide-004",
+    "index": 4,
+    "section": "Executive Summary",
+    "role": "content",
+    "title": "Key conclusion and recommendation",
+    "subtitle": "",
+    "keyMessage": "Key conclusion and recommendation",
+    "body": [
+      "Key conclusion and recommendation"
+    ],
+    "visualType": "metric-cards",
+    "visualSpec": {},
+    "layout": "title-and-bullets",
+    "speakerNotes": "Purpose: Executive Summary — Part 4\nKey argument: Key conclusion and recommendation\nTransition: Next slide covers Key conclusion and recommendation\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "low",
+      "sectionColorHint": "Executive Summary"
+    }
+  },
+  {
+    "id": "slide-005",
+    "index": 5,
+    "section": "Executive Summary",
+    "role": "content",
+    "title": "Key conclusion and recommendation",
+    "subtitle": "",
+    "keyMessage": "Key conclusion and recommendation",
+    "body": [
+      "Key conclusion and recommendation"
+    ],
+    "visualType": "metric-cards",
+    "visualSpec": {},
+    "layout": "title-and-bullets",
+    "speakerNotes": "Purpose: Executive Summary — Part 5\nKey argument: Key conclusion and recommendation\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "low",
+      "sectionColorHint": "Executive Summary"
+    }
+  },
+  {
+    "id": "slide-006",
+    "index": 6,
+    "section": "Evidence",
+    "role": "section-divider",
+    "title": "Evidence",
+    "subtitle": "",
+    "keyMessage": "Facts and figures that justify the conclusion",
+    "body": [],
+    "visualType": "none",
+    "visualSpec": {},
+    "layout": "section-divider",
+    "speakerNotes": "",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "low",
+      "sectionColorHint": "Evidence"
+    }
+  },
+  {
+    "id": "slide-007",
+    "index": 7,
+    "section": "Evidence",
+    "role": "content",
+    "title": "Facts and figures that justify the conclusion",
+    "subtitle": "",
+    "keyMessage": "Facts and figures that justify the conclusion",
+    "body": [
+      "Facts and figures that justify the conclusion"
+    ],
+    "visualType": "bar-chart",
+    "visualSpec": {
+      "type": "bar-chart",
+      "hasDataLabel": true,
+      "hasLegend": true
+    },
+    "layout": "title-and-bullets",
+    "speakerNotes": "Purpose: Evidence — Part 1\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "low",
+      "sectionColorHint": "Evidence"
+    }
+  },
+  {
+    "id": "slide-008",
+    "index": 8,
+    "section": "Evidence",
+    "role": "data-chart",
+    "title": "Facts and figures that justify the conclusion",
+    "subtitle": "",
+    "keyMessage": "Facts and figures that justify the conclusion",
+    "body": [
+      "Facts and figures that justify the conclusion"
+    ],
+    "visualType": "bar-chart",
+    "visualSpec": {
+      "type": "bar-chart",
+      "hasDataLabel": true,
+      "hasLegend": true
+    },
+    "layout": "chart-and-insight",
+    "speakerNotes": "Purpose: Evidence — Part 2\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "medium",
+      "sectionColorHint": "Evidence"
+    }
+  },
+  {
+    "id": "slide-009",
+    "index": 9,
+    "section": "Evidence",
+    "role": "data-chart",
+    "title": "Facts and figures that justify the conclusion",
+    "subtitle": "",
+    "keyMessage": "Facts and figures that justify the conclusion",
+    "body": [
+      "Facts and figures that justify the conclusion"
+    ],
+    "visualType": "bar-chart",
+    "visualSpec": {
+      "type": "bar-chart",
+      "hasDataLabel": true,
+      "hasLegend": true
+    },
+    "layout": "chart-and-insight",
+    "speakerNotes": "Purpose: Evidence — Part 3\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "medium",
+      "sectionColorHint": "Evidence"
+    }
+  },
+  {
+    "id": "slide-010",
+    "index": 10,
+    "section": "Evidence",
+    "role": "data-chart",
+    "title": "Facts and figures that justify the conclusion",
+    "subtitle": "",
+    "keyMessage": "Facts and figures that justify the conclusion",
+    "body": [
+      "Facts and figures that justify the conclusion"
+    ],
+    "visualType": "bar-chart",
+    "visualSpec": {
+      "type": "bar-chart",
+      "hasDataLabel": true,
+      "hasLegend": true
+    },
+    "layout": "chart-and-insight",
+    "speakerNotes": "Purpose: Evidence — Part 4\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "medium",
+      "sectionColorHint": "Evidence"
+    }
+  },
+  {
+    "id": "slide-011",
+    "index": 11,
+    "section": "Evidence",
+    "role": "data-chart",
+    "title": "Facts and figures that justify the conclusion",
+    "subtitle": "",
+    "keyMessage": "Facts and figures that justify the conclusion",
+    "body": [
+      "Facts and figures that justify the conclusion"
+    ],
+    "visualType": "bar-chart",
+    "visualSpec": {
+      "type": "bar-chart",
+      "hasDataLabel": true,
+      "hasLegend": true
+    },
+    "layout": "chart-and-insight",
+    "speakerNotes": "Purpose: Evidence — Part 5\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "medium",
+      "sectionColorHint": "Evidence"
+    }
+  },
+  {
+    "id": "slide-012",
+    "index": 12,
+    "section": "Evidence",
+    "role": "table",
+    "title": "Facts and figures that justify the conclusion",
+    "subtitle": "",
+    "keyMessage": "Facts and figures that justify the conclusion",
+    "body": [
+      "Facts and figures that justify the conclusion"
+    ],
+    "visualType": "bar-chart",
+    "visualSpec": {
+      "type": "bar-chart",
+      "hasDataLabel": true,
+      "hasLegend": true
+    },
+    "layout": "table",
+    "speakerNotes": "Purpose: Evidence — Part 6\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "medium",
+      "sectionColorHint": "Evidence"
+    }
+  },
+  {
+    "id": "slide-013",
+    "index": 13,
+    "section": "Evidence",
+    "role": "table",
+    "title": "Facts and figures that justify the conclusion",
+    "subtitle": "",
+    "keyMessage": "Facts and figures that justify the conclusion",
+    "body": [
+      "Facts and figures that justify the conclusion"
+    ],
+    "visualType": "bar-chart",
+    "visualSpec": {
+      "type": "bar-chart",
+      "hasDataLabel": true,
+      "hasLegend": true
+    },
+    "layout": "table",
+    "speakerNotes": "Purpose: Evidence — Part 7\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers What decision is needed\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "medium",
+      "sectionColorHint": "Evidence"
+    }
+  },
+  {
+    "id": "slide-014",
+    "index": 14,
+    "section": "Recommendation",
+    "role": "section-divider",
+    "title": "Recommendation",
+    "subtitle": "",
+    "keyMessage": "What decision is needed",
+    "body": [],
+    "visualType": "none",
+    "visualSpec": {},
+    "layout": "section-divider",
+    "speakerNotes": "",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "low",
+      "sectionColorHint": "Recommendation"
+    }
+  },
+  {
+    "id": "slide-015",
+    "index": 15,
+    "section": "Recommendation",
+    "role": "recommendation",
+    "title": "What decision is needed",
+    "subtitle": "",
+    "keyMessage": "What decision is needed",
+    "body": [
+      "What decision is needed"
+    ],
+    "visualType": "none",
+    "visualSpec": {},
+    "layout": "title-and-bullets",
+    "speakerNotes": "Purpose: Recommendation — Part 1\nKey argument: What decision is needed\nTransition: Next slide covers What decision is needed\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "high",
+      "sectionColorHint": "Recommendation"
+    }
+  },
+  {
+    "id": "slide-016",
+    "index": 16,
+    "section": "Recommendation",
+    "role": "recommendation",
+    "title": "What decision is needed",
+    "subtitle": "",
+    "keyMessage": "What decision is needed",
+    "body": [
+      "What decision is needed"
+    ],
+    "visualType": "none",
+    "visualSpec": {},
+    "layout": "title-and-bullets",
+    "speakerNotes": "Purpose: Recommendation — Part 2\nKey argument: What decision is needed\nTransition: Next slide covers What decision is needed\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "high",
+      "sectionColorHint": "Recommendation"
+    }
+  },
+  {
+    "id": "slide-017",
+    "index": 17,
+    "section": "Recommendation",
+    "role": "recommendation",
+    "title": "What decision is needed",
+    "subtitle": "",
+    "keyMessage": "What decision is needed",
+    "body": [
+      "What decision is needed"
+    ],
+    "visualType": "none",
+    "visualSpec": {},
+    "layout": "title-and-bullets",
+    "speakerNotes": "Purpose: Recommendation — Part 3\nKey argument: What decision is needed\nTransition: Next slide covers Summary and contact information\nSuggested duration: ~3s",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "high",
+      "sectionColorHint": "Recommendation"
+    }
+  },
+  {
+    "id": "slide-018",
+    "index": 18,
+    "section": "Closing",
+    "role": "closing",
+    "title": "Thank You",
+    "subtitle": "",
+    "keyMessage": "Summary and contact information",
+    "body": [],
+    "visualType": "none",
+    "visualSpec": {},
+    "layout": "closing",
+    "speakerNotes": "",
+    "sourceRefs": [],
+    "designHints": {
+      "density": "sparse",
+      "emphasis": "low",
+      "sectionColorHint": "Closing"
+    }
+  }
+]

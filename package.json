@@ -15,7 +15,8 @@
     "check:m12-1-document-ingestion": "node scripts/check-m12-1-document-ingestion.cjs",
     "check:m12-2-presentation-intent-parser": "node scripts/check-m12-2-presentation-intent-parser.cjs",
     "check:m12-3-story-planner": "node scripts/check-m12-3-story-planner.cjs",
-    "check": "npm run check:m8-docs && npm run check:m12-1-document-ingestion && npm run check:m12-2-presentation-intent-parser && npm run check:m12-3-story-planner",
+    "check:m12-4-slidespec-contract": "node scripts/check-m12-4-slidespec-contract.cjs",
+    "check": "npm run check:m8-docs && npm run check:m12-1-document-ingestion && npm run check:m12-2-presentation-intent-parser && npm run check:m12-3-story-planner && npm run check:m12-4-slidespec-contract",
     "check:docs": "npm run check:m8-docs",
     "check:all": "npm run check && npm run doctor",
     "pack-context:soft-report": "node scripts/generate-pack-runtime-context-soft-report.cjs"
