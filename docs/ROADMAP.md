@@ -241,7 +241,11 @@
   - Original exit codes preserved
   - No secrets, no write operations, fork-safe
   - Workflow safety checker script added
-- [ ] M11.10 Hard Gate Readiness Checkpoint
+- [x] M11.10 Hard Gate Readiness Checkpoint
+  - Readiness decision: NOT READY — remain informational
+  - Observation period insufficient
+  - PR sample size insufficient
+  - Next: M11.11 Informational Observation & Evidence Collection
 
 ## Rules for Future Work
 
