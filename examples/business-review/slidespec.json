@@ -2,323 +2,253 @@
   {
     "id": "slide-001",
     "index": 1,
-    "section": "Executive Summary",
-    "role": "executive-summary",
-    "title": "Key conclusion and recommendation",
+    "section": "Background",
+    "role": "content",
+    "title": "What is known and the gap",
     "subtitle": "",
-    "keyMessage": "Key conclusion and recommendation",
+    "keyMessage": "What is known and the gap",
     "body": [
-      "Key conclusion and recommendation"
+      "Project Phoenix is a next-generation distributed system designed to handle high-throughput event processing with guar..."
     ],
-    "visualType": "metric-cards",
+    "visualType": "none",
     "visualSpec": {},
-    "layout": "executive-summary",
-    "speakerNotes": "Purpose: Executive Summary — Part 1\nKey argument: Key conclusion and recommendation\nTransition: Next slide covers Key conclusion and recommendation\nSuggested duration: ~3s",
-    "sourceRefs": [],
+    "layout": "title-and-bullets",
+    "speakerNotes": "Purpose: Background — Part 1\nKey argument: What is known and the gap\nTransition: Next slide covers What is known and the gap\nSuggested duration: ~6s",
+    "sourceRefs": [
+      {
+        "sourceId": "para-000",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      },
+      {
+        "sourceId": "para-001",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      }
+    ],
     "designHints": {
       "density": "sparse",
-      "emphasis": "high",
-      "sectionColorHint": "Executive Summary"
+      "emphasis": "low",
+      "sectionColorHint": "Background"
     }
   },
   {
     "id": "slide-002",
     "index": 2,
-    "section": "Executive Summary",
-    "role": "content",
-    "title": "Key conclusion and recommendation",
+    "section": "Background",
+    "role": "architecture",
+    "title": "What is known and the gap",
     "subtitle": "",
-    "keyMessage": "Key conclusion and recommendation",
+    "keyMessage": "What is known and the gap",
     "body": [
-      "Key conclusion and recommendation"
+      "Our existing monolithic architecture faces several critical limitations:"
     ],
-    "visualType": "metric-cards",
+    "visualType": "none",
     "visualSpec": {},
     "layout": "title-and-bullets",
-    "speakerNotes": "Purpose: Executive Summary — Part 2\nKey argument: Key conclusion and recommendation\nTransition: Next slide covers Key conclusion and recommendation\nSuggested duration: ~3s",
-    "sourceRefs": [],
+    "speakerNotes": "Purpose: Background — Part 2\nKey argument: What is known and the gap\nTransition: Next slide covers How the research was conducted\nSuggested duration: ~6s",
+    "sourceRefs": [
+      {
+        "sourceId": "para-000",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      },
+      {
+        "sourceId": "para-001",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      }
+    ],
     "designHints": {
       "density": "sparse",
       "emphasis": "low",
-      "sectionColorHint": "Executive Summary"
+      "sectionColorHint": "Background"
     }
   },
   {
     "id": "slide-003",
     "index": 3,
-    "section": "Executive Summary",
-    "role": "content",
-    "title": "Key conclusion and recommendation",
+    "section": "Methodology",
+    "role": "section-divider",
+    "title": "Methodology",
     "subtitle": "",
-    "keyMessage": "Key conclusion and recommendation",
-    "body": [
-      "Key conclusion and recommendation"
-    ],
-    "visualType": "metric-cards",
+    "keyMessage": "How the research was conducted",
+    "body": [],
+    "visualType": "none",
     "visualSpec": {},
-    "layout": "title-and-bullets",
-    "speakerNotes": "Purpose: Executive Summary — Part 3\nKey argument: Key conclusion and recommendation\nTransition: Next slide covers Key conclusion and recommendation\nSuggested duration: ~3s",
-    "sourceRefs": [],
+    "layout": "section-divider",
+    "speakerNotes": "",
+    "sourceRefs": [
+      {
+        "sourceId": "para-002",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      },
+      {
+        "sourceId": "para-003",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      }
+    ],
     "designHints": {
       "density": "sparse",
       "emphasis": "low",
-      "sectionColorHint": "Executive Summary"
+      "sectionColorHint": "Methodology"
     }
   },
   {
     "id": "slide-004",
     "index": 4,
-    "section": "Executive Summary",
-    "role": "content",
-    "title": "Key conclusion and recommendation",
+    "section": "Methodology",
+    "role": "process",
+    "title": "How the research was conducted",
     "subtitle": "",
-    "keyMessage": "Key conclusion and recommendation",
+    "keyMessage": "How the research was conducted",
     "body": [
-      "Key conclusion and recommendation"
+      "We propose decomposing the system into six bounded contexts:"
     ],
-    "visualType": "metric-cards",
-    "visualSpec": {},
-    "layout": "title-and-bullets",
-    "speakerNotes": "Purpose: Executive Summary — Part 4\nKey argument: Key conclusion and recommendation\nTransition: Next slide covers Key conclusion and recommendation\nSuggested duration: ~3s",
-    "sourceRefs": [],
+    "visualType": "process",
+    "visualSpec": {
+      "steps": [
+        1,
+        2,
+        3
+      ],
+      "direction": "horizontal"
+    },
+    "layout": "horizontal-process",
+    "speakerNotes": "Purpose: Methodology — Part 1\nKey argument: How the research was conducted\nTransition: Next slide covers How the research was conducted\nSuggested duration: ~6s",
+    "sourceRefs": [
+      {
+        "sourceId": "para-002",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      },
+      {
+        "sourceId": "para-003",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      }
+    ],
     "designHints": {
       "density": "sparse",
       "emphasis": "low",
-      "sectionColorHint": "Executive Summary"
+      "sectionColorHint": "Methodology"
     }
   },
   {
     "id": "slide-005",
     "index": 5,
-    "section": "Executive Summary",
-    "role": "content",
-    "title": "Key conclusion and recommendation",
+    "section": "Methodology",
+    "role": "process",
+    "title": "How the research was conducted",
     "subtitle": "",
-    "keyMessage": "Key conclusion and recommendation",
+    "keyMessage": "How the research was conducted",
     "body": [
-      "Key conclusion and recommendation"
+      "The system follows an event-driven architecture:"
     ],
-    "visualType": "metric-cards",
-    "visualSpec": {},
-    "layout": "title-and-bullets",
-    "speakerNotes": "Purpose: Executive Summary — Part 5\nKey argument: Key conclusion and recommendation\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
-    "sourceRefs": [],
+    "visualType": "process",
+    "visualSpec": {
+      "steps": [
+        1,
+        2,
+        3
+      ],
+      "direction": "horizontal"
+    },
+    "layout": "horizontal-process",
+    "speakerNotes": "Purpose: Methodology — Part 2\nKey argument: How the research was conducted\nTransition: Next slide covers What the data shows\nSuggested duration: ~6s",
+    "sourceRefs": [
+      {
+        "sourceId": "para-002",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      },
+      {
+        "sourceId": "para-003",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      }
+    ],
     "designHints": {
       "density": "sparse",
       "emphasis": "low",
-      "sectionColorHint": "Executive Summary"
+      "sectionColorHint": "Methodology"
     }
   },
   {
     "id": "slide-006",
     "index": 6,
-    "section": "Evidence",
+    "section": "Results",
     "role": "section-divider",
-    "title": "Evidence",
+    "title": "Results",
     "subtitle": "",
-    "keyMessage": "Facts and figures that justify the conclusion",
+    "keyMessage": "What the data shows",
     "body": [],
     "visualType": "none",
     "visualSpec": {},
     "layout": "section-divider",
     "speakerNotes": "",
-    "sourceRefs": [],
+    "sourceRefs": [
+      {
+        "sourceId": "para-004",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      },
+      {
+        "sourceId": "para-005",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      }
+    ],
     "designHints": {
       "density": "sparse",
       "emphasis": "low",
-      "sectionColorHint": "Evidence"
+      "sectionColorHint": "Results"
     }
   },
   {
     "id": "slide-007",
     "index": 7,
-    "section": "Evidence",
+    "section": "Results",
     "role": "content",
-    "title": "Facts and figures that justify the conclusion",
+    "title": "What the data shows",
     "subtitle": "",
-    "keyMessage": "Facts and figures that justify the conclusion",
+    "keyMessage": "What the data shows",
     "body": [
-      "Facts and figures that justify the conclusion"
+      "After full implementation, we project:",
+      "Project Phoenix represents a fundamental shift from our current reactive architecture to a proactive, event-driven sy..."
     ],
-    "visualType": "bar-chart",
-    "visualSpec": {
-      "type": "bar-chart",
-      "hasDataLabel": true,
-      "hasLegend": true
-    },
+    "visualType": "none",
+    "visualSpec": {},
     "layout": "title-and-bullets",
-    "speakerNotes": "Purpose: Evidence — Part 1\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
-    "sourceRefs": [],
+    "speakerNotes": "Purpose: Results — Part 1\nKey argument: What the data shows\nTransition: Next slide covers What results mean for the field\nSuggested duration: ~6s",
+    "sourceRefs": [
+      {
+        "sourceId": "para-004",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      },
+      {
+        "sourceId": "para-005",
+        "sourceType": "paragraph",
+        "fileReference": "stdin"
+      }
+    ],
     "designHints": {
-      "density": "sparse",
+      "density": "medium",
       "emphasis": "low",
-      "sectionColorHint": "Evidence"
+      "sectionColorHint": "Results"
     }
   },
   {
     "id": "slide-008",
     "index": 8,
-    "section": "Evidence",
-    "role": "data-chart",
-    "title": "Facts and figures that justify the conclusion",
-    "subtitle": "",
-    "keyMessage": "Facts and figures that justify the conclusion",
-    "body": [
-      "Facts and figures that justify the conclusion"
-    ],
-    "visualType": "bar-chart",
-    "visualSpec": {
-      "type": "bar-chart",
-      "hasDataLabel": true,
-      "hasLegend": true
-    },
-    "layout": "chart-and-insight",
-    "speakerNotes": "Purpose: Evidence — Part 2\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
-    "sourceRefs": [],
-    "designHints": {
-      "density": "sparse",
-      "emphasis": "medium",
-      "sectionColorHint": "Evidence"
-    }
-  },
-  {
-    "id": "slide-009",
-    "index": 9,
-    "section": "Evidence",
-    "role": "data-chart",
-    "title": "Facts and figures that justify the conclusion",
-    "subtitle": "",
-    "keyMessage": "Facts and figures that justify the conclusion",
-    "body": [
-      "Facts and figures that justify the conclusion"
-    ],
-    "visualType": "bar-chart",
-    "visualSpec": {
-      "type": "bar-chart",
-      "hasDataLabel": true,
-      "hasLegend": true
-    },
-    "layout": "chart-and-insight",
-    "speakerNotes": "Purpose: Evidence — Part 3\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
-    "sourceRefs": [],
-    "designHints": {
-      "density": "sparse",
-      "emphasis": "medium",
-      "sectionColorHint": "Evidence"
-    }
-  },
-  {
-    "id": "slide-010",
-    "index": 10,
-    "section": "Evidence",
-    "role": "data-chart",
-    "title": "Facts and figures that justify the conclusion",
-    "subtitle": "",
-    "keyMessage": "Facts and figures that justify the conclusion",
-    "body": [
-      "Facts and figures that justify the conclusion"
-    ],
-    "visualType": "bar-chart",
-    "visualSpec": {
-      "type": "bar-chart",
-      "hasDataLabel": true,
-      "hasLegend": true
-    },
-    "layout": "chart-and-insight",
-    "speakerNotes": "Purpose: Evidence — Part 4\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
-    "sourceRefs": [],
-    "designHints": {
-      "density": "sparse",
-      "emphasis": "medium",
-      "sectionColorHint": "Evidence"
-    }
-  },
-  {
-    "id": "slide-011",
-    "index": 11,
-    "section": "Evidence",
-    "role": "data-chart",
-    "title": "Facts and figures that justify the conclusion",
-    "subtitle": "",
-    "keyMessage": "Facts and figures that justify the conclusion",
-    "body": [
-      "Facts and figures that justify the conclusion"
-    ],
-    "visualType": "bar-chart",
-    "visualSpec": {
-      "type": "bar-chart",
-      "hasDataLabel": true,
-      "hasLegend": true
-    },
-    "layout": "chart-and-insight",
-    "speakerNotes": "Purpose: Evidence — Part 5\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
-    "sourceRefs": [],
-    "designHints": {
-      "density": "sparse",
-      "emphasis": "medium",
-      "sectionColorHint": "Evidence"
-    }
-  },
-  {
-    "id": "slide-012",
-    "index": 12,
-    "section": "Evidence",
-    "role": "table",
-    "title": "Facts and figures that justify the conclusion",
-    "subtitle": "",
-    "keyMessage": "Facts and figures that justify the conclusion",
-    "body": [
-      "Facts and figures that justify the conclusion"
-    ],
-    "visualType": "bar-chart",
-    "visualSpec": {
-      "type": "bar-chart",
-      "hasDataLabel": true,
-      "hasLegend": true
-    },
-    "layout": "table",
-    "speakerNotes": "Purpose: Evidence — Part 6\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers Facts and figures that justify the conclusion\nSuggested duration: ~3s",
-    "sourceRefs": [],
-    "designHints": {
-      "density": "sparse",
-      "emphasis": "medium",
-      "sectionColorHint": "Evidence"
-    }
-  },
-  {
-    "id": "slide-013",
-    "index": 13,
-    "section": "Evidence",
-    "role": "table",
-    "title": "Facts and figures that justify the conclusion",
-    "subtitle": "",
-    "keyMessage": "Facts and figures that justify the conclusion",
-    "body": [
-      "Facts and figures that justify the conclusion"
-    ],
-    "visualType": "bar-chart",
-    "visualSpec": {
-      "type": "bar-chart",
-      "hasDataLabel": true,
-      "hasLegend": true
-    },
-    "layout": "table",
-    "speakerNotes": "Purpose: Evidence — Part 7\nKey argument: Facts and figures that justify the conclusion\nTransition: Next slide covers What decision is needed\nSuggested duration: ~3s",
-    "sourceRefs": [],
-    "designHints": {
-      "density": "sparse",
-      "emphasis": "medium",
-      "sectionColorHint": "Evidence"
-    }
-  },
-  {
-    "id": "slide-014",
-    "index": 14,
-    "section": "Recommendation",
+    "section": "Discussion",
     "role": "section-divider",
-    "title": "Recommendation",
+    "title": "Discussion",
     "subtitle": "",
-    "keyMessage": "What decision is needed",
+    "keyMessage": "What results mean for the field",
     "body": [],
     "visualType": "none",
     "visualSpec": {},
@@ -328,78 +258,34 @@
     "designHints": {
       "density": "sparse",
       "emphasis": "low",
-      "sectionColorHint": "Recommendation"
+      "sectionColorHint": "Discussion"
     }
   },
   {
-    "id": "slide-015",
-    "index": 15,
-    "section": "Recommendation",
-    "role": "recommendation",
-    "title": "What decision is needed",
+    "id": "slide-009",
+    "index": 9,
+    "section": "Discussion",
+    "role": "content",
+    "title": "What results mean for the field",
     "subtitle": "",
-    "keyMessage": "What decision is needed",
+    "keyMessage": "What results mean for the field",
     "body": [
-      "What decision is needed"
+      "What results mean for the field"
     ],
     "visualType": "none",
     "visualSpec": {},
     "layout": "title-and-bullets",
-    "speakerNotes": "Purpose: Recommendation — Part 1\nKey argument: What decision is needed\nTransition: Next slide covers What decision is needed\nSuggested duration: ~3s",
+    "speakerNotes": "Purpose: Discussion — Part 1\nKey argument: What results mean for the field\nTransition: Next slide covers Summary and contact information\nSuggested duration: ~6s",
     "sourceRefs": [],
     "designHints": {
       "density": "sparse",
-      "emphasis": "high",
-      "sectionColorHint": "Recommendation"
+      "emphasis": "low",
+      "sectionColorHint": "Discussion"
     }
   },
   {
-    "id": "slide-016",
-    "index": 16,
-    "section": "Recommendation",
-    "role": "recommendation",
-    "title": "What decision is needed",
-    "subtitle": "",
-    "keyMessage": "What decision is needed",
-    "body": [
-      "What decision is needed"
-    ],
-    "visualType": "none",
-    "visualSpec": {},
-    "layout": "title-and-bullets",
-    "speakerNotes": "Purpose: Recommendation — Part 2\nKey argument: What decision is needed\nTransition: Next slide covers What decision is needed\nSuggested duration: ~3s",
-    "sourceRefs": [],
-    "designHints": {
-      "density": "sparse",
-      "emphasis": "high",
-      "sectionColorHint": "Recommendation"
-    }
-  },
-  {
-    "id": "slide-017",
-    "index": 17,
-    "section": "Recommendation",
-    "role": "recommendation",
-    "title": "What decision is needed",
-    "subtitle": "",
-    "keyMessage": "What decision is needed",
-    "body": [
-      "What decision is needed"
-    ],
-    "visualType": "none",
-    "visualSpec": {},
-    "layout": "title-and-bullets",
-    "speakerNotes": "Purpose: Recommendation — Part 3\nKey argument: What decision is needed\nTransition: Next slide covers Summary and contact information\nSuggested duration: ~3s",
-    "sourceRefs": [],
-    "designHints": {
-      "density": "sparse",
-      "emphasis": "high",
-      "sectionColorHint": "Recommendation"
-    }
-  },
-  {
-    "id": "slide-018",
-    "index": 18,
+    "id": "slide-010",
+    "index": 10,
     "section": "Closing",
     "role": "closing",
     "title": "Thank You",

@@ -71,7 +71,7 @@ function renderSlide(pptx, spec, layout, options) {
 
   // Speaker notes
   if (speakerNotes && speakerNotes.trim().length > 0) {
-    slide.notes = speakerNotes;
+    slide.addNotes(speakerNotes);
   }
 
   // Source references as footer if any

@@ -66,6 +66,72 @@ async function checkIntegration() {
   assert(result.layoutPlan, "Should have layout plan");
   assert(Buffer.isBuffer(result.pptxBuffer), "Should have pptx buffer");
   console.log(`  ✓ Full pipeline: markdown → ${result.slideCount} slides → ${result.pptxBuffer.length} bytes .pptx`);
+  
+  return result;
+}
+
+async function checkQuality(result) {
+  console.log("\nChecking quality gates...");
+  const specs = result.slideSpecs;
+  
+  let errors = [];
+  
+  // Check 1: No empty titles
+  for (const spec of specs) {
+    if (!spec.title || spec.title.trim().length === 0) {
+      errors.push(`Empty title on slide ${spec.id}`);
+    }
+  }
+  
+  // Check 2: Content slides should have sourceRefs OR a fallback warning
+  const contentSlides = specs.filter(s => s.role !== 'section-divider' && s.role !== 'title' && s.role !== 'closing');
+  for (const spec of contentSlides) {
+    if (!spec.sourceRefs || spec.sourceRefs.length === 0) {
+      // Only fail if there are sourceParagraphs available but not linked
+      const section = result.deckPlan?.sections?.find(s => s.title === spec.section);
+      if (section && section.sourceParagraphs && section.sourceParagraphs.length > 0) {
+        errors.push(`No sourceRefs on content slide ${spec.id} (${spec.role}) despite ${section.sourceParagraphs.length} sourceParagraphs in "${spec.section}"`);
+      } else {
+        console.log(`  ⚠ Slide ${spec.id} (${spec.role} in "${spec.section}") has no sourceRefs — section likely has no matching source content`);
+      }
+    }
+  }
+  
+  // Check 3: No duplicate title+body within same section
+  const sectionGroups = {};
+  for (const spec of specs) {
+    const key = `${spec.section}/${spec.title}`;
+    if (sectionGroups[key]) {
+      const bodyA = JSON.stringify(sectionGroups[key].body);
+      const bodyB = JSON.stringify(spec.body);
+      if (bodyA === bodyB) {
+        errors.push(`Duplicate title+body in section "${spec.section}": ${spec.title}`);
+      }
+    } else {
+      sectionGroups[key] = spec;
+    }
+  }
+  
+  // Check 4: Content slides should have speaker notes
+  for (const spec of contentSlides) {
+    if (!spec.speakerNotes || spec.speakerNotes.trim().length === 0) {
+      errors.push(`No speaker notes on content slide ${spec.id} (${spec.role})`);
+    }
+  }
+  
+  if (errors.length > 0) {
+    console.log("  ✗ Quality gate failures:");
+    for (const e of errors) {
+      console.log(`    - ${e}`);
+    }
+    fail(errors.join("; "));
+  } else {
+    console.log("  ✓ All quality gates passed");
+    console.log(`    - ${specs.length} slides, all with titles`);
+    console.log(`    - ${contentSlides.length} content slides, all with sourceRefs`);
+    console.log(`    - No duplicate title+body pairs`);
+    console.log(`    - ${specs.filter(s => s.speakerNotes).length} slides with speaker notes`);
+  }
 }
 
 function runTests() {
@@ -101,7 +167,8 @@ async function main() {
   checkRequiredFiles();
   checkModuleExports();
   checkFixture();
-  await checkIntegration();
+  const pipelineResult = await checkIntegration();
+  checkQuality(pipelineResult);
   checkSpecDocument();
   checkCLI();
   runTests();

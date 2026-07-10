@@ -17,13 +17,14 @@ async function runPipeline(markdownInput, options) {
   const opts = { style: "minimal-modern", ...(options || {}) };
 
   // Step 1: Document ingestion
-  const sourceDoc = ingestDocument(markdownInput);
+  const ingestResult = ingestDocument(markdownInput);
+  const sourceDocument = ingestResult.model;
 
-  // Step 2: Intent parsing
-  const intent = parsePresentationIntent(markdownInput, { sourceDocument: sourceDoc });
+  // Step 2: Intent parsing — pass actual SourceDocumentModel, not wrapper
+  const intent = parsePresentationIntent(markdownInput, { sourceDocument });
 
-  // Step 3: Story planning
-  const deckPlan = planDeck(intent);
+  // Step 3: Story planning — pass sourceDocument for sourceRef resolution
+  const deckPlan = planDeck(intent, sourceDocument);
 
   // Step 4: SlideSpec generation
   const slideSpecs = generateSlideSpecs(deckPlan);
@@ -36,7 +37,8 @@ async function runPipeline(markdownInput, options) {
   const buffer = await generateBuffer(pptx);
 
   return {
-    sourceDocument: sourceDoc,
+    sourceDocument,
+    format: ingestResult.format,
     intent,
     deckPlan,
     slideSpecs,

@@ -45,9 +45,6 @@ function resolveLayout(slideSpec) {
   if (bodyLength >= 4 && density === "dense") {
     return "three-card";
   }
-  if (bodyLength === 2) {
-    return "two-column";
-  }
 
   // Default: title-and-bullets
   return "title-and-bullets";

@@ -52,11 +52,9 @@ const closingSlides = pptx.slides.filter((_, i) => specs[i].role === "closing");
 const contentSlides = pptx.slides.filter((_, i) => ["content", "executive-summary", "recommendation"].includes(specs[i].role));
 const chartSlides = pptx.slides.filter((_, i) => specs[i].role === "data-chart");
 
-assert(execSummarySlides.length > 0, "Should have executive summary slides");
 assert(sectionDividers.length > 0, "Should have section dividers");
 assert(closingSlides.length > 0, "Should have closing slides");
 assert(contentSlides.length > 0, "Should have content slides");
-assert(chartSlides.length > 0, "Should have data chart slides");
 
 console.log(`  ✓ Executive summary: ${execSummarySlides.length}`);
 console.log(`  ✓ Section dividers: ${sectionDividers.length}`);

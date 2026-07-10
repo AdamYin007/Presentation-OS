@@ -173,28 +173,36 @@ function generateBody(role, slidePlan, deckPlan) {
   const body = [];
   const keyMsg = slidePlan.keyMessage || "";
 
-  // Extract key points from source paragraphs for this section
-  if (deckPlan.sections) {
+  // Try to get source paragraph text from deckPlan sections
+  if (deckPlan.sections && slidePlan.sourceRefs && slidePlan.sourceRefs.length > 0) {
     const section = deckPlan.sections.find((s) => s.title === slidePlan.section);
-    if (section && section.sourceRefs && section.sourceRefs.length > 0) {
-      // Use source refs as a signal to generate body items
-      const maxItems = Math.min(5, section.slideAllocation || 3);
-      for (let i = 0; i < maxItems; i++) {
-        if (keyMsg && body.length === 0) {
-          body.push(keyMsg);
-        } else if (i === 0 && keyMsg) {
-          body.push(keyMsg);
-        } else {
-          body.push(`Point ${i + 1}: ${generateBodyPoint(i, role, deckPlan)}`);
+    if (section && section.sourceParagraphs && section.sourceParagraphs.length > 0) {
+      // Distribute paragraphs across slides in this section by position
+      const sectionSlides = deckPlan.slides.filter(
+        (s) => s.section === slidePlan.section && s.role !== "section-divider"
+      );
+      const slideLocalIdx = sectionSlides.findIndex((s) => s.index === slidePlan.index);
+      const totalSourcePara = section.sourceParagraphs.length;
+      
+      if (totalSourcePara > 0) {
+        // Round-robin: each slide gets paragraphs at its local index offset
+        for (let i = slideLocalIdx; i < totalSourcePara; i += sectionSlides.length) {
+          const para = section.sourceParagraphs[i];
+          if (para && para.originalText) {
+            const bullet = para.originalText.trim();
+            body.push(bullet.length > 120 ? bullet.slice(0, 117) + "..." : bullet);
+          }
         }
       }
     }
   }
 
+  // Fallback: if no source paragraphs found, use keyMessage
   if (body.length === 0 && keyMsg) {
     body.push(keyMsg);
   }
 
+  // Last resort fallback
   if (body.length === 0) {
     body.push("Key insight from analysis");
   }
