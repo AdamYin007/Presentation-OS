@@ -346,7 +346,7 @@ function suggestVisual(role, intent) {
   const visualMap = {
     "data-chart": "bar-chart",
     "comparison": "comparison",
-    "process": "horizontal-process",
+    "process": "process",
     "roadmap": "timeline",
     "case-study": "image",
     "executive-summary": "metric-cards",
@@ -437,40 +437,69 @@ function matchesSourceRef(paragraph, slideSection, slideSectionKeywords) {
   const sectionPathStr = normalizeSectionPath(paragraph.sectionPath);
   const text = (paragraph.originalText || "").toLowerCase();
   const pathLower = sectionPathStr.toLowerCase();
+  const slideLower = slideSection.toLowerCase();
 
-  // Check if section path contains any of the keywords
+  // Priority 1: Section path must contain at least one keyword as a word boundary match
+  // This prevents "design" from matching "designed" in arbitrary text
+  let pathMatchScore = 0;
   for (const kw of slideSectionKeywords) {
-    if (pathLower.includes(kw.toLowerCase()) || text.includes(kw.toLowerCase())) {
-      return true;
+    const kwLower = kw.toLowerCase();
+    // Check for word-boundary match in section path (section headers use clean names)
+    if (pathLower.match(new RegExp('\\b' + kwLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i'))) {
+      pathMatchScore += 2;
+    }
+    // Also check for substring match (fallback for compound paths)
+    else if (pathLower.includes(kwLower)) {
+      pathMatchScore += 1;
+    }
+  }
+  
+  // If no path match at all, skip this paragraph entirely
+  if (pathMatchScore === 0) return false;
+
+  // Priority 2: Text content should corroborate (not override) path matching
+  // Only count text matches if we already have a path match
+  let textMatchCount = 0;
+  for (const kw of slideSectionKeywords) {
+    const kwLower = kw.toLowerCase();
+    // Use word boundary regex to avoid partial matches like "designed" -> "design"
+    const regex = new RegExp('\\b' + kwLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+    if (regex.test(text)) {
+      textMatchCount++;
     }
   }
 
-  // Fallback: check if slide section name appears in path or vice versa
-  const slideLower = slideSection.toLowerCase();
-  if (slideLower.length > 3 && (pathLower.includes(slideLower) || slideLower.includes(pathLower))) {
-    return true;
-  }
-
-  return false;
+  // Return true if path match is strong enough OR if both path and text match
+  return pathMatchScore >= 2 || (pathMatchScore >= 1 && textMatchCount >= 1);
 }
 
 function preserveSourceRefs(sections, slides, sourceDocument, intent) {
   if (!sourceDocument || !sourceDocument.paragraphs) return;
 
+  // Build a map from deck section title -> matched paragraphs
+  const sectionParaMap = {};
+  for (const section of sections) {
+    sectionParaMap[section.title] = [];
+  }
+
   for (const slide of slides) {
     const matchedRefs = [];
-    const keywords = getSectionKeywords(slide.section);
+    const matchedParagraphs = [];
+    const slideSectionLower = slide.section.toLowerCase();
+    const slideKeywords = getSectionKeywords(slide.section);
 
+    // Match paragraphs by keyword-based matching (not exact sectionPath)
     for (const para of sourceDocument.paragraphs) {
-      const sectionMatch = keywords.length > 0
-        ? matchesSourceRef(para, slide.section, keywords)
-        : false;
-
-      if (sectionMatch) {
+      if (matchesSourceRef(para, slide.section, slideKeywords)) {
         matchedRefs.push({
           sourceId: para.sourceId,
           sourceType: para.sourceType,
           fileReference: para.fileReference || "",
+        });
+        matchedParagraphs.push({
+          sourceId: para.sourceId,
+          originalText: para.originalText || "",
+          sectionPath: para.sectionPath || [],
         });
       }
     }
@@ -482,6 +511,54 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
       seen.add(ref.sourceId);
       return true;
     });
+
+    // Store matched paragraphs on the section for downstream use
+    if (matchedParagraphs.length > 0) {
+      if (!sectionParaMap[slide.section]) {
+        sectionParaMap[slide.section] = [];
+      }
+      const existingIds = new Set(sectionParaMap[slide.section].map(p => p.sourceId));
+      for (const para of matchedParagraphs) {
+        if (!existingIds.has(para.sourceId)) {
+          sectionParaMap[slide.section].push(para);
+        }
+      }
+    }
+  }
+
+  // Fallback: if NO slides have refs, distribute paragraphs proportionally across sections
+  const totalSlidesWithRefs = slides.filter(s => s.sourceRefs.length > 0).length;
+  if (totalSlidesWithRefs === 0 && sourceDocument.paragraphs.length > 0) {
+    const numSections = sections.length;
+    const parasPerSection = Math.ceil(sourceDocument.paragraphs.length / numSections);
+
+    for (let i = 0; i < sections.length; i++) {
+      const startIdx = i * parasPerSection;
+      const endIdx = Math.min(startIdx + parasPerSection, sourceDocument.paragraphs.length);
+      const sectionParas = sourceDocument.paragraphs.slice(startIdx, endIdx);
+
+      sectionParaMap[sections[i].title] = sectionParas.map(p => ({
+        sourceId: p.sourceId,
+        originalText: p.originalText || "",
+        sectionPath: p.sectionPath || [],
+      }));
+
+      // Also assign refs to slides in this section
+      for (const slide of slides) {
+        if (slide.section === sections[i].title && slide.sourceRefs.length === 0) {
+          slide.sourceRefs = sectionParas.map(p => ({
+            sourceId: p.sourceId,
+            sourceType: p.sourceType,
+            fileReference: p.fileReference || "",
+          }));
+        }
+      }
+    }
+  }
+
+  // Assign sourceParagraphs to sections
+  for (const section of sections) {
+    section.sourceParagraphs = sectionParaMap[section.title] || [];
   }
 }
 

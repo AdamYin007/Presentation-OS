@@ -94,13 +94,24 @@ function inferTopic(text, sourceDocument, assumptions) {
 }
 
 function inferAudience(text, assumptions) {
+  // Only match explicit audience phrases — NOT generic "to handle / to improve / to build"
   const patterns = [
-    /(?:for|to|aimed at|audience:?)\s+([^,.。；;]+)/i,
+    /(?:for|audience:?)\s+(?:an?\s+)?([^,.。；;]+)/i,
     /(?:面向|给|受众是|听众是)([^，。；;]+)/,
   ];
   for (const pattern of patterns) {
     const match = text.match(pattern);
-    if (match?.[1]) return trimPhrase(match[1]);
+    if (match?.[1]) {
+      const phrase = trimPhrase(match[1]);
+      // Reject if it starts with purpose infinitive or long verb phrase
+      if (/^(to|for|aimed at|designed to|built to|meant to|intended to)\s+/i.test(phrase)) continue;
+      // Reject if first word is a common purpose verb
+      const firstWord = phrase.split(' ')[0];
+      if (/^(handle|improve|build|support|manage|process|enable|deliver|create|provide|reduce|increase|optimize|deploy|implement|develop|design|analyze|evaluate|track|monitor|scale|transform|streamline|accelerate|facilitate|ensure|maintain|operate|run|test|debug|fix|solve|address|mitigate|prevent|avoid|achieve|reach|meet|satisfy|fulfill|accomplish|complete|finish|execute|perform|conduct|carry out|make|do|write|code|program|engineer|construct|assemble|configure|setup|install|launch|ship|release|publish|share|distribute|communicate|present|explain|describe|define|specify|document|record|log|store|save|migrate|convert|translate|adapt|customize|personalize|tailor|adjust|tune|refine|polish|enhance|upgrade|modernize|revamp|restructure|reorganize|realign|reposition|rebrand|remodel|renovate|restore|repair|service|assist|help|aid|guide|coach|train|teach|educate|instruct|mentor|advise|consult|recommend|suggest|propose|offer|supply|furnish|show|display|exhibit|demonstrate|illustrate|depict|portray|represent|symbolize|signify|indicate|denote|convey|express|articulate|voice|state|declare|announce|proclaim|pronounce|utter|say|tell|speak|talk|chat|discuss|debate|argue|dispute|contend|assert|affirm|confirm|verify|validate|authenticate|certify|authorize|approve|endorse|sanction|ratify|legalize|legitimize|justify|defend|protect|shield|guard|cover|hide|conceal|mask|disguise|camouflage|obscure|blur|cloud|muddy|pollute|contaminate|infect|poison|corrupt|debase|degrade|lower|diminish|decrease|lessen|minimize|shrink|contract|compress|condense|consolidate|merge|combine|unite|join|link|connect|attach|fasten|secure|lock|seal|close|shut|block|stop|halt|pause|interrupt|break|fracture|crack|split|divide|separate|isolate|detach|disconnect|unlink|untie|unfasten|unlock|open|reveal|expose|uncover|discover|find|locate|identify|recognize|distinguish|differentiate|discriminate|select|choose|pick|elect|opt|prefer|favor|like|love|adore|worship|revere|venerate|honor|respect|admire|appreciate|value|treasure|cherish|prize|esteem|regard|consider|view|see|perceive|observe|notice|spot|catch|grab|seize)/i.test(firstWord)) {
+        continue;
+      }
+      return phrase;
+    }
   }
   assumptions.push("Audience defaulted to general professional audience.");
   return "general professional audience";
@@ -155,6 +166,23 @@ function inferSpeakerNotes(text) {
 }
 
 function inferDomain(text, assumptions) {
+  // Check technical/architecture signals FIRST (before generic words like "policy")
+  const techSignals = [
+    'architecture', 'distributed system', 'microservices', 'kafka', 'flink', 'postgres',
+    'postgresql', 'redis', 'api gateway', 'kong', 'prometheus', 'grafana', 'kubernetes',
+    'latency', 'event processing', 'throughput', 'scalability', 'deployment', 'ci/cd',
+    'pipeline', 'streaming', 'real-time', 'cloud-native', 'container', 'docker',
+    'restful', 'graphql', 'acidity', 'state management', 'monitoring', 'observability',
+    'tracing', 'alerting', 'load testing', 'performance optimization', 'failover',
+    'penetration testing', 'security audit', 'disaster recovery', 'technical',
+    '技术', '架构', '工程', '分布式', '微服务', '延迟', '吞吐量',
+    '部署', '流水线', '流处理', '实时', '云原生', '容器', '监控', '可观测性',
+    '追踪', '告警', '压测', '性能优化', '故障转移'
+  ];
+  const lowerText = text.toLowerCase();
+  for (const signal of techSignals) {
+    if (lowerText.includes(signal.toLowerCase())) return "technical";
+  }
   if (/medical|healthcare|clinical|医疗|临床|健康/i.test(text)) return "medical";
   if (/government|policy|政府|政策/i.test(text)) return "government";
   if (/education|student|school|教学|教育|学生|高中生|课件|课程/i.test(text)) return "education";

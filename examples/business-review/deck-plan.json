@@ -1,211 +1,279 @@
 {
   "schemaVersion": "1.0.0",
-  "deckTitle": "2025年度经营分析报告",
-  "subtitle": "for 管理层 · review",
-  "audience": "管理层",
-  "purpose": "review",
-  "language": "zh-CN",
-  "narrativePattern": "exec-summary-evidence-recommendation",
+  "deckTitle": "Project Phoenix: Technical Architecture Review",
+  "subtitle": "for general professional audience · teach",
+  "audience": "general professional audience",
+  "purpose": "teach",
+  "language": "en-US",
+  "narrativePattern": "background-method-results-discussion",
   "sections": [
     {
-      "id": "exec-summary",
-      "title": "Executive Summary",
-      "purpose": "Bottom line up front",
-      "keyMessage": "Key conclusion and recommendation",
-      "slideAllocation": 5,
-      "sourceRefs": []
+      "id": "background",
+      "title": "Background",
+      "purpose": "Research context",
+      "keyMessage": "What is known and the gap",
+      "slideAllocation": 2,
+      "sourceRefs": [],
+      "sourceParagraphs": [
+        {
+          "sourceId": "para-000",
+          "originalText": "Project Phoenix is a next-generation distributed system designed to handle high-throughput event processing with guaranteed delivery and sub-second latency. This document outlines the architectural decisions, technology stack, and implementation roadmap.",
+          "sectionPath": [
+            "",
+            "Project Phoenix: Technical Architecture Review",
+            "Executive Summary"
+          ]
+        },
+        {
+          "sourceId": "para-001",
+          "originalText": "Our existing monolithic architecture faces several critical limitations:",
+          "sectionPath": [
+            "",
+            "Project Phoenix: Technical Architecture Review",
+            "Current Challenges"
+          ]
+        }
+      ]
     },
     {
-      "id": "evidence",
-      "title": "Evidence",
-      "purpose": "Supporting data",
-      "keyMessage": "Facts and figures that justify the conclusion",
-      "slideAllocation": 7,
-      "sourceRefs": []
+      "id": "method",
+      "title": "Methodology",
+      "purpose": "Approach and design",
+      "keyMessage": "How the research was conducted",
+      "slideAllocation": 2,
+      "sourceRefs": [],
+      "sourceParagraphs": [
+        {
+          "sourceId": "para-002",
+          "originalText": "We propose decomposing the system into six bounded contexts:",
+          "sectionPath": [
+            "",
+            "Project Phoenix: Technical Architecture Review",
+            "Proposed Architecture",
+            "Service Boundaries"
+          ]
+        },
+        {
+          "sourceId": "para-003",
+          "originalText": "The system follows an event-driven architecture:",
+          "sectionPath": [
+            "",
+            "Project Phoenix: Technical Architecture Review",
+            "Proposed Architecture",
+            "Data Flow"
+          ]
+        }
+      ]
     },
     {
-      "id": "recommendation",
-      "title": "Recommendation",
-      "purpose": "Actionable next steps",
-      "keyMessage": "What decision is needed",
-      "slideAllocation": 3,
-      "sourceRefs": []
+      "id": "results",
+      "title": "Results",
+      "purpose": "Key findings",
+      "keyMessage": "What the data shows",
+      "slideAllocation": 1,
+      "sourceRefs": [],
+      "sourceParagraphs": [
+        {
+          "sourceId": "para-004",
+          "originalText": "After full implementation, we project:",
+          "sectionPath": [
+            "",
+            "Project Phoenix: Technical Architecture Review",
+            "Expected Outcomes"
+          ]
+        },
+        {
+          "sourceId": "para-005",
+          "originalText": "Project Phoenix represents a fundamental shift from our current reactive architecture to a proactive, event-driven system. The phased approach minimizes risk while delivering incremental value at each stage.",
+          "sectionPath": [
+            "",
+            "Project Phoenix: Technical Architecture Review",
+            "Conclusion"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "discussion",
+      "title": "Discussion",
+      "purpose": "Interpretation and limits",
+      "keyMessage": "What results mean for the field",
+      "slideAllocation": 1,
+      "sourceRefs": [],
+      "sourceParagraphs": []
     }
   ],
   "slides": [
     {
       "slideId": "slide-001",
       "index": 1,
-      "role": "executive-summary",
-      "section": "Executive Summary",
-      "objective": "Executive Summary — Part 1",
-      "keyMessage": "Key conclusion and recommendation",
-      "candidateVisual": "metric-cards",
-      "sourceRefs": []
+      "role": "content",
+      "section": "Background",
+      "objective": "Background — Part 1",
+      "keyMessage": "What is known and the gap",
+      "candidateVisual": "none",
+      "sourceRefs": [
+        {
+          "sourceId": "para-000",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        },
+        {
+          "sourceId": "para-001",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        }
+      ]
     },
     {
       "slideId": "slide-002",
       "index": 2,
-      "role": "content",
-      "section": "Executive Summary",
-      "objective": "Executive Summary — Part 2",
-      "keyMessage": "Key conclusion and recommendation",
-      "candidateVisual": "metric-cards",
-      "sourceRefs": []
+      "role": "architecture",
+      "section": "Background",
+      "objective": "Background — Part 2",
+      "keyMessage": "What is known and the gap",
+      "candidateVisual": "none",
+      "sourceRefs": [
+        {
+          "sourceId": "para-000",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        },
+        {
+          "sourceId": "para-001",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        }
+      ]
     },
     {
       "slideId": "slide-003",
       "index": 3,
-      "role": "content",
-      "section": "Executive Summary",
-      "objective": "Executive Summary — Part 3",
-      "keyMessage": "Key conclusion and recommendation",
-      "candidateVisual": "metric-cards",
-      "sourceRefs": []
+      "role": "section-divider",
+      "section": "Methodology",
+      "objective": "Transition to Methodology",
+      "keyMessage": "How the research was conducted",
+      "candidateVisual": "none",
+      "sourceRefs": [
+        {
+          "sourceId": "para-002",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        },
+        {
+          "sourceId": "para-003",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        }
+      ]
     },
     {
       "slideId": "slide-004",
       "index": 4,
-      "role": "content",
-      "section": "Executive Summary",
-      "objective": "Executive Summary — Part 4",
-      "keyMessage": "Key conclusion and recommendation",
-      "candidateVisual": "metric-cards",
-      "sourceRefs": []
+      "role": "process",
+      "section": "Methodology",
+      "objective": "Methodology — Part 1",
+      "keyMessage": "How the research was conducted",
+      "candidateVisual": "process",
+      "sourceRefs": [
+        {
+          "sourceId": "para-002",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        },
+        {
+          "sourceId": "para-003",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        }
+      ]
     },
     {
       "slideId": "slide-005",
       "index": 5,
-      "role": "content",
-      "section": "Executive Summary",
-      "objective": "Executive Summary — Part 5",
-      "keyMessage": "Key conclusion and recommendation",
-      "candidateVisual": "metric-cards",
-      "sourceRefs": []
+      "role": "process",
+      "section": "Methodology",
+      "objective": "Methodology — Part 2",
+      "keyMessage": "How the research was conducted",
+      "candidateVisual": "process",
+      "sourceRefs": [
+        {
+          "sourceId": "para-002",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        },
+        {
+          "sourceId": "para-003",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        }
+      ]
     },
     {
       "slideId": "slide-006",
       "index": 6,
       "role": "section-divider",
-      "section": "Evidence",
-      "objective": "Transition to Evidence",
-      "keyMessage": "Facts and figures that justify the conclusion",
+      "section": "Results",
+      "objective": "Transition to Results",
+      "keyMessage": "What the data shows",
       "candidateVisual": "none",
-      "sourceRefs": []
+      "sourceRefs": [
+        {
+          "sourceId": "para-004",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        },
+        {
+          "sourceId": "para-005",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        }
+      ]
     },
     {
       "slideId": "slide-007",
       "index": 7,
       "role": "content",
-      "section": "Evidence",
-      "objective": "Evidence — Part 1",
-      "keyMessage": "Facts and figures that justify the conclusion",
-      "candidateVisual": "bar-chart",
-      "sourceRefs": []
+      "section": "Results",
+      "objective": "Results — Part 1",
+      "keyMessage": "What the data shows",
+      "candidateVisual": "none",
+      "sourceRefs": [
+        {
+          "sourceId": "para-004",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        },
+        {
+          "sourceId": "para-005",
+          "sourceType": "paragraph",
+          "fileReference": "stdin"
+        }
+      ]
     },
     {
       "slideId": "slide-008",
       "index": 8,
-      "role": "data-chart",
-      "section": "Evidence",
-      "objective": "Evidence — Part 2",
-      "keyMessage": "Facts and figures that justify the conclusion",
-      "candidateVisual": "bar-chart",
+      "role": "section-divider",
+      "section": "Discussion",
+      "objective": "Transition to Discussion",
+      "keyMessage": "What results mean for the field",
+      "candidateVisual": "none",
       "sourceRefs": []
     },
     {
       "slideId": "slide-009",
       "index": 9,
-      "role": "data-chart",
-      "section": "Evidence",
-      "objective": "Evidence — Part 3",
-      "keyMessage": "Facts and figures that justify the conclusion",
-      "candidateVisual": "bar-chart",
+      "role": "content",
+      "section": "Discussion",
+      "objective": "Discussion — Part 1",
+      "keyMessage": "What results mean for the field",
+      "candidateVisual": "none",
       "sourceRefs": []
     },
     {
       "slideId": "slide-010",
       "index": 10,
-      "role": "data-chart",
-      "section": "Evidence",
-      "objective": "Evidence — Part 4",
-      "keyMessage": "Facts and figures that justify the conclusion",
-      "candidateVisual": "bar-chart",
-      "sourceRefs": []
-    },
-    {
-      "slideId": "slide-011",
-      "index": 11,
-      "role": "data-chart",
-      "section": "Evidence",
-      "objective": "Evidence — Part 5",
-      "keyMessage": "Facts and figures that justify the conclusion",
-      "candidateVisual": "bar-chart",
-      "sourceRefs": []
-    },
-    {
-      "slideId": "slide-012",
-      "index": 12,
-      "role": "table",
-      "section": "Evidence",
-      "objective": "Evidence — Part 6",
-      "keyMessage": "Facts and figures that justify the conclusion",
-      "candidateVisual": "bar-chart",
-      "sourceRefs": []
-    },
-    {
-      "slideId": "slide-013",
-      "index": 13,
-      "role": "table",
-      "section": "Evidence",
-      "objective": "Evidence — Part 7",
-      "keyMessage": "Facts and figures that justify the conclusion",
-      "candidateVisual": "bar-chart",
-      "sourceRefs": []
-    },
-    {
-      "slideId": "slide-014",
-      "index": 14,
-      "role": "section-divider",
-      "section": "Recommendation",
-      "objective": "Transition to Recommendation",
-      "keyMessage": "What decision is needed",
-      "candidateVisual": "none",
-      "sourceRefs": []
-    },
-    {
-      "slideId": "slide-015",
-      "index": 15,
-      "role": "recommendation",
-      "section": "Recommendation",
-      "objective": "Recommendation — Part 1",
-      "keyMessage": "What decision is needed",
-      "candidateVisual": "none",
-      "sourceRefs": []
-    },
-    {
-      "slideId": "slide-016",
-      "index": 16,
-      "role": "recommendation",
-      "section": "Recommendation",
-      "objective": "Recommendation — Part 2",
-      "keyMessage": "What decision is needed",
-      "candidateVisual": "none",
-      "sourceRefs": []
-    },
-    {
-      "slideId": "slide-017",
-      "index": 17,
-      "role": "recommendation",
-      "section": "Recommendation",
-      "objective": "Recommendation — Part 3",
-      "keyMessage": "What decision is needed",
-      "candidateVisual": "none",
-      "sourceRefs": []
-    },
-    {
-      "slideId": "slide-018",
-      "index": 18,
       "role": "closing",
       "section": "Closing",
       "objective": "Thank you and Q&A",
@@ -217,8 +285,5 @@
   "assumptions": [
     "Deck title inferred from SourceDocumentModel title"
   ],
-  "warnings": [
-    "mustInclude item \"收入增长\" may not be adequately addressed in the current plan.",
-    "mustInclude item \"风险\" may not be adequately addressed in the current plan."
-  ]
+  "warnings": []
 }
