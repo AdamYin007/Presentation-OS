@@ -71,7 +71,7 @@ function generateColorPalette(themeName, slideSpec) {
 
   return {
     background: tokens.colors.background,
-    text: tokens.colors.primary,
+    text: tokens.colors.text,
     secondaryText: tokens.colors.secondary,
     mutedText: tokens.colors.muted,
     accent: emphasis === "high" ? tokens.colors.accent : tokens.colors.border,
