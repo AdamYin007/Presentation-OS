@@ -172,7 +172,7 @@ console.log("  ✓ Empty specs handled");
 const consultingPlan = generateLayoutPlan(specs, { style: "business-consulting" });
 assert(consultingPlan.theme === "business-consulting", "Should use business-consulting theme");
 const firstConsultingLayout = consultingPlan.layouts[0];
-assert(firstConsultingLayout.colors.text === "#1E3A5F", "Primary text should be navy");
+assert(firstConsultingLayout.colors.text === "#1A202C", "Primary text should be dark gray (not navy)");
 console.log("  ✓ Business consulting theme applied");
 
 console.log("\n==============================");
