@@ -82,7 +82,7 @@ function mapDeckPlanToSlideSpec(slidePlan, deckPlan) {
   let title = generateTitle(role, slidePlan, sectionTitle, deckPlan);
 
   // Generate body content from keyMessage and source data
-  const body = generateBody(role, slidePlan, deckPlan);
+  const body = generateBody(role, slidePlan, deckPlan, title);
 
   // Generate speaker notes
   const speakerNotes = generateSpeakerNotes(role, slidePlan, deckPlan, sectionTitle);
@@ -274,7 +274,7 @@ function getPartNumber(slidePlan) {
  * Generate body content items for a slide.
  * Uses keyMessage and source data to produce 1-5 bullet points.
  */
-function generateBody(role, slidePlan, deckPlan) {
+function generateBody(role, slidePlan, deckPlan, title) {
   // Section dividers and special roles have empty body
   if (role === "section-divider" || role === "title" || role === "closing") {
     return [];
@@ -299,7 +299,23 @@ function generateBody(role, slidePlan, deckPlan) {
         for (let i = slideLocalIdx; i < totalSourcePara; i += sectionSlides.length) {
           const para = section.sourceParagraphs[i];
           if (para && para.originalText) {
-            const bullet = para.originalText.trim();
+            let bullet = para.originalText.trim();
+            
+            // Avoid title/body duplication: truncate bullets that are identical or 
+            // prefix-similar to the slide title (which comes from the same paragraph)
+            const titleLower = (title || "").toLowerCase().trim();
+            if (titleLower && bullet.toLowerCase().startsWith(titleLower)) {
+              // Bullet is a prefix/extension of title — skip the title portion
+              // and take the remainder, or fall back to keyMessage
+              const remainder = bullet.substring(titleLower.length).trim();
+              if (remainder && remainder.length > 10) {
+                bullet = remainder;
+              } else {
+                // Remainder too short — use keyMessage instead
+                bullet = keyMsg;
+              }
+            }
+            
             body.push(bullet.length > 120 ? bullet.slice(0, 117) + "..." : bullet);
           }
         }
@@ -307,24 +323,50 @@ function generateBody(role, slidePlan, deckPlan) {
     }
   }
 
+  // Deduplicate body items that are identical to the title (case-insensitive)
+  const titleNorm = (title || "").trim().toLowerCase().replace(/[.,!?;:]+$/, "");
+  const deduped = [];
+  for (const item of body) {
+    const itemNorm = item.trim().toLowerCase().replace(/[.,!?;:]+$/, "");
+    if (!titleNorm || titleNorm !== itemNorm) {
+      deduped.push(item);
+    }
+  }
+  // If all body items were duplicates of the title, keep only the first non-duplicate
+  // or fall back to keyMessage
+  if (deduped.length === 0 && body.length > 0) {
+    if (keyMsg && !titleNorm) {
+      deduped.push(keyMsg);
+    } else if (keyMsg) {
+      const keyMsgNorm = keyMsg.trim().toLowerCase().replace(/[.,!?;:]+$/, "");
+      if (keyMsgNorm !== titleNorm) {
+        deduped.push(keyMsg);
+      } else {
+        deduped.push("Key insight from analysis");
+      }
+    } else {
+      deduped.push("Key insight from analysis");
+    }
+  }
+
   // Fallback: if no source paragraphs found, use keyMessage
   // But never push a body item identical to the title
-  if (body.length === 0 && keyMsg) {
-    const trimmedTitle = (slidePlan.title || "").trim();
+  if (deduped.length === 0 && keyMsg) {
+    const trimmedTitle = title.trim();
     if (keyMsg.trim() !== trimmedTitle) {
-      body.push(keyMsg);
+      deduped.push(keyMsg);
     } else {
       // Title and keyMessage are the same — generate a generic insight instead
-      body.push("Key insight from analysis");
+      deduped.push("Key insight from analysis");
     }
   }
 
   // Last resort fallback
-  if (body.length === 0) {
-    body.push("Key insight from analysis");
+  if (deduped.length === 0) {
+    deduped.push("Key insight from analysis");
   }
 
-  return body;
+  return deduped;
 }
 
 function generateBodyPoint(index, role, deckPlan) {
