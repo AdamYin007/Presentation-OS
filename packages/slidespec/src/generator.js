@@ -198,8 +198,15 @@ function generateBody(role, slidePlan, deckPlan) {
   }
 
   // Fallback: if no source paragraphs found, use keyMessage
+  // But never push a body item identical to the title
   if (body.length === 0 && keyMsg) {
-    body.push(keyMsg);
+    const trimmedTitle = (slidePlan.title || "").trim();
+    if (keyMsg.trim() !== trimmedTitle) {
+      body.push(keyMsg);
+    } else {
+      // Title and keyMessage are the same — generate a generic insight instead
+      body.push("Key insight from analysis");
+    }
   }
 
   // Last resort fallback

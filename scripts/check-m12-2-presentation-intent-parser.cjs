@@ -210,11 +210,17 @@ function checkUnitTests() {
 function checkAllowedDiff() {
   console.log("\nChecking M12.2 diff allowlist...");
   const changed = new Set();
-  const branchDiff = cp.execFileSync("git", ["diff", "--name-only", "origin/develop...HEAD"], {
-    cwd: ROOT,
-    encoding: "utf8",
-  });
-  branchDiff.split("\n").map((line) => line.trim()).filter(Boolean).forEach((line) => changed.add(line));
+
+  // Try branch diff; skip if origin/develop not available (CI shallow clones)
+  try {
+    const branchDiff = cp.execFileSync("git", ["diff", "--name-only", "origin/develop...HEAD"], {
+      cwd: ROOT,
+      encoding: "utf8",
+    });
+    branchDiff.split("\n").map((line) => line.trim()).filter(Boolean).forEach((line) => changed.add(line));
+  } catch (e) {
+    console.log("  SKIP git diff origin/develop...HEAD (not available in CI)");
+  }
 
   const statusOut = cp.execFileSync("git", ["status", "--porcelain"], {
     cwd: ROOT,
