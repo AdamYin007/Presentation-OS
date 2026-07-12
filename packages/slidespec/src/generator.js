@@ -124,6 +124,9 @@ function mapDeckPlanToSlideSpec(slidePlan, deckPlan) {
 
 /**
  * Generate a slide title from the DeckPlan entry.
+ * 
+ * For content slides within a section that has multiple slides,
+ * generates differentiated titles based on the page-specific source paragraph.
  */
 function generateTitle(role, slidePlan, sectionTitle, deckPlan) {
   if (role === "title") {
@@ -142,15 +145,122 @@ function generateTitle(role, slidePlan, sectionTitle, deckPlan) {
     return "Agenda";
   }
 
-  // For content slides, use keyMessage as title when it's concise
-  const km = (slidePlan.keyMessage || "").trim();
-  if (km && km.length < 60) {
-    return km;
+  // For content slides, try to generate a page-specific title
+  const contentTitle = generateContentTitle(slidePlan, sectionTitle, deckPlan);
+  if (contentTitle) {
+    return contentTitle;
   }
 
   // Fallback: section + part number
   const partNum = getPartNumber(slidePlan);
   return `${sectionTitle}${partNum ? ` — Part ${partNum}` : ""}`;
+}
+
+/**
+ * Generate a differentiated title for a content slide.
+ * Uses the page-specific source paragraph to create a unique conclusion title.
+ */
+function generateContentTitle(slidePlan, sectionTitle, deckPlan) {
+  const km = (slidePlan.keyMessage || "").trim();
+  
+  // Try to extract page-specific insight from source paragraph
+  const pageSpecificInsight = extractPageSpecificInsight(slidePlan, deckPlan);
+  
+  if (pageSpecificInsight) {
+    return pageSpecificInsight;
+  }
+  
+  // If no page-specific insight, check if this is the only slide in its section
+  const sectionSlides = deckPlan.slides.filter(
+    s => s.section === slidePlan.section && s.role !== "section-divider"
+  );
+  
+  if (sectionSlides.length <= 1) {
+    // Only one slide in this section, safe to use keyMessage
+    if (km && km.length < 60) {
+      return km;
+    }
+  } else {
+    // Multiple slides in section - use keyMessage only if it contains page-specific info
+    // (e.g., includes a data point, specific finding, or numbered item)
+    if (km && km.length < 60 && isDifferentiatedKeyMessage(km, slidePlan, sectionSlides)) {
+      return km;
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Extract page-specific insight from the source paragraph assigned to this slide.
+ */
+function extractPageSpecificInsight(slidePlan, deckPlan) {
+  // Find the section this slide belongs to
+  const section = deckPlan.sections.find(s => s.title === slidePlan.section);
+  
+  if (!section || !section.sourceParagraphs || section.sourceParagraphs.length === 0) {
+    return null;
+  }
+  
+  // Find which paragraph index this slide should use (round-robin distribution)
+  const sectionSlides = deckPlan.slides.filter(
+    s => s.section === slidePlan.section && s.role !== "section-divider"
+  );
+  const slideLocalIdx = sectionSlides.findIndex(s => s.index === slidePlan.index);
+  
+  if (slideLocalIdx < 0 || slideLocalIdx >= section.sourceParagraphs.length) {
+    return null;
+  }
+  
+  const para = section.sourceParagraphs[slideLocalIdx];
+  if (!para || !para.originalText) {
+    return null;
+  }
+  
+  // Extract a concise conclusion from the source paragraph
+  // Look for the most informative sentence/clause
+  const text = para.originalText.trim();
+  
+  // If text is short enough, use it directly
+  if (text.length <= 80) {
+    return text;
+  }
+  
+  // Otherwise, extract first meaningful clause (up to 80 chars)
+  const match = text.match(/^.{1,80}(?:\s*[,.。；；]|$)/);
+  if (match) {
+    return match[0].replace(/[,.。；；]$/, '').trim();
+  }
+  
+  return text.substring(0, 80).trim();
+}
+
+/**
+ * Check if a keyMessage is already differentiated from other slides in the same section.
+ */
+function isDifferentiatedKeyMessage(keyMessage, currentSlide, sectionSlides) {
+  // Count how many other slides in this section have similar keyMessage
+  let similarCount = 0;
+  const normalizedCurrent = normalizeForComparison(keyMessage);
+  
+  for (const otherSlide of sectionSlides) {
+    if (otherSlide.index === currentSlide.index) continue;
+    
+    const otherKm = (otherSlide.keyMessage || "").trim();
+    if (normalizeForComparison(otherKm) === normalizedCurrent) {
+      similarCount++;
+    }
+  }
+  
+  // If more than 50% of other slides have the same keyMessage, it's not differentiated
+  return similarCount < sectionSlides.length / 2;
+}
+
+/**
+ * Normalize text for comparison (lowercase, trim, remove punctuation).
+ */
+function normalizeForComparison(text) {
+  return text.toLowerCase().trim().replace(/[^\w\s]/g, '');
 }
 
 function getPartNumber(slidePlan) {

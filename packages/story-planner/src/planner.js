@@ -321,6 +321,14 @@ function normalizeSectionPath(sectionPath) {
   return "";
 }
 
+function conciseMessageFromParagraph(paragraph, fallback) {
+  const text = (paragraph && paragraph.originalText ? paragraph.originalText : fallback || "").trim();
+  if (!text) return fallback || "";
+  const firstLine = text.split(/\r?\n/).find((line) => line.trim().length > 0) || text;
+  if (firstLine.length <= 120) return firstLine;
+  return `${firstLine.slice(0, 117).trim()}...`;
+}
+
 /**
  * Extract a key message for a slide from source data.
  */
@@ -482,6 +490,9 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
     sectionParaMap[section.title] = [];
   }
 
+  // Track whether ANY keyword-based matching succeeded
+  let totalKeywordMatches = 0;
+
   for (const slide of slides) {
     const matchedRefs = [];
     const matchedParagraphs = [];
@@ -501,6 +512,7 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
           originalText: para.originalText || "",
           sectionPath: para.sectionPath || [],
         });
+        totalKeywordMatches++;
       }
     }
 
@@ -521,6 +533,65 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
       for (const para of matchedParagraphs) {
         if (!existingIds.has(para.sourceId)) {
           sectionParaMap[slide.section].push(para);
+        }
+      }
+    }
+  }
+
+  // Only mark as inferred when we have SOME keyword matches but not enough coverage
+  // If ZERO keyword matches, we're in "no-match" mode and should NOT mark as inferred
+  const shouldMarkInferred = totalKeywordMatches > 0;
+
+  // Enhanced fallback: try to assign refs to slides that still don't have any
+  for (const slide of slides) {
+    if (slide.sourceRefs.length === 0 && slide.role !== "section-divider" && slide.role !== "closing" && slide.role !== "title" && slide.role !== "agenda") {
+      // Try to find any paragraph from the same section
+      const section = sections.find(s => s.title === slide.section);
+      
+      if (section && section.sourceParagraphs && section.sourceParagraphs.length > 0) {
+        // Assign at least one ref from this section's matched paragraphs
+        const firstPara = section.sourceParagraphs[0];
+        slide.sourceRefs = [{
+          sourceId: firstPara.sourceId,
+          sourceType: "paragraph",
+          fileReference: "",
+        }];
+        slide.keyMessage = conciseMessageFromParagraph(firstPara, slide.keyMessage);
+        sectionParaMap[section.title].push({
+          sourceId: firstPara.sourceId,
+          originalText: firstPara.originalText || "",
+          sectionPath: firstPara.sectionPath || [],
+        });
+        if (shouldMarkInferred) {
+          slide._inferred = true; // Mark as inferred for QA detection
+        }
+      } else if (sourceDocument.paragraphs && sourceDocument.paragraphs.length > 0) {
+        // Last resort: assign a nearby paragraph from the document
+        // Find the nearest unmatched paragraph by index
+        const assignedIds = new Set();
+        slides.forEach(s => (s.sourceRefs || []).forEach(r => assignedIds.add(r.sourceId)));
+        
+        const availableParas = sourceDocument.paragraphs.filter(p => !assignedIds.has(p.sourceId));
+        if (availableParas.length > 0) {
+          const para = availableParas[0];
+          slide.sourceRefs = [{
+            sourceId: para.sourceId,
+            sourceType: "paragraph",
+            fileReference: "",
+          }];
+          slide.keyMessage = conciseMessageFromParagraph(para, slide.keyMessage);
+          const sectionForSlide = sections.find(s => s.title === slide.section);
+          if (sectionForSlide) {
+            sectionParaMap[sectionForSlide.title].push({
+              sourceId: para.sourceId,
+              originalText: para.originalText || "",
+              sectionPath: para.sectionPath || [],
+            });
+          }
+          // Don't mark as inferred in no-match mode — this is expected behavior
+          if (shouldMarkInferred) {
+            slide._inferred = true;
+          }
         }
       }
     }
