@@ -1,0 +1,7 @@
+{
+  "name": "@awe/presentation-revision",
+  "version": "0.1.0",
+  "description": "Natural-language revision engine for Presentation OS",
+  "main": "src/index.js",
+  "type": "commonjs"
+}
