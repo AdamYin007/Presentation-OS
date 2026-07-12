@@ -15,6 +15,10 @@
 const fs = require("fs");
 const path = require("path");
 const { runPipeline } = require("../packages/presentation-pipeline/src/index.js");
+const ROOT = path.join(__dirname, "..");
+const REPORT_DIR = path.join(ROOT, "examples", "business-review");
+const JSON_REPORT_PATH = path.join(REPORT_DIR, "qa-report.json");
+const MD_REPORT_PATH = path.join(REPORT_DIR, "qa-report.md");
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -22,20 +26,24 @@ let passCount = 0;
 let failCount = 0;
 let warnCount = 0;
 const issues = [];
+const checks = [];
 
 function check(condition, msg, severity = "pass") {
   if (condition) {
     passCount++;
+    checks.push({ status: "pass", message: msg });
     console.log(`  ✓ ${msg}`);
   } else {
     if (severity === "warn") {
       warnCount++;
       console.log(`  ⚠ ${msg}`);
       issues.push({ severity: "warn", message: msg });
+      checks.push({ status: "warn", message: msg });
     } else {
       failCount++;
       console.log(`  ✗ ${msg}`);
       issues.push({ severity: "fail", message: msg });
+      checks.push({ status: "fail", message: msg });
     }
   }
 }
@@ -64,16 +72,17 @@ async function checkTitles(slideSpecs) {
   }
 }
 
-async function checkSourceRefs(slideSpecs) {
+async function checkSourceRefs(slideSpecs, deckPlan) {
   console.log("\nChecking source references...");
   
   // Only content and data-chart slides should have sourceRefs
   const contentRoles = ["content", "data-chart", "architecture", "process"];
-  const exemptRoles = ["section-divider", "closing", "title-slide"];
+  const exemptRoles = ["section-divider", "closing", "title-slide", "agenda"];
   
   let contentSlides = 0;
   let slidesWithRefs = 0;
-  let missingRefs = [];
+  let slidesMissingRefs = [];
+  let inferredSlides = [];
   
   for (const spec of slideSpecs) {
     const role = spec.role || "";
@@ -85,11 +94,22 @@ async function checkSourceRefs(slideSpecs) {
     
     if (contentRoles.includes(role)) {
       contentSlides++;
+      
+      // Check if this slide is marked as inferred
+      const deckSlide = (deckPlan && deckPlan.slides) 
+        ? deckPlan.slides.find(s => s.slideId === spec.id) 
+        : null;
+      
+      if (deckSlide && deckSlide._inferred) {
+        inferredSlides.push(spec.id);
+        check(false, `${spec.id} (${role}): marked as inferred — should have explicit sourceRefs`, "fail");
+      }
+      
       if (spec.sourceRefs && spec.sourceRefs.length > 0) {
         slidesWithRefs++;
       } else {
-        missingRefs.push(spec.id);
-        check(false, `${spec.id} (${role}): missing sourceRefs`, "warn");
+        slidesMissingRefs.push(spec.id);
+        check(false, `${spec.id} (${role}): missing sourceRefs`, "fail");
       }
     }
   }
@@ -99,22 +119,28 @@ async function checkSourceRefs(slideSpecs) {
     return;
   }
   
+  // STRICT REQUIREMENT: 100% of content slides must have sourceRefs
   const pct = Math.round(slidesWithRefs / contentSlides * 100);
   check(
-    pct >= 70,
-    `${slidesWithRefs}/${contentSlides} content slides have sourceRefs (${pct}%) — threshold: 70%`
+    pct >= 100,
+    `${slidesWithRefs}/${contentSlides} content slides have sourceRefs (${pct}%) — REQUIRED: 100%`
   );
   
-  if (missingRefs.length > 0 && pct < 50) {
-    check(false, `${missingRefs.length} content slides lack sourceRefs: ${missingRefs.slice(0, 3).join(", ")}${missingRefs.length > 3 ? "..." : ""}`, "fail");
+  if (slidesMissingRefs.length > 0) {
+    check(false, `${slidesMissingRefs.length} content slides lack sourceRefs: ${slidesMissingRefs.join(", ")}`, "fail");
+  }
+  
+  if (inferredSlides.length > 0) {
+    check(false, `${inferredSlides.length} content slides are marked as inferred: ${inferredSlides.join(", ")}`, "warn");
   }
 }
 
 async function checkDuplicateTitlesAndBody(slideSpecs) {
-  console.log("\nChecking for duplicate title+body pairs...");
+  console.log("\nChecking for duplicate content...");
   
   const pairs = new Map();
   let duplicates = 0;
+  let duplicateDetails = [];
   
   for (const spec of slideSpecs) {
     // Normalize: trim, collapse whitespace, lowercase
@@ -123,17 +149,82 @@ async function checkDuplicateTitlesAndBody(slideSpecs) {
     
     if (pairs.has(key)) {
       duplicates++;
-      check(false, `Duplicate pair: "${spec.title}" appears in both ${pairs.get(key)} and ${spec.id}`, "warn");
+      duplicateDetails.push({
+        title: spec.title,
+        slides: [pairs.get(key), spec.id]
+      });
+      check(false, `Duplicate pair: "${spec.title}" appears in both ${pairs.get(key)} and ${spec.id}`, "fail");
     } else {
       pairs.set(key, spec.id);
     }
   }
   
-  // This is a warning-level check, not a hard failure
+  // STRICT: No duplicates allowed
   check(
-    duplicates <= slideSpecs.length * 0.3,
-    `Found ${duplicates} duplicate pairs out of ${pairs.size} unique (${Math.round(duplicates / slideSpecs.length * 100)}%) — within 30% threshold`
+    duplicates === 0,
+    `Found ${duplicates} duplicate pairs out of ${pairs.size} unique — REQUIRED: 0 duplicates`
   );
+  
+  // Additional check: repeated section titles across content slides
+  const sectionTitles = new Map();
+  let repeatedSectionTitles = 0;
+  
+  for (const spec of slideSpecs) {
+    if (spec.role === "section-divider") continue;
+    
+    const sectionKey = spec.section + "|" + spec.title;
+    if (sectionTitles.has(sectionKey)) {
+      repeatedSectionTitles++;
+      check(false, `Repeated section+title: "${spec.title}" in section "${spec.section}" (${sectionTitles.get(sectionKey)}, ${spec.id})`, "warn");
+    } else {
+      sectionTitles.set(sectionKey, spec.id);
+    }
+  }
+  
+  check(
+    repeatedSectionTitles === 0,
+    `No repeated section+title combinations (${repeatedSectionTitles} found)`
+  );
+}
+
+async function checkDuplicateKeyMessages(slideSpecs) {
+  console.log("\nChecking duplicate key messages...");
+  const seen = new Map();
+  let duplicates = 0;
+  const normalize = (str) => String(str || "").trim().toLowerCase().replace(/\s+/g, " ");
+
+  for (const spec of slideSpecs) {
+    if (["section-divider", "closing", "title"].includes(spec.role)) continue;
+    const key = normalize(spec.keyMessage);
+    if (!key) continue;
+    if (seen.has(key)) {
+      duplicates++;
+      check(false, `Duplicate keyMessage in ${seen.get(key)} and ${spec.id}: "${spec.keyMessage.slice(0, 60)}"`, "fail");
+    } else {
+      seen.set(key, spec.id);
+    }
+  }
+
+  check(duplicates === 0, `Duplicate keyMessage count: ${duplicates}`);
+}
+
+async function checkTitleBodySeparation(slideSpecs) {
+  console.log("\nChecking title/body separation...");
+  let duplicates = 0;
+  const normalize = (str) => String(str || "").trim().toLowerCase().replace(/\s+/g, " ").replace(/[.,!?;:]+$/, "");
+
+  for (const spec of slideSpecs) {
+    const title = normalize(spec.title);
+    const bodyItems = Array.isArray(spec.body) ? spec.body : [];
+    for (const item of bodyItems) {
+      if (title && title === normalize(item)) {
+        duplicates++;
+        check(false, `${spec.id}: title is repeated in body`, "fail");
+      }
+    }
+  }
+
+  check(duplicates === 0, `Title/body duplicate count: ${duplicates}`);
 }
 
 async function checkSpeakerNotes(slideSpecs) {
@@ -293,17 +384,52 @@ async function main() {
   // Run all content QA checks
   await checkSlideCount(slideSpecs, deckPlan);
   await checkTitles(slideSpecs);
-  await checkSourceRefs(slideSpecs);
+  await checkSourceRefs(slideSpecs, deckPlan);
   await checkDuplicateTitlesAndBody(slideSpecs);
+  await checkDuplicateKeyMessages(slideSpecs);
+  await checkTitleBodySeparation(slideSpecs);
   await checkSpeakerNotes(slideSpecs);
   await checkSectionDividers(slideSpecs);
   await checkClosingSlide(slideSpecs);
   await checkLayoutDiversity(layoutPlan);
   await checkThemeConsistency(layoutPlan);
+
+  fs.mkdirSync(REPORT_DIR, { recursive: true });
+  const report = {
+    status: failCount === 0 ? "pass" : "fail",
+    generatedAt: new Date().toISOString(),
+    input: "fixtures/document-ingest/sample-markdown.md",
+    slideCount: slideSpecs.length,
+    contentSlides: slideSpecs.filter((s) => ["content", "data-chart", "architecture", "process"].includes(s.role)).length,
+    checks,
+    issues,
+    passCount,
+    failCount,
+    warnCount,
+  };
+  fs.writeFileSync(JSON_REPORT_PATH, JSON.stringify(report, null, 2));
+  fs.writeFileSync(MD_REPORT_PATH, [
+    "# M12.8 Content QA Report",
+    "",
+    `Status: ${report.status}`,
+    `Generated: ${report.generatedAt}`,
+    `Slides: ${report.slideCount}`,
+    `Pass: ${passCount}`,
+    `Fail: ${failCount}`,
+    `Warn: ${warnCount}`,
+    "",
+    "## Issues",
+    "",
+    ...(issues.length
+      ? issues.map((issue) => `- ${issue.severity.toUpperCase()}: ${issue.message}`)
+      : ["- None"]),
+    "",
+  ].join("\n"));
   
   // Summary
   console.log("\n==============================");
   console.log(`Results: ${green(`${passCount} passed`)}, ${failCount > 0 ? red(`${failCount} failed`) : "0 failed"}, ${warnCount > 0 ? yellow(`${warnCount} warnings`) : "0 warnings"}`);
+  console.log(`Reports: ${JSON_REPORT_PATH}, ${MD_REPORT_PATH}`);
   
   if (issues.length > 0) {
     console.log("\nIssues detected:");

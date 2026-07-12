@@ -82,7 +82,7 @@ function mapDeckPlanToSlideSpec(slidePlan, deckPlan) {
   let title = generateTitle(role, slidePlan, sectionTitle, deckPlan);
 
   // Generate body content from keyMessage and source data
-  const body = generateBody(role, slidePlan, deckPlan);
+  const body = generateBody(role, slidePlan, deckPlan, title);
 
   // Generate speaker notes
   const speakerNotes = generateSpeakerNotes(role, slidePlan, deckPlan, sectionTitle);
@@ -124,6 +124,9 @@ function mapDeckPlanToSlideSpec(slidePlan, deckPlan) {
 
 /**
  * Generate a slide title from the DeckPlan entry.
+ * 
+ * For content slides within a section that has multiple slides,
+ * generates differentiated titles based on the page-specific source paragraph.
  */
 function generateTitle(role, slidePlan, sectionTitle, deckPlan) {
   if (role === "title") {
@@ -142,15 +145,122 @@ function generateTitle(role, slidePlan, sectionTitle, deckPlan) {
     return "Agenda";
   }
 
-  // For content slides, use keyMessage as title when it's concise
-  const km = (slidePlan.keyMessage || "").trim();
-  if (km && km.length < 60) {
-    return km;
+  // For content slides, try to generate a page-specific title
+  const contentTitle = generateContentTitle(slidePlan, sectionTitle, deckPlan);
+  if (contentTitle) {
+    return contentTitle;
   }
 
   // Fallback: section + part number
   const partNum = getPartNumber(slidePlan);
   return `${sectionTitle}${partNum ? ` — Part ${partNum}` : ""}`;
+}
+
+/**
+ * Generate a differentiated title for a content slide.
+ * Uses the page-specific source paragraph to create a unique conclusion title.
+ */
+function generateContentTitle(slidePlan, sectionTitle, deckPlan) {
+  const km = (slidePlan.keyMessage || "").trim();
+  
+  // Try to extract page-specific insight from source paragraph
+  const pageSpecificInsight = extractPageSpecificInsight(slidePlan, deckPlan);
+  
+  if (pageSpecificInsight) {
+    return pageSpecificInsight;
+  }
+  
+  // If no page-specific insight, check if this is the only slide in its section
+  const sectionSlides = deckPlan.slides.filter(
+    s => s.section === slidePlan.section && s.role !== "section-divider"
+  );
+  
+  if (sectionSlides.length <= 1) {
+    // Only one slide in this section, safe to use keyMessage
+    if (km && km.length < 60) {
+      return km;
+    }
+  } else {
+    // Multiple slides in section - use keyMessage only if it contains page-specific info
+    // (e.g., includes a data point, specific finding, or numbered item)
+    if (km && km.length < 60 && isDifferentiatedKeyMessage(km, slidePlan, sectionSlides)) {
+      return km;
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Extract page-specific insight from the source paragraph assigned to this slide.
+ */
+function extractPageSpecificInsight(slidePlan, deckPlan) {
+  // Find the section this slide belongs to
+  const section = deckPlan.sections.find(s => s.title === slidePlan.section);
+  
+  if (!section || !section.sourceParagraphs || section.sourceParagraphs.length === 0) {
+    return null;
+  }
+  
+  // Find which paragraph index this slide should use (round-robin distribution)
+  const sectionSlides = deckPlan.slides.filter(
+    s => s.section === slidePlan.section && s.role !== "section-divider"
+  );
+  const slideLocalIdx = sectionSlides.findIndex(s => s.index === slidePlan.index);
+  
+  if (slideLocalIdx < 0 || slideLocalIdx >= section.sourceParagraphs.length) {
+    return null;
+  }
+  
+  const para = section.sourceParagraphs[slideLocalIdx];
+  if (!para || !para.originalText) {
+    return null;
+  }
+  
+  // Extract a concise conclusion from the source paragraph
+  // Look for the most informative sentence/clause
+  const text = para.originalText.trim();
+  
+  // If text is short enough, use it directly
+  if (text.length <= 80) {
+    return text;
+  }
+  
+  // Otherwise, extract first meaningful clause (up to 80 chars)
+  const match = text.match(/^.{1,80}(?:\s*[,.。；；]|$)/);
+  if (match) {
+    return match[0].replace(/[,.。；；]$/, '').trim();
+  }
+  
+  return text.substring(0, 80).trim();
+}
+
+/**
+ * Check if a keyMessage is already differentiated from other slides in the same section.
+ */
+function isDifferentiatedKeyMessage(keyMessage, currentSlide, sectionSlides) {
+  // Count how many other slides in this section have similar keyMessage
+  let similarCount = 0;
+  const normalizedCurrent = normalizeForComparison(keyMessage);
+  
+  for (const otherSlide of sectionSlides) {
+    if (otherSlide.index === currentSlide.index) continue;
+    
+    const otherKm = (otherSlide.keyMessage || "").trim();
+    if (normalizeForComparison(otherKm) === normalizedCurrent) {
+      similarCount++;
+    }
+  }
+  
+  // If more than 50% of other slides have the same keyMessage, it's not differentiated
+  return similarCount < sectionSlides.length / 2;
+}
+
+/**
+ * Normalize text for comparison (lowercase, trim, remove punctuation).
+ */
+function normalizeForComparison(text) {
+  return text.toLowerCase().trim().replace(/[^\w\s]/g, '');
 }
 
 function getPartNumber(slidePlan) {
@@ -164,7 +274,7 @@ function getPartNumber(slidePlan) {
  * Generate body content items for a slide.
  * Uses keyMessage and source data to produce 1-5 bullet points.
  */
-function generateBody(role, slidePlan, deckPlan) {
+function generateBody(role, slidePlan, deckPlan, title) {
   // Section dividers and special roles have empty body
   if (role === "section-divider" || role === "title" || role === "closing") {
     return [];
@@ -189,7 +299,23 @@ function generateBody(role, slidePlan, deckPlan) {
         for (let i = slideLocalIdx; i < totalSourcePara; i += sectionSlides.length) {
           const para = section.sourceParagraphs[i];
           if (para && para.originalText) {
-            const bullet = para.originalText.trim();
+            let bullet = para.originalText.trim();
+            
+            // Avoid title/body duplication: truncate bullets that are identical or 
+            // prefix-similar to the slide title (which comes from the same paragraph)
+            const titleLower = (title || "").toLowerCase().trim();
+            if (titleLower && bullet.toLowerCase().startsWith(titleLower)) {
+              // Bullet is a prefix/extension of title — skip the title portion
+              // and take the remainder, or fall back to keyMessage
+              const remainder = bullet.substring(titleLower.length).trim();
+              if (remainder && remainder.length > 10) {
+                bullet = remainder;
+              } else {
+                // Remainder too short — use keyMessage instead
+                bullet = keyMsg;
+              }
+            }
+            
             body.push(bullet.length > 120 ? bullet.slice(0, 117) + "..." : bullet);
           }
         }
@@ -197,24 +323,50 @@ function generateBody(role, slidePlan, deckPlan) {
     }
   }
 
+  // Deduplicate body items that are identical to the title (case-insensitive)
+  const titleNorm = (title || "").trim().toLowerCase().replace(/[.,!?;:]+$/, "");
+  const deduped = [];
+  for (const item of body) {
+    const itemNorm = item.trim().toLowerCase().replace(/[.,!?;:]+$/, "");
+    if (!titleNorm || titleNorm !== itemNorm) {
+      deduped.push(item);
+    }
+  }
+  // If all body items were duplicates of the title, keep only the first non-duplicate
+  // or fall back to keyMessage
+  if (deduped.length === 0 && body.length > 0) {
+    if (keyMsg && !titleNorm) {
+      deduped.push(keyMsg);
+    } else if (keyMsg) {
+      const keyMsgNorm = keyMsg.trim().toLowerCase().replace(/[.,!?;:]+$/, "");
+      if (keyMsgNorm !== titleNorm) {
+        deduped.push(keyMsg);
+      } else {
+        deduped.push("Key insight from analysis");
+      }
+    } else {
+      deduped.push("Key insight from analysis");
+    }
+  }
+
   // Fallback: if no source paragraphs found, use keyMessage
   // But never push a body item identical to the title
-  if (body.length === 0 && keyMsg) {
-    const trimmedTitle = (slidePlan.title || "").trim();
+  if (deduped.length === 0 && keyMsg) {
+    const trimmedTitle = title.trim();
     if (keyMsg.trim() !== trimmedTitle) {
-      body.push(keyMsg);
+      deduped.push(keyMsg);
     } else {
       // Title and keyMessage are the same — generate a generic insight instead
-      body.push("Key insight from analysis");
+      deduped.push("Key insight from analysis");
     }
   }
 
   // Last resort fallback
-  if (body.length === 0) {
-    body.push("Key insight from analysis");
+  if (deduped.length === 0) {
+    deduped.push("Key insight from analysis");
   }
 
-  return body;
+  return deduped;
 }
 
 function generateBodyPoint(index, role, deckPlan) {

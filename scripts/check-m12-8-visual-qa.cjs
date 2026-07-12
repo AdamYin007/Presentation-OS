@@ -1,373 +1,334 @@
 #!/usr/bin/env node
 /**
- * M12.8 Visual QA — Automated visual quality checks for generated presentations.
- * 
- * Checks:
- * 1. PPTX → PDF conversion succeeds
- * 2. Each slide renders without errors
- * 3. Font sizes within acceptable range per role
- * 4. Color contrast meets WCAG AA standards (4.5:1 for normal text)
- * 5. Layout spacing consistency (padding/margins)
- * 6. No overlapping elements
+ * M12.8 Visual QA — deterministic visual and package quality gates.
+ *
+ * Generates a real PPTX, converts it to PDF, renders every page to PNG, and
+ * checks the generated artifact for blank/sparse pages, simple layout hazards,
+ * invalid assets, broken relationships, absolute path leakage, and text density.
  */
+
+"use strict";
 
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
+const cp = require("child_process");
 const { runPipeline } = require("../packages/presentation-pipeline/src/index.js");
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+const ROOT = path.join(__dirname, "..");
+const FIXTURE = path.join(ROOT, "fixtures", "document-ingest", "sample-markdown.md");
+const AUDIT_DIR = "/tmp/presentation-os-m12-8-visual-qa";
+const PNG_DIR = path.join(AUDIT_DIR, "png");
+const PPTX_PATH = path.join(AUDIT_DIR, "output.pptx");
+const PDF_DIR = path.join(AUDIT_DIR, "pdf-output");
+const PDF_PATH = path.join(PDF_DIR, "output.pdf");
+const REPORT_PATH = path.join(AUDIT_DIR, "visual-audit.json");
+const SLIDE_W = 13.333;
+const SLIDE_H = 7.5;
 
 let passCount = 0;
 let failCount = 0;
 let warnCount = 0;
-const issues = [];
+const checks = [];
 
-function check(condition, msg, severity = "pass") {
+function record(condition, message, severity = "fail", data = {}) {
   if (condition) {
     passCount++;
-    console.log(`  ✓ ${msg}`);
+    checks.push({ status: "pass", message, ...data });
+    console.log(`  OK ${message}`);
+    return;
+  }
+  if (severity === "warn") {
+    warnCount++;
+    checks.push({ status: "warn", message, ...data });
+    console.log(`  WARN ${message}`);
   } else {
-    if (severity === "warn") {
-      warnCount++;
-      console.log(`  ⚠ ${msg}`);
-      issues.push({ severity: "warn", message: msg });
-    } else {
-      failCount++;
-      console.log(`  ✗ ${msg}`);
-      issues.push({ severity: "fail", message: msg });
-    }
+    failCount++;
+    checks.push({ status: "fail", message, ...data });
+    console.log(`  FAIL ${message}`);
   }
 }
 
-function bold(msg) {
-  return `\x1b[1m${msg}\x1b[0m`;
-}
-
-function red(msg) {
-  return `\x1b[31m${msg}\x1b[0m`;
-}
-
-function green(msg) {
-  return `\x1b[32m${msg}\x1b[0m`;
-}
-
-function yellow(msg) {
-  return `\x1b[33m${msg}\x1b[0m`;
-}
-
-// ─── Color Contrast Calculation ─────────────────────────────────────────────
-
-function hexToRgb(hex) {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : null;
-}
-
-function relativeLuminance(rgb) {
-  const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(c => {
-    c = c / 255;
-    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+function run(cmd, args, options = {}) {
+  return cp.execFileSync(cmd, args, {
+    cwd: ROOT,
+    encoding: options.encoding || "utf8",
+    stdio: options.stdio || "pipe",
+    timeout: options.timeout || 60000,
   });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-function contrastRatio(color1, color2) {
-  const rgb1 = hexToRgb(color1);
-  const rgb2 = hexToRgb(color2);
-  if (!rgb1 || !rgb2) return 0;
-  
-  const l1 = relativeLuminance(rgb1);
-  const l2 = relativeLuminance(rgb2);
-  const lighter = Math.max(l1, l2);
-  const darker = Math.min(l1, l2);
-  return (lighter + 0.05) / (darker + 0.05);
+function ensureCleanDir(dir) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
 }
 
-// ─── Visual Rendering Pipeline ──────────────────────────────────────────────
-
-async function renderPptxToPdf(pptxPath, pdfOutputDir) {
-  console.log("\nRendering PPTX to PDF...");
-  
-  // Ensure output directory exists
+function commandExists(cmd) {
   try {
-    if (!fs.existsSync(pdfOutputDir)) {
-      fs.mkdirSync(pdfOutputDir, { recursive: true });
-      console.log(`  Created output directory: ${pdfOutputDir}`);
-    }
-  } catch (e) {
-    check(false, `Failed to create output directory: ${e.message}`, "fail");
-    return false;
-  }
-  
-  const pdfPath = path.join(pdfOutputDir, "output.pdf");
-  
-  try {
-    // Use LibreOffice headless mode to convert PPTX to PDF
-    const libreOfficePath = "/Applications/LibreOffice.app/Contents/MacOS/soffice";
-    
-    // Check if LibreOffice is available
-    if (!fs.existsSync(libreOfficePath)) {
-      check(false, "LibreOffice not found at expected path", "fail");
-      return false;
-    }
-    
-    const result = execSync(
-      `"${libreOfficePath}" --headless --convert-to pdf --outdir "${pdfOutputDir}" "${pptxPath}"`,
-      { timeout: 60000 }
-    );
-    
-    check(fs.existsSync(pdfPath), `PDF generated: ${pdfPath} (${fs.statSync(pdfPath).size} bytes)`);
-    return fs.existsSync(pdfPath);
-    
-  } catch (e) {
-    check(false, `PDF conversion failed: ${e.message}`, "fail");
+    run("which", [cmd]);
+    return true;
+  } catch {
     return false;
   }
 }
 
-// ─── Visual Quality Gates ───────────────────────────────────────────────────
+function renderPptxToPdf() {
+  const soffice = "/Applications/LibreOffice.app/Contents/MacOS/soffice";
+  record(fs.existsSync(soffice), "LibreOffice is available for PPTX to PDF conversion");
+  if (!fs.existsSync(soffice)) return false;
 
-async function checkFontSizes(layoutPlan, slideSpecs) {
-  console.log("\nChecking font size ranges...");
-  
-  const fontSizeRanges = {
-    "title": { min: 18, max: 44 },
-    "heading": { min: 16, max: 36 },
-    "body": { min: 10, max: 18 },
-    "notes": { min: 7, max: 12 },
-    "section-divider": { min: 24, max: 48 }
-  };
-  
-  let violations = 0;
-  let totalChecks = 0;
-  
-  for (const layout of layoutPlan.layouts) {
-    // Check fontSize values
-    const fontSizeKeys = Object.keys(layout.fontSize || {});
-    for (const key of fontSizeKeys) {
-      const value = layout.fontSize[key];
-      const range = fontSizeRanges[key];
-      
-      if (range) {
-        totalChecks++;
-        if (value >= range.min && value <= range.max) {
-          check(true, `${key}: ${value}pt within range [${range.min}-${range.max}]`);
-        } else {
-          violations++;
-          check(false, `${key}: ${value}pt outside range [${range.min}-${range.max}]`, "warn");
-        }
-      }
-    }
-  }
-  
-  check(
-    violations === 0,
-    `Font size validation: ${totalChecks} checks, ${violations} violations`
-  );
-}
-
-async function checkColorContrast(layoutPlan) {
-  console.log("\nChecking color contrast (WCAG AA)...");
-  
-  // Extract colors from layout plan
-  const bgColors = new Set();
-  const textColors = new Set();
-  
-  for (const layout of layoutPlan.layouts) {
-    if (layout.colors) {
-      if (layout.colors.background) bgColors.add(layout.colors.background);
-      if (layout.colors.text) textColors.add(layout.colors.text);
-    }
-  }
-  
-  // Check contrast between background and text
-  for (const bg of bgColors) {
-    for (const text of textColors) {
-      const ratio = contrastRatio(bg, text);
-      check(
-        ratio >= 4.5,
-        `Contrast ${bg} vs ${text}: ${ratio.toFixed(1)}:1 (threshold: 4.5:1)`
-      );
-    }
+  try {
+    run(soffice, ["--headless", "--convert-to", "pdf", "--outdir", PDF_DIR, PPTX_PATH], { timeout: 90000 });
+    record(fs.existsSync(PDF_PATH), `PDF generated at ${PDF_PATH}`);
+    return fs.existsSync(PDF_PATH);
+  } catch (e) {
+    record(false, `PDF conversion failed: ${e.message}`);
+    return false;
   }
 }
 
-async function checkLayoutSpacing(layoutPlan) {
-  console.log("\nChecking layout spacing consistency...");
-  
-  const spacings = layoutPlan.layouts.map(l => JSON.stringify(l.spacing));
-  const uniqueSpacings = new Set(spacings);
-  
-  // 4 distinct patterns is acceptable for different slide roles
-  check(
-    uniqueSpacings.size <= 5,
-    `Layout spacing variety: ${uniqueSpacings.size} distinct patterns (expected ≤ 5)`
-  );
-  
-  // Check that spacing values are reasonable
-  for (const layout of layoutPlan.layouts) {
-    if (layout.spacing) {
-      const { padding, margin, gap } = layout.spacing;
-      
-      if (padding !== undefined) {
-        check(padding >= 24 && padding <= 96, `Padding: ${padding}px (range: 24-96px)`);
-      }
-      if (margin !== undefined) {
-        // Margin can be 0 for some layouts (e.g., full-bleed designs)
-        check(margin >= 0 && margin <= 48, `Margin: ${margin}px (range: 0-48px)`);
-      }
-      if (gap !== undefined) {
-        check(gap >= 12 && gap <= 32, `Gap: ${gap}px (range: 12-32px)`);
-      }
-    }
+function getPdfPageCount() {
+  try {
+    const out = run("pdfinfo", [PDF_PATH]);
+    const match = out.match(/^Pages:\s+(\d+)/m);
+    return match ? Number(match[1]) : 0;
+  } catch (e) {
+    record(false, `pdfinfo failed: ${e.message}`);
+    return 0;
   }
 }
 
-async function checkSlideDimensions(slideSpecs, layoutPlan) {
-  console.log("\nChecking slide dimensions...");
-  
-  // Standard 16:9 aspect ratio
-  const standardWidth = 1920;
-  const standardHeight = 1080;
-  
-  // Check if layoutPlan has dimension info (may be in theme or elsewhere)
-  const slideWidth = layoutPlan.slideWidth || 1920;
-  const slideHeight = layoutPlan.slideHeight || 1080;
-  
-  check(
-    slideWidth === standardWidth,
-    `Slide width: ${slideWidth}px (standard: ${standardWidth}px)`
-  );
-  
-  check(
-    slideHeight === standardHeight,
-    `Slide height: ${slideHeight}px (standard: ${standardHeight}px)`
-  );
-  
-  // Verify aspect ratio
-  const aspectRatio = slideWidth / slideHeight;
-  check(
-    Math.abs(aspectRatio - 16/9) < 0.01,
-    `Aspect ratio: ${aspectRatio.toFixed(2)} (expected: ${(16/9).toFixed(2)})`
-  );
-  
-  // Check all slides use consistent dimensions
-  const dimensions = [...new Set(slideSpecs.map(s => s.dimensions))];
-  check(
-    dimensions.length <= 1,
-    `All slides use consistent dimensions: ${dimensions[0] || "N/A"}`
-  );
+function renderPdfToPng(pageCount) {
+  if (!commandExists("pdftoppm")) {
+    record(false, "pdftoppm is available for per-slide PNG rendering");
+    return [];
+  }
+  fs.mkdirSync(PNG_DIR, { recursive: true });
+  try {
+    run("pdftoppm", ["-png", "-r", "120", PDF_PATH, path.join(PNG_DIR, "slide")], { timeout: 90000 });
+  } catch (e) {
+    record(false, `PNG rendering failed: ${e.message}`);
+    return [];
+  }
+  const files = fs.readdirSync(PNG_DIR)
+    .filter((file) => /^slide-\d+\.png$/.test(file))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+    .map((file) => path.join(PNG_DIR, file));
+  record(files.length === pageCount, `PNG count matches PDF pages: ${files.length}/${pageCount}`);
+  return files;
 }
 
-async function checkVisualElements(slideSpecs) {
-  console.log("\nChecking visual element distribution...");
-  
-  const roles = {};
+function analyzePngs(files) {
+  if (files.length === 0) return [];
+  const py = [
+    "import json, sys",
+    "from PIL import Image",
+    "rows=[]",
+    "for p in sys.argv[1:]:",
+    "    im=Image.open(p).convert('RGB')",
+    "    small=im.resize((96,54))",
+    "    pixels=list(small.getdata())",
+    "    bg=max(set(pixels), key=pixels.count)",
+    "    diff=sum(1 for px in pixels if sum(abs(px[i]-bg[i]) for i in range(3))>30)",
+    "    unique=len(set(pixels))",
+    "    rows.append({'path':p,'width':im.width,'height':im.height,'uniqueColors':unique,'inkRatio':diff/len(pixels)})",
+    "print(json.dumps(rows))",
+  ].join("\n");
+  try {
+    return JSON.parse(run("python3", ["-c", py, ...files], { timeout: 60000 }));
+  } catch (e) {
+    record(false, `PNG pixel analysis failed: ${e.message}`);
+    return [];
+  }
+}
+
+function getPdfTextByPage(pageCount) {
+  if (!commandExists("pdftotext")) {
+    record(false, "pdftotext is available for sparse-page checks");
+    return [];
+  }
+  const pages = [];
+  for (let i = 1; i <= pageCount; i++) {
+    try {
+      const text = run("pdftotext", ["-f", String(i), "-l", String(i), "-layout", PDF_PATH, "-"]);
+      pages.push({ page: i, text, charCount: text.replace(/\s+/g, "").length });
+    } catch (e) {
+      record(false, `pdftotext failed on page ${i}: ${e.message}`);
+      pages.push({ page: i, text: "", charCount: 0 });
+    }
+  }
+  return pages;
+}
+
+function listPptxEntries() {
+  try {
+    return run("unzip", ["-Z1", PPTX_PATH]).split(/\r?\n/).filter(Boolean);
+  } catch (e) {
+    record(false, `Unable to list PPTX entries: ${e.message}`);
+    return [];
+  }
+}
+
+function readPptxEntry(entry) {
+  try {
+    return run("unzip", ["-p", PPTX_PATH, entry], { timeout: 30000 });
+  } catch {
+    return "";
+  }
+}
+
+function validatePptxPackage(entries) {
+  const media = entries.filter((e) => e.startsWith("ppt/media/"));
+  const rels = entries.filter((e) => e.endsWith(".rels"));
+  const xmlEntries = entries.filter((e) => e.endsWith(".xml") || e.endsWith(".rels"));
+  const xmlText = xmlEntries.map(readPptxEntry).join("\n");
+  const absolutePathHits = xmlText.match(/(?:\/Users\/|\/private\/|file:\/\/|[A-Za-z]:\\)/g) || [];
+  const relText = rels.map(readPptxEntry).join("\n");
+  const badTargets = relText.match(/Target=["'](?:file:\/\/|\/Users\/|\/private\/|[A-Za-z]:\\)/g) || [];
+
+  record(absolutePathHits.length === 0, "No absolute local paths leaked into PPTX XML", "fail", { count: absolutePathHits.length });
+  record(badTargets.length === 0, "No absolute relationship targets in PPTX package", "fail", { count: badTargets.length });
+  record(media.every((e) => !e.includes("..")), `Media entries are package-relative (${media.length} media files)`);
+  return { mediaCount: media.length, relationshipCount: rels.length, absolutePathHits: absolutePathHits.length, badTargets: badTargets.length };
+}
+
+function boxesForSlide(spec, layout) {
+  const maxWidth = ((layout && layout.maxWidth) || 800) / 96;
+  const role = spec.role || "content";
+  if (role === "title") return [{ label: "title", x: 1, y: 2.5, w: maxWidth, h: 1.5 }];
+  if (role === "section-divider") return [{ label: "title", x: 1, y: 2.5, w: maxWidth, h: 2 }];
+  if (role === "closing") {
+    return [
+      { label: "title", x: 1, y: 2.5, w: maxWidth, h: 1.5 },
+      { label: "message", x: 1, y: 4.2, w: maxWidth, h: 0.5 },
+    ];
+  }
+  if (role === "agenda") {
+    return [
+      { label: "title", x: 0.5, y: 0.5, w: maxWidth, h: 0.8 },
+      { label: "body", x: 0.5, y: 1.5, w: maxWidth, h: 5 },
+    ];
+  }
+  return [
+    { label: "title", x: 0.5, y: 0.3, w: maxWidth, h: 0.8 },
+    { label: "body", x: 0.5, y: 1.2, w: maxWidth, h: 5.5 },
+    { label: "sourceRefs", x: 0.5, y: 7.0, w: maxWidth, h: 0.3 },
+  ];
+}
+
+function overlaps(a, b) {
+  const x = Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x));
+  const y = Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+  return x * y;
+}
+
+function validateLayoutGeometry(slideSpecs, layoutPlan) {
+  let zeroSize = 0;
+  let outOfBounds = 0;
+  let negative = 0;
+  let overlap = 0;
+  let overflowSuspected = 0;
+  let highDensity = 0;
+
   for (const spec of slideSpecs) {
-    const role = spec.role || "unknown";
-    roles[role] = (roles[role] || 0) + 1;
+    const layout = layoutPlan.layouts.find((l) => l.slideId === spec.id);
+    const boxes = boxesForSlide(spec, layout);
+    for (const box of boxes) {
+      if (box.w <= 0 || box.h <= 0) zeroSize++;
+      if (box.x < 0 || box.y < 0) negative++;
+      if (box.x + box.w > SLIDE_W || box.y + box.h > SLIDE_H) outOfBounds++;
+    }
+    for (let i = 0; i < boxes.length; i++) {
+      for (let j = i + 1; j < boxes.length; j++) {
+        if (overlaps(boxes[i], boxes[j]) > 0.02) overlap++;
+      }
+    }
+    const body = Array.isArray(spec.body) ? spec.body.join(" ") : "";
+    const bodyChars = body.length;
+    const bodyBox = boxes.find((b) => b.label === "body");
+    const bodyArea = bodyBox ? bodyBox.w * bodyBox.h : 1;
+    const density = bodyChars / bodyArea;
+    if (density > 55) overflowSuspected++;
+    if (density > 38) highDensity++;
   }
-  
-  console.log("  Role distribution:");
-  for (const [role, count] of Object.entries(roles)) {
-    console.log(`    ${role}: ${count}`);
-  }
-  
-  // Check that no single role dominates (>60%)
-  const totalSlides = slideSpecs.length;
-  for (const [role, count] of Object.entries(roles)) {
-    const pct = Math.round(count / totalSlides * 100);
-    check(
-      pct <= 60,
-      `${role}: ${count}/${totalSlides} slides (${pct}%) — within 60% threshold`
-    );
-  }
+
+  record(zeroSize === 0, `Zero-size render boxes: ${zeroSize}`);
+  record(negative === 0, `Negative render coordinates: ${negative}`);
+  record(outOfBounds === 0, `Out-of-bounds render boxes: ${outOfBounds}`);
+  record(overlap === 0, `Estimated text box overlaps: ${overlap}`);
+  record(overflowSuspected === 0, `Critical overflow suspected: ${overflowSuspected}`);
+  record(highDensity === 0, `High text density warnings: ${highDensity}`, "warn");
+  return { zeroSize, negative, outOfBounds, overlap, overflowSuspected, highDensity };
 }
 
-// ─── Main ───────────────────────────────────────────────────────────────────
+function validateRenderedPages(pngStats, pdfTexts, slideSpecs) {
+  let blankSlides = 0;
+  let sparseSlides = 0;
+  for (let i = 0; i < pngStats.length; i++) {
+    const stat = pngStats[i];
+    const text = pdfTexts[i] || { charCount: 0 };
+    const spec = slideSpecs[i] || {};
+    const role = spec.role || "content";
+    const blank = stat.inkRatio < 0.002 && text.charCount === 0;
+    const sparse = !["title", "section-divider", "closing"].includes(role) && text.charCount < 40;
+    if (blank) blankSlides++;
+    if (sparse) sparseSlides++;
+  }
+  record(blankSlides === 0, `Blank rendered slides: ${blankSlides}`);
+  record(sparseSlides === 0, `Sparse content slides: ${sparseSlides}`);
+  return { blankSlides, sparseSlides };
+}
 
 async function main() {
-  console.log(bold("M12.8 Visual QA"));
-  console.log("=================\n");
-  
-  // Generate PPTX from sample input
-  const sampleMdPath = path.join(__dirname, "..", "fixtures", "document-ingest", "sample-markdown.md");
-  const auditDir = "/tmp/presentation-os-m12-8-visual-qa";
-  const pdfOutputDir = path.join(auditDir, "pdf-output");
-  
-  let result;
-  try {
-    if (fs.existsSync(sampleMdPath)) {
-      const inputMd = fs.readFileSync(sampleMdPath, "utf8");
-      console.log(`Using fixture: fixtures/document-ingest/sample-markdown.md`);
-      result = await runPipeline(inputMd, { style: "minimal-modern" });
-    } else {
-      console.log("  ⚠ No sample-markdown.md found, using minimal content");
-      result = await runPipeline("# Test\n\n## Overview\nThis is a test presentation.\n\n## Details\nMore details here.\n\n## Conclusion\nThank you.", { style: "minimal-modern" });
-    }
-  } catch (e) {
-    console.error(red(`Pipeline error: ${e.message}`));
-    process.exit(1);
-  }
-  
-  const { slideSpecs, layoutPlan, pptxBuffer } = result;
-  
-  // Save PPTX for rendering FIRST
-  const pptxPath = path.join(auditDir, "output.pptx");
-  fs.writeFileSync(pptxPath, pptxBuffer);
-  console.log(`\nPPTX saved: ${pptxPath} (${pptxBuffer.length} bytes)`);
-  
-  // Step 1: Render PPTX to PDF (now file exists)
-  const pdfGenerated = await renderPptxToPdf(pptxPath, pdfOutputDir);
-  
-  if (pdfGenerated) {
-    // Step 2: Check font sizes
-    await checkFontSizes(layoutPlan, slideSpecs);
-    
-    // Step 3: Check color contrast
-    await checkColorContrast(layoutPlan);
-    
-    // Step 4: Check layout spacing
-    await checkLayoutSpacing(layoutPlan);
-    
-    // Step 5: Check slide dimensions
-    await checkSlideDimensions(slideSpecs, layoutPlan);
-    
-    // Step 6: Check visual element distribution
-    await checkVisualElements(slideSpecs);
-  } else {
-    console.log(yellow("Skipping visual checks — PDF generation failed"));
-  }
-  
-  // Summary
+  console.log("M12.8 Visual QA");
+  console.log("================\n");
+  ensureCleanDir(AUDIT_DIR);
+  fs.mkdirSync(PDF_DIR, { recursive: true });
+
+  const input = fs.readFileSync(FIXTURE, "utf8");
+  const result = await runPipeline(input, { style: "minimal-modern" });
+  fs.writeFileSync(PPTX_PATH, result.pptxBuffer);
+  record(fs.existsSync(PPTX_PATH) && fs.statSync(PPTX_PATH).size > 0, `PPTX generated at ${PPTX_PATH}`);
+
+  const entries = listPptxEntries();
+  const packageSummary = validatePptxPackage(entries);
+  const geometrySummary = validateLayoutGeometry(result.slideSpecs, result.layoutPlan);
+  const pdfOk = renderPptxToPdf();
+  const pageCount = pdfOk ? getPdfPageCount() : 0;
+  record(pageCount === result.slideSpecs.length, `PDF page count matches slide specs: ${pageCount}/${result.slideSpecs.length}`);
+  const pngFiles = pdfOk ? renderPdfToPng(pageCount) : [];
+  const pngStats = analyzePngs(pngFiles);
+  const pdfTexts = pdfOk ? getPdfTextByPage(pageCount) : [];
+  const renderedSummary = validateRenderedPages(pngStats, pdfTexts, result.slideSpecs);
+
+  const report = {
+    status: failCount === 0 ? "pass" : "fail",
+    generatedAt: new Date().toISOString(),
+    input: "fixtures/document-ingest/sample-markdown.md",
+    pptxPath: PPTX_PATH,
+    pdfPath: PDF_PATH,
+    pngDir: PNG_DIR,
+    slideCount: result.slideSpecs.length,
+    pdfPageCount: pageCount,
+    pngCount: pngFiles.length,
+    packageSummary,
+    geometrySummary,
+    renderedSummary,
+    pngStats,
+    pageTextStats: pdfTexts.map((p) => ({ page: p.page, charCount: p.charCount })),
+    checks,
+    passCount,
+    failCount,
+    warnCount,
+  };
+  fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2));
+
   console.log("\n==============================");
-  console.log(`Results: ${green(`${passCount} passed`)}, ${failCount > 0 ? red(`${failCount} failed`) : "0 failed"}, ${warnCount > 0 ? yellow(`${warnCount} warnings`) : "0 warnings"}`);
-  
-  if (issues.length > 0) {
-    console.log("\nIssues detected:");
-    for (const issue of issues) {
-      const icon = issue.severity === "fail" ? "✗" : "⚠";
-      console.log(`  ${icon} [${issue.severity.toUpperCase()}] ${issue.message}`);
-    }
-  }
-  
-  console.log("");
-  
-  // Exit with appropriate code
-  if (failCount > 0) {
-    console.log(red("Visual QA FAILED"));
-    process.exit(1);
-  } else {
-    console.log(green("Visual QA PASSED"));
-    process.exit(0);
-  }
+  console.log(`Results: ${passCount} passed, ${failCount} failed, ${warnCount} warnings`);
+  console.log(`Report: ${REPORT_PATH}`);
+  if (failCount > 0) process.exit(1);
 }
 
 main().catch((e) => {
-  console.error(red(`Fatal error: ${e.message}`));
+  console.error(`Fatal error: ${e.stack || e.message}`);
   process.exit(1);
 });
