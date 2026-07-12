@@ -208,17 +208,18 @@ function extractPageSpecificInsight(slidePlan, deckPlan) {
   );
   const slideLocalIdx = sectionSlides.findIndex(s => s.index === slidePlan.index);
   
-  if (slideLocalIdx < 0 || slideLocalIdx >= section.sourceParagraphs.length) {
+  if (slideLocalIdx < 0) {
     return null;
   }
   
-  const para = section.sourceParagraphs[slideLocalIdx];
+  // Use modular indexing so we don't exceed available paragraphs
+  const paraIdx = slideLocalIdx % section.sourceParagraphs.length;
+  const para = section.sourceParagraphs[paraIdx];
   if (!para || !para.originalText) {
     return null;
   }
   
   // Extract a concise conclusion from the source paragraph
-  // Look for the most informative sentence/clause
   const text = para.originalText.trim();
   
   // If text is short enough, use it directly
@@ -282,6 +283,7 @@ function generateBody(role, slidePlan, deckPlan, title) {
 
   const body = [];
   const keyMsg = slidePlan.keyMessage || "";
+  const MAX_BULLETS = 5;
 
   // Try to get source paragraph text from deckPlan sections
   if (deckPlan.sections && slidePlan.sourceRefs && slidePlan.sourceRefs.length > 0) {
@@ -295,9 +297,13 @@ function generateBody(role, slidePlan, deckPlan, title) {
       const totalSourcePara = section.sourceParagraphs.length;
       
       if (totalSourcePara > 0) {
-        // Round-robin: each slide gets paragraphs at its local index offset
-        for (let i = slideLocalIdx; i < totalSourcePara; i += sectionSlides.length) {
-          const para = section.sourceParagraphs[i];
+        // Each slide gets up to MAX_BULLETS paragraphs starting from its local index
+        // Use modular indexing so slides with few paragraphs still get content
+        const startIdx = slideLocalIdx % Math.max(1, totalSourcePara);
+        let count = 0;
+        for (let i = 0; i < totalSourcePara && count < MAX_BULLETS; i++) {
+          const paraIdx = (startIdx + i) % totalSourcePara;
+          const para = section.sourceParagraphs[paraIdx];
           if (para && para.originalText) {
             let bullet = para.originalText.trim();
             
@@ -316,7 +322,13 @@ function generateBody(role, slidePlan, deckPlan, title) {
               }
             }
             
-            body.push(bullet.length > 120 ? bullet.slice(0, 117) + "..." : bullet);
+            if (bullet && bullet.length > 120) {
+              bullet = bullet.slice(0, 117) + "...";
+            }
+            if (bullet) {
+              body.push(bullet);
+              count++;
+            }
           }
         }
       }
@@ -332,8 +344,8 @@ function generateBody(role, slidePlan, deckPlan, title) {
       deduped.push(item);
     }
   }
-  // If all body items were duplicates of the title, keep only the first non-duplicate
-  // or fall back to keyMessage
+
+  // If all body items were duplicates of the title, fall back to keyMessage
   if (deduped.length === 0 && body.length > 0) {
     if (keyMsg && !titleNorm) {
       deduped.push(keyMsg);
@@ -342,10 +354,12 @@ function generateBody(role, slidePlan, deckPlan, title) {
       if (keyMsgNorm !== titleNorm) {
         deduped.push(keyMsg);
       } else {
-        deduped.push("Key insight from analysis");
+        // Title and keyMessage are the same — use the first available source item
+        // or an empty body (slide should have been designed differently)
+        deduped.push("");
       }
     } else {
-      deduped.push("Key insight from analysis");
+      deduped.push("");
     }
   }
 
@@ -356,14 +370,24 @@ function generateBody(role, slidePlan, deckPlan, title) {
     if (keyMsg.trim() !== trimmedTitle) {
       deduped.push(keyMsg);
     } else {
-      // Title and keyMessage are the same — generate a generic insight instead
-      deduped.push("Key insight from analysis");
+      // Title and keyMessage are the same — use first available source paragraph
+      const section = deckPlan.sections?.find(s => s.title === slidePlan.section);
+      if (section?.sourceParagraphs?.length > 0) {
+        const firstPara = section.sourceParagraphs[0].originalText?.trim();
+        if (firstPara) {
+          deduped.push(firstPara.length > 120 ? firstPara.slice(0, 117) + "..." : firstPara);
+        } else {
+          deduped.push("");
+        }
+      } else {
+        deduped.push("");
+      }
     }
   }
 
-  // Last resort fallback
-  if (deduped.length === 0) {
-    deduped.push("Key insight from analysis");
+  // Ensure we don't exceed max bullets after dedup
+  while (deduped.length > MAX_BULLETS) {
+    deduped.pop();
   }
 
   return deduped;
