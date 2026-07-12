@@ -206,6 +206,8 @@ function estimateSectionBoost(sectionId, sourceDocument, intent) {
 function generateSlideEntries(sections, intent, sourceDocument, assumptions, warnings) {
   const slides = [];
   let slideIndex = 1;
+  // Global paragraph rotation counter to avoid duplicate keyMessages
+  let paraRotationOffset = 0;
 
   for (const section of sections) {
     // Add section divider slide if not the first section
@@ -227,7 +229,9 @@ function generateSlideEntries(sections, intent, sourceDocument, assumptions, war
     const slidesInSection = section.slideAllocation || 1;
     for (let i = 0; i < slidesInSection; i++) {
       const role = determineSlideRole(i, slidesInSection, section);
-      const keyMsg = extractKeyMessage(section, i, sourceDocument);
+      const keyMsg = extractKeyMessage(section, i, sourceDocument, paraRotationOffset);
+      // Advance rotation so next section starts at different paragraph
+      paraRotationOffset += slidesInSection;
 
       slides.push({
         slideId: `slide-${String(slideIndex).padStart(3, "0")}`,
@@ -331,18 +335,61 @@ function conciseMessageFromParagraph(paragraph, fallback) {
 
 /**
  * Extract a key message for a slide from source data.
+ * Uses keyword-based matching (same as preserveSourceRefs) to find relevant paragraphs,
+ * plus global offset rotation to avoid duplicates across slides in the same section.
  */
-function extractKeyMessage(section, index, sourceDocument) {
-  if (sourceDocument && sourceDocument.paragraphs && sourceDocument.paragraphs.length > 0) {
-    const sectionParagraphs = sourceDocument.paragraphs.filter((p) => {
-      const path = normalizeSectionPath(p.sectionPath);
-      return path.toLowerCase().includes(section.id.toLowerCase()) ||
-             path.toLowerCase().includes(section.title.toLowerCase());
-    });
-    if (sectionParagraphs.length > 0) {
-      const para = sectionParagraphs[index % sectionParagraphs.length];
-      return para.originalText ? para.originalText.substring(0, 120) : section.keyMessage;
+/**
+ * Match a sectionPath or text against extended keywords (used by extractKeyMessage).
+ */
+function _matchesSectionKeyword(sectionPath, text, keywords) {
+  const pathStr = normalizeSectionPath(sectionPath);
+  const pathLower = pathStr.toLowerCase();
+  const textLower = (text || "").toLowerCase();
+  for (const kw of keywords) {
+    const kwLower = kw.toLowerCase();
+    if (pathLower.includes(kwLower)) return true;
+    if (textLower.includes(kwLower)) return true;
+  }
+  return false;
+}
+function extractKeyMessage(section, index, sourceDocument, globalOffset = 0) {
+  const keywords = getExtendedSectionKeywords(section.title);
+  // Gather ALL matching content from paragraphs, lists, and tables
+  const allContent = [];
+  if (sourceDocument && sourceDocument.paragraphs) {
+    for (const p of sourceDocument.paragraphs) {
+      if (_matchesSectionKeyword(p.sectionPath, p.originalText, keywords)) {
+        allContent.push({ _type: "paragraph", originalText: p.originalText });
+      }
     }
+  }
+  if (sourceDocument && sourceDocument.lists) {
+    for (const listEntry of sourceDocument.lists) {
+      if (_matchesSectionKeyword(listEntry.sectionPath, "", keywords)) {
+        for (const item of listEntry.items) {
+          allContent.push({ _type: "list-item", originalText: item });
+        }
+      }
+    }
+  }
+  if (sourceDocument && sourceDocument.tables) {
+    for (const tableEntry of sourceDocument.tables) {
+      if (_matchesSectionKeyword(tableEntry.sectionPath, "", keywords)) {
+        if (tableEntry.header) {
+          for (const h of tableEntry.header) allContent.push({ _type: "table-cell", originalText: h });
+        }
+        if (tableEntry.rows) {
+          for (const row of tableEntry.rows) {
+            for (const cell of row) allContent.push({ _type: "table-cell", originalText: cell });
+          }
+        }
+      }
+    }
+  }
+  if (allContent.length > 0) {
+    const itemIdx = (globalOffset + index) % allContent.length;
+    const item = allContent[itemIdx];
+    return item.originalText ? item.originalText.substring(0, 120) : section.keyMessage;
   }
   return section.keyMessage;
 }
@@ -394,6 +441,28 @@ function checkConstraints(intent, sections, slides, assumptions, warnings) {
 }
 
 /**
+ * Deck section title → source heading keywords (semantic mapping).
+ * Bridges narrative patterns (e.g., "Background") with arbitrary source doc headings.
+ */
+const DECK_SECTION_SOURCE_MAPPING = {
+  Background: ["background", "背景", "overview", "概览", "introduction", "简介", "current", "现状", "challenge", "挑战", "problem", "问题", "context", "环境", "landscape"],
+  Methodology: ["method", "方法", "design", "设计", "approach", "方案", "process", "流程", "framework", "框架", "architecture", "架构", "implementation", "实施", "phase", "阶段"],
+  Results: ["result", "结果", "outcome", "成果", "finding", "发现", "data", "数据", "evidence", "证据", "performance", "表现", "expected", "预期"],
+  Discussion: ["discussion", "讨论", "limitation", "局限", "implication", "意义", "conclusion", "结论", "summary", "总结", "takeaway", "要点", "risk", "风险", "mitigation", "缓解"],
+};
+
+/**
+ * Get extended keywords for a deck section, combining direct keyword map + semantic mapping.
+ * This ensures content matching works even when source doc headings differ from narrative pattern names.
+ */
+function getExtendedSectionKeywords(sectionTitle) {
+  const direct = SECTION_KEYWORD_MAP[sectionTitle] || [];
+  const mapped = DECK_SECTION_SOURCE_MAPPING[sectionTitle] || [];
+  // Deduplicate
+  return [...new Set([...direct, ...mapped])];
+}
+
+/**
  * Populate sourceRefs by matching source document elements to planned slides.
  * Uses keyword-based matching since narrative section names may differ from source paths.
  */
@@ -438,7 +507,7 @@ const SECTION_KEYWORD_MAP = {
 };
 
 function getSectionKeywords(sectionTitle) {
-  return SECTION_KEYWORD_MAP[sectionTitle] || [];
+  return getExtendedSectionKeywords(sectionTitle);
 }
 
 function matchesSourceRef(paragraph, slideSection, slideSectionKeywords) {
@@ -481,13 +550,37 @@ function matchesSourceRef(paragraph, slideSection, slideSectionKeywords) {
   return pathMatchScore >= 2 || (pathMatchScore >= 1 && textMatchCount >= 1);
 }
 
-function preserveSourceRefs(sections, slides, sourceDocument, intent) {
-  if (!sourceDocument || !sourceDocument.paragraphs) return;
+/**
+ * Match a list or table entry against a slide section using keywords.
+ */
+function matchesListTableRef(entry, slideSection, slideKeywords) {
+  const sectionPathStr = normalizeSectionPath(entry.sectionPath);
+  const pathLower = sectionPathStr.toLowerCase();
 
-  // Build a map from deck section title -> matched paragraphs
-  const sectionParaMap = {};
+  let pathMatchScore = 0;
+  for (const kw of slideKeywords) {
+    const kwLower = kw.toLowerCase();
+    // Check for word-boundary match in section path
+    if (pathLower.match(new RegExp('\\b' + kwLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i'))) {
+      pathMatchScore += 2;
+    }
+    // Also check for substring match (fallback for compound paths)
+    else if (pathLower.includes(kwLower)) {
+      pathMatchScore += 1;
+    }
+  }
+  if (pathMatchScore === 0) return false;
+  return pathMatchScore >= 1;
+}
+
+function preserveSourceRefs(sections, slides, sourceDocument, intent) {
+  if (!sourceDocument) return;
+
+  // Build a map from deck section title -> matched content items
+  // This now includes paragraphs, lists, and tables
+  const sectionContentMap = {};
   for (const section of sections) {
-    sectionParaMap[section.title] = [];
+    sectionContentMap[section.title] = [];
   }
 
   // Track whether ANY keyword-based matching succeeded
@@ -495,24 +588,98 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
 
   for (const slide of slides) {
     const matchedRefs = [];
-    const matchedParagraphs = [];
+    const matchedContent = [];
     const slideSectionLower = slide.section.toLowerCase();
     const slideKeywords = getSectionKeywords(slide.section);
 
-    // Match paragraphs by keyword-based matching (not exact sectionPath)
-    for (const para of sourceDocument.paragraphs) {
-      if (matchesSourceRef(para, slide.section, slideKeywords)) {
-        matchedRefs.push({
-          sourceId: para.sourceId,
-          sourceType: para.sourceType,
-          fileReference: para.fileReference || "",
-        });
-        matchedParagraphs.push({
-          sourceId: para.sourceId,
-          originalText: para.originalText || "",
-          sectionPath: para.sectionPath || [],
-        });
-        totalKeywordMatches++;
+    // Match paragraphs by keyword-based matching
+    if (sourceDocument.paragraphs) {
+      for (const para of sourceDocument.paragraphs) {
+        if (matchesSourceRef(para, slide.section, slideKeywords)) {
+          matchedRefs.push({
+            sourceId: para.sourceId,
+            sourceType: para.sourceType,
+            fileReference: para.fileReference || "",
+          });
+          matchedContent.push({
+            sourceId: para.sourceId,
+            originalText: para.originalText || "",
+            sectionPath: para.sectionPath || [],
+            _type: "paragraph",
+          });
+          totalKeywordMatches++;
+        }
+      }
+    }
+
+    // Match list items by keyword-based matching
+    if (sourceDocument.lists) {
+      for (const listEntry of sourceDocument.lists) {
+        if (matchesListTableRef(listEntry, slide.section, slideKeywords)) {
+          for (let li = 0; li < listEntry.items.length; li++) {
+            const item = listEntry.items[li];
+            const itemId = listEntry.sourceId + "-item-" + li;
+            matchedRefs.push({
+              sourceId: itemId,
+              sourceType: "list-item",
+              fileReference: listEntry.fileReference || "",
+            });
+            matchedContent.push({
+              sourceId: itemId,
+              originalText: item || "",
+              sectionPath: listEntry.sectionPath || [],
+              _type: "list-item",
+            });
+            totalKeywordMatches++;
+          }
+        }
+      }
+    }
+
+    // Match table cells by keyword-based matching
+    if (sourceDocument.tables) {
+      for (const tableEntry of sourceDocument.tables) {
+        if (matchesListTableRef(tableEntry, slide.section, slideKeywords)) {
+          // Add header row as content
+          if (tableEntry.header) {
+            for (let hi = 0; hi < tableEntry.header.length; hi++) {
+              const cellId = tableEntry.sourceId + "-header-" + hi;
+              matchedRefs.push({
+                sourceId: cellId,
+                sourceType: "table-cell",
+                fileReference: tableEntry.fileReference || "",
+              });
+              matchedContent.push({
+                sourceId: cellId,
+                originalText: tableEntry.header[hi] || "",
+                sectionPath: tableEntry.sectionPath || [],
+                _type: "table-cell",
+              });
+              totalKeywordMatches++;
+            }
+          }
+          // Add data rows as content
+          if (tableEntry.rows) {
+            for (let ri = 0; ri < tableEntry.rows.length; ri++) {
+              const row = tableEntry.rows[ri];
+              for (let ci = 0; ci < row.length; ci++) {
+                const cellId = tableEntry.sourceId + "-row-" + ri + "-cell-" + ci;
+                matchedRefs.push({
+                  sourceId: cellId,
+                  sourceType: "table-cell",
+                  fileReference: tableEntry.fileReference || "",
+                });
+                matchedContent.push({
+                  sourceId: cellId,
+                  originalText: row[ci] || "",
+                  sectionPath: tableEntry.sectionPath || [],
+                  _type: "table-cell",
+                });
+                totalKeywordMatches++;
+              }
+            }
+          }
+        }
       }
     }
 
@@ -524,50 +691,45 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
       return true;
     });
 
-    // Store matched paragraphs on the section for downstream use
-    if (matchedParagraphs.length > 0) {
-      if (!sectionParaMap[slide.section]) {
-        sectionParaMap[slide.section] = [];
+    // Store matched content on the section for downstream use
+    if (matchedContent.length > 0) {
+      if (!sectionContentMap[slide.section]) {
+        sectionContentMap[slide.section] = [];
       }
-      const existingIds = new Set(sectionParaMap[slide.section].map(p => p.sourceId));
-      for (const para of matchedParagraphs) {
-        if (!existingIds.has(para.sourceId)) {
-          sectionParaMap[slide.section].push(para);
+      const existingIds = new Set(sectionContentMap[slide.section].map(c => c.sourceId));
+      for (const content of matchedContent) {
+        if (!existingIds.has(content.sourceId)) {
+          sectionContentMap[slide.section].push(content);
         }
       }
     }
   }
 
   // Only mark as inferred when we have SOME keyword matches but not enough coverage
-  // If ZERO keyword matches, we're in "no-match" mode and should NOT mark as inferred
   const shouldMarkInferred = totalKeywordMatches > 0;
 
   // Enhanced fallback: try to assign refs to slides that still don't have any
   for (const slide of slides) {
     if (slide.sourceRefs.length === 0 && slide.role !== "section-divider" && slide.role !== "closing" && slide.role !== "title" && slide.role !== "agenda") {
-      // Try to find any paragraph from the same section
       const section = sections.find(s => s.title === slide.section);
       
-      if (section && section.sourceParagraphs && section.sourceParagraphs.length > 0) {
-        // Assign at least one ref from this section's matched paragraphs
-        const firstPara = section.sourceParagraphs[0];
+      if (section && sectionContentMap[section.title] && sectionContentMap[section.title].length > 0) {
+        const firstItem = sectionContentMap[section.title][0];
         slide.sourceRefs = [{
-          sourceId: firstPara.sourceId,
-          sourceType: "paragraph",
+          sourceId: firstItem.sourceId,
+          sourceType: firstItem._type || "paragraph",
           fileReference: "",
         }];
-        slide.keyMessage = conciseMessageFromParagraph(firstPara, slide.keyMessage);
-        sectionParaMap[section.title].push({
-          sourceId: firstPara.sourceId,
-          originalText: firstPara.originalText || "",
-          sectionPath: firstPara.sectionPath || [],
+        slide.keyMessage = conciseMessageFromParagraph(firstItem, slide.keyMessage);
+        sectionContentMap[section.title].push({
+          sourceId: firstItem.sourceId,
+          originalText: firstItem.originalText || "",
+          sectionPath: firstItem.sectionPath || [],
         });
         if (shouldMarkInferred) {
-          slide._inferred = true; // Mark as inferred for QA detection
+          slide._inferred = true;
         }
       } else if (sourceDocument.paragraphs && sourceDocument.paragraphs.length > 0) {
-        // Last resort: assign a nearby paragraph from the document
-        // Find the nearest unmatched paragraph by index
         const assignedIds = new Set();
         slides.forEach(s => (s.sourceRefs || []).forEach(r => assignedIds.add(r.sourceId)));
         
@@ -582,13 +744,12 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
           slide.keyMessage = conciseMessageFromParagraph(para, slide.keyMessage);
           const sectionForSlide = sections.find(s => s.title === slide.section);
           if (sectionForSlide) {
-            sectionParaMap[sectionForSlide.title].push({
+            sectionContentMap[sectionForSlide.title].push({
               sourceId: para.sourceId,
               originalText: para.originalText || "",
               sectionPath: para.sectionPath || [],
             });
           }
-          // Don't mark as inferred in no-match mode — this is expected behavior
           if (shouldMarkInferred) {
             slide._inferred = true;
           }
@@ -597,39 +758,88 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
     }
   }
 
-  // Fallback: if NO slides have refs, distribute paragraphs proportionally across sections
+  // Fallback: if NO slides have refs, distribute content proportionally across sections
   const totalSlidesWithRefs = slides.filter(s => s.sourceRefs.length > 0).length;
-  if (totalSlidesWithRefs === 0 && sourceDocument.paragraphs.length > 0) {
+  if (totalSlidesWithRefs === 0) {
     const numSections = sections.length;
-    const parasPerSection = Math.ceil(sourceDocument.paragraphs.length / numSections);
+    
+    // Gather all available content types
+    const allContent = [];
+    if (sourceDocument.paragraphs) {
+      for (const p of sourceDocument.paragraphs) {
+        allContent.push({ ...p, _type: "paragraph" });
+      }
+    }
+    if (sourceDocument.lists) {
+      for (const l of sourceDocument.lists) {
+        for (let li = 0; li < l.items.length; li++) {
+          allContent.push({
+            sourceId: l.sourceId + "-item-" + li,
+            originalText: l.items[li] || "",
+            sectionPath: l.sectionPath || [],
+            _type: "list-item",
+          });
+        }
+      }
+    }
+    if (sourceDocument.tables) {
+      for (const t of sourceDocument.tables) {
+        if (t.header) {
+          for (let hi = 0; hi < t.header.length; hi++) {
+            allContent.push({
+              sourceId: t.sourceId + "-header-" + hi,
+              originalText: t.header[hi] || "",
+              sectionPath: t.sectionPath || [],
+              _type: "table-cell",
+            });
+          }
+        }
+        if (t.rows) {
+          for (let ri = 0; ri < t.rows.length; ri++) {
+            const row = t.rows[ri];
+            for (let ci = 0; ci < row.length; ci++) {
+              allContent.push({
+                sourceId: t.sourceId + "-row-" + ri + "-cell-" + ci,
+                originalText: row[ci] || "",
+                sectionPath: t.sectionPath || [],
+                _type: "table-cell",
+              });
+            }
+          }
+        }
+      }
+    }
+    
+    if (allContent.length > 0) {
+      const contentPerSection = Math.ceil(allContent.length / numSections);
+      for (let i = 0; i < sections.length; i++) {
+        const startIdx = i * contentPerSection;
+        const endIdx = Math.min(startIdx + contentPerSection, allContent.length);
+        const sectionContent = allContent.slice(startIdx, endIdx);
+        
+        sectionContentMap[sections[i].title] = sectionContent.map(c => ({
+          sourceId: c.sourceId,
+          originalText: c.originalText || "",
+          sectionPath: c.sectionPath || [],
+        }));
 
-    for (let i = 0; i < sections.length; i++) {
-      const startIdx = i * parasPerSection;
-      const endIdx = Math.min(startIdx + parasPerSection, sourceDocument.paragraphs.length);
-      const sectionParas = sourceDocument.paragraphs.slice(startIdx, endIdx);
-
-      sectionParaMap[sections[i].title] = sectionParas.map(p => ({
-        sourceId: p.sourceId,
-        originalText: p.originalText || "",
-        sectionPath: p.sectionPath || [],
-      }));
-
-      // Also assign refs to slides in this section
-      for (const slide of slides) {
-        if (slide.section === sections[i].title && slide.sourceRefs.length === 0) {
-          slide.sourceRefs = sectionParas.map(p => ({
-            sourceId: p.sourceId,
-            sourceType: p.sourceType,
-            fileReference: p.fileReference || "",
-          }));
+        for (const slide of slides) {
+          if (slide.section === sections[i].title && slide.sourceRefs.length === 0) {
+            slide.sourceRefs = sectionContent.slice(0, 3).map(c => ({
+              sourceId: c.sourceId,
+              sourceType: c._type || "paragraph",
+              fileReference: c.fileReference || "",
+            }));
+          }
         }
       }
     }
   }
 
-  // Assign sourceParagraphs to sections
+  // Assign sourceParagraphs to sections (renamed to sourceContent for clarity)
+  // But keep sourceParagraphs field name for backward compat with generator.js
   for (const section of sections) {
-    section.sourceParagraphs = sectionParaMap[section.title] || [];
+    section.sourceParagraphs = sectionContentMap[section.title] || [];
   }
 }
 
