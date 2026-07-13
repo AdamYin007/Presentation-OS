@@ -79,6 +79,7 @@ const ALLOWED_DIFF_FILES = new Set([
   "scripts/generate-pptx.js",
   "scripts/check-m12-7-end-to-end.cjs",
   "docs/M12_7_END_TO_END_MVP_SPEC.md",
+  "scripts/check-m12-8-visual-qa.cjs",
   // M12.10 Asset, Chart, and Diagram Enhancement
   "docs/M12_10_ASSET_CHART_DIAGRAM_ENHANCEMENT_SPEC.md",
   "examples/m12-10-chart-diagram.pptx",
