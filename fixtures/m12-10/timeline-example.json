@@ -1,0 +1,25 @@
+{
+  "id": "slide-m12-10-timeline",
+  "index": 5,
+  "section": "History",
+  "role": "content",
+  "title": "Company Milestones",
+  "keyMessage": "Rapid growth from startup to industry leader in 5 years",
+  "body": ["2020: Founded", "2021: Seed Round", "2022: Product Launch", "2023: Series B", "2024: Market Leader"],
+  "visualType": "timeline",
+  "visualSpec": {
+    "events": [
+      { "year": "2020", "title": "Founded", "description": "Team of 3 in garage" },
+      { "year": "2021", "title": "Seed Round", "description": "$2M raised" },
+      { "year": "2022", "title": "Product Launch", "description": "10K users in month 1" },
+      { "year": "2023", "title": "Series B", "description": "$15M raised, 100 employees" },
+      { "year": "2024", "title": "Market Leader", "description": "500K+ users, profitable" }
+    ]
+  },
+  "layout": "timeline",
+  "speakerNotes": "The company has grown from a small startup to a market leader in just 5 years, with consistent milestones along the way.",
+  "sourceRefs": [
+    { "sourceId": "doc-5", "paragraphIndex": 20, "snippet": "Company history and milestones" }
+  ],
+  "designHints": {}
+}

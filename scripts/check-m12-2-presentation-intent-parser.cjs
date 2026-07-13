@@ -79,6 +79,16 @@ const ALLOWED_DIFF_FILES = new Set([
   "scripts/generate-pptx.js",
   "scripts/check-m12-7-end-to-end.cjs",
   "docs/M12_7_END_TO_END_MVP_SPEC.md",
+  // M12.10 Asset, Chart, and Diagram Enhancement
+  "docs/M12_10_ASSET_CHART_DIAGRAM_ENHANCEMENT_SPEC.md",
+  "examples/m12-10-chart-diagram.pptx",
+  "fixtures/m12-10/bar-chart-example.json",
+  "fixtures/m12-10/line-chart-example.json",
+  "fixtures/m12-10/metric-cards-example.json",
+  "fixtures/m12-10/process-diagram-example.json",
+  "fixtures/m12-10/timeline-example.json",
+  "scripts/check-m12-10-asset-chart-diagram.cjs",
+  "tests/chart-diagram/chart-diagram.test.js",
 ]);
 
 function fail(message) {

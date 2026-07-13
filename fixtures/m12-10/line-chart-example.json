@@ -1,0 +1,56 @@
+{
+  "id": "slide-m12-10-line",
+  "index": 2,
+  "section": "Trends",
+  "role": "data-chart",
+  "title": "Monthly Active Users Trend",
+  "keyMessage": "MAU grew 45% year-over-year with accelerating growth in Q4",
+  "body": ["Q1: 120K", "Q2: 145K", "Q3: 178K", "Q4: 210K"],
+  "visualType": "line-chart",
+  "visualSpec": {
+    "series": [
+      {
+        "name": "Current Year",
+        "points": [
+          { "x": "Jan", "y": 120000 },
+          { "x": "Feb", "y": 128000 },
+          { "x": "Mar", "y": 135000 },
+          { "x": "Apr", "y": 145000 },
+          { "x": "May", "y": 155000 },
+          { "x": "Jun", "y": 162000 },
+          { "x": "Jul", "y": 170000 },
+          { "x": "Aug", "y": 178000 },
+          { "x": "Sep", "y": 185000 },
+          { "x": "Oct", "y": 192000 },
+          { "x": "Nov", "y": 200000 },
+          { "x": "Dec", "y": 210000 }
+        ]
+      },
+      {
+        "name": "Previous Year",
+        "points": [
+          { "x": "Jan", "y": 95000 },
+          { "x": "Feb", "y": 98000 },
+          { "x": "Mar", "y": 102000 },
+          { "x": "Apr", "y": 108000 },
+          { "x": "May", "y": 112000 },
+          { "x": "Jun", "y": 118000 },
+          { "x": "Jul", "y": 125000 },
+          { "x": "Aug", "y": 130000 },
+          { "x": "Sep", "y": 138000 },
+          { "x": "Oct", "y": 145000 },
+          { "x": "Nov", "y": 152000 },
+          { "x": "Dec", "y": 160000 }
+        ]
+      }
+    ],
+    "colors": ["#3B82F6", "#9CA3AF"],
+    "showGrid": true
+  },
+  "layout": "full-width-chart",
+  "speakerNotes": "Year-over-year MAU growth accelerated significantly in Q4, driven by the new onboarding flow launch.",
+  "sourceRefs": [
+    { "sourceId": "doc-2", "paragraphIndex": 7, "snippet": "Monthly active user growth data" }
+  ],
+  "designHints": { "chartStyle": "smooth" }
+}
