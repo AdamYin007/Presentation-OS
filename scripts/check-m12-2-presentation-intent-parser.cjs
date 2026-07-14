@@ -90,6 +90,13 @@ const ALLOWED_DIFF_FILES = new Set([
   "fixtures/m12-10/timeline-example.json",
   "scripts/check-m12-10-asset-chart-diagram.cjs",
   "tests/chart-diagram/chart-diagram.test.js",
+  // M12.11 CLI and Skill Packaging
+  "scripts/make-pptx.js",
+  "scripts/make-pptx-help.txt",
+  "scripts/check-m12-11-cli-skill-packaging.cjs",
+  "fixtures/m12-11/sample-input.md",
+  "tests/m12-11-cli-skill-packaging/m12-11.test.js",
+  "docs/M12_11_CLI_SKILL_PACKAGING_SPEC.md",
 ]);
 
 function fail(message) {

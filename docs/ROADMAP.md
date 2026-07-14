@@ -323,8 +323,15 @@
   - Bar chart, line chart, KPI metric cards, process diagram, timeline diagram
   - All rendered as editable PPTX primitives via PptxGenJS
   - 35 passing tests, 5 fixtures, full pipeline regression verified
-  - Next: M12.11 CLI and Skill Packaging
-- [ ] M12.11 CLI and Skill Packaging
+- [x] M12.11 CLI and Skill Packaging
+  - Thin CLI entrypoint (`scripts/make-pptx.js`) wrapping `runPipeline()`
+  - Supports `--style`, `--dry-run`, `--json`, `--help` flags
+  - Three theme styles: minimal-modern, business-consulting, academic-clean
+  - Structured JSON output for programmatic consumption
+  - Zero cloud/paid dependencies — pure Node.js builtins + pptxgenjs
+  - Spec document, checker script, comprehensive tests, sample fixture
+  - Integrated into `npm run check` and `npm run check:all`
+  - Next: M12.12 Multi-Domain Real-Document Pilot
 - [ ] M12.12 Multi-Domain Real-Document Pilot
 - [ ] M12.13 Usability and Reliability Release
 
