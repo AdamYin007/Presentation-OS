@@ -1,0 +1,25 @@
+{
+  "id": "slide-m12-10-kpi",
+  "index": 3,
+  "section": "Key Metrics",
+  "role": "data-chart",
+  "title": "Key Performance Indicators",
+  "keyMessage": "All four core KPIs show positive trends",
+  "body": ["Revenue: +23%", "Users: +45%", "Retention: 92%", "NPS: 72"],
+  "visualType": "metric-cards",
+  "visualSpec": {
+    "metrics": [
+      { "label": "Revenue", "value": "$29.2M", "trend": "up" },
+      { "label": "Active Users", "value": "210K", "trend": "up" },
+      { "label": "Retention Rate", "value": "92%", "trend": "up" },
+      { "label": "NPS Score", "value": "72", "trend": "flat" }
+    ],
+    "columns": 2
+  },
+  "layout": "kpi-cards",
+  "speakerNotes": "All four core KPIs are moving in the right direction. NPS has plateaued and needs attention.",
+  "sourceRefs": [
+    { "sourceId": "doc-3", "paragraphIndex": 12, "snippet": "Annual KPI summary" }
+  ],
+  "designHints": {}
+}

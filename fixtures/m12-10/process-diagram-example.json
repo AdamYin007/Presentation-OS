@@ -1,0 +1,37 @@
+{
+  "id": "slide-m12-10-process",
+  "index": 4,
+  "section": "Implementation",
+  "role": "content",
+  "title": "Implementation Roadmap",
+  "keyMessage": "Four-phase rollout ensures minimal disruption",
+  "body": ["Phase 1: Foundation", "Phase 2: Migration", "Phase 3: Optimization", "Phase 4: Scale"],
+  "visualType": "process",
+  "visualSpec": {
+    "steps": [
+      {
+        "title": "Foundation",
+        "description": "Weeks 1-4: Infrastructure setup and team alignment"
+      },
+      {
+        "title": "Migration",
+        "description": "Weeks 5-10: Data migration and API integration"
+      },
+      {
+        "title": "Optimization",
+        "description": "Weeks 11-14: Performance tuning and testing"
+      },
+      {
+        "title": "Scale",
+        "description": "Weeks 15-18: Full production rollout"
+      }
+    ],
+    "direction": "horizontal"
+  },
+  "layout": "horizontal-process",
+  "speakerNotes": "The phased approach minimizes risk while ensuring each phase builds on a solid foundation.",
+  "sourceRefs": [
+    { "sourceId": "doc-4", "paragraphIndex": 15, "snippet": "Implementation timeline" }
+  ],
+  "designHints": {}
+}

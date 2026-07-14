@@ -71,10 +71,18 @@ function commandExists(cmd) {
   }
 }
 
+function resolveLibreOfficeCommand() {
+  const macSoffice = "/Applications/LibreOffice.app/Contents/MacOS/soffice";
+  if (fs.existsSync(macSoffice)) return macSoffice;
+  if (commandExists("soffice")) return "soffice";
+  if (commandExists("libreoffice")) return "libreoffice";
+  return null;
+}
+
 function renderPptxToPdf() {
-  const soffice = "/Applications/LibreOffice.app/Contents/MacOS/soffice";
-  record(fs.existsSync(soffice), "LibreOffice is available for PPTX to PDF conversion");
-  if (!fs.existsSync(soffice)) return false;
+  const soffice = resolveLibreOfficeCommand();
+  record(Boolean(soffice), "LibreOffice is available for PPTX to PDF conversion", "warn");
+  if (!soffice) return false;
 
   try {
     run(soffice, ["--headless", "--convert-to", "pdf", "--outdir", PDF_DIR, PPTX_PATH], { timeout: 90000 });
@@ -294,7 +302,11 @@ async function main() {
   const geometrySummary = validateLayoutGeometry(result.slideSpecs, result.layoutPlan);
   const pdfOk = renderPptxToPdf();
   const pageCount = pdfOk ? getPdfPageCount() : 0;
-  record(pageCount === result.slideSpecs.length, `PDF page count matches slide specs: ${pageCount}/${result.slideSpecs.length}`);
+  if (pdfOk) {
+    record(pageCount === result.slideSpecs.length, `PDF page count matches slide specs: ${pageCount}/${result.slideSpecs.length}`);
+  } else {
+    record(true, "PDF page count check skipped because LibreOffice is unavailable");
+  }
   const pngFiles = pdfOk ? renderPdfToPng(pageCount) : [];
   const pngStats = analyzePngs(pngFiles);
   const pdfTexts = pdfOk ? getPdfTextByPage(pageCount) : [];

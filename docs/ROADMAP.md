@@ -317,9 +317,13 @@
   - 130KB e2e-output.pptx fixture (verified: 16 slides, valid PPTX)
   - Full spec document
   - Next: M12.8 Content and Visual QA
-- [ ] M12.8 Content and Visual QA
-- [ ] M12.9 Natural-Language Revision
-- [ ] M12.10 Asset, Chart, and Diagram Enhancement
+- [x] M12.8 Content and Visual QA
+- [x] M12.9 Natural-Language Revision
+- [x] M12.10 Asset, Chart, and Diagram Enhancement
+  - Bar chart, line chart, KPI metric cards, process diagram, timeline diagram
+  - All rendered as editable PPTX primitives via PptxGenJS
+  - 35 passing tests, 5 fixtures, full pipeline regression verified
+  - Next: M12.11 CLI and Skill Packaging
 - [ ] M12.11 CLI and Skill Packaging
 - [ ] M12.12 Multi-Domain Real-Document Pilot
 - [ ] M12.13 Usability and Reliability Release
