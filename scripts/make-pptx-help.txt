@@ -1,0 +1,34 @@
+AWE — AI Workspace Enterprise
+Markdown to PowerPoint (M12.11)
+
+Usage:
+  node scripts/make-pptx.js <input.md> <output.pptx> [options]
+
+Arguments:
+  input.md          Path to a markdown file (required)
+  output.pptx       Path for the output PPTX file (required unless --dry-run or --json)
+
+Options:
+  --style <name>    Theme style: minimal-modern | business-consulting | academic-clean
+                    (default: minimal-modern)
+  --dry-run         Run the full pipeline but do not write an output file
+  --json            Print pipeline summary as JSON to stdout
+  --help, -h        Show this help message
+
+Examples:
+  # Basic: generate a presentation
+  node scripts/make-pptx.js docs/proposal.md deck.pptx
+
+  # Use a specific theme style
+  node scripts/make-pptx.js docs/proposal.md deck.pptx --style business-consulting
+
+  # Dry-run with JSON summary
+  node scripts/make-pptx.js docs/proposal.md --dry-run --json
+
+  # Just print JSON summary (no output file)
+  node scripts/make-pptx.js docs/proposal.md output.pptx --json
+
+Dependencies:
+  - Node.js 18+ (uses built-in fs, path, child_process)
+  - pptxgenjs (via the existing presentation-pipeline package)
+  - No cloud services, no paid APIs, no external downloads
