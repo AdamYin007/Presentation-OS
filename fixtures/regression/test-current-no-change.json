@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-07-15T14:00:00.000Z",
+  "input": "fixtures/document-ingest/sample-markdown.md",
+  "pipeline": { "format": "markdown", "style": "minimal-modern", "title": "Business Review" },
+  "deck": { "slideCount": 10, "contentSlides": 6, "sectionDividers": 3, "closingSlide": true },
+  "checks": [
+    { "id": "title-completeness", "category": "content", "status": "pass", "message": "All slides have non-empty titles" },
+    { "id": "source-ref-coverage", "category": "content", "status": "pass", "message": "100% content slides have sourceRefs" },
+    { "id": "duplicate-detection", "category": "content", "status": "pass", "message": "No duplicate pairs found" },
+    { "id": "section-dividers", "category": "structure", "status": "pass", "message": "Found 3 section dividers" },
+    { "id": "closing-slide", "category": "structure", "status": "pass", "message": "Exactly 1 closing slide" },
+    { "id": "layout-diversity", "category": "structure", "status": "pass", "message": "4 distinct layouts across 10 slides" },
+    { "id": "visual-qa-libreoffice", "category": "visual", "status": "warn", "message": "LibreOffice not available — visual QA skipped" }
+  ],
+  "warnings": ["Closing slide has no body content"],
+  "summary": {
+    "passCount": 6,
+    "failCount": 0,
+    "warnCount": 1,
+    "overallStatus": "pass",
+    "qualityScore": 95
+  }
+}
