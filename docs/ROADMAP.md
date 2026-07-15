@@ -332,7 +332,7 @@
   - Spec document, checker script, comprehensive tests, sample fixture
   - Integrated into `npm run check` and `npm run check:all`
   - Next: M12.12 Multi-Domain Real-Document Pilot
-- [ ] M12.12 Multi-Domain Real-Document Pilot
+- [x] M12.12 Multi-Domain Real-Document Pilot
 - [ ] M12.13 Usability and Reliability Release
 
 ## Rules for Future Work
