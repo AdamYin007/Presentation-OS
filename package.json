@@ -28,7 +28,8 @@
     "check:m12-9-natural-language-revision": "node tests/presentation-revision/presentation-revision.test.js",
     "check:m12-10-asset-chart-diagram": "node scripts/check-m12-10-asset-chart-diagram.cjs",
     "check:m12-11-cli-skill-packaging": "node scripts/check-m12-11-cli-skill-packaging.cjs",
-    "check:m12-12-multi-domain-pilot": "node scripts/check-m12-12-multi-domain-pilot.cjs"
+    "check:m12-12-multi-domain-pilot": "node scripts/check-m12-12-multi-domain-pilot.cjs",
+    "check:m12-14-quality-traceability": "node scripts/check-m12-14-quality-traceability.cjs"
   },
   "keywords": [],
   "author": "",
