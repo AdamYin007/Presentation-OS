@@ -97,6 +97,15 @@ const ALLOWED_DIFF_FILES = new Set([
   "fixtures/m12-11/sample-input.md",
   "tests/m12-11-cli-skill-packaging/m12-11.test.js",
   "docs/M12_11_CLI_SKILL_PACKAGING_SPEC.md",
+  // M12.12 Multi-Domain Real-Document Pilot
+  "examples/m12-12-business.pptx",
+  "examples/m12-12-education.pptx",
+  "examples/m12-12-technical.pptx",
+  "fixtures/m12-12/business-real/q2-business-review.md",
+  "fixtures/m12-12/education-real/intro-to-ml.md",
+  "fixtures/m12-12/technical-real/kubernetes-architecture.md",
+  "scripts/check-m12-12-multi-domain-pilot.cjs",
+  "docs/M12_12_MULTI_DOMAIN_PILOT_SPEC.md",
 ]);
 
 function fail(message) {

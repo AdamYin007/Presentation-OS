@@ -7,6 +7,7 @@ Usage:
 Arguments:
   input.md          Path to a markdown file (required)
   output.pptx       Path for the output PPTX file (required unless --dry-run or --json)
+                    Parent directories are created automatically if missing
 
 Options:
   --style <name>    Theme style: minimal-modern | business-consulting | academic-clean
