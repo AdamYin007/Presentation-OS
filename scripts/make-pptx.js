@@ -146,7 +146,11 @@ async function main() {
       return;
     }
 
-    // Write output file
+    // Write output file (create parent dirs if needed)
+    const outDir = path.dirname(outputPath);
+    if (!fs.existsSync(outDir)) {
+      fs.mkdirSync(outDir, { recursive: true });
+    }
     fs.writeFileSync(outputPath, result.pptxBuffer);
     if (opts.json) {
       console.log(JSON.stringify({ ...summary, outputPath }, null, 2));

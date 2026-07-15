@@ -38,10 +38,15 @@ AWE - AI Workspace Enterprise
 
 Commands:
   awe doctor
-  awe list skills
-  awe list workflows
-  awe list factories
+  awe list <skills|workflows|factories>
+  awe search <keyword>
+  awe install <package>
+  awe installed
+  awe remove <package>
+  awe run factory <name> [--topic ...] [--out ...]
   awe registry list
+  awe sprint
+  awe help
 `);
   process.exit(0);
 }
