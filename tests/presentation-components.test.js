@@ -63,7 +63,7 @@ test("card renders without error", () => {
   const pptx = createTestPptx();
   const slide = getSlide(pptx);
   comp.card(slide, 1, 2, 3, 1.5, "Header", "Body text", comp.C.blue, pptx);
-  assert.ok(slide.shapes.length > 0, "Card should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Card should produce shapes");
 });
 test("card with icon variant", () => {
   const pptx = createTestPptx();
@@ -72,7 +72,7 @@ test("card with icon variant", () => {
     variant: "icon",
     iconChar: "◆"
   });
-  assert.ok(slide.shapes.length > 0, "Icon card should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Icon card should produce shapes");
 });
 test("card with badge variant", () => {
   const pptx = createTestPptx();
@@ -81,7 +81,7 @@ test("card with badge variant", () => {
     variant: "badge",
     badgeText: "NEW"
   });
-  assert.ok(slide.shapes.length > 0, "Badge card should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Badge card should produce shapes");
 });
 test("card with flat variant", () => {
   const pptx = createTestPptx();
@@ -89,7 +89,7 @@ test("card with flat variant", () => {
   comp.card(slide, 1, 2, 3, 1.5, "Flat Card", "Description", comp.C.cyan, pptx, {
     variant: "flat"
   });
-  assert.ok(slide.shapes.length > 0, "Flat card should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Flat card should produce shapes");
 });
 
 // ── Timeline Component ──
@@ -105,7 +105,7 @@ test("timeline renders horizontal without error", () => {
     { label: "Phase 2", title: "Middle", body: "Continue" },
     { label: "Phase 3", title: "End", body: "Finish" }
   ], pptx);
-  assert.ok(slide.shapes.length > 0, "Timeline should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Timeline should produce shapes");
 });
 test("timeline with arrows", () => {
   const pptx = createTestPptx();
@@ -114,7 +114,7 @@ test("timeline with arrows", () => {
     { label: "Q1", title: "Plan", body: "Planning phase" },
     { label: "Q2", title: "Build", body: "Development" }
   ], pptx, { showArrows: true });
-  assert.ok(slide.shapes.length > 0, "Timelime with arrows should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Timelime with arrows should produce shapes");
 });
 test("timeline vertical mode", () => {
   const pptx = createTestPptx();
@@ -124,7 +124,7 @@ test("timeline vertical mode", () => {
     { label: "Step 2", title: "Second" },
     { label: "Step 3", title: "Third" }
   ], pptx, { vertical: true });
-  assert.ok(slide.shapes.length > 0, "Vertical timeline should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Vertical timeline should produce shapes");
 });
 
 // ── Platform Hub Component ──
@@ -140,7 +140,7 @@ test("platformHub manual layout", () => {
     { label: "System B", x: 8, y: 1 },
     { label: "System C", x: 4, y: 5 }
   ], pptx);
-  assert.ok(slide.shapes.length > 0, "Platform hub should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Platform hub should produce shapes");
 });
 test("platformHub auto layout", () => {
   const pptx = createTestPptx();
@@ -151,7 +151,7 @@ test("platformHub auto layout", () => {
     { label: "Node 3", icon: "■" },
     { label: "Node 4" }
   ], pptx, { autoLayout: true });
-  assert.ok(slide.shapes.length > 0, "Auto layout hub should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Auto layout hub should produce shapes");
 });
 
 // ── Layered Architecture Component ──
@@ -168,7 +168,7 @@ test("layered architecture basic render", () => {
     { name: "Data", desc: "Data layer" },
     { name: "Connect", desc: "Integration" }
   ], pptx);
-  assert.ok(slide.shapes.length > 0, "Layered arch should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Layered arch should produce shapes");
 });
 test("layered architecture with arrows", () => {
   const pptx = createTestPptx();
@@ -178,7 +178,7 @@ test("layered architecture with arrows", () => {
     { name: "Mid", desc: "Layer 2" },
     { name: "Bot", desc: "Layer 3" }
   ], pptx, { showArrows: true });
-  assert.ok(slide.shapes.length > 0, "Layered arch with arrows should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Layered arch with arrows should produce shapes");
 });
 test("layered architecture with side panel", () => {
   const pptx = createTestPptx();
@@ -187,7 +187,7 @@ test("layered architecture with side panel", () => {
     { name: "App", desc: "Apps", sideLabel: "A" },
     { name: "Data", desc: "Data", sideLabel: "D" }
   ], pptx, { sidePanel: true });
-  assert.ok(slide.shapes.length > 0, "Side panel layered arch should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "Side panel layered arch should produce shapes");
 });
 
 // ── Helpers ──
@@ -202,7 +202,7 @@ test("makeTitle renders", () => {
   const pptx = createTestPptx();
   const slide = getSlide(pptx);
   comp.makeTitle(slide, "Title Text", "Subtitle text");
-  assert.ok(slide.shapes.length > 0, "makeTitle should produce shapes");
+  assert.ok(slide._slideObjects.length > 0, "makeTitle should produce shapes");
 });
 
 // ── Backward Compatibility ──
@@ -212,25 +212,25 @@ test("existing card signature works", () => {
   const slide = getSlide(pptx);
   // Original 8-param call (no opts)
   comp.card(slide, 1, 2, 3, 1.5, "H", "B", comp.C.blue, pptx);
-  assert.ok(slide.shapes.length > 0);
+  assert.ok(slide._slideObjects.length > 0);
 });
 test("existing timeline signature works", () => {
   const pptx = createTestPptx();
   const slide = getSlide(pptx);
   comp.timeline(slide, [{ label: "L", title: "T", body: "B" }], pptx);
-  assert.ok(slide.shapes.length > 0);
+  assert.ok(slide._slideObjects.length > 0);
 });
 test("existing platformHub signature works", () => {
   const pptx = createTestPptx();
   const slide = getSlide(pptx);
   comp.platformHub(slide, "Hub", [{ label: "N", x: 1, y: 1 }], pptx);
-  assert.ok(slide.shapes.length > 0);
+  assert.ok(slide._slideObjects.length > 0);
 });
 test("existing layeredArchitecture signature works", () => {
   const pptx = createTestPptx();
   const slide = getSlide(pptx);
   comp.layeredArchitecture(slide, [{ name: "L", desc: "D" }], pptx);
-  assert.ok(slide.shapes.length > 0);
+  assert.ok(slide._slideObjects.length > 0);
 });
 
 // ── Export Integrity ──
