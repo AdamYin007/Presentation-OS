@@ -21,13 +21,14 @@
     "check:m12-7-end-to-end": "node scripts/check-m12-7-end-to-end.cjs",
     "check:m12-8-content-qa": "node scripts/check-m12-8-content-qa.cjs",
     "check:m12-8-visual-qa": "node scripts/check-m12-8-visual-qa.cjs",
-    "check": "npm run check:m8-docs && npm run check:m12-1-document-ingestion && npm run check:m12-2-presentation-intent-parser && npm run check:m12-3-story-planner && npm run check:m12-4-slidespec-contract && npm run check:m12-5-theme-layout && npm run check:m12-6-pptx-renderer && npm run check:m12-7-end-to-end && npm run check:m12-8-content-qa && npm run check:m12-8-visual-qa && npm run check:m12-9-natural-language-revision && npm run check:m12-10-asset-chart-diagram && npm run check:m12-11-cli-skill-packaging",
+    "check": "npm run check:m8-docs && npm run check:m12-1-document-ingestion && npm run check:m12-2-presentation-intent-parser && npm run check:m12-3-story-planner && npm run check:m12-4-slidespec-contract && npm run check:m12-5-theme-layout && npm run check:m12-6-pptx-renderer && npm run check:m12-7-end-to-end && npm run check:m12-8-content-qa && npm run check:m12-8-visual-qa && npm run check:m12-9-natural-language-revision && npm run check:m12-10-asset-chart-diagram && npm run check:m12-11-cli-skill-packaging && npm run check:m12-12-cross-domain",
     "check:docs": "npm run check:m8-docs",
     "check:all": "npm run check && npm run doctor",
     "pack-context:soft-report": "node scripts/generate-pack-runtime-context-soft-report.cjs",
     "check:m12-9-natural-language-revision": "node tests/presentation-revision/presentation-revision.test.js",
     "check:m12-10-asset-chart-diagram": "node scripts/check-m12-10-asset-chart-diagram.cjs",
-    "check:m12-11-cli-skill-packaging": "node scripts/check-m12-11-cli-skill-packaging.cjs"
+    "check:m12-11-cli-skill-packaging": "node scripts/check-m12-11-cli-skill-packaging.cjs",
+    "check:m12-12-cross-domain": "node tests/m12-12-cross-domain/cross-domain.test.js"
   },
   "keywords": [],
   "author": "",
