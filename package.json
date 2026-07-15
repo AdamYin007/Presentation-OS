@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node tests/presentation-components.test.js",
     "doctor": "node packages/cli/src/index.js doctor",
     "start": "node packages/cli/src/index.js",
     "check:m8-docs": "node scripts/check-m8-docs.cjs",
