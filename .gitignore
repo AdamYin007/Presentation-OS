@@ -3,3 +3,8 @@ output/
 
 # Local-only external MCP workspace
 /skills/chatgpt-desktop-mcp/
+
+# Generated presentation QA artifacts (check/test output)
+examples/**/*.pptx
+examples/**/qa-report.json
+examples/**/qa-report.md
