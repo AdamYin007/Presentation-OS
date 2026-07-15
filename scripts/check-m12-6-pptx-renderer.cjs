@@ -23,6 +23,18 @@ const FIXTURE_FILES = [
   "examples/business-review/output.pptx",
 ];
 
+function ensureFixture() {
+  const fixturePath = path.join(ROOT, FIXTURE_FILES[0]);
+  if (!fs.existsSync(fixturePath)) {
+    console.log("\nGenerating missing fixture: examples/business-review/output.pptx");
+    const { runPipeline } = require("../packages/presentation-pipeline/src/index.js");
+    const md = fs.readFileSync(path.join(ROOT, "fixtures/document-ingest/sample-markdown.md"), "utf8");
+    const result = runPipeline(md, { title: "Business Review", style: "business-consulting" });
+    fs.writeFileSync(fixturePath, result.pptxBuffer);
+    console.log(`  ✓ Generated fixture: ${result.pptxBuffer.length} bytes`);
+  }
+}
+
 const ALLOWED_DIFF_FILES = new Set([
   ...REQUIRED_FILES, ...FIXTURE_FILES,
   "docs/ROADMAP.md", "package.json",
@@ -104,6 +116,7 @@ function checkScope() {
 async function main() {
   console.log("M12.6 Editable PPTX Renderer Checker");
   console.log("=====================================\n");
+  ensureFixture();
   checkRequiredFiles();
   checkModuleExports();
   checkFixture();
