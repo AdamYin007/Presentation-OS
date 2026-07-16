@@ -1,5 +1,5 @@
 /**
- * Pipeline Orchestrator — M12.7
+ * Pipeline Orchestrator — M12.7 / M12.14
  *
  * Chains: ingest → intent → story-planner → slidespec → theme-layout → renderer
  */
@@ -9,6 +9,8 @@ const { planDeck } = require("../../story-planner/src/index.js");
 const { generateSlideSpecs } = require("../../slidespec/src/index.js");
 const { generateLayoutPlan } = require("../../theme-layout/src/index.js");
 const { renderPptx, generateBuffer } = require("../../pptx-renderer/src/index.js");
+const { runQualityChecks, buildManifest, writeManifest, writeSummary } = require("./qa-utils.js");
+const fs = require("fs");
 
 /**
  * Run full pipeline from markdown input to .pptx buffer.
@@ -36,7 +38,7 @@ async function runPipeline(markdownInput, options) {
   const pptx = renderPptx(slideSpecs, layoutPlan);
   const buffer = await generateBuffer(pptx);
 
-  return {
+  const result = {
     sourceDocument,
     format: ingestResult.format,
     intent,
@@ -46,6 +48,19 @@ async function runPipeline(markdownInput, options) {
     pptxBuffer: buffer,
     slideCount: slideSpecs.length,
   };
+
+  // Step 7 (optional): Quality manifest emission
+  if (opts.emitManifest) {
+    const outputDir = opts.outputDir || process.cwd();
+    fs.mkdirSync(outputDir, { recursive: true });
+    const checkResults = runQualityChecks(slideSpecs);
+    const manifest = buildManifest(opts.inputPath || "unknown", result, checkResults, outputDir);
+    const manifestPath = writeManifest(manifest, outputDir);
+    const summaryPath = writeSummary(manifest, outputDir);
+    result.manifest = { path: manifestPath, summaryPath, ...manifest };
+  }
+
+  return result;
 }
 
 module.exports = { runPipeline };
