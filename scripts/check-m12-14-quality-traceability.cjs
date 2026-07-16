@@ -21,11 +21,11 @@
 const fs = require("fs");
 const path = require("path");
 const { runPipeline } = require("../packages/presentation-pipeline/src/index.js");
+const { runQualityChecks, buildManifest, writeManifest, writeSummary } = require("../packages/presentation-pipeline/src/qa-utils.js");
 
 // ─── Configuration ──────────────────────────────────────────────────────
 
 const ROOT = path.join(__dirname, "..");
-
 const INPUT_MD = process.argv[2] || path.join(ROOT, "fixtures", "document-ingest", "sample-markdown.md");
 const OUTPUT_DIR = process.argv[3] || path.join(ROOT, "examples", "business-review");
 const MANIFEST_PATH = path.join(OUTPUT_DIR, "quality-manifest.json");
@@ -60,7 +60,6 @@ function record(condition, message, severity = "fail") {
 
 function addCheck(id, category, condition, message, severity = "fail") {
   record(condition, `[${category}] ${message}`, severity);
-  // Store with id for manifest
   const entry = checks[checks.length - 1];
   entry.id = id;
   entry.category = category;
@@ -71,204 +70,89 @@ function addCheck(id, category, condition, message, severity = "fail") {
 function checkTitles(slideSpecs) {
   console.log("\nChecking slide titles...");
   let allFilled = true;
-  let emptyTitles = [];
   for (const spec of slideSpecs) {
-    if (!spec.title || spec.title.trim().length === 0) {
-      allFilled = false;
-      emptyTitles.push(spec.id);
-    }
+    if (!spec.title || spec.title.trim().length === 0) { allFilled = false; break; }
   }
-  addCheck(
-    "title-completeness",
-    "content",
-    allFilled,
-    `All ${slideSpecs.length} slides have non-empty titles`
-  );
-  if (!allFilled) {
-    console.log(`    Missing titles: ${emptyTitles.join(", ")}`);
-  }
+  addCheck("title-completeness", "content", allFilled, `All ${slideSpecs.length} slides have non-empty titles`);
 }
 
 function checkSourceRefs(slideSpecs) {
   console.log("\nChecking source references...");
-
   const contentRoles = ["content", "data-chart", "architecture", "process"];
   const exemptRoles = ["section-divider", "closing", "title-slide", "agenda"];
-
-  let contentSlides = 0;
-  let slidesWithRefs = 0;
-  let slidesMissingRefs = [];
-
+  let contentSlides = 0, slidesWithRefs = 0;
   for (const spec of slideSpecs) {
     const role = spec.role || "";
     if (exemptRoles.includes(role)) continue;
     if (!contentRoles.includes(role)) continue;
-
     contentSlides++;
-    if (spec.sourceRefs && spec.sourceRefs.length > 0) {
-      slidesWithRefs++;
-    } else {
-      slidesMissingRefs.push(spec.id);
-    }
+    if (spec.sourceRefs && spec.sourceRefs.length > 0) slidesWithRefs++;
   }
-
   if (contentSlides === 0) {
     addCheck("source-ref-coverage", "content", true, "No content slides to check (input may be minimal)");
     return;
   }
-
   const pct = Math.round((slidesWithRefs / contentSlides) * 100);
-  addCheck(
-    "source-ref-coverage",
-    "content",
-    pct >= 100,
-    `${slidesWithRefs}/${contentSlides} content slides have sourceRefs (${pct}%) — REQUIRED: 100%`
-  );
-
-  if (slidesMissingRefs.length > 0) {
-    addCheck(
-      "source-ref-missing",
-      "content",
-      false,
-      `${slidesMissingRefs.length} content slides lack sourceRefs: ${slidesMissingRefs.join(", ")}`,
-      "fail"
-    );
-  }
+  addCheck("source-ref-coverage", "content", pct >= 100, `${slidesWithRefs}/${contentSlides} content slides have sourceRefs (${pct}%) — REQUIRED: 100%`);
 }
 
 function checkDuplicateContent(slideSpecs) {
   console.log("\nChecking for duplicate content...");
-
-  const normalize = (str) =>
-    str.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.,!?;:]+$/, "");
-
+  const normalize = (str) => str.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.,!?;:]+$/, "");
   const pairs = new Map();
   let duplicates = 0;
-  let duplicateDetails = [];
-
   for (const spec of slideSpecs) {
     const key = `${normalize(spec.title)}|${normalize(spec.keyMessage || "")}`;
-    if (pairs.has(key)) {
-      duplicates++;
-      duplicateDetails.push({
-        title: spec.title,
-        slides: [pairs.get(key), spec.id],
-      });
-    } else {
-      pairs.set(key, spec.id);
-    }
+    if (pairs.has(key)) duplicates++; else pairs.set(key, spec.id);
   }
-
-  addCheck(
-    "duplicate-detection",
-    "content",
-    duplicates === 0,
-    `Found ${duplicates} duplicate pairs out of ${pairs.size} unique — REQUIRED: 0 duplicates`
-  );
-
-  if (duplicates > 0) {
-    addCheck(
-      "duplicate-details",
-      "content",
-      false,
-      `Duplicates: ${duplicateDetails.map((d) => `"${d.title}" in ${d.slides.join(", ")}`).join("; ")}`,
-      "warn"
-    );
-  }
+  addCheck("duplicate-detection", "content", duplicates === 0, `Found ${duplicates} duplicate pairs out of ${pairs.size} unique — REQUIRED: 0 duplicates`);
 }
 
 function checkSectionDividers(slideSpecs) {
   console.log("\nChecking section dividers...");
-
   const dividerSlides = slideSpecs.filter((s) => s.role === "section-divider");
-  const hasDividers = dividerSlides.length >= 2;
-
-  addCheck(
-    "section-dividers",
-    "structure",
-    hasDividers,
-    `Found ${dividerSlides.length} section dividers — RECOMMENDED: minimum 2`
-  );
-
+  addCheck("section-dividers", "structure", dividerSlides.length >= 2, `Found ${dividerSlides.length} section dividers — RECOMMENDED: minimum 2`);
   if (dividerSlides.length > 0) {
-    addCheck(
-      "section-divider-structure",
-      "structure",
-      dividerSlides.every((s) => s.title && s.title.trim().length > 0),
-      `All ${dividerSlides.length} section dividers have non-empty titles`
-    );
+    addCheck("section-divider-structure", "structure", dividerSlides.every((s) => s.title && s.title.trim().length > 0), `All ${dividerSlides.length} section dividers have non-empty titles`);
   }
 }
 
 function checkClosingSlide(slideSpecs) {
   console.log("\nChecking closing slide...");
-
   const closingSlides = slideSpecs.filter((s) => s.role === "closing");
   const hasClosing = closingSlides.length === 1;
-
-  addCheck(
-    "closing-slide",
-    "structure",
-    hasClosing,
-    `Found ${closingSlides.length} closing slide(s) — REQUIRED: exactly 1`
-  );
-
+  addCheck("closing-slide", "structure", hasClosing, `Found ${closingSlides.length} closing slide(s) — REQUIRED: exactly 1`);
   if (hasClosing) {
     const closing = closingSlides[0];
     const hasBody = Array.isArray(closing.body) ? closing.body.length > 0 : (closing.body && closing.body.trim().length > 0);
-    addCheck(
-      "closing-slide-content",
-      "structure",
-      true,
-      `Closing slide present (${hasBody ? "has" : "no"} body content — reported as info)`
-    );
-    if (!hasBody) {
-      warnings.push("Closing slide has no body content — consider adding summary or contact info");
-    }
+    addCheck("closing-slide-content", "structure", true, `Closing slide present (${hasBody ? "has" : "no"} body content — reported as info)`);
+    if (!hasBody) warnings.push("Closing slide has no body content — consider adding summary or contact info");
   }
 }
 
 function checkLayoutDiversity(slideSpecs) {
   console.log("\nChecking layout diversity...");
-
   const layoutCounts = {};
   for (const spec of slideSpecs) {
     const layout = spec.layout || "default";
     layoutCounts[layout] = (layoutCounts[layout] || 0) + 1;
   }
-
   const distinctLayouts = Object.keys(layoutCounts).length;
   const totalSlides = slideSpecs.length;
-  const diversityRatio = totalSlides > 0 ? distinctLayouts / totalSlides : 0;
-
-  addCheck(
-    "layout-diversity",
-    "structure",
-    distinctLayouts >= Math.min(3, totalSlides),
-    `${distinctLayouts} distinct layouts across ${totalSlides} slides (ratio: ${(diversityRatio * 100).toFixed(0)}%)`
-  );
+  addCheck("layout-diversity", "structure", distinctLayouts >= Math.min(3, totalSlides), `${distinctLayouts} distinct layouts across ${totalSlides} slides (ratio: ${(totalSlides > 0 ? distinctLayouts / totalSlides : 0) * 100 | 0}%)`);
 }
 
 // ─── Pipeline Validation ───────────────────────────────────────────────
 
 async function validatePipeline(inputPath, outputDir) {
   console.log("\nRunning pipeline...");
-
-  if (!fs.existsSync(inputPath)) {
-    throw new Error(`Input file not found: ${inputPath}`);
-  }
-
+  if (!fs.existsSync(inputPath)) throw new Error(`Input file not found: ${inputPath}`);
   const mdInput = fs.readFileSync(inputPath, "utf8");
   const result = await runPipeline(mdInput, { style: "minimal-modern" });
-
-  // Ensure output directory exists
   fs.mkdirSync(outputDir, { recursive: true });
-
-  // Write PPTX buffer
   const pptxPath = path.join(outputDir, "output.pptx");
   fs.writeFileSync(pptxPath, result.pptxBuffer);
   console.log(`  ✓ PPTX written: ${pptxPath} (${result.pptxBuffer.length} bytes)`);
-
   return { ...result, pptxPath };
 }
 
@@ -276,143 +160,28 @@ async function validatePipeline(inputPath, outputDir) {
 
 function checkVisualQAAvailable() {
   console.log("\nChecking visual QA availability...");
-
-  // Visual QA requires LibreOffice for PDF conversion
-  // We just check if the dependency would be available
   try {
     require("child_process").execFileSync("libreoffice", ["--version"], { stdio: "pipe" });
     addCheck("visual-qa-libreoffice", "visual", true, "LibreOffice available for visual QA");
     return true;
   } catch (e) {
-    addCheck(
-      "visual-qa-libreoffice",
-      "visual",
-      false,
-      "LibreOffice not available — visual QA skipped (PPTX validity and blank page checks omitted)",
-      "warn"
-    );
+    addCheck("visual-qa-libreoffice", "visual", false, "LibreOffice not available — visual QA skipped (PPTX validity and blank page checks omitted)", "warn");
     return false;
   }
-}
-
-// ─── Quality Score Calculation ──────────────────────────────────────────
-
-function calculateQualityScore() {
-  // Rule: fail each -20, warn each -5, floor at 0
-  let score = 100;
-  score -= failCount * 20;
-  score -= warnCount * 5;
-  return Math.max(0, score);
 }
 
 // ─── Manifest Emission ─────────────────────────────────────────────────
 
 function emitManifest(inputPath, result, outputDir) {
   console.log("\nEmitting quality manifest...");
-
-  const manifest = {
-    version: "1.0.0",
-    generatedAt: new Date().toISOString(),
-    input: path.relative(ROOT, inputPath),
-    pipeline: {
-      format: "markdown",
-      style: "minimal-modern",
-      title: result.deckPlan?.title || path.basename(inputPath, ".md"),
-    },
-    deck: {
-      slideCount: result.slideSpecs.length,
-      contentSlides: result.slideSpecs.filter((s) =>
-        ["content", "data-chart", "architecture", "process"].includes(s.role)
-      ).length,
-      sectionDividers: result.slideSpecs.filter((s) => s.role === "section-divider").length,
-      closingSlide: result.slideSpecs.some((s) => s.role === "closing"),
-    },
-    checks: checks.map((c) => ({
-      id: c.id,
-      category: c.category,
-      status: c.status,
-      message: c.message,
-    })),
-    warnings: warnings.length > 0 ? warnings : undefined,
-    summary: {
-      passCount,
-      failCount,
-      warnCount,
-      overallStatus: failCount === 0 ? "pass" : "fail",
-      qualityScore: calculateQualityScore(),
-    },
-  };
-
+  const checkResults = runQualityChecks(result.slideSpecs);
+  // Override with our actual check data (including visual QA status)
+  const mergedChecks = [...checks];
+  const mergedWarnings = [...warnings];
+  const manifest = buildManifest(inputPath, result, { checks: mergedChecks, warnings: mergedWarnings, passCount, failCount, warnCount }, outputDir);
   fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
   console.log(`  ✓ Manifest written: ${MANIFEST_PATH}`);
-
   return manifest;
-}
-
-// ─── QA Summary Generation ─────────────────────────────────────────────
-
-function emitSummary(manifest) {
-  console.log("  Generating QA summary...");
-
-  const lines = [
-    "# Presentation Quality Summary",
-    "",
-    `**Input**: \`${manifest.input}\``,
-    `**Generated**: ${new Date(manifest.generatedAt).toLocaleString()}`,
-    `**Quality Score**: ${manifest.summary.qualityScore}/100 ${manifest.summary.qualityScore >= 80 ? "✅" : manifest.summary.qualityScore >= 50 ? "⚠️" : "❌"}`,
-    "",
-    "---",
-    "",
-    "## Deck Overview",
-    "",
-    `- **Slides**: ${manifest.deck.slideCount}`,
-    `- **Content slides**: ${manifest.deck.contentSlides}`,
-    `- **Section dividers**: ${manifest.deck.sectionDividers}`,
-    `- **Closing slide**: ${manifest.deck.closingSlide ? "Yes" : "No"}`,
-    "",
-    "---",
-    "",
-    "## Results",
-    "",
-    `| Metric | Count |`,
-    `|--------|-------|`,
-    `| ✅ Passed | ${manifest.summary.passCount} |`,
-    `| ❌ Failed | ${manifest.summary.failCount} |`,
-    `| ⚠️ Warnings | ${manifest.summary.warnCount} |`,
-    `| **Overall** | **${manifest.summary.overallStatus.toUpperCase()}** |`,
-    "",
-    "---",
-    "",
-    "## Checks",
-    "",
-    "| # | Category | Status | Detail |",
-    "|---|----------|--------|--------|",
-  ];
-
-  manifest.checks.forEach((c, i) => {
-    const icon = c.status === "pass" ? "✅" : c.status === "warn" ? "⚠️" : "❌";
-    lines.push(`| ${i + 1} | ${c.category} | ${icon} ${c.status.toUpperCase()} | ${c.message.replace(/\|/g, "\\|")} |`);
-  });
-
-  if (manifest.warnings && manifest.warnings.length > 0) {
-    lines.push("");
-    lines.push("---");
-    lines.push("");
-    lines.push("## Warnings");
-    lines.push("");
-    for (const w of manifest.warnings) {
-      lines.push(`- ⚠️ ${w}`);
-    }
-  }
-
-  lines.push("");
-  lines.push("---");
-  lines.push("");
-  lines.push(`*Generated by M12.14 Quality Manifest Checker*`);
-  lines.push("");
-
-  fs.writeFileSync(SUMMARY_PATH, lines.join("\n"));
-  console.log(`  ✓ Summary written: ${SUMMARY_PATH}`);
 }
 
 // ─── Main ──────────────────────────────────────────────────────────────
@@ -421,16 +190,14 @@ async function main() {
   console.log("M12.14 Quality Manifest Checker");
   console.log("===============================\n");
 
-  // Step 1: Validate input exists
   if (!fs.existsSync(INPUT_MD)) {
     console.error(`Error: Input file not found: ${INPUT_MD}`);
     process.exit(1);
   }
 
-  // Step 2: Run pipeline
   const result = await validatePipeline(INPUT_MD, OUTPUT_DIR);
 
-  // Step 3: Run content + structural checks
+  // Run content + structural checks
   checkTitles(result.slideSpecs);
   checkSourceRefs(result.slideSpecs);
   checkDuplicateContent(result.slideSpecs);
@@ -438,41 +205,34 @@ async function main() {
   checkClosingSlide(result.slideSpecs);
   checkLayoutDiversity(result.slideSpecs);
 
-  // Step 4: Check visual QA availability (optional, degrades gracefully)
+  // Check visual QA availability (optional)
   const visualAvailable = checkVisualQAAvailable();
   if (visualAvailable) {
-    // In future: run actual visual QA checks here
     addCheck("visual-qa-skipped", "visual", true, "Visual QA skipped in this phase (implementation pending)");
   }
 
-  // Step 5: Emit manifest
+  // Emit manifest & summary
   const manifest = emitManifest(INPUT_MD, result, OUTPUT_DIR);
+  const summaryPath = writeSummary(manifest, OUTPUT_DIR);
+  console.log(`  ✓ Summary written: ${summaryPath}`);
 
-  // Step 6: Generate QA summary
-  emitSummary(manifest);
-
-  // Step 7: Summary
+  // Summary output
   console.log("\n===============================");
   console.log(`Results: ${manifest.summary.passCount} passed, ${manifest.summary.failCount} failed, ${manifest.summary.warnCount} warnings`);
   console.log(`Quality Score: ${manifest.summary.qualityScore}/100`);
   console.log(`Manifest: ${MANIFEST_PATH}`);
-  console.log(`Summary: ${SUMMARY_PATH}`);
+  console.log(`Summary: ${summaryPath}`);
 
   if (warnings.length > 0) {
     console.log("\nWarnings:");
-    for (const w of warnings) {
-      console.log(`  ⚠ ${w}`);
-    }
+    for (const w of warnings) console.log(`  ⚠ ${w}`);
   }
 
-  console.log("");
-
-  // Exit code
   if (failCount > 0) {
-    console.error("Quality manifest check FAILED");
+    console.error("\nQuality manifest check FAILED");
     process.exit(1);
   } else {
-    console.log("Quality manifest check PASSED");
+    console.log("\nQuality manifest check PASSED");
     process.exit(0);
   }
 }
