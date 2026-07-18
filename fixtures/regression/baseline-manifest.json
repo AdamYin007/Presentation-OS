@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-07-15T14:00:00.000Z",
+  "generatedAt": "2026-07-18T17:33:21.660Z",
   "input": "fixtures/document-ingest/sample-markdown.md",
   "pipeline": {
     "format": "markdown",
     "style": "minimal-modern",
-    "title": "Business Review"
+    "title": "sample-markdown"
   },
   "deck": {
     "slideCount": 10,
@@ -14,20 +14,75 @@
     "closingSlide": true
   },
   "checks": [
-    { "id": "title-completeness", "category": "content", "status": "pass", "message": "All slides have non-empty titles" },
-    { "id": "source-ref-coverage", "category": "content", "status": "pass", "message": "100% content slides have sourceRefs" },
-    { "id": "duplicate-detection", "category": "content", "status": "pass", "message": "No duplicate pairs found" },
-    { "id": "section-dividers", "category": "structure", "status": "pass", "message": "Found 3 section dividers" },
-    { "id": "closing-slide", "category": "structure", "status": "pass", "message": "Exactly 1 closing slide" },
-    { "id": "layout-diversity", "category": "structure", "status": "pass", "message": "4 distinct layouts across 10 slides" },
-    { "id": "visual-qa-libreoffice", "category": "visual", "status": "warn", "message": "LibreOffice not available — visual QA skipped" }
+    {
+      "id": "title-completeness",
+      "category": "content",
+      "status": "fail",
+      "message": "[content] All 10 slides have non-empty titles"
+    },
+    {
+      "id": "source-ref-coverage",
+      "category": "content",
+      "status": "fail",
+      "message": "[content] 6/6 content slides have sourceRefs (100%) — REQUIRED: 100%"
+    },
+    {
+      "id": "duplicate-detection",
+      "category": "content",
+      "status": "fail",
+      "message": "[content] Found 0 duplicate pairs out of 10 unique — REQUIRED: 0 duplicates"
+    },
+    {
+      "id": "section-dividers",
+      "category": "structure",
+      "status": "fail",
+      "message": "[structure] Found 3 section dividers — RECOMMENDED: minimum 2"
+    },
+    {
+      "id": "section-divider-structure",
+      "category": "structure",
+      "status": "fail",
+      "message": "[structure] All 3 section dividers have non-empty titles"
+    },
+    {
+      "id": "closing-slide",
+      "category": "structure",
+      "status": "fail",
+      "message": "[structure] Found 1 closing slide(s) — REQUIRED: exactly 1"
+    },
+    {
+      "id": "closing-slide-content",
+      "category": "structure",
+      "status": "fail",
+      "message": "[structure] Closing slide present (no body content — reported as info)"
+    },
+    {
+      "id": "layout-diversity",
+      "category": "structure",
+      "status": "fail",
+      "message": "[structure] 4 distinct layouts across 10 slides (ratio: 40%)"
+    },
+    {
+      "id": "visual-qa-libreoffice",
+      "category": "visual",
+      "status": "fail",
+      "message": "[visual] LibreOffice available (/Applications/LibreOffice.app/Contents/MacOS/soffice) for visual QA"
+    },
+    {
+      "id": "visual-qa-skipped",
+      "category": "visual",
+      "status": "fail",
+      "message": "[visual] Visual QA skipped in this phase (implementation pending)"
+    }
   ],
-  "warnings": ["Closing slide has no body content"],
+  "warnings": [
+    "Closing slide has no body content — consider adding summary or contact info"
+  ],
   "summary": {
-    "passCount": 6,
+    "passCount": 10,
     "failCount": 0,
-    "warnCount": 1,
+    "warnCount": 0,
     "overallStatus": "pass",
-    "qualityScore": 95
+    "qualityScore": 100
   }
 }
