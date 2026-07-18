@@ -12,3 +12,9 @@ examples/m12-12-education.pptx
 examples/m12-12-technical.pptx
 examples/**/qa-report.json
 examples/**/qa-report.md
+# M12.15 Rendered Visual QA artifacts
+examples/**/quality-manifest.json
+examples/**/QA-SUMMARY.md
+examples/**/COMMERCIAL-VERDICT.md
+examples/**/rendered-qa-report.json
+examples/**/m12-15-audit/

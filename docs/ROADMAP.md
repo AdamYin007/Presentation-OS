@@ -1,8 +1,8 @@
 # AWE Presentation OS — Roadmap
 
-> **Version**: 1.0.0  
-> **Date**: 2026-07-01  
-> **Status**: Architecture Frozen v1 — M3 Adapter Migration Complete
+> **Version**: 1.0.0
+> **Date**: 2026-07-19
+> **Status**: M12.15 Rendered Visual QA Complete — Commercial Delivery Gate Active
 
 ---
 
@@ -333,7 +333,37 @@
   - Integrated into `npm run check` and `npm run check:all`
   - Next: M12.12 Multi-Domain Real-Document Pilot
 - [x] M12.12 Multi-Domain Real-Document Pilot
-- [ ] M12.13 Usability and Reliability Release
+- [x] M12.13 Usability and Reliability Release
+  - CLI help, error handling, style selection, dry-run mode
+  - Zero cloud/paid dependencies maintained
+  - All existing checks pass regression baseline
+- [x] M12.14 Quality Traceability & Regression Baseline
+  - Quality manifest (quality-manifest.json) with deterministic scoring
+  - QA summary report (QA-SUMMARY.md) with human-readable output
+  - Content + structural QA checks integrated into pipeline emit hook
+  - Quality regression baseline checker comparing manifests over time
+  - Full traceability: input → slide specs → quality checks → verdict
+- [x] M12.15 Rendered Visual QA and Commercial Delivery Gate
+  - PPTX package integrity inspection (path leakage, relationships, media)
+  - LibreOffice-based PDF conversion with graceful degradation
+  - Rendered page analysis: blank detection, sparse content, overflow estimation
+  - Layout geometry validation: overlap, out-of-bounds, zero-size boxes
+  - Commercial delivery verdict: PASS / NEEDS_REVIEW / FAIL
+  - Integrated with M12.14 quality manifest for unified scoring
+  - Test fixtures for pass, warn, and fail scenarios
+
+### Next Direction — Post-M12.15
+
+After achieving commercial delivery gates, remaining gaps to reach production-grade quality:
+
+| Priority | Area | Description |
+|---|---|---|
+| P0 | Color contrast verification | WCAG AA compliance on rendered slides |
+| P1 | Typography consistency | Font family/size variance across slides |
+| P1 | Brand guideline enforcement | Logo placement, color palette compliance |
+| P2 | Multi-domain style packs | Domain-specific visual rules |
+| P2 | Automated fix suggestions | Concrete remediation steps when gates fail |
+| P3 | CI/CD integration | Pre-commit hook for every deck generation |
 
 ## Rules for Future Work
 
