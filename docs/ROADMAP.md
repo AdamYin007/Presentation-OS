@@ -2,7 +2,7 @@
 
 > **Version**: 1.0.0
 > **Date**: 2026-07-19
-> **Status**: M12.19 Logo Safe Area Enforcement Complete — Deterministic Logo Bounding-Box Validation Active
+> **Status**: M12.20 Brand Template Profile Packs Complete — Reusable Brand Profiles Active
 
 ---
 
@@ -383,8 +383,15 @@
   - Integrated into deliver-pptx.js pipeline step 4/6
   - Focused test suite (12 scenarios): PASS, FAIL, NEEDS_REVIEW, mixed, custom margins
   - NPM scripts: `check:m12-19-logo-safe-area-enforcement`, integrated into `check` and `check:all`
-- [ ] M12.20 Brand Template Profile Packs
-  - Reusable company/industry brand profiles for logo margins, color rules, typography, and footer conventions
+- [x] M12.20 Brand Template Profile Packs
+  - Reusable brand profile package (`packages/brand-profiles/`) with schema validation, built-in loader, and custom JSON support
+  - Three built-in profiles: `minimal-modern`, `business-consulting`, `academic-clean` — each with logoSafeArea, allowedPalette, typographyRules, footerConvention, titlePlacement, requiredSlides, maxSlidesPerSection
+  - CLI flag `--brand-profile <name-or-path>` in deliver-pptx.js for built-in names or absolute JSON file paths
+  - Profile config forwarded to M12.16 Visual Design Gate (brandGuidelines) and M12.19 Logo Safe Area Gate (custom margins)
+  - Schema validation rejects invalid profiles with descriptive errors (exit code 2)
+  - Focused test suite (15 scenarios): module exports, builtin discovery, validation, loading, custom JSON, error handling, logo safe-area influence, deliver-pptx integration, npm scripts, package structure, spec document
+  - NPM scripts: `check:m12-20-brand-template-profile-packs`, integrated into `check` and `check:all`
+  - Spec document: `docs/M12_20_BRAND_TEMPLATE_PROFILE_PACKS_SPEC.md`
 
 ## Rules for Future Work
 

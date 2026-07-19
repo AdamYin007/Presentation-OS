@@ -1,0 +1,6 @@
+{
+  "name": "Invalid Schema Profile",
+  "logoSafeArea": "not-an-object",
+  "allowedPalette": 42,
+  "footerConvention": "invalid-value"
+}

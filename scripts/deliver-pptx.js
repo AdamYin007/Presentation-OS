@@ -7,12 +7,13 @@
  * verdict. All in one command.
  *
  * Usage:
- *   node scripts/deliver-pptx.js <input.md> [output-dir] [--style <style>] [--title <title>] [--json]
+ *   node scripts/deliver-pptx.js <input.md> [output-dir] [--style <style>] [--title <title>] [--brand-profile <name-or-path>] [--json]
  *
  * Examples:
  *   node scripts/deliver-pptx.js docs/proposal.md ./deliverables --style business-consulting
  *   node scripts/deliver-pptx.js slides.md ./out --title "Q3 Review" --json
  *   npm run deliver:pptx -- docs/business-review.md ./deliverables --style minimal-modern
+ *   node scripts/deliver-pptx.js slides.md ./out --brand-profile /path/to/custom-brand.json
  *
  * Output artifacts (written to output-dir):
  *   - output.pptx              Generated PowerPoint deck
@@ -54,13 +55,14 @@ const {
   mergeCommercialReadiness,
 } = require("../packages/pixel-accessibility-gate/src/index.js");
 const { checkLogoSafeArea } = require("../packages/logo-safe-area-gate/src/index.js");
+const { loadProfile, resolveBrandConfig, getBuiltInProfiles } = require("../packages/brand-profiles/src/index.js");
 
 // ─── Argument Parsing ──────────────────────────────────────────────
 
 function parseArgs(argv) {
   const args = argv.slice(2);
   let positional = [];
-  let options = { style: "minimal-modern", title: null, json: false };
+  let options = { style: "minimal-modern", title: null, json: false, brandProfile: null };
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--help" || args[i] === "-h") {
@@ -69,6 +71,10 @@ function parseArgs(argv) {
 Options:
   --style <name>     Theme style: minimal-modern | business-consulting | academic-clean
                      (default: minimal-modern)
+  --brand-profile <name-or-path>
+                     Brand profile name (built-in) or absolute path to JSON file.
+                     Built-ins: ${getBuiltInProfiles().join(", ")}
+                     Profile feeds logoSafeArea, allowed colors, typography, footer/title conventions.
   --title <text>     Override presentation title
   --json             Also print machine-readable report to stdout
   --help, -h         Show this help message
@@ -76,11 +82,15 @@ Options:
 Examples:
   node scripts/deliver-pptx.js docs/proposal.md ./deliverables
   node scripts/deliver-pptx.js slides.md ./out --style business-consulting
+  node scripts/deliver-pptx.js slides.md ./out --brand-profile business-consulting
+  node scripts/deliver-pptx.js slides.md ./out --brand-profile /path/to/my-brand.json
   node scripts/deliver-pptx.js slides.md ./out --title "Q3 Review" --json`);
       process.exit(0);
     }
     if (args[i] === "--style" && i + 1 < args.length) {
       options.style = args[++i];
+    } else if (args[i] === "--brand-profile" && i + 1 < args.length) {
+      options.brandProfile = args[++i];
     } else if (args[i] === "--title" && i + 1 < args.length) {
       options.title = args[++i];
     } else if (args[i] === "--json") {
@@ -147,6 +157,23 @@ async function main() {
 
   jsonMode = options.json; // set before any console output
 
+  // ── Load Brand Profile (M12.20) ────────────────────────────────
+  let brandConfig = {};
+  let profileSource = null;
+  if (options.brandProfile) {
+    try {
+      const { profile, source } = loadProfile(options.brandProfile);
+      brandConfig = resolveBrandConfig(profile);
+      profileSource = source;
+      if (!jsonMode) {
+        console.log(`Loaded brand profile: ${profile.name || profile.id} (${source})`);
+      }
+    } catch (err) {
+      console.error(`Error loading brand profile: ${err.message}`);
+      process.exit(2);
+    }
+  }
+
   const rootDir = path.join(__dirname, "..");
   const outDir = outputPath ? path.resolve(outputPath) : path.join(rootDir, "deliverables");
   const auditDir = outDir;
@@ -172,6 +199,7 @@ async function main() {
     console.log(`Input:  ${resolvedInput}`);
     console.log(`Output: ${auditDir}`);
     console.log(`Style:  ${options.style}`);
+    if (profileSource) console.log(`Profile: ${profileSource}`);
     if (options.title) console.log(`Title:  ${options.title}`);
     console.log("");
   }
@@ -301,10 +329,10 @@ async function main() {
 
   if (!jsonMode) console.log("");
 
-  // ── Step 3: M12.16 — Visual Design Standards Gate ──────────────
-  step("[3/6] M12.16 — Visual Design Standards Gate...");
+  // ── Step 3: M12.16 + M12.20 — Visual Design Standards Gate ──────
+  step("[3/6] M12.16 + M12.20 — Visual Design Standards Gate...");
 
-  const m12_16_gate = await runVisualDesignGate(slideSpecs, layoutPlan, { m12_15_verdict });
+  const m12_16_gate = await runVisualDesignGate(slideSpecs, layoutPlan, { m12_15_verdict, brandConfig });
   log(m12_16_gate.overallVerdict === "PASS" ? "OK" : m12_16_gate.overallVerdict === "FAIL" ? "FAIL" : "WARN", `M12.16 verdict: ${m12_16_gate.overallVerdict} (score: ${m12_16_gate.summary.qualityScore}/100)`);
 
   // Write visual design summary
@@ -313,10 +341,10 @@ async function main() {
 
   if (!jsonMode) console.log("");
 
-  // ── Step 4: M12.19 — Logo Safe Area Enforcement ────────────────
-  step("[4/6] M12.19 — Logo Safe Area Enforcement...");
+  // ── Step 4: M12.19 + M12.20 — Logo Safe Area Enforcement ────────
+  step("[4/6] M12.19 + M12.20 — Logo Safe Area Enforcement...");
 
-  const m12_19_logo = checkLogoSafeArea(slideSpecs, layoutPlan);
+  const m12_19_logo = checkLogoSafeArea(slideSpecs, layoutPlan, brandConfig);
   log(m12_19_logo.verdict === "PASS" ? "OK" : m12_19_logo.verdict === "FAIL" ? "FAIL" : "WARN",
       `M12.19 logo safe-area: ${m12_19_logo.verdict} (${m12_19_logo.totalLogosChecked} logos checked)`);
 
@@ -332,6 +360,7 @@ async function main() {
     slideDimensions: m12_19_logo.slideDimensions,
     results: m12_19_logo.results,
     issues: m12_19_logo.issues,
+    brandProfile: profileSource || null,
   }, null, 2));
   log("OK", "Logo safe-area report written");
 
