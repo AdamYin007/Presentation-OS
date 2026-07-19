@@ -359,17 +359,24 @@
   - M12.15 integration: prior commercial FAIL prevents false PASS
   - Verdict levels: PASS / NEEDS_REVIEW / FAIL with deterministic thresholds
   - Unit tests covering PASS, NEEDS_REVIEW, FAIL scenarios
+- [x] M12.17 Pixel-Level Accessibility and Rendered Visual Robustness Gate
+  - Pixel-based contrast estimation on rendered PNGs via ImageMagick nearest-neighbor downsampling + bimodal luminance clustering
+  - Color-blindness simulation: protanopia/deuteranopia/tritanopia via deterministic 3×3 matrix transforms on palette colors
+  - Font fallback/readability checks: theme metadata + PDF text extraction quality verification
+  - Unified commercial-readiness report merging M12.15/M12.16/M12.17 gates with worst-of-all-wins verdict
+  - Graceful degradation when LibreOffice/ImageMagick/Poppler unavailable
+  - Test fixtures for PASS, NEEDS_REVIEW, FAIL, and degraded environment behavior
 
-### Next Direction — Post-M12.16
+### Next Direction — Post-M12.17
 
-After achieving commercial delivery gates, remaining gaps to reach production-grade quality:
+After achieving pixel-level accessibility and rendered visual robustness gates, remaining gaps to reach production-grade quality:
 
 | Priority | Area | Description |
 |---|---|---|
-| P0 | Rendered pixel-level contrast | WCAG analysis on actual PDF/PNG output (not just theme colors) — requires LibreOffice/OpenOffice rendering pipeline |
-| P1 | Logo safe area enforcement | Runtime detection of logo bounding boxes in SlideSpec + safe area validation |
-| P2 | Multi-domain style packs | Domain-specific visual rules per industry vertical |
-| P3 | CI/CD integration | Pre-commit hook for every deck generation (`awe check`) |
+| P0 | Logo safe area enforcement | Runtime detection of logo bounding boxes in SlideSpec + safe area validation |
+| P1 | Multi-domain style packs | Domain-specific visual rules per industry vertical |
+| P2 | CI/CD integration | Pre-commit hook for every deck generation (`awe check`) |
+| P3 | Trend tracking | Multi-version baseline management for quality score trends over time |
 
 ## Rules for Future Work
 
