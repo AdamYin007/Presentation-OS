@@ -22,6 +22,7 @@ const fs = require("fs");
 const path = require("path");
 const { runPipeline } = require("../packages/presentation-pipeline/src/index.js");
 const { runQualityChecks, buildManifest, writeManifest, writeSummary } = require("../packages/presentation-pipeline/src/qa-utils.js");
+const { resolveRenderer } = require("../packages/presentation-pipeline/src/rendered-visual-qa.js");
 
 // ─── Configuration ──────────────────────────────────────────────────────
 
@@ -160,12 +161,12 @@ async function validatePipeline(inputPath, outputDir) {
 
 function checkVisualQAAvailable() {
   console.log("\nChecking visual QA availability...");
-  try {
-    require("child_process").execFileSync("libreoffice", ["--version"], { stdio: "pipe" });
-    addCheck("visual-qa-libreoffice", "visual", true, "LibreOffice available for visual QA");
+  const renderer = resolveRenderer();
+  if (renderer.available) {
+    addCheck("visual-qa-libreoffice", "visual", true, `LibreOffice available (${renderer.cmd}) for visual QA`);
     return true;
-  } catch (e) {
-    addCheck("visual-qa-libreoffice", "visual", false, "LibreOffice not available — visual QA skipped (PPTX validity and blank page checks omitted)", "warn");
+  } else {
+    addCheck("visual-qa-libreoffice", "visual", false, `LibreOffice not available — visual QA skipped (${renderer.reason})`, "warn");
     return false;
   }
 }
