@@ -212,6 +212,7 @@ async function main() {
     emitManifest: true,
     outputDir: auditDir,
     inputPath: resolvedInput,
+    brandConfig: brandConfig || null,
   };
   if (options.title) pipelineOpts.title = options.title;
 

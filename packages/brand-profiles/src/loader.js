@@ -81,6 +81,10 @@ function loadProfile(profileNameOrPath) {
 function resolveBrandConfig(profile) {
   const config = {};
 
+  if (profile.name || profile.id) {
+    config.brandName = profile.name || profile.id;
+  }
+
   if (profile.logoSafeArea) {
     config.logoSafeArea = profile.logoSafeArea;
   }

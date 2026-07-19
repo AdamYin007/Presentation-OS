@@ -392,6 +392,15 @@
   - Focused test suite (15 scenarios): module exports, builtin discovery, validation, loading, custom JSON, error handling, logo safe-area influence, deliver-pptx integration, npm scripts, package structure, spec document
   - NPM scripts: `check:m12-20-brand-template-profile-packs`, integrated into `check` and `check:all`
   - Spec document: `docs/M12_20_BRAND_TEMPLATE_PROFILE_PACKS_SPEC.md`
+- [x] M12.21 Profile-Driven Rendering
+  - `--brand-profile` now affects actual generated PPTX output, not only QA gates
+  - Pipeline threads `brandConfig` into theme-layout and pptx-renderer
+  - Brand palettes override slide `layout.colors` and deck `themeTokens`; typography rules override layout font tokens
+  - Renderer applies brand footer conventions (`none`, `slide-number`, `brand-name`, `both`) with correct page totals
+  - Renderer applies title placement for title and closing slides while preserving source reference footers
+  - Focused test suite covers built-in/custom profiles, invalid profile exit code 2, JSON mode, one-command regression, determinism, and graceful fallback
+  - NPM scripts: `check:m12-21-profile-driven-rendering`, integrated into `check` and `check:all`
+  - Spec document: `docs/M12_21_PROFILE_DRIVEN_RENDERING_SPEC.md`
 
 ## Rules for Future Work
 

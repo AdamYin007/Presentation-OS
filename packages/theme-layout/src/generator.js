@@ -1,8 +1,9 @@
 /**
- * Theme and Layout Generator — M12.5
+ * Theme and Layout Generator — M12.5 / M12.21
  *
  * Converts SlideSpec[] into a LayoutPlan with concrete layout assignments,
  * theme tokens, and visual specifications ready for the renderer (M12.6).
+ * M12.21: brandConfig can override theme colors and fonts per slide.
  */
 
 "use strict";
@@ -65,8 +66,8 @@ function selectTheme(deckMetadata) {
  * Generate color palette from theme for a specific slide.
  * Uses designHints emphasis to determine accent usage.
  */
-function generateColorPalette(themeName, slideSpec) {
-  const tokens = getThemeTokens(themeName);
+function generateColorPalette(themeName, slideSpec, themeTokensOverride) {
+  const tokens = themeTokensOverride || getThemeTokens(themeName);
   const emphasis = (slideSpec.designHints && slideSpec.designHints.emphasis) || "low";
 
   return {
@@ -106,16 +107,64 @@ function generateSpacing(layout, density) {
 }
 
 /**
+ * Apply brand profile overrides to theme tokens for a given slide.
+ * M12.21: brandConfig.allowedPalette can override theme colors;
+ * typographyRules can override theme fonts. Falls back gracefully
+ * when no brand config is provided.
+ */
+function applyBrandOverrides(themeTokens, brandConfig) {
+  if (!brandConfig || typeof brandConfig !== "object") return themeTokens;
+
+  const tokens = JSON.parse(JSON.stringify(themeTokens));
+  const colors = tokens.colors || {};
+  const fonts = tokens.fonts || {};
+
+  // Override colors from allowedPalette when present
+  if (Array.isArray(brandConfig.allowedPalette) && brandConfig.allowedPalette.length > 0) {
+    // Map brand palette to theme color roles by position:
+    //   [0] → primary, [1] → secondary, [2] → accent, [3] → background,
+    //   [4] → surface, [5] → border, [6] → text, [7] → muted
+    const roleKeys = ["primary", "secondary", "accent", "background", "surface", "border", "text", "muted"];
+    for (let i = 0; i < Math.min(brandConfig.allowedPalette.length, roleKeys.length); i++) {
+      const hex = brandConfig.allowedPalette[i];
+      if (typeof hex === "string" && /^#[0-9A-Fa-f]{6}$/.test(hex)) {
+        colors[roleKeys[i]] = hex;
+      }
+    }
+    tokens.colors = colors;
+  }
+
+  // Override fonts from typographyRules when present
+  if (brandConfig.typographyRules && typeof brandConfig.typographyRules === "object") {
+    const tr = brandConfig.typographyRules;
+    if (tr.headingFont) fonts.heading = tr.headingFont;
+    if (tr.bodyFont) fonts.body = tr.bodyFont;
+    if (tr.monoFont) fonts.mono = tr.monoFont;
+    tokens.fonts = fonts;
+  }
+
+  return tokens;
+}
+
+/**
  * Main function: converts SlideSpec[] into LayoutPlan.
+ * M12.21: accepts brandConfig in deckMetadata for profile-driven rendering.
  */
 function generateLayoutPlan(slideSpecs, deckMetadata) {
   const themeName = selectTheme(deckMetadata);
-  const themeTokens = getThemeTokens(themeName);
+  let themeTokens = getThemeTokens(themeName);
+
+  // M12.21: apply brand profile overrides at deck level
+  const brandConfig = (deckMetadata && deckMetadata.brandConfig) ? deckMetadata.brandConfig : null;
+  if (brandConfig) {
+    themeTokens = applyBrandOverrides(themeTokens, brandConfig);
+  }
+
   const layouts = [];
 
   for (const spec of slideSpecs) {
     const layoutFamily = resolveLayout(spec);
-    const colors = generateColorPalette(themeName, spec);
+    const colors = generateColorPalette(themeName, spec, themeTokens);
     const spacing = generateSpacing(layoutFamily, spec.designHints?.density || "medium");
 
     layouts.push({
@@ -174,4 +223,5 @@ module.exports = {
   resolveLayout,
   selectTheme,
   generateColorPalette,
+  applyBrandOverrides,
 };
