@@ -2,7 +2,7 @@
 
 > **Version**: 1.0.0
 > **Date**: 2026-07-19
-> **Status**: M12.22 Local Delivery Studio MVP Complete — Browser-Based Local Delivery Active
+> **Status**: M12.23 Desktop App Launcher MVP Complete — macOS and Windows Launchers Active
 
 ---
 
@@ -412,6 +412,17 @@
   - Focused test suite covers server UI, profile API, valid delivery, invalid input/profile errors, artifact existence, and existing CLI compatibility
   - NPM scripts: `studio:pptx`, `check:m12-22-local-delivery-studio`, integrated into `check` and `check:all`
   - Spec document: `docs/M12_22_LOCAL_DELIVERY_STUDIO_SPEC.md`
+- [x] M12.23 Desktop App Launcher MVP
+  - Cross-platform launcher builder (`scripts/build-desktop-app.js`) for local desktop product entrypoints
+  - macOS output: `dist/Presentation OS Delivery Studio.app`
+  - Windows output: `dist/Presentation OS Delivery Studio Windows/Start Presentation OS Delivery Studio.cmd`
+  - Both launchers start the local Delivery Studio server and open `http://localhost:9200`
+  - Windows portable flow documented with Node.js prerequisite and `PRESENTATION_OS_ROOT` override
+  - Environment overrides: `PRESENTATION_OS_ROOT`, `PRESENTATION_OS_PORT`, `PRESENTATION_OS_STUDIO_DIR`, `PRESENTATION_OS_NODE`
+  - Dry-run mode for validation via `PRESENTATION_OS_DRY_RUN=1`
+  - NPM scripts: `desktop:build`, `desktop:build:macos`, `desktop:build:windows`, `check:m12-23-desktop-app-launcher`
+  - Focused test suite covers builder args, macOS bundle structure, Windows portable folder, dry-run behavior, and CLI platform selection
+  - Spec document: `docs/M12_23_DESKTOP_APP_LAUNCHER_SPEC.md`
 
 ## Rules for Future Work
 
