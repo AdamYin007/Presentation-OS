@@ -2,7 +2,7 @@
 
 > **Version**: 1.0.0
 > **Date**: 2026-07-19
-> **Status**: M12.20 Brand Template Profile Packs Complete — Reusable Brand Profiles Active
+> **Status**: M12.22 Local Delivery Studio MVP Complete — Browser-Based Local Delivery Active
 
 ---
 
@@ -401,6 +401,17 @@
   - Focused test suite covers built-in/custom profiles, invalid profile exit code 2, JSON mode, one-command regression, determinism, and graceful fallback
   - NPM scripts: `check:m12-21-profile-driven-rendering`, integrated into `check` and `check:all`
   - Spec document: `docs/M12_21_PROFILE_DRIVEN_RENDERING_SPEC.md`
+- [x] M12.22 Local Delivery Studio MVP
+  - Local Node HTTP server (`scripts/delivery-studio.js`) serving a browser UI for markdown-to-PPTX delivery
+  - User-facing command: `npm run studio:pptx`, opening `http://localhost:9200`
+  - API endpoints: `GET /`, `GET /api/profiles`, `POST /api/deliver`
+  - POST delivery writes timestamped job folders under `deliverables/studio/`
+  - Studio reuses the existing `scripts/deliver-pptx.js` commercial pipeline via `spawn` argv arrays, avoiding shell injection and duplicate QA logic
+  - Supports markdown input, style, built-in brand profiles, custom brand profile JSON paths, and title overrides
+  - Returns local artifact paths for `output.pptx`, `COMMERCIAL-VERDICT.md`, `machine-report.json`, and related reports
+  - Focused test suite covers server UI, profile API, valid delivery, invalid input/profile errors, artifact existence, and existing CLI compatibility
+  - NPM scripts: `studio:pptx`, `check:m12-22-local-delivery-studio`, integrated into `check` and `check:all`
+  - Spec document: `docs/M12_22_LOCAL_DELIVERY_STUDIO_SPEC.md`
 
 ## Rules for Future Work
 
