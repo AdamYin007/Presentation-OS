@@ -538,11 +538,13 @@ function checkFontFallback(slideSpecs, layoutPlan, pdfTextPages, environment) {
  * @param {Object} m12_17_colorblind - Color-blindness check result
  * @param {Object} m12_17_font - Font fallback check result
  * @param {Object} environment - detectEnvironment() result
+ * @param {Object} [m12_19_logo] - Optional logo safe-area check result
  * @returns {{ overallVerdict, gateResults, environment, remediations, totalChecks }}
  */
-function mergeCommercialReadiness(m12_15_verdict, m12_16_gate, m12_17_pixel, m12_17_colorblind, m12_17_font, environment) {
+function mergeCommercialReadiness(m12_15_verdict, m12_16_gate, m12_17_pixel, m12_17_colorblind, m12_17_font, environment, m12_19_logo) {
   const verdictPriority = { "FAIL": 3, "NEEDS_REVIEW": 2, "PASS": 1 };
   const verdicts = [m12_15_verdict, m12_16_gate.overallVerdict, m12_17_pixel.verdict, m12_17_colorblind.verdict, m12_17_font.verdict];
+  if (m12_19_logo && m12_19_logo.verdict) verdicts.push(m12_19_logo.verdict);
   let overallVerdict = "PASS";
   let overallScore = 0;
 
@@ -588,6 +590,19 @@ function mergeCommercialReadiness(m12_15_verdict, m12_16_gate, m12_17_pixel, m12
     return true;
   });
 
+  // M12.19 logo safe-area remediations
+  if (m12_19_logo && m12_19_logo.issues) {
+    for (const issue of m12_19_logo.issues) {
+      if (issue.suggestion) {
+        uniqueRemediations.push({ priority: issue.severity === "fail" ? "high" : "medium", category: "logo_safe_area", suggestion: issue.suggestion });
+      }
+    }
+  }
+
+  const logoPass = m12_19_logo ? (m12_19_logo.passCount || 0) : 0;
+  const logoFail = m12_19_logo ? (m12_19_logo.failCount || 0) : 0;
+  const logoWarn = m12_19_logo ? (m12_19_logo.warnCount || 0) : 0;
+
   return {
     overallVerdict,
     gateResults: {
@@ -596,13 +611,14 @@ function mergeCommercialReadiness(m12_15_verdict, m12_16_gate, m12_17_pixel, m12
       m12_17_pixel_contrast: m12_17_pixel.verdict,
       m12_17_color_blindness: m12_17_colorblind.verdict,
       m12_17_font_readability: m12_17_font.verdict,
+      ...(m12_19_logo ? { m12_19_logo_safe_area: m12_19_logo.verdict } : {}),
     },
     environment,
     remediations: uniqueRemediations,
     totalChecks: {
-      pass: m12_17_pixel.passCount + m12_17_colorblind.passCount + m12_17_font.passCount,
-      fail: m12_17_pixel.failCount + m12_17_colorblind.failCount + m12_17_font.failCount,
-      warn: m12_17_pixel.warnCount + m12_17_colorblind.warnCount + m12_17_font.warnCount,
+      pass: m12_17_pixel.passCount + m12_17_colorblind.passCount + m12_17_font.passCount + logoPass,
+      fail: m12_17_pixel.failCount + m12_17_colorblind.failCount + m12_17_font.failCount + logoFail,
+      warn: m12_17_pixel.warnCount + m12_17_colorblind.warnCount + m12_17_font.warnCount + logoWarn,
     },
   };
 }

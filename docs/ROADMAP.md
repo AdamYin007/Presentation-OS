@@ -2,7 +2,7 @@
 
 > **Version**: 1.0.0
 > **Date**: 2026-07-19
-> **Status**: M12.16 Visual Design Standards Gate Complete — Commercial-Grade Visual Quality Analysis Active
+> **Status**: M12.19 Logo Safe Area Enforcement Complete — Deterministic Logo Bounding-Box Validation Active
 
 ---
 
@@ -375,8 +375,16 @@
   - Focused test suite verifying artifact completeness, exit codes, and graceful degradation
   - NPM scripts: `deliver:pptx`, `check:m12-18-one-command-delivery-pipeline`
   - Integrated into `npm run check` and `npm run check:all`
-- [ ] M12.19 Logo Safe Area Enforcement
-  - Runtime detection of logo bounding boxes in SlideSpec + safe area validation
+- [x] M12.19 Logo Safe Area Enforcement
+  - Deterministic logo safe-area checker package (`packages/logo-safe-area-gate/`)
+  - Verdict levels: PASS / NEEDS_REVIEW / FAIL with configurable brand margins
+  - Supports logo data from designHints.logo.boundingBox and visualSpec.logo.boundingBox
+  - Graceful degradation: no logo data → NEEDS_REVIEW (never false PASS)
+  - Integrated into deliver-pptx.js pipeline step 4/6
+  - Focused test suite (12 scenarios): PASS, FAIL, NEEDS_REVIEW, mixed, custom margins
+  - NPM scripts: `check:m12-19-logo-safe-area-enforcement`, integrated into `check` and `check:all`
+- [ ] M12.20 Brand Template Profile Packs
+  - Reusable company/industry brand profiles for logo margins, color rules, typography, and footer conventions
 
 ## Rules for Future Work
 

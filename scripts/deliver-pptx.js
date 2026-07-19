@@ -21,6 +21,7 @@
  *   - VISUAL-DESIGN-SUMMARY.md Visual design analysis (M12.16)
  *   - rendered-qa-report.json  Rendered page analysis (M12.15)
  *   - PIXEL-ACCESSIBILITY-SUMMARY.md Pixel contrast + color-blindness (M12.17)
+ *   - LOGO-SAFE-AREA-SUMMARY.md Logo safe-area enforcement (M12.19)
  *   - COMMERCIAL-VERDICT.md    Final commercial-readiness verdict
  *   - machine-report.json      Machine-readable JSON report (all gates merged)
  *
@@ -52,6 +53,7 @@ const {
   checkFontFallback,
   mergeCommercialReadiness,
 } = require("../packages/pixel-accessibility-gate/src/index.js");
+const { checkLogoSafeArea } = require("../packages/logo-safe-area-gate/src/index.js");
 
 // ─── Argument Parsing ──────────────────────────────────────────────
 
@@ -160,6 +162,8 @@ async function main() {
   const pixelSummaryPath = path.join(outDir, "PIXEL-ACCESSIBILITY-SUMMARY.md");
   const verdictPath = path.join(outDir, "COMMERCIAL-VERDICT.md");
   const machineReportPath = path.join(outDir, "machine-report.json");
+  const logoReportPath = path.join(outDir, "logo-safe-area-report.json");
+  const logoSummaryPath = path.join(outDir, "LOGO-SAFE-AREA-SUMMARY.md");
 
   if (!jsonMode) {
     console.log("=".repeat(65));
@@ -309,8 +313,32 @@ async function main() {
 
   if (!jsonMode) console.log("");
 
-  // ── Step 4: M12.17 — Pixel Accessibility & Color Blindness ─────
-  step("[4/6] M12.17 — Pixel Accessibility & Color Blindness...");
+  // ── Step 4: M12.19 — Logo Safe Area Enforcement ────────────────
+  step("[4/6] M12.19 — Logo Safe Area Enforcement...");
+
+  const m12_19_logo = checkLogoSafeArea(slideSpecs, layoutPlan);
+  log(m12_19_logo.verdict === "PASS" ? "OK" : m12_19_logo.verdict === "FAIL" ? "FAIL" : "WARN",
+      `M12.19 logo safe-area: ${m12_19_logo.verdict} (${m12_19_logo.totalLogosChecked} logos checked)`);
+
+  // Write logo safe-area report
+  fs.writeFileSync(logoReportPath, JSON.stringify({
+    gate: "m12_19_logo_safe_area",
+    verdict: m12_19_logo.verdict,
+    passCount: m12_19_logo.passCount,
+    failCount: m12_19_logo.failCount,
+    warnCount: m12_19_logo.warnCount,
+    totalLogosChecked: m12_19_logo.totalLogosChecked,
+    margins: m12_19_logo.margins,
+    slideDimensions: m12_19_logo.slideDimensions,
+    results: m12_19_logo.results,
+    issues: m12_19_logo.issues,
+  }, null, 2));
+  log("OK", "Logo safe-area report written");
+
+  if (!jsonMode) console.log("");
+
+  // ── Step 5: M12.17 — Pixel Accessibility & Color Blindness ─────
+  step("[5/6] M12.17 — Pixel Accessibility & Color Blindness...");
 
   const environment = detectEnvironment();
   const pixelContrast = checkPixelContrast(pngFiles, slideSpecs, layoutPlan);
@@ -326,8 +354,8 @@ async function main() {
 
   if (!jsonMode) console.log("");
 
-  // ── Step 5: Merge Commercial Readiness Report ──────────────────
-  step("[5/6] Merging commercial readiness report...");
+  // ── Step 6: Merge Commercial Readiness Report ──────────────────
+  step("[6/6] Merging commercial readiness report...");
 
   const commercialReport = mergeCommercialReadiness(
     m12_15_verdict,
@@ -335,7 +363,8 @@ async function main() {
     pixelContrast,
     colorblind,
     font,
-    environment
+    environment,
+    m12_19_logo
   );
 
   // Enforce: any M12.17 sub-check FAIL prevents overall PASS
@@ -353,8 +382,8 @@ async function main() {
 
   if (!jsonMode) console.log("");
 
-  // ── Step 6: Write Final Reports ────────────────────────────────
-  step("[6/6] Writing final reports...");
+  // ── Step 7: Write Final Reports ────────────────────────────────
+  step("[7/7] Writing final reports...");
 
   // Machine-readable JSON report
   fs.writeFileSync(machineReportPath, JSON.stringify(commercialReport, null, 2));
@@ -467,6 +496,56 @@ async function main() {
   fs.writeFileSync(pixelSummaryPath, summaryLines.join("\n"));
   log("OK", `Pixel accessibility summary: ${pixelSummaryPath}`);
 
+  // LOGO-SAFE-AREA-SUMMARY.md
+  const logoSummaryLines = [];
+  logoSummaryLines.push("# Logo Safe Area Enforcement — M12.19");
+  logoSummaryLines.push("");
+  logoSummaryLines.push(`**Generated**: ${new Date().toLocaleString()}`);
+  logoSummaryLines.push(`**Overall Verdict**: ${m12_19_logo.verdict}`);
+  logoSummaryLines.push(`**Total Logos Checked**: ${m12_19_logo.totalLogosChecked}`);
+  logoSummaryLines.push(`**Checks**: ${m12_19_logo.passCount} pass, ${m12_19_logo.failCount} fail, ${m12_19_logo.warnCount} warn`);
+  logoSummaryLines.push("");
+
+  if (m12_19_logo.margins) {
+    logoSummaryLines.push("## Safe Area Configuration");
+    logoSummaryLines.push("");
+    logoSummaryLines.push("| Margin | Value |");
+    logoSummaryLines.push("|--------|-------|");
+    logoSummaryLines.push(`| Top    | ${m12_19_logo.margins.top}px |`);
+    logoSummaryLines.push(`| Bottom | ${m12_19_logo.margins.bottom}px |`);
+    logoSummaryLines.push(`| Left   | ${m12_19_logo.margins.left}px |`);
+    logoSummaryLines.push(`| Right  | ${m12_19_logo.margins.right}px |`);
+    logoSummaryLines.push("");
+  }
+
+  if (m12_19_logo.results.length > 0) {
+    logoSummaryLines.push("## Per-Slide Results");
+    logoSummaryLines.push("");
+    logoSummaryLines.push("| Slide | Status | Message |");
+    logoSummaryLines.push("|-------|--------|---------|");
+    for (const r of m12_19_logo.results) {
+      logoSummaryLines.push(`| ${r.slide} | ${r.status.toUpperCase()} | ${r.message} |`);
+    }
+    logoSummaryLines.push("");
+  }
+
+  if (m12_19_logo.issues.length > 0) {
+    logoSummaryLines.push("## Issues");
+    logoSummaryLines.push("");
+    for (const issue of m12_19_logo.issues) {
+      const icon = issue.severity === "fail" ? "FAIL" : issue.severity === "warn" ? "WARN" : "INFO";
+      logoSummaryLines.push(`- [${icon}] Slide ${issue.slide}: ${issue.suggestion}`);
+    }
+    logoSummaryLines.push("");
+  }
+
+  logoSummaryLines.push("---");
+  logoSummaryLines.push("");
+  logoSummaryLines.push(`**Verdict**: ${m12_19_logo.verdict}`);
+
+  fs.writeFileSync(logoSummaryPath, logoSummaryLines.join("\n"));
+  log("OK", `Logo safe-area summary: ${logoSummaryPath}`);
+
   // COMMERCIAL-VERDICT.md
   const verdictLines = [];
   verdictLines.push("# Commercial Delivery Verdict");
@@ -535,6 +614,7 @@ async function main() {
       { name: "VISUAL-DESIGN-SUMMARY.md", desc: "Visual design analysis" },
       { name: "rendered-qa-report.json", desc: "Rendered page analysis" },
       { name: "PIXEL-ACCESSIBILITY-SUMMARY.md", desc: "Pixel contrast + color-blindness" },
+      { name: "LOGO-SAFE-AREA-SUMMARY.md", desc: "Logo safe-area enforcement (M12.19)" },
       { name: "COMMERCIAL-VERDICT.md", desc: "Final commercial-readiness verdict" },
       { name: "machine-report.json", desc: "Machine-readable JSON report" },
     ];
