@@ -1,0 +1,17 @@
+{
+  "name": "Custom Client Brand",
+  "id": "custom-client-brand",
+  "description": "Example custom brand profile loaded from a JSON file.",
+  "inheritsTheme": false,
+  "logoSafeArea": { "top": 60, "bottom": 60, "left": 60, "right": 60 },
+  "allowedPalette": [ "#0B3D91", "#F5A623", "#FFFFFF", "#1A1A1A" ],
+  "typographyRules": {
+    "headingFont": "Arial, sans-serif",
+    "bodyFont": "Arial, sans-serif",
+    "monoFont": "Courier New, monospace"
+  },
+  "footerConvention": "brand-name",
+  "titlePlacement": "center",
+  "requiredSlides": { "titleSlide": true, "closingSlide": true },
+  "maxSlidesPerSection": 6
+}

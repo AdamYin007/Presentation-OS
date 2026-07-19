@@ -1,0 +1,6 @@
+{
+  "name": "@awe/brand-profiles",
+  "version": "1.0.0",
+  "description": "Reusable brand/client profile packs for Presentation OS — logo margins, color rules, typography, footer/title conventions",
+  "main": "src/index.js"
+}
