@@ -2,7 +2,7 @@
 
 > **Version**: 1.0.0
 > **Date**: 2026-07-19
-> **Status**: M12.15 Rendered Visual QA Complete — Commercial Delivery Gate Active
+> **Status**: M12.16 Visual Design Standards Gate Complete — Commercial-Grade Visual Quality Analysis Active
 
 ---
 
@@ -351,19 +351,25 @@
   - Commercial delivery verdict: PASS / NEEDS_REVIEW / FAIL
   - Integrated with M12.14 quality manifest for unified scoring
   - Test fixtures for pass, warn, and fail scenarios
+- [x] M12.16 Visual Design Standards Gate
+  - Color contrast validation: WCAG AA/AAA thresholds using theme colors + text/background pairs
+  - Typography consistency: font family/size hierarchy variance across slides
+  - Brand guideline rule hooks/config: allowed palette, logo safe area, title/footer conventions
+  - Actionable remediation: machine-readable JSON report + human QA summary markdown
+  - M12.15 integration: prior commercial FAIL prevents false PASS
+  - Verdict levels: PASS / NEEDS_REVIEW / FAIL with deterministic thresholds
+  - Unit tests covering PASS, NEEDS_REVIEW, FAIL scenarios
 
-### Next Direction — Post-M12.15
+### Next Direction — Post-M12.16
 
 After achieving commercial delivery gates, remaining gaps to reach production-grade quality:
 
 | Priority | Area | Description |
 |---|---|---|
-| P0 | Color contrast verification | WCAG AA compliance on rendered slides |
-| P1 | Typography consistency | Font family/size variance across slides |
-| P1 | Brand guideline enforcement | Logo placement, color palette compliance |
-| P2 | Multi-domain style packs | Domain-specific visual rules |
-| P2 | Automated fix suggestions | Concrete remediation steps when gates fail |
-| P3 | CI/CD integration | Pre-commit hook for every deck generation |
+| P0 | Rendered pixel-level contrast | WCAG analysis on actual PDF/PNG output (not just theme colors) — requires LibreOffice/OpenOffice rendering pipeline |
+| P1 | Logo safe area enforcement | Runtime detection of logo bounding boxes in SlideSpec + safe area validation |
+| P2 | Multi-domain style packs | Domain-specific visual rules per industry vertical |
+| P3 | CI/CD integration | Pre-commit hook for every deck generation (`awe check`) |
 
 ## Rules for Future Work
 
