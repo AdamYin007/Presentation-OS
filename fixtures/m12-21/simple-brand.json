@@ -1,0 +1,28 @@
+{
+  "id": "simple-minimal",
+  "name": "Simple Minimal",
+  "logoSafeArea": {
+    "top": 30,
+    "bottom": 30,
+    "left": 30,
+    "right": 30
+  },
+  "allowedPalette": [
+    "#000000",
+    "#333333",
+    "#FF5722",
+    "#FFFFFF",
+    "#F5F5F5"
+  ],
+  "typographyRules": {
+    "headingFont": "Arial, sans-serif",
+    "bodyFont": "Arial, sans-serif"
+  },
+  "footerConvention": "slide-number",
+  "titlePlacement": "top",
+  "requiredSlides": {
+    "titleSlide": false,
+    "closingSlide": false
+  },
+  "maxSlidesPerSection": 15
+}

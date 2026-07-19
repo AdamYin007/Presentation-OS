@@ -1,7 +1,9 @@
 /**
- * Pipeline Orchestrator — M12.7 / M12.14
+ * Pipeline Orchestrator — M12.7 / M12.14 / M12.21
  *
  * Chains: ingest → intent → story-planner → slidespec → theme-layout → renderer
+ * M12.21: brandConfig is threaded through layoutPlan generation and renderer
+ * so that brand profiles affect actual PPTX output (colors, fonts, footer, title).
  */
 const { ingestDocument } = require("../../document-ingest/src/index.js");
 const { parsePresentationIntent } = require("../../intent-parser/src/index.js");
@@ -31,11 +33,16 @@ async function runPipeline(markdownInput, options) {
   // Step 4: SlideSpec generation
   const slideSpecs = generateSlideSpecs(deckPlan);
 
-  // Step 5: Theme and layout assignment
-  const layoutPlan = generateLayoutPlan(slideSpecs, { style: opts.style });
+  // Step 5: Theme and layout assignment — M12.21: pass brandConfig
+  const layoutPlan = generateLayoutPlan(slideSpecs, {
+    style: opts.style,
+    brandConfig: opts.brandConfig || null,
+  });
 
-  // Step 6: PPTX rendering
-  const pptx = renderPptx(slideSpecs, layoutPlan);
+  // Step 6: PPTX rendering — M12.21: pass brandConfig for theme overrides
+  const pptx = renderPptx(slideSpecs, layoutPlan, {
+    brandConfig: opts.brandConfig || null,
+  });
   const buffer = await generateBuffer(pptx);
 
   const result = {

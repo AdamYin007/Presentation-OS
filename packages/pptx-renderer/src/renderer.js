@@ -1,8 +1,9 @@
 /**
- * PPTX Renderer — M12.6
+ * PPTX Renderer — M12.6 / M12.21
  *
  * Renders SlideSpec[] + LayoutPlan into a real editable .pptx using pptxgenjs.
  * First renderer should be boring but editable and reliable.
+ * M12.21: brandConfig options override footer convention and title placement.
  */
 
 "use strict";
@@ -21,10 +22,38 @@ function renderPptx(slideSpecs, layoutPlan, options) {
   if (opts.company) pptx.company = opts.company;
   if (opts.subject) pptx.subject = opts.subject;
 
+  const layoutFonts = layoutPlan && layoutPlan.themeTokens && layoutPlan.themeTokens.fonts
+    ? layoutPlan.themeTokens.fonts
+    : {};
+  const headFontFace = normalizeFontFace(layoutFonts.heading);
+  const bodyFontFace = normalizeFontFace(layoutFonts.body);
+  if (headFontFace || bodyFontFace) {
+    pptx.theme = {
+      headFontFace: headFontFace || bodyFontFace,
+      bodyFontFace: bodyFontFace || headFontFace,
+      lang: "en-US",
+    };
+  }
+
+  // M12.21: extract brand profile config for rendering overrides
+  const brandConfig = opts.brandConfig && typeof opts.brandConfig === "object" ? opts.brandConfig : null;
+  const footerConvention = brandConfig && brandConfig.footerConvention ? brandConfig.footerConvention : "slide-number";
+  const titlePlacement = brandConfig && brandConfig.titlePlacement ? brandConfig.titlePlacement : "top";
+  const brandName = brandConfig && brandConfig.brandName ? brandConfig.brandName : "";
+
   for (let i = 0; i < slideSpecs.length; i++) {
     const spec = slideSpecs[i];
     const layout = layoutPlan.layouts.find((l) => l.slideId === spec.id);
-    renderSlide(pptx, spec, layout, opts);
+    const slideNumber = (typeof spec.index === "number" && spec.index >= 1 && spec.index <= slideSpecs.length)
+      ? spec.index
+      : i + 1;
+    renderSlide(pptx, spec, layout, opts, {
+      footerConvention,
+      titlePlacement,
+      brandName,
+      slideNumber,
+      totalSlides: slideSpecs.length,
+    });
   }
 
   return pptx;
@@ -32,8 +61,10 @@ function renderPptx(slideSpecs, layoutPlan, options) {
 
 /**
  * Render a single slide based on its SlideSpec and LayoutPlan entry.
+ * M12.21: brandRenderOpts controls footer convention and title placement.
  */
-function renderSlide(pptx, spec, layout, options) {
+function renderSlide(pptx, spec, layout, options, brandRenderOpts) {
+  const opts = brandRenderOpts || {};
   const slide = pptx.addSlide();
   const colors = layout ? layout.colors : { background: "#FFFFFF", text: "#1A1A1A" };
   const spacing = layout ? layout.spacing : { padding: 32, margin: 16, gap: 12 };
@@ -49,15 +80,21 @@ function renderSlide(pptx, spec, layout, options) {
   const bodyItems = Array.isArray(spec.body) ? spec.body : [];
   const speakerNotes = spec.speakerNotes || "";
 
+  const footerConvention = opts.footerConvention || "slide-number";
+  const titlePlacement = opts.titlePlacement || "top";
+  const brandName = opts.brandName || "";
+  const slideNumber = opts.slideNumber || (typeof spec.index === "number" ? spec.index : 1);
+  const totalSlides = opts.totalSlides || pptx.slides.length;
+
   switch (role) {
     case "title":
-      renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth);
+      renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth, titlePlacement);
       break;
     case "section-divider":
       renderSectionDivider(slide, spec, layout, colors, fontSize, maxWidth);
       break;
     case "closing":
-      renderClosingSlide(slide, spec, layout, colors, fontSize, maxWidth);
+      renderClosingSlide(slide, spec, layout, colors, fontSize, maxWidth, titlePlacement, brandName, totalSlides);
       break;
     case "agenda":
       renderAgendaSlide(slide, spec, layout, colors, fontSize, maxWidth);
@@ -85,7 +122,10 @@ function renderSlide(pptx, spec, layout, options) {
     slide.addNotes(speakerNotes);
   }
 
-  // Source references as footer if any
+  // M12.21: Brand-driven footer convention
+  applyBrandFooter(slide, spec, layout, totalSlides, footerConvention, brandName, slideNumber);
+
+  // Source references remain as a left footer for traceability.
   if (layout && spec.sourceRefs && spec.sourceRefs.length > 0) {
     const refs = spec.sourceRefs.map((r) => r.sourceId).join(", ");
     slide.addText(refs, {
@@ -97,10 +137,12 @@ function renderSlide(pptx, spec, layout, options) {
 
 /**
  * Render title slide.
+ * M12.21: titlePlacement controls vertical alignment ("top" or "center").
  */
-function renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth) {
+function renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth, titlePlacement) {
+  const y = titlePlacement === "center" ? 3.0 : 2.5;
   const titleStyle = {
-    x: 1, y: 2.5, w: maxWidth / 96, h: 1.5,
+    x: 1, y: y, w: maxWidth / 96, h: 1.5,
     fontSize: fontSize.heading, bold: true, color: colors.text || "#1A1A1A",
     align: "center", valign: "middle",
   };
@@ -108,7 +150,7 @@ function renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth) {
 
   if (spec.subtitle) {
     slide.addText(spec.subtitle, {
-      x: 1, y: 4.2, w: maxWidth / 96, h: 0.5,
+      x: 1, y: y + 2.0, w: maxWidth / 96, h: 0.5,
       fontSize: 16, color: colors.secondaryText || "#6B7280",
       align: "center", valign: "middle",
     });
@@ -128,17 +170,19 @@ function renderSectionDivider(slide, spec, layout, colors, fontSize, maxWidth) {
 
 /**
  * Render closing slide.
+ * M12.21: titlePlacement and brandName are applied.
  */
-function renderClosingSlide(slide, spec, layout, colors, fontSize, maxWidth) {
+function renderClosingSlide(slide, spec, layout, colors, fontSize, maxWidth, titlePlacement, brandName, totalSlides) {
+  const y = titlePlacement === "center" ? 3.0 : 2.5;
   slide.addText(spec.title || "Thank You", {
-    x: 1, y: 2.5, w: maxWidth / 96, h: 1.5,
+    x: 1, y: y, w: maxWidth / 96, h: 1.5,
     fontSize: 36, bold: true, color: colors.text || "#1A1A1A",
     align: "center", valign: "middle",
   });
 
   if (spec.keyMessage) {
     slide.addText(spec.keyMessage, {
-      x: 1, y: 4.2, w: maxWidth / 96, h: 0.5,
+      x: 1, y: y + 2.0, w: maxWidth / 96, h: 0.5,
       fontSize: 16, color: colors.secondaryText || "#6B7280",
       align: "center", valign: "middle",
     });
@@ -707,7 +751,63 @@ async function generateBuffer(pptx) {
   return await pptx.write({ outputType: "nodebuffer" });
 }
 
+function normalizeFontFace(fontFamily) {
+  if (typeof fontFamily !== "string" || !fontFamily.trim()) return null;
+  return fontFamily.split(",")[0].trim().replace(/^["']|["']$/g, "");
+}
+
+/**
+ * M12.21: Apply brand-driven footer to a slide.
+ * Respects footerConvention from brand profile:
+ *   - "none": no footer
+ *   - "slide-number": page N of total
+ *   - "brand-name": company/brand name
+ *   - "both": brand name + page number
+ */
+function applyBrandFooter(slide, spec, layout, totalSlides, footerConvention, brandName, slideNumber) {
+  if (!footerConvention || footerConvention === "none") return;
+
+  const maxWidth = layout ? layout.maxWidth : 800;
+  let footerText = "";
+  const page = slideNumber || (typeof spec.index === "number" && spec.index >= 1 ? spec.index : 1);
+  const total = totalSlides || page;
+
+  switch (footerConvention) {
+    case "slide-number":
+      footerText = `${page} / ${total}`;
+      break;
+    case "brand-name":
+      if (brandName) {
+        footerText = brandName;
+      } else {
+        // Fallback to slide-number when brand name not provided
+        footerText = `${page} / ${total}`;
+      }
+      break;
+    case "both":
+      if (brandName) {
+        footerText = `© ${brandName} | ${page} / ${total}`;
+      } else {
+        footerText = `${page} / ${total}`;
+      }
+      break;
+    default:
+      // Unknown convention — fallback to slide-number
+      footerText = `${page} / ${total}`;
+      break;
+  }
+
+  if (!footerText) return;
+
+  slide.addText(footerText, {
+    x: 0.5, y: 7.0, w: maxWidth / 96, h: 0.3,
+    fontSize: 8, color: "9CA3AF", align: "right",
+  });
+}
+
 module.exports = {
   renderPptx,
   generateBuffer,
+  applyBrandFooter,
+  normalizeFontFace,
 };

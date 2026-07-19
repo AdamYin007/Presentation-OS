@@ -1,0 +1,34 @@
+{
+  "id": "deep-blue-corp",
+  "name": "Deep Blue Corp",
+  "logoSafeArea": {
+    "top": 60,
+    "bottom": 60,
+    "left": 60,
+    "right": 60
+  },
+  "allowedPalette": [
+    "#0D47A1",
+    "#1565C0",
+    "#FFC107",
+    "#FAFAFA",
+    "#E3F2FD",
+    "#BBDEFB",
+    "#263232",
+    "#78909C"
+  ],
+  "typographyRules": {
+    "headingFont": "Roboto, sans-serif",
+    "bodyFont": "Roboto, sans-serif",
+    "monoFont": "Roboto Mono, monospace",
+    "maxHeadingSize": 40,
+    "minBodySize": 14
+  },
+  "footerConvention": "both",
+  "titlePlacement": "center",
+  "requiredSlides": {
+    "titleSlide": false,
+    "closingSlide": true
+  },
+  "maxSlidesPerSection": 10
+}

@@ -1,0 +1,9 @@
+{
+  "id": "bad-schema",
+  "name": "Bad Schema",
+  "allowedPalette": [
+    "not-a-color",
+    "#GGGGGG"
+  ],
+  "footerConvention": "invalid-value"
+}
