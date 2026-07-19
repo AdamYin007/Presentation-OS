@@ -367,16 +367,16 @@
   - Graceful degradation when LibreOffice/ImageMagick/Poppler unavailable
   - Test fixtures for PASS, NEEDS_REVIEW, FAIL, and degraded environment behavior
 
-### Next Direction — Post-M12.17
-
-After achieving pixel-level accessibility and rendered visual robustness gates, remaining gaps to reach production-grade quality:
-
-| Priority | Area | Description |
-|---|---|---|
-| P0 | Logo safe area enforcement | Runtime detection of logo bounding boxes in SlideSpec + safe area validation |
-| P1 | Multi-domain style packs | Domain-specific visual rules per industry vertical |
-| P2 | CI/CD integration | Pre-commit hook for every deck generation (`awe check`) |
-| P3 | Trend tracking | Multi-version baseline management for quality score trends over time |
+- [x] M12.18 One-Command Delivery Pipeline
+  - Product-facing CLI (`scripts/deliver-pptx.js`) accepting input markdown, output dir, style, title options
+  - Single command produces: output.pptx + quality-manifest.json + QA-SUMMARY.md + VISUAL-DESIGN-SUMMARY.md + rendered-qa-report.json + PIXEL-ACCESSIBILITY-SUMMARY.md + COMMERCIAL-VERDICT.md + machine-report.json
+  - M12.17 core logic extracted into `packages/pixel-accessibility-gate/` as reusable module
+  - Graceful degradation: missing rendering tools → NEEDS_REVIEW (never false PASS)
+  - Focused test suite verifying artifact completeness, exit codes, and graceful degradation
+  - NPM scripts: `deliver:pptx`, `check:m12-18-one-command-delivery-pipeline`
+  - Integrated into `npm run check` and `npm run check:all`
+- [ ] M12.19 Logo Safe Area Enforcement
+  - Runtime detection of logo bounding boxes in SlideSpec + safe area validation
 
 ## Rules for Future Work
 
