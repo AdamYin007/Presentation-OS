@@ -1,0 +1,34 @@
+# Code Owners for Presentation OS
+
+# Core source code — requires maintainer approval
+/src/**                @AdamYin007
+/packages/**          @AdamYin007
+/core/                @AdamYin007
+/runtime/             @AdamYin007
+/resolver/            @AdamYin007
+/registry/            @AdamYin007
+
+# Templates and schemas — commercial IP
+/templates/**         @AdamYin007
+/schemas/**           @AdamYin007
+
+# Build scripts and automation
+/scripts/**           @AdamYin007
+
+# GitHub configuration
+.github/**            @AdamYin007
+
+# Documentation — architecture and business docs require owner review
+docs/ARCHITECTURE.md  @AdamYin007
+docs/ROADMAP.md       @AdamYin007
+docs/COMMERCIALIZATION_RESEARCH.md @AdamYin007
+
+# Root configuration files
+package.json          @AdamYin007
+package-lock.json     @AdamYin007
+tsconfig*.json        @AdamYin007
+.eslintrc*            @AdamYin007
+.prettierrc*          @AdamYin007
+
+# CI/CD configuration
+.github/workflows/**  @AdamYin007
