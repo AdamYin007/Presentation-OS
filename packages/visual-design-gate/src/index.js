@@ -204,7 +204,9 @@ function checkTypographyConsistency(slideSpecs, layoutPlan) {
       passCount: 1,
       failCount: 0,
       warnCount: 0,
-      results: [{ status: "pass", message: "No layout data available — skipping typography checks" }],
+      results: [
+        { status: "pass", message: "No layout data available — skipping typography checks" },
+      ],
       issues: [],
     };
   }
@@ -321,7 +323,9 @@ function checkTypographyConsistency(slideSpecs, layoutPlan) {
   // Rule 3: Font family consistency — check that all slides use theme fonts
   const themeFontList = [expectedHeading, expectedBody];
   const actualFonts = [...fontFamiliesUsed];
-  const allMatch = actualFonts.every((f) => themeFontList.some((tf) => f.includes(tf.split(",")[0].trim())));
+  const allMatch = actualFonts.every((f) =>
+    themeFontList.some((tf) => f.includes(tf.split(",")[0].trim())),
+  );
 
   if (allMatch) {
     passCount++;
@@ -332,46 +336,47 @@ function checkTypographyConsistency(slideSpecs, layoutPlan) {
       expected: themeFontList,
       actual: actualFonts,
       severity: "fail",
-      suggestion: "Some slides use font families outside the theme definition. Align all fonts to the theme's heading/body families.",
+      suggestion:
+        "Some slides use font families outside the theme definition. Align all fonts to the theme's heading/body families.",
     });
   }
 
-    // Rule 4: Heading-to-body size ratio check — per layout family
-    // Different layout families legitimately have different ratios (title vs content),
-    // so we only flag variance WITHIN the same layout family.
-    let headingBodyRatioCount = 0;
-    let ratioWarned = false;
+  // Rule 4: Heading-to-body size ratio check — per layout family
+  // Different layout families legitimately have different ratios (title vs content),
+  // so we only flag variance WITHIN the same layout family.
+  let headingBodyRatioCount = 0;
+  let ratioWarned = false;
 
-    // Build index: layoutFamily -> [{index, headingSize, bodySize}]
-    const familyRatios = {};
-    for (const layout of layoutPlan.layouts) {
-      const lf = layout.layoutFamily || "default";
-      const fs = layout.fontSize || {};
-      if (!familyRatios[lf]) familyRatios[lf] = [];
-      if (fs.heading && fs.body) {
-        familyRatios[lf].push(fs.heading / fs.body);
-        headingBodyRatioCount++;
-      }
+  // Build index: layoutFamily -> [{index, headingSize, bodySize}]
+  const familyRatios = {};
+  for (const layout of layoutPlan.layouts) {
+    const lf = layout.layoutFamily || "default";
+    const fs = layout.fontSize || {};
+    if (!familyRatios[lf]) familyRatios[lf] = [];
+    if (fs.heading && fs.body) {
+      familyRatios[lf].push(fs.heading / fs.body);
+      headingBodyRatioCount++;
     }
+  }
 
-    for (const [lf, ratios] of Object.entries(familyRatios)) {
-      if (ratios.length < 2) continue; // Single slide in this family — skip
-      const minR = Math.min(...ratios);
-      const maxR = Math.max(...ratios);
-      if (maxR - minR > 0.5) {
-        ratioWarned = true;
-        warnCount++;
-        issues.push({
-          category: "heading_body_ratio",
-          layoutFamily: lf,
-          minRatio: parseFloat(minR.toFixed(2)),
-          maxRatio: parseFloat(maxR.toFixed(2)),
-          severity: "warn",
-          suggestion: `Heading-to-body ratio in layout "${lf}" varies from ${minR.toFixed(2)} to ${maxR.toFixed(2)}. Target consistent ratio (~1.5x).`,
-        });
-      }
+  for (const [lf, ratios] of Object.entries(familyRatios)) {
+    if (ratios.length < 2) continue; // Single slide in this family — skip
+    const minR = Math.min(...ratios);
+    const maxR = Math.max(...ratios);
+    if (maxR - minR > 0.5) {
+      ratioWarned = true;
+      warnCount++;
+      issues.push({
+        category: "heading_body_ratio",
+        layoutFamily: lf,
+        minRatio: parseFloat(minR.toFixed(2)),
+        maxRatio: parseFloat(maxR.toFixed(2)),
+        severity: "warn",
+        suggestion: `Heading-to-body ratio in layout "${lf}" varies from ${minR.toFixed(2)} to ${maxR.toFixed(2)}. Target consistent ratio (~1.5x).`,
+      });
     }
-    if (!ratioWarned) passCount++;
+  }
+  if (!ratioWarned) passCount++;
 
   let verdict;
   if (failCount > 0) verdict = "FAIL";
@@ -411,7 +416,7 @@ function checkTypographyConsistency(slideSpecs, layoutPlan) {
  */
 function checkBrandGuidelines(slideSpecs, layoutPlan, brandConfig = {}) {
   const defaults = {
-    allowedPalette: [],       // empty = use theme colors
+    allowedPalette: [], // empty = use theme colors
     logoSafeArea: { top: 40, bottom: 40, left: 40, right: 40 },
     // Auto-generated decks from the Presentation OS pipeline use semantic
     // slide roles (content, section-divider, process, closing…) and do NOT
@@ -647,7 +652,10 @@ async function runVisualDesignGate(slideSpecs, layoutPlan, options = {}) {
       ? {
           priorVerdict: m12_15_verdict,
           overridden: m12_15_verdict === "FAIL" && overallVerdict !== "FAIL",
-          note: m12_15_verdict === "FAIL" ? "M12.15 FAIL prevents M12.16 from returning PASS" : undefined,
+          note:
+            m12_15_verdict === "FAIL"
+              ? "M12.15 FAIL prevents M12.16 from returning PASS"
+              : undefined,
         }
       : undefined,
   };
@@ -669,8 +677,8 @@ function generateHumanSummary(gateResult) {
 
   lines.push("## Summary");
   lines.push("");
-  lines.push(`| Metric | Count |`);
-  lines.push(`|--------|-------|`);
+  lines.push("| Metric | Count |");
+  lines.push("|--------|-------|");
   lines.push(`| Pass   | ${gateResult.summary.passCount} |`);
   lines.push(`| Fail   | ${gateResult.summary.failCount} |`);
   lines.push(`| Warn   | ${gateResult.summary.warnCount} |`);
@@ -688,7 +696,9 @@ function generateHumanSummary(gateResult) {
     lines.push("");
     for (const v of cc.violations) {
       const icon = v.severity === "fail" ? "❌" : "⚠️";
-      lines.push(`${icon} Slide ${v.slide}: ${v.pair} — ratio ${v.ratio}:1 (threshold: ${v.threshold})`);
+      lines.push(
+        `${icon} Slide ${v.slide}: ${v.pair} — ratio ${v.ratio}:1 (threshold: ${v.threshold})`,
+      );
       lines.push(`   → ${v.suggestion}`);
     }
     lines.push("");
@@ -752,7 +762,7 @@ function generateHumanSummary(gateResult) {
     lines.push("");
     lines.push(`Prior commercial verdict: ${gateResult.m12_15_integration.priorVerdict}`);
     if (gateResult.m12_15_integration.overridden) {
-      lines.push(`⚠️ M12.15 FAIL prevented M12.16 from returning PASS`);
+      lines.push("⚠️ M12.15 FAIL prevented M12.16 from returning PASS");
     }
     lines.push("");
   }

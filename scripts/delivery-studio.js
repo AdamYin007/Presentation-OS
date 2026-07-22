@@ -21,14 +21,13 @@ const DEFAULT_STUDIO_DIR = path.join(ROOT_DIR, "deliverables", "studio");
 const DEFAULT_PORT = 9200;
 const MAX_BODY_SIZE = 500 * 1024;
 const VALID_STYLES = ["minimal-modern", "business-consulting", "academic-clean"];
-const REQUIRED_ARTIFACTS = [
-  "output.pptx",
-  "COMMERCIAL-VERDICT.md",
-  "machine-report.json",
-];
+const REQUIRED_ARTIFACTS = ["output.pptx", "COMMERCIAL-VERDICT.md", "machine-report.json"];
 
 function parseCliArgs(argv = process.argv) {
-  const options = { port: Number.parseInt(process.env.PORT || String(DEFAULT_PORT), 10), studioDir: DEFAULT_STUDIO_DIR };
+  const options = {
+    port: Number.parseInt(process.env.PORT || String(DEFAULT_PORT), 10),
+    studioDir: DEFAULT_STUDIO_DIR,
+  };
 
   for (let i = 2; i < argv.length; i += 1) {
     if (argv[i] === "--port" && argv[i + 1]) {
@@ -109,7 +108,10 @@ function validateRequest(input) {
   const style = input.style || "minimal-modern";
   const title = typeof input.title === "string" && input.title.trim() ? input.title.trim() : null;
   const profileCandidate = input.customBrandProfilePath || input.brandProfile || null;
-  const brandProfile = typeof profileCandidate === "string" && profileCandidate.trim() ? profileCandidate.trim() : null;
+  const brandProfile =
+    typeof profileCandidate === "string" && profileCandidate.trim()
+      ? profileCandidate.trim()
+      : null;
 
   if (!markdown) {
     return { error: "Markdown input is required and must be non-empty." };
@@ -145,10 +147,11 @@ function collectArtifacts(jobDir) {
   if (!fs.existsSync(jobDir)) return {};
 
   return Object.fromEntries(
-    fs.readdirSync(jobDir)
+    fs
+      .readdirSync(jobDir)
       .filter((name) => !name.startsWith("."))
       .sort()
-      .map((name) => [name, path.join(jobDir, name)])
+      .map((name) => [name, path.join(jobDir, name)]),
   );
 }
 
@@ -179,11 +182,17 @@ function runDeliverPptx({ markdown, style, title, brandProfile, jobDir }) {
     let stderr = "";
     const timeout = setTimeout(() => {
       child.kill("SIGTERM");
-      reject(Object.assign(new Error("Delivery timed out after 120 seconds."), { statusCode: 504 }));
+      reject(
+        Object.assign(new Error("Delivery timed out after 120 seconds."), { statusCode: 504 }),
+      );
     }, 120000);
 
-    child.stdout.on("data", (chunk) => { stdout += chunk; });
-    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk;
+    });
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk;
+    });
     child.on("error", (err) => {
       clearTimeout(timeout);
       reject(err);
@@ -191,19 +200,26 @@ function runDeliverPptx({ markdown, style, title, brandProfile, jobDir }) {
     child.on("close", (code) => {
       clearTimeout(timeout);
       const artifacts = collectArtifacts(jobDir);
-      const requiredArtifactsExist = REQUIRED_ARTIFACTS.every((name) => fs.existsSync(path.join(jobDir, name)));
+      const requiredArtifactsExist = REQUIRED_ARTIFACTS.every((name) =>
+        fs.existsSync(path.join(jobDir, name)),
+      );
 
       if ((code === 0 || code === 1) && requiredArtifactsExist) {
         resolve({ code, stdout, stderr, artifacts, machineReport: readMachineReport(jobDir) });
         return;
       }
 
-      reject(Object.assign(new Error(stderr.trim() || stdout.trim() || `deliver-pptx exited with code ${code}`), {
-        statusCode: 500,
-        exitCode: code,
-        stdout,
-        stderr,
-      }));
+      reject(
+        Object.assign(
+          new Error(stderr.trim() || stdout.trim() || `deliver-pptx exited with code ${code}`),
+          {
+            statusCode: 500,
+            exitCode: code,
+            stdout,
+            stderr,
+          },
+        ),
+      );
     });
   });
 }
@@ -409,7 +425,10 @@ function createServer(options = {}) {
     const url = new URL(req.url, "http://localhost");
 
     if (req.method === "GET" && url.pathname === "/") {
-      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-store",
+      });
       res.end(buildHtmlUI());
       return;
     }

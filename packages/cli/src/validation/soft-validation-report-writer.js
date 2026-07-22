@@ -51,11 +51,11 @@ var REPORT_SEVERITY = {
  * @constant {Object<string, string>}
  */
 var CODE_TO_GATE = {
-  "ERROR_CONTEXT_NOT_OBJECT": "CONTEXT_REQUIRED_SECTIONS_GATE",
-  "WARN_CONTRACT_SECTION_MISSING": "CONTEXT_REQUIRED_SECTIONS_GATE",
-  "INFO_CONTRACT_VERSION_ABSENT": "CONTRACT_VERSION_PRESENT_SOFT_GATE",
-  "WARN_CONTRACT_VERSION_MALFORMED": "CONTRACT_VERSION_FORMAT_GATE",
-  "WARN_RESERVED_NAMESPACE_USED": "CONTEXT_RESERVED_NAMESPACE_GATE",
+  ERROR_CONTEXT_NOT_OBJECT: "CONTEXT_REQUIRED_SECTIONS_GATE",
+  WARN_CONTRACT_SECTION_MISSING: "CONTEXT_REQUIRED_SECTIONS_GATE",
+  INFO_CONTRACT_VERSION_ABSENT: "CONTRACT_VERSION_PRESENT_SOFT_GATE",
+  WARN_CONTRACT_VERSION_MALFORMED: "CONTRACT_VERSION_FORMAT_GATE",
+  WARN_RESERVED_NAMESPACE_USED: "CONTEXT_RESERVED_NAMESPACE_GATE",
 };
 
 /**
@@ -177,7 +177,18 @@ function computeSeverity(summary) {
 function normalizeInput(result) {
   if (!result || typeof result !== "object") {
     return {
-      warnings: [{ code: "ERROR_VALIDATOR_INTERNAL", severity: REPORT_SEVERITY.ERROR, message: "Input is null or not an object", path: "$", expected: "object", actual: typeof result, migrationHint: "Pass a valid validator result object.", sourceDocument: "docs/M9_SOFT_VALIDATION_REPORT_FORMAT_DESIGN.md" }],
+      warnings: [
+        {
+          code: "ERROR_VALIDATOR_INTERNAL",
+          severity: REPORT_SEVERITY.ERROR,
+          message: "Input is null or not an object",
+          path: "$",
+          expected: "object",
+          actual: typeof result,
+          migrationHint: "Pass a valid validator result object.",
+          sourceDocument: "docs/M9_SOFT_VALIDATION_REPORT_FORMAT_DESIGN.md",
+        },
+      ],
       errors: [],
       ok: false,
       severity: REPORT_SEVERITY.ERROR,
@@ -206,7 +217,7 @@ function normalizeInput(result) {
 function createSoftValidationReport(input, options) {
   var opts = Object.assign(
     { includeTimestamp: true, generatedAt: null, source: "", metadata: {} },
-    options || {}
+    options || {},
   );
 
   var normalized = normalizeInput(input);

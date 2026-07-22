@@ -27,7 +27,11 @@ const cp = require("child_process");
 const { generateLayoutPlan } = require("../packages/theme-layout/src/generator.js");
 const { renderPptx, generateBuffer } = require("../packages/pptx-renderer/src/index.js");
 const { normalizeFontFace } = require("../packages/pptx-renderer/src/renderer.js");
-const { loadProfile, resolveBrandConfig, getBuiltInProfiles } = require("../packages/brand-profiles/src/index.js");
+const {
+  loadProfile,
+  resolveBrandConfig,
+  getBuiltInProfiles,
+} = require("../packages/brand-profiles/src/index.js");
 const { runPipeline } = require("../packages/presentation-pipeline/src/index.js");
 
 const ROOT = path.join(__dirname, "..");
@@ -98,7 +102,9 @@ function ensureFixtures() {
   // Good fixture for integration tests
   const goodFixture = path.join(FIXTURES_DIR, "good.md");
   if (!fs.existsSync(goodFixture)) {
-    fs.writeFileSync(goodFixture, `# Quarterly Business Review
+    fs.writeFileSync(
+      goodFixture,
+      `# Quarterly Business Review
 
 ## Introduction
 
@@ -122,68 +128,91 @@ Customer satisfaction score improved to 94%.
 
 Thank you for your attention.
 Questions welcome.
-`, "utf8");
+`,
+      "utf8",
+    );
   }
 
   // Custom brand profile fixture — deep blue corporate branding
   const customBrandPath = path.join(FIXTURES_DIR, "custom-brand.json");
   if (!fs.existsSync(customBrandPath)) {
-    fs.writeFileSync(customBrandPath, JSON.stringify({
-      id: "deep-blue-corp",
-      name: "Deep Blue Corp",
-      logoSafeArea: { top: 60, bottom: 60, left: 60, right: 60 },
-      allowedPalette: [
-        "#0D47A1", // primary (overrides theme primary #1A1A1A or #1E3A5F)
-        "#1565C0", // secondary
-        "#FFC107", // accent (gold)
-        "#FAFAFA", // background
-        "#E3F2FD", // surface
-        "#BBDEFB", // border
-        "#263232", // text
-        "#78909C", // muted
-      ],
-      typographyRules: {
-        headingFont: "Roboto, sans-serif",
-        bodyFont: "Roboto, sans-serif",
-        monoFont: "Roboto Mono, monospace",
-        maxHeadingSize: 40,
-        minBodySize: 14,
-      },
-      footerConvention: "both",
-      titlePlacement: "center",
-      requiredSlides: { titleSlide: false, closingSlide: true },
-      maxSlidesPerSection: 10,
-    }, null, 2));
+    fs.writeFileSync(
+      customBrandPath,
+      JSON.stringify(
+        {
+          id: "deep-blue-corp",
+          name: "Deep Blue Corp",
+          logoSafeArea: { top: 60, bottom: 60, left: 60, right: 60 },
+          allowedPalette: [
+            "#0D47A1", // primary (overrides theme primary #1A1A1A or #1E3A5F)
+            "#1565C0", // secondary
+            "#FFC107", // accent (gold)
+            "#FAFAFA", // background
+            "#E3F2FD", // surface
+            "#BBDEFB", // border
+            "#263232", // text
+            "#78909C", // muted
+          ],
+          typographyRules: {
+            headingFont: "Roboto, sans-serif",
+            bodyFont: "Roboto, sans-serif",
+            monoFont: "Roboto Mono, monospace",
+            maxHeadingSize: 40,
+            minBodySize: 14,
+          },
+          footerConvention: "both",
+          titlePlacement: "center",
+          requiredSlides: { titleSlide: false, closingSlide: true },
+          maxSlidesPerSection: 10,
+        },
+        null,
+        2,
+      ),
+    );
   }
 
   // Another custom brand — minimalist with slide-number footer
   const simpleBrandPath = path.join(FIXTURES_DIR, "simple-brand.json");
   if (!fs.existsSync(simpleBrandPath)) {
-    fs.writeFileSync(simpleBrandPath, JSON.stringify({
-      id: "simple-minimal",
-      name: "Simple Minimal",
-      logoSafeArea: { top: 30, bottom: 30, left: 30, right: 30 },
-      allowedPalette: ["#000000", "#333333", "#FF5722", "#FFFFFF", "#F5F5F5"],
-      typographyRules: {
-        headingFont: "Arial, sans-serif",
-        bodyFont: "Arial, sans-serif",
-      },
-      footerConvention: "slide-number",
-      titlePlacement: "top",
-      requiredSlides: { titleSlide: false, closingSlide: false },
-      maxSlidesPerSection: 15,
-    }, null, 2));
+    fs.writeFileSync(
+      simpleBrandPath,
+      JSON.stringify(
+        {
+          id: "simple-minimal",
+          name: "Simple Minimal",
+          logoSafeArea: { top: 30, bottom: 30, left: 30, right: 30 },
+          allowedPalette: ["#000000", "#333333", "#FF5722", "#FFFFFF", "#F5F5F5"],
+          typographyRules: {
+            headingFont: "Arial, sans-serif",
+            bodyFont: "Arial, sans-serif",
+          },
+          footerConvention: "slide-number",
+          titlePlacement: "top",
+          requiredSlides: { titleSlide: false, closingSlide: false },
+          maxSlidesPerSection: 15,
+        },
+        null,
+        2,
+      ),
+    );
   }
 
   // Bad schema fixture — invalid color format
   const badSchemaPath = path.join(FIXTURES_DIR, "bad-schema-m12-21.json");
   if (!fs.existsSync(badSchemaPath)) {
-    fs.writeFileSync(badSchemaPath, JSON.stringify({
-      id: "bad-schema",
-      name: "Bad Schema",
-      allowedPalette: ["not-a-color", "#GGGGGG"],
-      footerConvention: "invalid-value",
-    }, null, 2));
+    fs.writeFileSync(
+      badSchemaPath,
+      JSON.stringify(
+        {
+          id: "bad-schema",
+          name: "Bad Schema",
+          allowedPalette: ["not-a-color", "#GGGGGG"],
+          footerConvention: "invalid-value",
+        },
+        null,
+        2,
+      ),
+    );
   }
 
   return { goodFixture, customBrandPath, simpleBrandPath, badSchemaPath };
@@ -212,14 +241,26 @@ function testBrandColorsOverrideThemeTokens() {
   });
 
   // Business consulting palette: #1E3A5F, #4A5568, #D4A843, #FFFFFF, #F7F7F5, #D4C5A9, #1A202C, #718096
-  assertEqual(layoutWithBrand.themeTokens.colors.primary, "#1E3A5F",
-    "Brand overrides primary from #1E3A5F");
-  assertEqual(layoutWithBrand.themeTokens.colors.accent, "#D4A843",
-    "Brand overrides accent from #D4A843");
-  assertEqual(layoutWithBrand.themeTokens.colors.text, "#1A202C",
-    "Brand overrides text from #1A202C");
-  assertEqual(layoutWithBrand.themeTokens.colors.background, "#FFFFFF",
-    "Brand overrides background from #FFFFFF");
+  assertEqual(
+    layoutWithBrand.themeTokens.colors.primary,
+    "#1E3A5F",
+    "Brand overrides primary from #1E3A5F",
+  );
+  assertEqual(
+    layoutWithBrand.themeTokens.colors.accent,
+    "#D4A843",
+    "Brand overrides accent from #D4A843",
+  );
+  assertEqual(
+    layoutWithBrand.themeTokens.colors.text,
+    "#1A202C",
+    "Brand overrides text from #1A202C",
+  );
+  assertEqual(
+    layoutWithBrand.themeTokens.colors.background,
+    "#FFFFFF",
+    "Brand overrides background from #FFFFFF",
+  );
 }
 
 // ─── Test 2: Brand Profile Fonts Override Theme Fonts ──────────
@@ -238,17 +279,38 @@ function testBrandFontsOverrideThemeTokens() {
   });
 
   // Academic clean uses Source Sans Pro
-  assertEqual(layout.themeTokens.fonts.heading, "Source Sans Pro, sans-serif",
-    "Brand overrides heading font to Source Sans Pro");
-  assertEqual(layout.themeTokens.fonts.body, "Source Sans Pro, sans-serif",
-    "Brand overrides body font to Source Sans Pro");
-  assertEqual(layout.themeTokens.fonts.mono, "Source Code Pro, monospace",
-    "Brand overrides mono font to Source Code Pro");
+  assertEqual(
+    layout.themeTokens.fonts.heading,
+    "Source Sans Pro, sans-serif",
+    "Brand overrides heading font to Source Sans Pro",
+  );
+  assertEqual(
+    layout.themeTokens.fonts.body,
+    "Source Sans Pro, sans-serif",
+    "Brand overrides body font to Source Sans Pro",
+  );
+  assertEqual(
+    layout.themeTokens.fonts.mono,
+    "Source Code Pro, monospace",
+    "Brand overrides mono font to Source Code Pro",
+  );
 
   const pptx = renderPptx(specs, layout, { brandConfig: config });
-  assertEqual(pptx.theme.headFontFace, "Source Sans Pro", "PPTX head font face uses brand heading font");
-  assertEqual(pptx.theme.bodyFontFace, "Source Sans Pro", "PPTX body font face uses brand body font");
-  assertEqual(normalizeFontFace("Roboto, sans-serif"), "Roboto", "Font family is normalized for PPTX theme");
+  assertEqual(
+    pptx.theme.headFontFace,
+    "Source Sans Pro",
+    "PPTX head font face uses brand heading font",
+  );
+  assertEqual(
+    pptx.theme.bodyFontFace,
+    "Source Sans Pro",
+    "PPTX body font face uses brand body font",
+  );
+  assertEqual(
+    normalizeFontFace("Roboto, sans-serif"),
+    "Roboto",
+    "Font family is normalized for PPTX theme",
+  );
 }
 
 // ─── Test 3: Custom Brand Profile Colors ───────────────────────
@@ -268,12 +330,21 @@ function testCustomBrandProfileColors() {
   });
 
   // Custom palette: #0D47A1, #1565C0, #FFC107, #FAFAFA, #E3F2FD, #BBDEFB, #263232, #78909C
-  assertEqual(layout.themeTokens.colors.primary, "#0D47A1",
-    "Custom primary overrides to Deep Blue (#0D47A1)");
-  assertEqual(layout.themeTokens.colors.accent, "#FFC107",
-    "Custom accent overrides to gold (#FFC107)");
-  assertEqual(layout.themeTokens.colors.text, "#263232",
-    "Custom text overrides to dark slate (#263232)");
+  assertEqual(
+    layout.themeTokens.colors.primary,
+    "#0D47A1",
+    "Custom primary overrides to Deep Blue (#0D47A1)",
+  );
+  assertEqual(
+    layout.themeTokens.colors.accent,
+    "#FFC107",
+    "Custom accent overrides to gold (#FFC107)",
+  );
+  assertEqual(
+    layout.themeTokens.colors.text,
+    "#263232",
+    "Custom text overrides to dark slate (#263232)",
+  );
 }
 
 // ─── Test 4: Footer Convention Applied in Renderer ─────────────
@@ -305,11 +376,27 @@ function testFooterConventionApplied() {
 
   const { applyBrandFooter } = require("../packages/pptx-renderer/src/renderer.js");
   const added = [];
-  applyBrandFooter({ addText: (text) => added.push(text) }, { index: 1 }, { maxWidth: 800 }, 3, "brand-name", config.brandName, 1);
+  applyBrandFooter(
+    { addText: (text) => added.push(text) },
+    { index: 1 },
+    { maxWidth: 800 },
+    3,
+    "brand-name",
+    config.brandName,
+    1,
+  );
   assertEqual(added[0], "Business Consulting", "brand-name footer uses profile name");
 
   const numbered = [];
-  applyBrandFooter({ addText: (text) => numbered.push(text) }, { index: 1 }, { maxWidth: 800 }, 3, "slide-number", "", 1);
+  applyBrandFooter(
+    { addText: (text) => numbered.push(text) },
+    { index: 1 },
+    { maxWidth: 800 },
+    3,
+    "slide-number",
+    "",
+    1,
+  );
   assertEqual(numbered[0], "1 / 3", "slide-number footer uses 1-based page and total slides");
 }
 
@@ -355,11 +442,15 @@ function testInvalidProfileRejects() {
 
   const { goodFixture, badSchemaPath } = ensureFixtures();
 
-  const result = cp.spawnSync("node", [DELIVER_SCRIPT, goodFixture, "--brand-profile", badSchemaPath], {
-    cwd: ROOT,
-    encoding: "utf8",
-    timeout: 30000,
-  });
+  const result = cp.spawnSync(
+    "node",
+    [DELIVER_SCRIPT, goodFixture, "--brand-profile", badSchemaPath],
+    {
+      cwd: ROOT,
+      encoding: "utf8",
+      timeout: 30000,
+    },
+  );
 
   // Should fail because bad schema
   assert(result.status === 2, `Exit code is 2 for invalid profile, got ${result.status}`);
@@ -373,12 +464,23 @@ function testJsonModeMachineReadable() {
   const { goodFixture } = ensureFixtures();
   const customBrandPath = path.join(FIXTURES_DIR, "custom-brand.json");
 
-  const result = cp.spawnSync("node", [DELIVER_SCRIPT, goodFixture, "--json",
-    "--style", "minimal-modern", "--brand-profile", customBrandPath], {
-    cwd: ROOT,
-    encoding: "utf8",
-    timeout: 120000,
-  });
+  const result = cp.spawnSync(
+    "node",
+    [
+      DELIVER_SCRIPT,
+      goodFixture,
+      "--json",
+      "--style",
+      "minimal-modern",
+      "--brand-profile",
+      customBrandPath,
+    ],
+    {
+      cwd: ROOT,
+      encoding: "utf8",
+      timeout: 120000,
+    },
+  );
 
   assertEqual(result.status, 0, "JSON mode with brand profile exits cleanly");
 
@@ -403,12 +505,15 @@ function testOneCommandDeliveryStillWorks() {
   const tmpOut = path.join(FIXTURES_DIR, "test-output", "one-command");
   fs.mkdirSync(tmpOut, { recursive: true });
 
-  const result = cp.spawnSync("node", [DELIVER_SCRIPT, goodFixture, tmpOut,
-    "--style", "minimal-modern"], {
-    cwd: ROOT,
-    encoding: "utf8",
-    timeout: 120000,
-  });
+  const result = cp.spawnSync(
+    "node",
+    [DELIVER_SCRIPT, goodFixture, tmpOut, "--style", "minimal-modern"],
+    {
+      cwd: ROOT,
+      encoding: "utf8",
+      timeout: 120000,
+    },
+  );
 
   assertEqual(result.status, 0, "One-command delivery exits 0");
 
@@ -454,10 +559,16 @@ function testDeterministicBehavior() {
 
   assertEqual(layout1.theme, layout2.theme, "Theme consistent across runs");
   assertEqual(layout1.totalSlides, layout2.totalSlides, "Slide count consistent");
-  assertEqual(layout1.themeTokens.colors.primary, layout2.themeTokens.colors.primary,
-    "Primary color consistent across runs");
-  assertEqual(layout1.themeTokens.fonts.heading, layout2.themeTokens.fonts.heading,
-    "Heading font consistent across runs");
+  assertEqual(
+    layout1.themeTokens.colors.primary,
+    layout2.themeTokens.colors.primary,
+    "Primary color consistent across runs",
+  );
+  assertEqual(
+    layout1.themeTokens.fonts.heading,
+    layout2.themeTokens.fonts.heading,
+    "Heading font consistent across runs",
+  );
 }
 
 // ─── Test 10: Graceful Degradation — No Brand Config ───────────
@@ -465,18 +576,18 @@ function testDeterministicBehavior() {
 function testGracefulDegradationNoBrandConfig() {
   console.log("\n[Test] Graceful degradation: no brand config falls back to defaults");
 
-  const specs = [
-    makeSlideSpec("title", "Title"),
-    makeSlideSpec("content", "Content"),
-  ];
+  const specs = [makeSlideSpec("title", "Title"), makeSlideSpec("content", "Content")];
 
   // Without any brandConfig
   const layout = generateLayoutPlan(specs, { style: "minimal-modern" });
 
   assertEqual(layout.theme, "minimal-modern", "Default theme applied without brand config");
   assertEqual(layout.themeTokens.colors.primary, "#1A1A1A", "Default primary used");
-  assertEqual(layout.themeTokens.fonts.heading, "Inter, -apple-system, sans-serif",
-    "Default heading font used");
+  assertEqual(
+    layout.themeTokens.fonts.heading,
+    "Inter, -apple-system, sans-serif",
+    "Default heading font used",
+  );
   assert(layout.layouts.length === 2, "Both slides have layouts");
 }
 
@@ -515,8 +626,10 @@ Thank you.
   assert(result.pptxBuffer.length > 1000, "PPTX buffer is substantial size");
 
   // Verify brand config was applied to theme tokens
-  assert(result.layoutPlan.themeTokens.colors.primary !== undefined,
-    "Theme tokens present in pipeline result");
+  assert(
+    result.layoutPlan.themeTokens.colors.primary !== undefined,
+    "Theme tokens present in pipeline result",
+  );
 }
 
 // ─── Test 12: Built-in Profiles Drive Different Colors ─────────
@@ -542,7 +655,11 @@ function testBuiltInProfilesProduceDifferentColors() {
 
   // Verify known values
   assertEqual(colorSets["minimal-modern"], "#1A1A1A", "Minimal modern primary is #1A1A1A");
-  assertEqual(colorSets["business-consulting"], "#1E3A5F", "Business consulting primary is #1E3A5F");
+  assertEqual(
+    colorSets["business-consulting"],
+    "#1E3A5F",
+    "Business consulting primary is #1E3A5F",
+  );
   assertEqual(colorSets["academic-clean"], "#2C3E50", "Academic clean primary is #2C3E50");
 }
 
@@ -572,14 +689,26 @@ Done.
   });
 
   // Custom palette should override the base theme
-  assertEqual(result.layoutPlan.themeTokens.colors.primary, "#0D47A1",
-    "Custom primary color applied (#0D47A1)");
-  assertEqual(result.layoutPlan.themeTokens.colors.accent, "#FFC107",
-    "Custom accent color applied (#FFC107)");
-  assertEqual(result.layoutPlan.themeTokens.fonts.heading, "Roboto, sans-serif",
-    "Custom heading font applied (Roboto)");
-  assertEqual(result.layoutPlan.themeTokens.fonts.body, "Roboto, sans-serif",
-    "Custom body font applied (Roboto)");
+  assertEqual(
+    result.layoutPlan.themeTokens.colors.primary,
+    "#0D47A1",
+    "Custom primary color applied (#0D47A1)",
+  );
+  assertEqual(
+    result.layoutPlan.themeTokens.colors.accent,
+    "#FFC107",
+    "Custom accent color applied (#FFC107)",
+  );
+  assertEqual(
+    result.layoutPlan.themeTokens.fonts.heading,
+    "Roboto, sans-serif",
+    "Custom heading font applied (Roboto)",
+  );
+  assertEqual(
+    result.layoutPlan.themeTokens.fonts.body,
+    "Roboto, sans-serif",
+    "Custom body font applied (Roboto)",
+  );
 }
 
 // ─── Test 14: Footer Convention Values ─────────────────────────
@@ -593,7 +722,15 @@ function testFooterConventionValues() {
 
   for (const conv of conventions) {
     const texts = [];
-    applyBrandFooter({ addText: (text) => texts.push(text) }, { index: 1 }, { maxWidth: 800 }, 3, conv, "TestBrand", 1);
+    applyBrandFooter(
+      { addText: (text) => texts.push(text) },
+      { index: 1 },
+      { maxWidth: 800 },
+      3,
+      conv,
+      "TestBrand",
+      1,
+    );
     if (conv === "none") {
       assertEqual(texts.length, 0, "none footer emits no text");
     } else if (conv === "brand-name") {
@@ -611,8 +748,10 @@ function testFooterConventionValues() {
 function testNpmScriptsRegistered() {
   console.log("\n[Test] NPM scripts registered in package.json");
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
-  assert(pkg.scripts["check:m12-21-profile-driven-rendering"] !== undefined,
-    "npm script check:m12-21-profile-driven-rendering is registered");
+  assert(
+    pkg.scripts["check:m12-21-profile-driven-rendering"] !== undefined,
+    "npm script check:m12-21-profile-driven-rendering is registered",
+  );
 }
 
 // ─── Run All Tests ─────────────────────────────────────────────

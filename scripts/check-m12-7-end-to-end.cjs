@@ -84,7 +84,7 @@ async function checkQuality(result) {
   }
   
   // Check 2: Content slides should have sourceRefs OR a fallback warning
-  const contentSlides = specs.filter(s => s.role !== 'section-divider' && s.role !== 'title' && s.role !== 'closing');
+  const contentSlides = specs.filter(s => s.role !== "section-divider" && s.role !== "title" && s.role !== "closing");
   for (const spec of contentSlides) {
     if (!spec.sourceRefs || spec.sourceRefs.length === 0) {
       // Only fail if there are sourceParagraphs available but not linked
@@ -129,7 +129,7 @@ async function checkQuality(result) {
     console.log("  ✓ All quality gates passed");
     console.log(`    - ${specs.length} slides, all with titles`);
     console.log(`    - ${contentSlides.length} content slides, all with sourceRefs`);
-    console.log(`    - No duplicate title+body pairs`);
+    console.log("    - No duplicate title+body pairs");
     console.log(`    - ${specs.filter(s => s.speakerNotes).length} slides with speaker notes`);
   }
 }

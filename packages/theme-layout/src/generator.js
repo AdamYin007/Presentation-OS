@@ -31,13 +31,21 @@ function resolveLayout(slideSpec) {
   if (slideSpec.visualType === "table" && bodyLength <= 5) {
     return "table";
   }
-  if (["bar-chart", "line-chart", "area-chart", "pie-chart", "scatter-chart"].includes(slideSpec.visualType)) {
+  if (
+    ["bar-chart", "line-chart", "area-chart", "pie-chart", "scatter-chart"].includes(
+      slideSpec.visualType,
+    )
+  ) {
     return "chart-and-insight";
   }
   if (slideSpec.visualType === "comparison") {
     return "comparison";
   }
-  if (slideSpec.visualType === "process" || slideSpec.visualType === "timeline" || slideSpec.visualType === "roadmap") {
+  if (
+    slideSpec.visualType === "process" ||
+    slideSpec.visualType === "timeline" ||
+    slideSpec.visualType === "roadmap"
+  ) {
     return "horizontal-process";
   }
   if (slideSpec.visualType === "image") {
@@ -124,7 +132,16 @@ function applyBrandOverrides(themeTokens, brandConfig) {
     // Map brand palette to theme color roles by position:
     //   [0] → primary, [1] → secondary, [2] → accent, [3] → background,
     //   [4] → surface, [5] → border, [6] → text, [7] → muted
-    const roleKeys = ["primary", "secondary", "accent", "background", "surface", "border", "text", "muted"];
+    const roleKeys = [
+      "primary",
+      "secondary",
+      "accent",
+      "background",
+      "surface",
+      "border",
+      "text",
+      "muted",
+    ];
     for (let i = 0; i < Math.min(brandConfig.allowedPalette.length, roleKeys.length); i++) {
       const hex = brandConfig.allowedPalette[i];
       if (typeof hex === "string" && /^#[0-9A-Fa-f]{6}$/.test(hex)) {
@@ -155,7 +172,7 @@ function generateLayoutPlan(slideSpecs, deckMetadata) {
   let themeTokens = getThemeTokens(themeName);
 
   // M12.21: apply brand profile overrides at deck level
-  const brandConfig = (deckMetadata && deckMetadata.brandConfig) ? deckMetadata.brandConfig : null;
+  const brandConfig = deckMetadata && deckMetadata.brandConfig ? deckMetadata.brandConfig : null;
   if (brandConfig) {
     themeTokens = applyBrandOverrides(themeTokens, brandConfig);
   }

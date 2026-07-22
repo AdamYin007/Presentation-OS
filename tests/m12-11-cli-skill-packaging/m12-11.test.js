@@ -41,7 +41,10 @@ assert(fs.existsSync(path.join(ROOT, "scripts/make-pptx-help.txt")), "Help text 
 assert(fs.existsSync(path.join(ROOT, "fixtures/m12-11/sample-input.md")), "Sample fixture exists");
 
 const cliSrc = fs.readFileSync(CLI, "utf8");
-assert(cliSrc.includes('require("../packages/presentation-pipeline/src/index.js")'), "CLI imports runPipeline");
+assert(
+  cliSrc.includes('require("../packages/presentation-pipeline/src/index.js")'),
+  "CLI imports runPipeline",
+);
 assert(cliSrc.includes("parseArgs"), "CLI has argument parser");
 assert(cliSrc.includes("dryRun"), "CLI supports --dry-run");
 assert(cliSrc.includes("--json"), "CLI supports --json");
@@ -82,7 +85,13 @@ assert(rEmpty.stderr.includes("empty"), "Empty input says 'empty'");
 // ── 6. Invalid style ──────────────────────────────────────────
 
 console.log("\n6. Invalid style...");
-const rBadStyle = runCli([CLI, "fixtures/m12-11/sample-input.md", "out.pptx", "--style", "fake-style"]);
+const rBadStyle = runCli([
+  CLI,
+  "fixtures/m12-11/sample-input.md",
+  "out.pptx",
+  "--style",
+  "fake-style",
+]);
 assert(rBadStyle.status === 1, "Invalid style exits 1");
 assert(rBadStyle.stderr.includes("unknown style"), "Invalid style says 'unknown style'");
 
@@ -106,8 +115,14 @@ try {
   assert(false, "JSON output is valid (parse failed)");
 }
 if (summary) {
-  assert(typeof summary.slideCount === "number" && summary.slideCount >= 2, `slideCount ≥ 2 (got ${summary.slideCount})`);
-  assert(typeof summary.topic === "string" && summary.topic.length > 0, `topic is non-empty string`);
+  assert(
+    typeof summary.slideCount === "number" && summary.slideCount >= 2,
+    `slideCount ≥ 2 (got ${summary.slideCount})`,
+  );
+  assert(
+    typeof summary.topic === "string" && summary.topic.length > 0,
+    "topic is non-empty string",
+  );
   assert(Array.isArray(summary.slideSpecs), "slideSpecs is array");
   assert(summary.pptxSizeBytes > 0, `pptxSizeBytes > 0 (got ${summary.pptxSizeBytes})`);
 }
@@ -116,7 +131,9 @@ if (summary) {
 
 console.log("\n9. Full pipeline run (write PPTX)...");
 const tmpOut = path.join(ROOT, "fixtures/m12-11/.tmp-m12-11.pptx");
-try { fs.unlinkSync(tmpOut); } catch (_) {}
+try {
+  fs.unlinkSync(tmpOut);
+} catch (_) {}
 const rFull = runCli([CLI, "fixtures/m12-11/sample-input.md", tmpOut, "--style", "minimal-modern"]);
 assert(rFull.status === 0, "Full run exits 0");
 assert(fs.existsSync(tmpOut), "Output file created");
@@ -128,7 +145,13 @@ fs.unlinkSync(tmpOut);
 // ── 10. Business-consulting style ──────────────────────────────
 
 console.log("\n10. Business-consulting style...");
-const rConsulting = runCli([CLI, "fixtures/m12-11/sample-input.md", tmpOut, "--style", "business-consulting"]);
+const rConsulting = runCli([
+  CLI,
+  "fixtures/m12-11/sample-input.md",
+  tmpOut,
+  "--style",
+  "business-consulting",
+]);
 assert(rConsulting.status === 0, "Business-consulting style exits 0");
 const outBuf2 = fs.readFileSync(tmpOut);
 assert(outBuf2.readUInt32BE(0) === 0x504b0304, "Business-consulting output is valid PPTX");
@@ -137,7 +160,13 @@ fs.unlinkSync(tmpOut);
 // ── 11. Academic-clean style ──────────────────────────────────
 
 console.log("\n11. Academic-clean style...");
-const rAcademic = runCli([CLI, "fixtures/m12-11/sample-input.md", tmpOut, "--style", "academic-clean"]);
+const rAcademic = runCli([
+  CLI,
+  "fixtures/m12-11/sample-input.md",
+  tmpOut,
+  "--style",
+  "academic-clean",
+]);
 assert(rAcademic.status === 0, "Academic-clean style exits 0");
 const outBuf3 = fs.readFileSync(tmpOut);
 assert(outBuf3.readUInt32BE(0) === 0x504b0304, "Academic-clean output is valid PPTX");

@@ -102,7 +102,7 @@ async function main() {
     record(true, "LibreOffice/OpenOffice available for PDF conversion");
   } else {
     console.log(`  Reason: ${renderer.reason}`);
-    record(true, `LibreOffice unavailable — will use package-level checks only`, "warn");
+    record(true, "LibreOffice unavailable — will use package-level checks only", "warn");
   }
   console.log("");
 
@@ -242,8 +242,8 @@ async function main() {
     "",
     "---", "",
     "## Quality Metrics", "",
-    `| Metric | Value |`,
-    `|--------|-------|`,
+    "| Metric | Value |",
+    "|--------|-------|",
     `| Passed Checks | ${m12_15_pass} |`,
     `| Failed Checks | ${m12_15_fail} |`,
     `| Warnings | ${m12_15_warn} |`,
@@ -303,7 +303,7 @@ async function main() {
   console.log(`Quality Score: ${manifest.summary.qualityScore}/100`);
   console.log(`Commercial Verdict: ${verdictInfo.verdict}`);
   console.log("");
-  console.log(`Artifacts:`);
+  console.log("Artifacts:");
   console.log(`  Report:  ${REPORT_PATH}`);
   console.log(`  Verdict: ${VERDICT_PATH}`);
   console.log(`  Manifest: ${MANIFEST_PATH}`);

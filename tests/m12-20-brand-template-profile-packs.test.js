@@ -25,7 +25,12 @@ const {
   isBuiltinProfile,
   BUILTINS,
 } = require("../packages/brand-profiles/src/index.js");
-const { checkLogoSafeArea, DEFAULT_SAFE_AREA, SLIDE_WIDTH_PX, SLIDE_HEIGHT_PX } = require("../packages/logo-safe-area-gate/src/index.js");
+const {
+  checkLogoSafeArea,
+  DEFAULT_SAFE_AREA,
+  SLIDE_WIDTH_PX,
+  SLIDE_HEIGHT_PX,
+} = require("../packages/logo-safe-area-gate/src/index.js");
 
 const ROOT = path.join(__dirname, "..");
 const FIXTURES_DIR = path.join(ROOT, "fixtures", "m12-20");
@@ -60,9 +65,17 @@ function assertEqual(actual, expected, message) {
 
 function makeSlideSpec(logoBox) {
   return {
-    id: "s1", index: 1, section: "Intro", role: "title-slide", title: "Title",
-    keyMessage: "", body: [], visualType: "none", layout: "title-slide",
-    speakerNotes: "", sourceRefs: [],
+    id: "s1",
+    index: 1,
+    section: "Intro",
+    role: "title-slide",
+    title: "Title",
+    keyMessage: "",
+    body: [],
+    visualType: "none",
+    layout: "title-slide",
+    speakerNotes: "",
+    sourceRefs: [],
     designHints: logoBox ? { logo: { boundingBox: logoBox } } : {},
   };
 }
@@ -105,7 +118,10 @@ function testIsBuiltinProfile() {
 function testValidateProfile() {
   console.log("\n[Test] validateProfile");
   // Valid profile
-  const valid = validateProfile({ name: "Test", logoSafeArea: { top: 10, bottom: 10, left: 10, right: 10 } });
+  const valid = validateProfile({
+    name: "Test",
+    logoSafeArea: { top: 10, bottom: 10, left: 10, right: 10 },
+  });
   assert(valid.valid === true, "Valid profile passes validation");
   assertEqual(valid.errors.length, 0, "No errors for valid profile");
 
@@ -138,7 +154,11 @@ function testLoadBuiltins() {
   const r2 = loadProfile("business-consulting");
   assertEqual(r2.source, "builtin", "Business consulting source is 'builtin'");
   assertEqual(r2.profile.logoSafeArea.top, 50, "Business consulting top margin is 50px");
-  assertEqual(r2.profile.footerConvention, "brand-name", "Business consulting uses brand-name footer");
+  assertEqual(
+    r2.profile.footerConvention,
+    "brand-name",
+    "Business consulting uses brand-name footer",
+  );
   assert(r2.profile.allowedPalette.length > 0, "Has allowed palette");
 
   const r3 = loadProfile("academic-clean");
@@ -183,7 +203,10 @@ function testLoadInvalidJson() {
     loadProfile(invalidPath);
     assert(false, "Should have thrown for invalid JSON");
   } catch (err) {
-    assert(err.message.includes("Invalid JSON") || err.message.includes("JSON"), "Error mentions JSON issue");
+    assert(
+      err.message.includes("Invalid JSON") || err.message.includes("JSON"),
+      "Error mentions JSON issue",
+    );
   }
 }
 
@@ -196,7 +219,10 @@ function testLoadBadSchema() {
     loadProfile(badPath);
     assert(false, "Should have thrown for bad schema");
   } catch (err) {
-    assert(err.message.includes("validation failed") || err.message.includes("Validation"), "Error mentions validation failure");
+    assert(
+      err.message.includes("validation failed") || err.message.includes("Validation"),
+      "Error mentions validation failure",
+    );
     assert(err.message.includes("logoSafeArea"), "Error mentions logoSafeArea field");
   }
 }
@@ -259,22 +285,32 @@ function testDeliverPptxIntegration() {
 function testNpmScriptsRegistered() {
   console.log("\n[Test] NPM scripts registered in package.json");
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
-  assert(pkg.scripts["check:m12-20-brand-template-profile-packs"] !== undefined,
-    "npm script check:m12-20-brand-template-profile-packs is registered");
+  assert(
+    pkg.scripts["check:m12-20-brand-template-profile-packs"] !== undefined,
+    "npm script check:m12-20-brand-template-profile-packs is registered",
+  );
 }
 
 function testPackageExists() {
   console.log("\n[Test] Package directory exists");
   const pkgPath = path.join(ROOT, "packages", "brand-profiles", "src", "index.js");
   assert(fs.existsSync(pkgPath), "packages/brand-profiles/src/index.js exists");
-  assert(fs.existsSync(path.join(ROOT, "packages", "brand-profiles", "package.json")),
-    "packages/brand-profiles/package.json exists");
-  assert(fs.existsSync(path.join(ROOT, "packages", "brand-profiles", "src", "schema.js")),
-    "packages/brand-profiles/src/schema.js exists");
-  assert(fs.existsSync(path.join(ROOT, "packages", "brand-profiles", "src", "builtins.js")),
-    "packages/brand-profiles/src/builtins.js exists");
-  assert(fs.existsSync(path.join(ROOT, "packages", "brand-profiles", "src", "loader.js")),
-    "packages/brand-profiles/src/loader.js exists");
+  assert(
+    fs.existsSync(path.join(ROOT, "packages", "brand-profiles", "package.json")),
+    "packages/brand-profiles/package.json exists",
+  );
+  assert(
+    fs.existsSync(path.join(ROOT, "packages", "brand-profiles", "src", "schema.js")),
+    "packages/brand-profiles/src/schema.js exists",
+  );
+  assert(
+    fs.existsSync(path.join(ROOT, "packages", "brand-profiles", "src", "builtins.js")),
+    "packages/brand-profiles/src/builtins.js exists",
+  );
+  assert(
+    fs.existsSync(path.join(ROOT, "packages", "brand-profiles", "src", "loader.js")),
+    "packages/brand-profiles/src/loader.js exists",
+  );
 }
 
 function testSpecDocumentExists() {

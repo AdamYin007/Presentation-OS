@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWE Presentation OS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1>🎨 AWE Presentation OS</h1>
+      <p class="subtitle">Generate professional presentations from Markdown</p>
+    </header>
+
+    <main>
+      <section class="input-section">
+        <textarea 
+          id="markdown-input" 
+          placeholder="Enter your presentation content in Markdown..."
+          rows="12"
+        ># Welcome to AWE
+
+## Features
+
+- AI-powered slide generation
+- Professional templates
+- Brand customization
+- Audience adaptation
+
+## Get Started
+
+Simply paste your content and click Generate!</textarea>
+        
+        <div class="options">
+          <label>
+            <input type="checkbox" id="compiler-toggle">
+            Enable Compiler
+          </label>
+          
+          <label>
+            <input type="checkbox" id="audience-toggle">
+            Enable Audience Engine
+          </label>
+        </div>
+
+        <button id="generate-btn" class="btn-primary">
+          🚀 Generate Presentation
+        </button>
+      </section>
+
+      <section class="output-section">
+        <div id="loading" class="loading hidden">
+          <div class="spinner"></div>
+          <p>Generating your presentation...</p>
+        </div>
+
+        <div id="result" class="result hidden">
+          <h2>✅ Presentation Generated!</h2>
+          <p id="slide-count"></p>
+          <a id="download-link" class="btn-download" download>⬇️ Download PPTX</a>
+        </div>
+
+        <div id="error" class="error hidden">
+          <h2>❌ Error</h2>
+          <p id="error-message"></p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Built with ❤️ by AWE Team | v1.0.0</p>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

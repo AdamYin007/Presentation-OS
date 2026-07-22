@@ -18,7 +18,12 @@ function checkTitles(slideSpecs) {
       break;
     }
   }
-  return { id: "title-completeness", category: "content", pass: allFilled, message: `All ${slideSpecs.length} slides have non-empty titles` };
+  return {
+    id: "title-completeness",
+    category: "content",
+    pass: allFilled,
+    message: `All ${slideSpecs.length} slides have non-empty titles`,
+  };
 }
 
 function checkSourceRefs(slideSpecs) {
@@ -36,15 +41,30 @@ function checkSourceRefs(slideSpecs) {
   }
 
   if (contentSlides === 0) {
-    return { id: "source-ref-coverage", category: "content", pass: true, message: "No content slides to check" };
+    return {
+      id: "source-ref-coverage",
+      category: "content",
+      pass: true,
+      message: "No content slides to check",
+    };
   }
 
   const pct = Math.round((slidesWithRefs / contentSlides) * 100);
-  return { id: "source-ref-coverage", category: "content", pass: pct >= 100, message: `${slidesWithRefs}/${contentSlides} content slides have sourceRefs (${pct}%) — REQUIRED: 100%` };
+  return {
+    id: "source-ref-coverage",
+    category: "content",
+    pass: pct >= 100,
+    message: `${slidesWithRefs}/${contentSlides} content slides have sourceRefs (${pct}%) — REQUIRED: 100%`,
+  };
 }
 
 function checkDuplicateContent(slideSpecs) {
-  const normalize = (str) => str.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.,!?;:]+$/, "");
+  const normalize = (str) =>
+    str
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .replace(/[.,!?;:]+$/, "");
   const pairs = new Map();
   let duplicates = 0;
 
@@ -54,7 +74,12 @@ function checkDuplicateContent(slideSpecs) {
     else pairs.set(key, spec.id);
   }
 
-  return { id: "duplicate-detection", category: "content", pass: duplicates === 0, message: `Found ${duplicates} duplicate pairs out of ${pairs.size} unique — REQUIRED: 0 duplicates` };
+  return {
+    id: "duplicate-detection",
+    category: "content",
+    pass: duplicates === 0,
+    message: `Found ${duplicates} duplicate pairs out of ${pairs.size} unique — REQUIRED: 0 duplicates`,
+  };
 }
 
 function checkSectionDividers(slideSpecs) {
@@ -63,9 +88,19 @@ function checkSectionDividers(slideSpecs) {
   const allHaveTitles = dividerSlides.every((s) => s.title && s.title.trim().length > 0);
 
   const results = [];
-  results.push({ id: "section-dividers", category: "structure", pass: hasDividers, message: `Found ${dividerSlides.length} section dividers — RECOMMENDED: minimum 2` });
+  results.push({
+    id: "section-dividers",
+    category: "structure",
+    pass: hasDividers,
+    message: `Found ${dividerSlides.length} section dividers — RECOMMENDED: minimum 2`,
+  });
   if (dividerSlides.length > 0) {
-    results.push({ id: "section-divider-structure", category: "structure", pass: allHaveTitles, message: `All ${dividerSlides.length} section dividers have non-empty titles` });
+    results.push({
+      id: "section-divider-structure",
+      category: "structure",
+      pass: allHaveTitles,
+      message: `All ${dividerSlides.length} section dividers have non-empty titles`,
+    });
   }
   return results;
 }
@@ -73,12 +108,26 @@ function checkSectionDividers(slideSpecs) {
 function checkClosingSlide(slideSpecs) {
   const closingSlides = slideSpecs.filter((s) => s.role === "closing");
   const hasOne = closingSlides.length === 1;
-  const results = [{ id: "closing-slide", category: "structure", pass: hasOne, message: `Found ${closingSlides.length} closing slide(s) — REQUIRED: exactly 1` }];
+  const results = [
+    {
+      id: "closing-slide",
+      category: "structure",
+      pass: hasOne,
+      message: `Found ${closingSlides.length} closing slide(s) — REQUIRED: exactly 1`,
+    },
+  ];
 
   if (hasOne) {
     const closing = closingSlides[0];
-    const hasBody = Array.isArray(closing.body) ? closing.body.length > 0 : (closing.body && closing.body.trim().length > 0);
-    results.push({ id: "closing-slide-content", category: "structure", pass: true, message: `Closing slide present (${hasBody ? "has" : "no"} body content — reported as info)` });
+    const hasBody = Array.isArray(closing.body)
+      ? closing.body.length > 0
+      : closing.body && closing.body.trim().length > 0;
+    results.push({
+      id: "closing-slide-content",
+      category: "structure",
+      pass: true,
+      message: `Closing slide present (${hasBody ? "has" : "no"} body content — reported as info)`,
+    });
   }
   return results;
 }
@@ -91,7 +140,12 @@ function checkLayoutDiversity(slideSpecs) {
   }
   const distinctLayouts = Object.keys(layoutCounts).length;
   const totalSlides = slideSpecs.length;
-  return { id: "layout-diversity", category: "structure", pass: distinctLayouts >= Math.min(3, totalSlides), message: `${distinctLayouts} distinct layouts across ${totalSlides} slides (ratio: ${(totalSlides > 0 ? distinctLayouts / totalSlides : 0) * 100 | 0}%)` };
+  return {
+    id: "layout-diversity",
+    category: "structure",
+    pass: distinctLayouts >= Math.min(3, totalSlides),
+    message: `${distinctLayouts} distinct layouts across ${totalSlides} slides (ratio: ${((totalSlides > 0 ? distinctLayouts / totalSlides : 0) * 100) | 0}%)`,
+  };
 }
 
 // ─── Public API ─────────────────────────────────────────────────────────
@@ -117,10 +171,16 @@ function runQualityChecks(slideSpecs) {
   if (!dupCheck.pass) warnings.push(dupCheck.message);
 
   const sectionChecks = checkSectionDividers(slideSpecs);
-  sectionChecks.forEach(c => { checks.push(c); if (!c.pass) warnings.push(c.message); });
+  sectionChecks.forEach((c) => {
+    checks.push(c);
+    if (!c.pass) warnings.push(c.message);
+  });
 
   const closingChecks = checkClosingSlide(slideSpecs);
-  closingChecks.forEach(c => { checks.push(c); if (!c.pass) warnings.push(c.message); });
+  closingChecks.forEach((c) => {
+    checks.push(c);
+    if (!c.pass) warnings.push(c.message);
+  });
   // Closing slide with no body is an info-level warning, not a failure
   if (closingChecks.length > 1 && !closingChecks[1].message.includes("has")) {
     warnings.push("Closing slide has no body content — consider adding summary or contact info");
@@ -131,7 +191,9 @@ function runQualityChecks(slideSpecs) {
   if (!layoutCheck.pass) warnings.push(layoutCheck.message);
 
   // Count statuses
-  let passCount = 0, failCount = 0, warnCount = 0;
+  let passCount = 0,
+    failCount = 0,
+    warnCount = 0;
   for (const c of checks) {
     if (c.pass) passCount++;
     else failCount++;
@@ -170,11 +232,18 @@ function buildManifest(inputPath, pipelineResult, checkResults, outputDir) {
     },
     deck: {
       slideCount: slideSpecs.length,
-      contentSlides: slideSpecs.filter((s) => ["content", "data-chart", "architecture", "process"].includes(s.role)).length,
+      contentSlides: slideSpecs.filter((s) =>
+        ["content", "data-chart", "architecture", "process"].includes(s.role),
+      ).length,
       sectionDividers: slideSpecs.filter((s) => s.role === "section-divider").length,
       closingSlide: slideSpecs.some((s) => s.role === "closing"),
     },
-    checks: checks.map((c) => ({ id: c.id, category: c.category, status: c.pass ? "pass" : "fail", message: c.message })),
+    checks: checks.map((c) => ({
+      id: c.id,
+      category: c.category,
+      status: c.pass ? "pass" : "fail",
+      message: c.message,
+    })),
     warnings: warnings.length > 0 ? warnings : undefined,
     summary: {
       passCount,
@@ -200,31 +269,45 @@ function writeManifest(manifest, outputDir) {
  */
 function writeSummary(manifest, outputDir) {
   const lines = [
-    "# Presentation Quality Summary", "",
+    "# Presentation Quality Summary",
+    "",
     `**Input**: \`${manifest.input}\``,
     `**Generated**: ${new Date(manifest.generatedAt).toLocaleString()}`,
     `**Quality Score**: ${manifest.summary.qualityScore}/100 ${manifest.summary.qualityScore >= 80 ? "✅" : manifest.summary.qualityScore >= 50 ? "⚠️" : "❌"}`,
-    "", "---", "",
-    "## Deck Overview", "",
+    "",
+    "---",
+    "",
+    "## Deck Overview",
+    "",
     `- **Slides**: ${manifest.deck.slideCount}`,
     `- **Content slides**: ${manifest.deck.contentSlides}`,
     `- **Section dividers**: ${manifest.deck.sectionDividers}`,
     `- **Closing slide**: ${manifest.deck.closingSlide ? "Yes" : "No"}`,
-    "", "---", "",
-    "## Results", "",
-    "| Metric | Count |", "|--------|-------|",
+    "",
+    "---",
+    "",
+    "## Results",
+    "",
+    "| Metric | Count |",
+    "|--------|-------|",
     `| ✅ Passed | ${manifest.summary.passCount} |`,
     `| ❌ Failed | ${manifest.summary.failCount} |`,
     `| ⚠️ Warnings | ${manifest.summary.warnCount} |`,
     `| **Overall** | **${manifest.summary.overallStatus.toUpperCase()}** |`,
-    "", "---", "",
-    "## Checks", "",
-    "| # | Category | Status | Detail |", "|---|----------|--------|--------|",
+    "",
+    "---",
+    "",
+    "## Checks",
+    "",
+    "| # | Category | Status | Detail |",
+    "|---|----------|--------|--------|",
   ];
 
   manifest.checks.forEach((c, i) => {
     const icon = c.status === "pass" ? "✅" : c.status === "warn" ? "⚠️" : "❌";
-    lines.push(`| ${i + 1} | ${c.category} | ${icon} ${c.status.toUpperCase()} | ${c.message.replace(/\|/g, "\\|")} |`);
+    lines.push(
+      `| ${i + 1} | ${c.category} | ${icon} ${c.status.toUpperCase()} | ${c.message.replace(/\|/g, "\\|")} |`,
+    );
   });
 
   if (manifest.warnings && manifest.warnings.length > 0) {

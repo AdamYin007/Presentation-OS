@@ -2,8 +2,14 @@
  * Tests for M12.9 Natural-Language Revision engine.
  */
 
-const { reviseDeck, parseRevisionInstruction } = require("../../packages/presentation-revision/src/index.js");
-const { VALID_OPERATIONS, DEFAULT_REVISION_RESULT } = require("../../packages/presentation-revision/src/schema.js");
+const {
+  reviseDeck,
+  parseRevisionInstruction,
+} = require("../../packages/presentation-revision/src/index.js");
+const {
+  VALID_OPERATIONS,
+  DEFAULT_REVISION_RESULT,
+} = require("../../packages/presentation-revision/src/schema.js");
 
 let passed = 0;
 let failed = 0;
@@ -24,25 +30,117 @@ function makeTestDeck() {
     audience: "management",
     purpose: "review",
     narrativePattern: "background-method-results",
-    sections: [{ id: "sec-1", title: "Background", purpose: "context", keyMessage: "Overview", slideAllocation: 3, sourceRefs: [] }],
+    sections: [
+      {
+        id: "sec-1",
+        title: "Background",
+        purpose: "context",
+        keyMessage: "Overview",
+        slideAllocation: 3,
+        sourceRefs: [],
+      },
+    ],
     slides: [
-      { slideId: "slide-001", role: "title", objective: "", keyMessage: "", candidateVisual: "none", sourceRefs: [] },
-      { slideId: "slide-002", role: "executive-summary", objective: "overview", keyMessage: "Key findings", candidateVisual: "metric-cards", sourceRefs: [] },
-      { slideId: "slide-003", role: "section-divider", objective: "", keyMessage: "Background", candidateVisual: "none", sourceRefs: [] },
-      { slideId: "slide-004", role: "content", objective: "data", keyMessage: "Data shows growth", candidateVisual: "bar-chart", sourceRefs: [] },
-      { slideId: "slide-005", role: "content", objective: "analysis", keyMessage: "Analysis of trends", candidateVisual: "line-chart", sourceRefs: [] },
-      { slideId: "slide-006", role: "section-divider", objective: "", keyMessage: "Results", candidateVisual: "none", sourceRefs: [] },
-      { slideId: "slide-007", role: "comparison", objective: "compare options", keyMessage: "Option A vs B", candidateVisual: "comparison", sourceRefs: [] },
-      { slideId: "slide-008", role: "recommendation", objective: "next steps", keyMessage: "Recommend action", candidateVisual: "process", sourceRefs: [] },
-      { slideId: "slide-009", role: "closing", objective: "", keyMessage: "Thank you", candidateVisual: "none", sourceRefs: [] },
+      {
+        slideId: "slide-001",
+        role: "title",
+        objective: "",
+        keyMessage: "",
+        candidateVisual: "none",
+        sourceRefs: [],
+      },
+      {
+        slideId: "slide-002",
+        role: "executive-summary",
+        objective: "overview",
+        keyMessage: "Key findings",
+        candidateVisual: "metric-cards",
+        sourceRefs: [],
+      },
+      {
+        slideId: "slide-003",
+        role: "section-divider",
+        objective: "",
+        keyMessage: "Background",
+        candidateVisual: "none",
+        sourceRefs: [],
+      },
+      {
+        slideId: "slide-004",
+        role: "content",
+        objective: "data",
+        keyMessage: "Data shows growth",
+        candidateVisual: "bar-chart",
+        sourceRefs: [],
+      },
+      {
+        slideId: "slide-005",
+        role: "content",
+        objective: "analysis",
+        keyMessage: "Analysis of trends",
+        candidateVisual: "line-chart",
+        sourceRefs: [],
+      },
+      {
+        slideId: "slide-006",
+        role: "section-divider",
+        objective: "",
+        keyMessage: "Results",
+        candidateVisual: "none",
+        sourceRefs: [],
+      },
+      {
+        slideId: "slide-007",
+        role: "comparison",
+        objective: "compare options",
+        keyMessage: "Option A vs B",
+        candidateVisual: "comparison",
+        sourceRefs: [],
+      },
+      {
+        slideId: "slide-008",
+        role: "recommendation",
+        objective: "next steps",
+        keyMessage: "Recommend action",
+        candidateVisual: "process",
+        sourceRefs: [],
+      },
+      {
+        slideId: "slide-009",
+        role: "closing",
+        objective: "",
+        keyMessage: "Thank you",
+        candidateVisual: "none",
+        sourceRefs: [],
+      },
     ],
   };
 }
 
 function makeTestSlideSpecs(count = 9) {
   const specs = [];
-  const layouts = ["title-slide", "executive-summary", "section-divider", "three-card", "horizontal-process", "section-divider", "comparison", "recommendation", "closing"];
-  const titles = ["Title", "Key Findings", "Background", "Growth Data", "Trend Analysis", "Results", "Options Comparison", "Recommendation", "Closing"];
+  const layouts = [
+    "title-slide",
+    "executive-summary",
+    "section-divider",
+    "three-card",
+    "horizontal-process",
+    "section-divider",
+    "comparison",
+    "recommendation",
+    "closing",
+  ];
+  const titles = [
+    "Title",
+    "Key Findings",
+    "Background",
+    "Growth Data",
+    "Trend Analysis",
+    "Results",
+    "Options Comparison",
+    "Recommendation",
+    "Closing",
+  ];
   for (let i = 0; i < count; i++) {
     specs.push({
       id: `slide-${String(i + 1).padStart(3, "0")}`,
@@ -210,7 +308,7 @@ assert(result.success === false, "unrecognized instruction fails gracefully");
 assert(result.warnings.length > 0, "warning about unrecognized ops");
 
 // === Summary ===
-console.log(`\n=========================================`);
+console.log("\n=========================================");
 console.log(`Results: ${passed} passed, ${failed} failed`);
 if (failed > 0) {
   process.exit(1);

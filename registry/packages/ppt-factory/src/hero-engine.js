@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 /**
  * Hero Engine Phase 1 — Enrich a story with hero metadata from a hero sequence.
@@ -21,7 +21,7 @@ const path = require('path');
  */
 function enrichStoryWithHero(story, heroSequence, options) {
   const opts = Object.assign({}, options);
-  if (typeof opts.overrideTitle !== 'boolean') opts.overrideTitle = false;
+  if (typeof opts.overrideTitle !== "boolean") opts.overrideTitle = false;
 
   // --- Passthrough when no hero sequence ---
   if (!heroSequence || !heroSequence.slides || heroSequence.slides.length === 0) {
@@ -66,7 +66,7 @@ function enrichStoryWithHero(story, heroSequence, options) {
     // Build the hero object
     const hero = {
       pattern_id: hs.hero_pattern_id || null,
-      statement: hs.hero_statement || '',
+      statement: hs.hero_statement || "",
       visual_focus: hs.visual_focus || null,
       decision_goal: hs.decision_goal || null,
       first_impression_5s: hs.first_impression_5s || null,
@@ -94,7 +94,7 @@ function enrichStoryWithHero(story, heroSequence, options) {
 
   // --- Attach _meta ---
   enriched._meta = {
-    hero_engine_version: '1.0.0',
+    hero_engine_version: "1.0.0",
     hero_sequence_source: heroSequence.meta ? heroSequence.meta.story_id : null,
     generated_at: new Date().toISOString(),
     narrative_arc: heroSequence.meta ? heroSequence.meta.narrative_arc : null,
@@ -120,7 +120,7 @@ function enrichStoryWithHero(story, heroSequence, options) {
 function loadHeroLibrary(libraryPath) {
   if (libraryPath) {
     try {
-      const raw = fs.readFileSync(libraryPath, 'utf8');
+      const raw = fs.readFileSync(libraryPath, "utf8");
       const lib = JSON.parse(raw);
       return Array.isArray(lib.patterns) ? lib.patterns : [];
     } catch (e) {
@@ -131,13 +131,13 @@ function loadHeroLibrary(libraryPath) {
 
   // Try to resolve from common project locations
   const candidates = [
-    path.join(__dirname, '..', '..', '..', '..', 'presentation-dna', 'hero-layer', 'hero-library.json'),
-    path.join(process.cwd(), 'presentation-dna', 'hero-layer', 'hero-library.json'),
+    path.join(__dirname, "..", "..", "..", "..", "presentation-dna", "hero-layer", "hero-library.json"),
+    path.join(process.cwd(), "presentation-dna", "hero-layer", "hero-library.json"),
   ];
 
   for (const candidate of candidates) {
     try {
-      const raw = fs.readFileSync(candidate, 'utf8');
+      const raw = fs.readFileSync(candidate, "utf8");
       const lib = JSON.parse(raw);
       return Array.isArray(lib.patterns) ? lib.patterns : [];
     } catch (_) {

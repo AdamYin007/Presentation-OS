@@ -55,14 +55,26 @@ const {
   mergeCommercialReadiness,
 } = require("../packages/pixel-accessibility-gate/src/index.js");
 const { checkLogoSafeArea } = require("../packages/logo-safe-area-gate/src/index.js");
-const { loadProfile, resolveBrandConfig, getBuiltInProfiles } = require("../packages/brand-profiles/src/index.js");
+const {
+  loadProfile,
+  resolveBrandConfig,
+  getBuiltInProfiles,
+} = require("../packages/brand-profiles/src/index.js");
 
 // ─── Argument Parsing ──────────────────────────────────────────────
 
 function parseArgs(argv) {
   const args = argv.slice(2);
   let positional = [];
-  let options = { style: "minimal-modern", title: null, json: false, brandProfile: null };
+  let options = {
+    style: "minimal-modern",
+    title: null,
+    json: false,
+    brandProfile: null,
+    compiler: false,
+    audience: null,
+    speaker: null,
+  };
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--help" || args[i] === "-h") {
@@ -76,6 +88,15 @@ Options:
                      Built-ins: ${getBuiltInProfiles().join(", ")}
                      Profile feeds logoSafeArea, allowed colors, typography, footer/title conventions.
   --title <text>     Override presentation title
+  --compiler         Enable Presentation Compiler (M12.24) — standard mode optimization
+                     Analyzes entire presentation before rendering: overflow detection,
+                     pagination, resource deduplication, theme consistency.
+  --optimize         Same as --compiler but enables full constraint solving,
+                     pagination analysis, and accessibility checking (optimized mode).
+  --audience <role>  Audience role for dynamic adaptation (M12.25):
+                     board | executives | managers | engineers | students | investors | customers | general
+  --speaker <profile>Speaker profile for dynamic adaptation (M12.25):
+                     executive | manager | specialist | student | general_public
   --json             Also print machine-readable report to stdout
   --help, -h         Show this help message
 
@@ -84,7 +105,9 @@ Examples:
   node scripts/deliver-pptx.js slides.md ./out --style business-consulting
   node scripts/deliver-pptx.js slides.md ./out --brand-profile business-consulting
   node scripts/deliver-pptx.js slides.md ./out --brand-profile /path/to/my-brand.json
-  node scripts/deliver-pptx.js slides.md ./out --title "Q3 Review" --json`);
+  node scripts/deliver-pptx.js slides.md ./out --title "Q3 Review" --json
+  node scripts/deliver-pptx.js slides.md ./out --compiler
+  node scripts/deliver-pptx.js slides.md ./out --optimize`);
       process.exit(0);
     }
     if (args[i] === "--style" && i + 1 < args.length) {
@@ -93,6 +116,14 @@ Examples:
       options.brandProfile = args[++i];
     } else if (args[i] === "--title" && i + 1 < args.length) {
       options.title = args[++i];
+    } else if (args[i] === "--optimize") {
+      options.compiler = "optimized";
+    } else if (args[i] === "--compiler") {
+      options.compiler = "standard";
+    } else if (args[i] === "--audience" && i + 1 < args.length) {
+      options.audience = args[++i];
+    } else if (args[i] === "--speaker" && i + 1 < args.length) {
+      options.speaker = args[++i];
     } else if (args[i] === "--json") {
       options.json = true;
     } else if (!args[i].startsWith("--")) {
@@ -126,7 +157,8 @@ function step(label) {
 
 function log(level, msg) {
   if (!jsonMode) {
-    const icon = level === "OK" ? "  OK" : level === "WARN" ? " WARN" : level === "FAIL" ? "FAIL" : "    ";
+    const icon =
+      level === "OK" ? "  OK" : level === "WARN" ? " WARN" : level === "FAIL" ? "FAIL" : "    ";
     console.log(`${icon} ${msg}`);
   }
 }
@@ -213,8 +245,14 @@ async function main() {
     outputDir: auditDir,
     inputPath: resolvedInput,
     brandConfig: brandConfig || null,
+    compiler: options.compiler || false,
   };
   if (options.title) pipelineOpts.title = options.title;
+  if (options.audience || options.speaker) {
+    pipelineOpts.audienceEngine = {};
+    if (options.audience) pipelineOpts.audienceEngine.audience = options.audience;
+    if (options.speaker) pipelineOpts.audienceEngine.speaker = options.speaker;
+  }
 
   let pipelineResult;
   try {
@@ -222,7 +260,12 @@ async function main() {
   } catch (err) {
     console.error(`Pipeline error: ${err.message}`);
     if (!options.json) {
-      fs.writeFileSync(verdictPath, "# Commercial Delivery Verdict\n\n**Status**: ERROR\n\nPipeline failed: " + err.message + "\n");
+      fs.writeFileSync(
+        verdictPath,
+        "# Commercial Delivery Verdict\n\n**Status**: ERROR\n\nPipeline failed: " +
+          err.message +
+          "\n",
+      );
     }
     process.exit(2);
   }
@@ -254,7 +297,15 @@ async function main() {
   // ── Step 2: M12.15 — Rendered Visual QA ────────────────────────
   step("[2/6] M12.15 — Rendered Visual QA...");
 
-  const { resolveRenderer, renderToPdf, getPdfPageCount, renderPdfToPng, validateLayoutGeometry, validateRenderedPages, computeVerdict } = renderedVisualQa;
+  const {
+    resolveRenderer,
+    renderToPdf,
+    getPdfPageCount,
+    renderPdfToPng,
+    validateLayoutGeometry,
+    validateRenderedPages,
+    computeVerdict,
+  } = renderedVisualQa;
 
   const renderer = resolveRenderer();
   let m12_15_verdict = "NEEDS_REVIEW";
@@ -272,8 +323,16 @@ async function main() {
         try {
           pdfTextPages = [];
           for (let i = 1; i <= pageCount; i++) {
-            const text = require("child_process").execFileSync("pdftotext", ["-f", String(i), "-l", String(i), "-layout", pdfResult.pdfPath, "-"], { encoding: "utf8", timeout: 30000 });
-            pdfTextPages.push({ page: i, charCount: text.replace(/\s+/g, "").length, rawLength: text.length });
+            const text = require("child_process").execFileSync(
+              "pdftotext",
+              ["-f", String(i), "-l", String(i), "-layout", pdfResult.pdfPath, "-"],
+              { encoding: "utf8", timeout: 30000 },
+            );
+            pdfTextPages.push({
+              page: i,
+              charCount: text.replace(/\s+/g, "").length,
+              rawLength: text.length,
+            });
           }
         } catch (e) {
           // pdftotext per-page failed — continue with empty pages
@@ -288,7 +347,11 @@ async function main() {
         try {
           const baseName = path.basename(pdfResult.pdfPath, ".pdf");
           const outGlob = path.join(auditDir, `${baseName}-page-%d.png`);
-          require("child_process").execFileSync("magick", [pdfResult.pdfPath, "-density", "200", "-quality", "95", outGlob], { timeout: 120000 });
+          require("child_process").execFileSync(
+            "magick",
+            [pdfResult.pdfPath, "-density", "200", "-quality", "95", outGlob],
+            { timeout: 120000 },
+          );
           for (let i = 1; i <= pageCount; i++) {
             const expected = path.join(auditDir, `${baseName}-page-${i}.png`);
             if (fs.existsSync(expected)) {
@@ -311,21 +374,35 @@ async function main() {
   const renderedResults = validateRenderedPages(
     pngFiles.map(() => null),
     pdfTextPages,
-    slideSpecs
+    slideSpecs,
   );
 
-  m12_15_verdict = computeVerdict(manifest, { ...geometry, ...renderedResults }, renderer.available).verdict;
-  log(m12_15_verdict === "PASS" ? "OK" : m12_15_verdict === "FAIL" ? "FAIL" : "WARN", `M12.15 verdict: ${m12_15_verdict}`);
+  m12_15_verdict = computeVerdict(
+    manifest,
+    { ...geometry, ...renderedResults },
+    renderer.available,
+  ).verdict;
+  log(
+    m12_15_verdict === "PASS" ? "OK" : m12_15_verdict === "FAIL" ? "FAIL" : "WARN",
+    `M12.15 verdict: ${m12_15_verdict}`,
+  );
 
   // Write rendered QA report
-  fs.writeFileSync(renderedReportPath, JSON.stringify({
-    verdict: m12_15_verdict,
-    rendererAvailable: renderer.available,
-    pageCount: pdfTextPages.length,
-    geometry,
-    renderedResults,
-    qualityScore: manifest?.summary?.qualityScore || 0,
-  }, null, 2));
+  fs.writeFileSync(
+    renderedReportPath,
+    JSON.stringify(
+      {
+        verdict: m12_15_verdict,
+        rendererAvailable: renderer.available,
+        pageCount: pdfTextPages.length,
+        geometry,
+        renderedResults,
+        qualityScore: manifest?.summary?.qualityScore || 0,
+      },
+      null,
+      2,
+    ),
+  );
   log("OK", "Rendered QA report written");
 
   if (!jsonMode) console.log("");
@@ -333,8 +410,18 @@ async function main() {
   // ── Step 3: M12.16 + M12.20 — Visual Design Standards Gate ──────
   step("[3/6] M12.16 + M12.20 — Visual Design Standards Gate...");
 
-  const m12_16_gate = await runVisualDesignGate(slideSpecs, layoutPlan, { m12_15_verdict, brandConfig });
-  log(m12_16_gate.overallVerdict === "PASS" ? "OK" : m12_16_gate.overallVerdict === "FAIL" ? "FAIL" : "WARN", `M12.16 verdict: ${m12_16_gate.overallVerdict} (score: ${m12_16_gate.summary.qualityScore}/100)`);
+  const m12_16_gate = await runVisualDesignGate(slideSpecs, layoutPlan, {
+    m12_15_verdict,
+    brandConfig,
+  });
+  log(
+    m12_16_gate.overallVerdict === "PASS"
+      ? "OK"
+      : m12_16_gate.overallVerdict === "FAIL"
+        ? "FAIL"
+        : "WARN",
+    `M12.16 verdict: ${m12_16_gate.overallVerdict} (score: ${m12_16_gate.summary.qualityScore}/100)`,
+  );
 
   // Write visual design summary
   fs.writeFileSync(visualSummaryPath, generateM12_16Summary(m12_16_gate));
@@ -346,23 +433,32 @@ async function main() {
   step("[4/6] M12.19 + M12.20 — Logo Safe Area Enforcement...");
 
   const m12_19_logo = checkLogoSafeArea(slideSpecs, layoutPlan, brandConfig);
-  log(m12_19_logo.verdict === "PASS" ? "OK" : m12_19_logo.verdict === "FAIL" ? "FAIL" : "WARN",
-      `M12.19 logo safe-area: ${m12_19_logo.verdict} (${m12_19_logo.totalLogosChecked} logos checked)`);
+  log(
+    m12_19_logo.verdict === "PASS" ? "OK" : m12_19_logo.verdict === "FAIL" ? "FAIL" : "WARN",
+    `M12.19 logo safe-area: ${m12_19_logo.verdict} (${m12_19_logo.totalLogosChecked} logos checked)`,
+  );
 
   // Write logo safe-area report
-  fs.writeFileSync(logoReportPath, JSON.stringify({
-    gate: "m12_19_logo_safe_area",
-    verdict: m12_19_logo.verdict,
-    passCount: m12_19_logo.passCount,
-    failCount: m12_19_logo.failCount,
-    warnCount: m12_19_logo.warnCount,
-    totalLogosChecked: m12_19_logo.totalLogosChecked,
-    margins: m12_19_logo.margins,
-    slideDimensions: m12_19_logo.slideDimensions,
-    results: m12_19_logo.results,
-    issues: m12_19_logo.issues,
-    brandProfile: profileSource || null,
-  }, null, 2));
+  fs.writeFileSync(
+    logoReportPath,
+    JSON.stringify(
+      {
+        gate: "m12_19_logo_safe_area",
+        verdict: m12_19_logo.verdict,
+        passCount: m12_19_logo.passCount,
+        failCount: m12_19_logo.failCount,
+        warnCount: m12_19_logo.warnCount,
+        totalLogosChecked: m12_19_logo.totalLogosChecked,
+        margins: m12_19_logo.margins,
+        slideDimensions: m12_19_logo.slideDimensions,
+        results: m12_19_logo.results,
+        issues: m12_19_logo.issues,
+        brandProfile: profileSource || null,
+      },
+      null,
+      2,
+    ),
+  );
   log("OK", "Logo safe-area report written");
 
   if (!jsonMode) console.log("");
@@ -372,14 +468,23 @@ async function main() {
 
   const environment = detectEnvironment();
   const pixelContrast = checkPixelContrast(pngFiles, slideSpecs, layoutPlan);
-  log(pixelContrast.verdict === "PASS" ? "OK" : pixelContrast.verdict === "FAIL" ? "FAIL" : "WARN", `Pixel contrast: ${pixelContrast.verdict}`);
+  log(
+    pixelContrast.verdict === "PASS" ? "OK" : pixelContrast.verdict === "FAIL" ? "FAIL" : "WARN",
+    `Pixel contrast: ${pixelContrast.verdict}`,
+  );
   if (pixelContrast.degraded) log("WARN", "Degraded: ImageMagick unavailable, using color proxy");
 
   const colorblind = checkColorBlindness(layoutPlan);
-  log(colorblind.verdict === "PASS" ? "OK" : colorblind.verdict === "FAIL" ? "FAIL" : "WARN", `Color-blindness: ${colorblind.verdict}`);
+  log(
+    colorblind.verdict === "PASS" ? "OK" : colorblind.verdict === "FAIL" ? "FAIL" : "WARN",
+    `Color-blindness: ${colorblind.verdict}`,
+  );
 
   const font = checkFontFallback(slideSpecs, layoutPlan, pdfTextPages, environment);
-  log(font.verdict === "PASS" ? "OK" : font.verdict === "FAIL" ? "FAIL" : "WARN", `Font readability: ${font.verdict}`);
+  log(
+    font.verdict === "PASS" ? "OK" : font.verdict === "FAIL" ? "FAIL" : "WARN",
+    `Font readability: ${font.verdict}`,
+  );
   if (font.degraded) log("WARN", "Degraded: PDF text extraction unavailable");
 
   if (!jsonMode) console.log("");
@@ -394,18 +499,29 @@ async function main() {
     colorblind,
     font,
     environment,
-    m12_19_logo
+    m12_19_logo,
   );
 
   // Enforce: any M12.17 sub-check FAIL prevents overall PASS
-  if (commercialReport.overallVerdict === "PASS" &&
-      (pixelContrast.verdict === "FAIL" || colorblind.verdict === "FAIL" || font.verdict === "FAIL")) {
+  if (
+    commercialReport.overallVerdict === "PASS" &&
+    (pixelContrast.verdict === "FAIL" || colorblind.verdict === "FAIL" || font.verdict === "FAIL")
+  ) {
     commercialReport.overallVerdict = "FAIL";
   }
 
-  log(commercialReport.overallVerdict === "PASS" ? "OK" : commercialReport.overallVerdict === "FAIL" ? "FAIL" : "WARN",
-      `Overall commercial readiness: ${commercialReport.overallVerdict}`);
-  log("", `Checks: ${commercialReport.totalChecks.pass} pass, ${commercialReport.totalChecks.fail} fail, ${commercialReport.totalChecks.warn} warn`);
+  log(
+    commercialReport.overallVerdict === "PASS"
+      ? "OK"
+      : commercialReport.overallVerdict === "FAIL"
+        ? "FAIL"
+        : "WARN",
+    `Overall commercial readiness: ${commercialReport.overallVerdict}`,
+  );
+  log(
+    "",
+    `Checks: ${commercialReport.totalChecks.pass} pass, ${commercialReport.totalChecks.fail} fail, ${commercialReport.totalChecks.warn} warn`,
+  );
   if (commercialReport.remediations.length > 0) {
     log("", `Remediations: ${commercialReport.remediations.length} actionable items`);
   }
@@ -425,7 +541,9 @@ async function main() {
   summaryLines.push("");
   summaryLines.push(`**Generated**: ${new Date().toLocaleString()}`);
   summaryLines.push(`**Overall Verdict**: ${commercialReport.overallVerdict}`);
-  summaryLines.push(`**Total Checks**: ${commercialReport.totalChecks.pass + commercialReport.totalChecks.fail + commercialReport.totalChecks.warn} (${commercialReport.totalChecks.pass} pass, ${commercialReport.totalChecks.fail} fail, ${commercialReport.totalChecks.warn} warn)`);
+  summaryLines.push(
+    `**Total Checks**: ${commercialReport.totalChecks.pass + commercialReport.totalChecks.fail + commercialReport.totalChecks.warn} (${commercialReport.totalChecks.pass} pass, ${commercialReport.totalChecks.fail} fail, ${commercialReport.totalChecks.warn} warn)`,
+  );
   summaryLines.push("");
 
   summaryLines.push("## Environment");
@@ -442,24 +560,40 @@ async function main() {
   summaryLines.push("");
   summaryLines.push("| Gate | Verdict |");
   summaryLines.push("|------|---------|");
-  summaryLines.push(`| M12.15 Rendered Visual QA | ${commercialReport.gateResults.m12_15_rendered_qa} |`);
-  summaryLines.push(`| M12.16 Visual Design Standards | ${commercialReport.gateResults.m12_16_visual_design} |`);
-  summaryLines.push(`| M12.17 Pixel Contrast | ${commercialReport.gateResults.m12_17_pixel_contrast} |`);
-  summaryLines.push(`| M12.17 Color-Blindness | ${commercialReport.gateResults.m12_17_color_blindness} |`);
-  summaryLines.push(`| M12.17 Font Readability | ${commercialReport.gateResults.m12_17_font_readability} |`);
-  summaryLines.push(`| **Overall Commercial Readiness** | **${commercialReport.overallVerdict}** |`);
+  summaryLines.push(
+    `| M12.15 Rendered Visual QA | ${commercialReport.gateResults.m12_15_rendered_qa} |`,
+  );
+  summaryLines.push(
+    `| M12.16 Visual Design Standards | ${commercialReport.gateResults.m12_16_visual_design} |`,
+  );
+  summaryLines.push(
+    `| M12.17 Pixel Contrast | ${commercialReport.gateResults.m12_17_pixel_contrast} |`,
+  );
+  summaryLines.push(
+    `| M12.17 Color-Blindness | ${commercialReport.gateResults.m12_17_color_blindness} |`,
+  );
+  summaryLines.push(
+    `| M12.17 Font Readability | ${commercialReport.gateResults.m12_17_font_readability} |`,
+  );
+  summaryLines.push(
+    `| **Overall Commercial Readiness** | **${commercialReport.overallVerdict}** |`,
+  );
   summaryLines.push("");
 
   if (pixelContrast.findings && pixelContrast.findings.length > 0) {
     summaryLines.push("### Pixel Contrast Details");
     summaryLines.push("");
-    summaryLines.push(`**Verdict**: ${pixelContrast.verdict}${pixelContrast.degraded ? " (degraded: no ImageMagick)" : ""}`);
+    summaryLines.push(
+      `**Verdict**: ${pixelContrast.verdict}${pixelContrast.degraded ? " (degraded: no ImageMagick)" : ""}`,
+    );
     summaryLines.push("");
     summaryLines.push("| Page | Role | Method | Ratio | Severity |");
     summaryLines.push("|------|------|--------|-------|----------|");
     for (const f of pixelContrast.findings) {
       const icon = f.severity === "pass" ? "PASS" : f.severity === "warn" ? "WARN" : "FAIL";
-      summaryLines.push(`| ${f.page} | ${f.role} | ${f.method} | ${f.ratio ? f.ratio + ":1" : "N/A"} | ${icon} |`);
+      summaryLines.push(
+        `| ${f.page} | ${f.role} | ${f.method} | ${f.ratio ? f.ratio + ":1" : "N/A"} | ${icon} |`,
+      );
     }
     summaryLines.push("");
   }
@@ -469,7 +603,9 @@ async function main() {
     summaryLines.push("");
     summaryLines.push(`**Verdict**: ${colorblind.verdict}`);
     summaryLines.push("");
-    summaryLines.push("Simulates protanopia, deuteranopia, and tritanopia via deterministic matrix transforms.");
+    summaryLines.push(
+      "Simulates protanopia, deuteranopia, and tritanopia via deterministic matrix transforms.",
+    );
     summaryLines.push("");
     const failFindings = colorblind.findings.filter((f) => f.severity === "fail");
     const warnFindings = colorblind.findings.filter((f) => f.severity === "warn");
@@ -477,7 +613,9 @@ async function main() {
       summaryLines.push("#### Hard Failures");
       summaryLines.push("");
       for (const f of failFindings) {
-        summaryLines.push(`- Slide ${f.page}: ${f.pair} — sim distance ${f.simDist} (${f.simType})${f.suggestion ? " → " + f.suggestion : ""}`);
+        summaryLines.push(
+          `- Slide ${f.page}: ${f.pair} — sim distance ${f.simDist} (${f.simType})${f.suggestion ? " → " + f.suggestion : ""}`,
+        );
       }
       summaryLines.push("");
     }
@@ -485,12 +623,16 @@ async function main() {
       summaryLines.push("#### Warnings");
       summaryLines.push("");
       for (const f of warnFindings) {
-        summaryLines.push(`- Slide ${f.page}: ${f.pair} — sim distance ${f.simDist} (${f.simType})`);
+        summaryLines.push(
+          `- Slide ${f.page}: ${f.pair} — sim distance ${f.simDist} (${f.simType})`,
+        );
       }
       summaryLines.push("");
     }
     if (!failFindings.length && !warnFindings.length) {
-      summaryLines.push("All color pairs maintain distinguishability across all three simulations.");
+      summaryLines.push(
+        "All color pairs maintain distinguishability across all three simulations.",
+      );
       summaryLines.push("");
     }
   }
@@ -498,7 +640,9 @@ async function main() {
   if (font.findings && font.findings.length > 0) {
     summaryLines.push("### Font Fallback & Readability");
     summaryLines.push("");
-    summaryLines.push(`**Verdict**: ${font.verdict}${font.degraded ? " (degraded: no poppler)" : ""}`);
+    summaryLines.push(
+      `**Verdict**: ${font.verdict}${font.degraded ? " (degraded: no poppler)" : ""}`,
+    );
     summaryLines.push("");
     for (const f of font.findings) {
       if (f.suggestion) {
@@ -533,7 +677,9 @@ async function main() {
   logoSummaryLines.push(`**Generated**: ${new Date().toLocaleString()}`);
   logoSummaryLines.push(`**Overall Verdict**: ${m12_19_logo.verdict}`);
   logoSummaryLines.push(`**Total Logos Checked**: ${m12_19_logo.totalLogosChecked}`);
-  logoSummaryLines.push(`**Checks**: ${m12_19_logo.passCount} pass, ${m12_19_logo.failCount} fail, ${m12_19_logo.warnCount} warn`);
+  logoSummaryLines.push(
+    `**Checks**: ${m12_19_logo.passCount} pass, ${m12_19_logo.failCount} fail, ${m12_19_logo.warnCount} warn`,
+  );
   logoSummaryLines.push("");
 
   if (m12_19_logo.margins) {
@@ -595,7 +741,9 @@ async function main() {
 
   verdictLines.push("## Quality Metrics");
   verdictLines.push("");
-  verdictLines.push(`- Total checks: ${commercialReport.totalChecks.pass + commercialReport.totalChecks.fail + commercialReport.totalChecks.warn}`);
+  verdictLines.push(
+    `- Total checks: ${commercialReport.totalChecks.pass + commercialReport.totalChecks.fail + commercialReport.totalChecks.warn}`,
+  );
   verdictLines.push(`- Passed: ${commercialReport.totalChecks.pass}`);
   verdictLines.push(`- Failed: ${commercialReport.totalChecks.fail}`);
   verdictLines.push(`- Warnings: ${commercialReport.totalChecks.warn}`);
@@ -613,12 +761,16 @@ async function main() {
   if (environment.hasLibreOffice || environment.hasImagemagick || environment.hasPoppler) {
     verdictLines.push("## Environment Note");
     verdictLines.push("");
-    verdictLines.push("This verdict was computed with full rendering toolchain available. For degraded environments (missing LibreOffice/ImageMagick/Poppler), the verdict would be NEEDS_REVIEW at minimum.");
+    verdictLines.push(
+      "This verdict was computed with full rendering toolchain available. For degraded environments (missing LibreOffice/ImageMagick/Poppler), the verdict would be NEEDS_REVIEW at minimum.",
+    );
     verdictLines.push("");
   } else {
     verdictLines.push("## Environment Note");
     verdictLines.push("");
-    verdictLines.push("> ⚠ No rendering tools detected. All pixel-level and rendered checks were skipped. Verdict is based on metadata analysis only.");
+    verdictLines.push(
+      "> ⚠ No rendering tools detected. All pixel-level and rendered checks were skipped. Verdict is based on metadata analysis only.",
+    );
     verdictLines.push("");
   }
 
@@ -654,7 +806,10 @@ async function main() {
       const exists = fs.existsSync(fullPath);
       const size = exists ? fs.statSync(fullPath).size : 0;
       const icon = exists ? "OK" : "MISSING";
-      log(icon, `${artifact.name} (${artifact.desc})${exists ? ` (${size.toLocaleString()} bytes)` : ""}`);
+      log(
+        icon,
+        `${artifact.name} (${artifact.desc})${exists ? ` (${size.toLocaleString()} bytes)` : ""}`,
+      );
     }
 
     // Cleanup temp files

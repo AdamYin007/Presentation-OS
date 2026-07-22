@@ -30,15 +30,24 @@ function _manualLayout(slide, centerLabel, nodes, pptx, opts) {
 
   // Central platform ellipse
   slide.addShape(pptx.ShapeType.ellipse, {
-    x: cx, y: cy, w: cw, h: ch,
+    x: cx,
+    y: cy,
+    w: cw,
+    h: ch,
     fill: { color: C.blue },
-    line: { color: C.blue }
+    line: { color: C.blue },
   });
   slide.addText(centerLabel, {
-    x: cx + 0.45, y: cy + 0.32,
-    w: cw - 0.9, h: 0.7,
-    fontSize: 20, bold: true, color: C.white,
-    align: "center", margin: 0, breakLine: true
+    x: cx + 0.45,
+    y: cy + 0.32,
+    w: cw - 0.9,
+    h: 0.7,
+    fontSize: 20,
+    bold: true,
+    color: C.white,
+    align: "center",
+    margin: 0,
+    breakLine: true,
   });
 
   _drawNodesAndConnectors(slide, nodes, cx, cy, cw, ch, pptx);
@@ -56,28 +65,37 @@ function _autoLayout(slide, centerLabel, nodes, pptx, opts) {
 
   // Central platform ellipse
   slide.addShape(pptx.ShapeType.ellipse, {
-    x: cx, y: cy, w: cw, h: ch,
+    x: cx,
+    y: cy,
+    w: cw,
+    h: ch,
     fill: { color: C.blue },
-    line: { color: C.blue }
+    line: { color: C.blue },
   });
   slide.addText(centerLabel, {
-    x: cx + 0.45, y: cy + 0.32,
-    w: cw - 0.9, h: 0.7,
-    fontSize: 20, bold: true, color: C.white,
-    align: "center", margin: 0, breakLine: true
+    x: cx + 0.45,
+    y: cy + 0.32,
+    w: cw - 0.9,
+    h: 0.7,
+    fontSize: 20,
+    bold: true,
+    color: C.white,
+    align: "center",
+    margin: 0,
+    breakLine: true,
   });
 
   // Position nodes evenly around the ellipse
   const placedNodes = [];
   for (let i = 0; i < count; i++) {
-    const angle = (2 * Math.PI * i / count) - Math.PI / 2;
+    const angle = (2 * Math.PI * i) / count - Math.PI / 2;
     const nx = cx + (cw / 2 + radius) * Math.cos(angle);
     const ny = cy + (ch / 2 + radius) * Math.sin(angle);
     placedNodes.push({
       label: nodes[i].label,
       x: nx - 1.0,
       y: ny - 0.425,
-      icon: nodes[i].icon
+      icon: nodes[i].icon,
     });
   }
 
@@ -87,30 +105,32 @@ function _autoLayout(slide, centerLabel, nodes, pptx, opts) {
 }
 
 function _drawNodesAndConnectors(slide, nodes, cx, cy, cw, ch, pptx) {
-  nodes.forEach(n => {
+  nodes.forEach((n) => {
     card(slide, n.x, n.y, 2.0, 0.85, n.label, "", C.green, pptx, {
       variant: n.icon ? "icon" : "default",
-      iconChar: n.icon || "●"
+      iconChar: n.icon || "●",
     });
 
     // Draw connector lines from center to nodes
-    const dx = (n.x + 1.0) - cx;
-    const dy = (n.y + 0.425) - cy;
+    const dx = n.x + 1.0 - cx;
+    const dy = n.y + 0.425 - cy;
     const len = Math.sqrt(dx * dx + dy * dy);
     const nx = dx / len;
     const ny = dy / len;
 
     // Start from ellipse edge (approximate)
-    const sx = cx + nx * cw / 2;
-    const sy = cy + ny * ch / 2;
+    const sx = cx + (nx * cw) / 2;
+    const sy = cy + (ny * ch) / 2;
     // End at card edge
     const ex = n.x + 1.0;
     const ey = n.y + 0.425;
 
     slide.addShape(pptx.ShapeType.line, {
-      x: sx, y: sy,
-      w: ex - sx, h: ey - sy,
-      line: { color: C.border, width: 1 }
+      x: sx,
+      y: sy,
+      w: ex - sx,
+      h: ey - sy,
+      line: { color: C.border, width: 1 },
     });
   });
 }

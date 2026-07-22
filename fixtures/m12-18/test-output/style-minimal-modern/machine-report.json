@@ -1,0 +1,29 @@
+{
+  "overallVerdict": "NEEDS_REVIEW",
+  "gateResults": {
+    "m12_15_rendered_qa": "NEEDS_REVIEW",
+    "m12_16_visual_design": "PASS",
+    "m12_17_pixel_contrast": "NEEDS_REVIEW",
+    "m12_17_color_blindness": "PASS",
+    "m12_17_font_readability": "PASS",
+    "m12_19_logo_safe_area": "NEEDS_REVIEW"
+  },
+  "environment": {
+    "hasLibreOffice": true,
+    "hasImagemagick": true,
+    "hasPoppler": true,
+    "hasPython": true
+  },
+  "remediations": [
+    {
+      "priority": "medium",
+      "category": "logo_safe_area",
+      "suggestion": "No slides declare logo bounding-box data. To enable logo safe-area enforcement, add designHints.logo.boundingBox to relevant SlideSpec entries."
+    }
+  ],
+  "totalChecks": {
+    "pass": 104,
+    "fail": 0,
+    "warn": 3
+  }
+}

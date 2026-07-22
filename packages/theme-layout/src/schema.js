@@ -5,12 +5,30 @@
  */
 
 const LAYOUT_FAMILIES = [
-  "title-slide", "agenda", "section-divider", "executive-summary",
-  "title-and-bullets", "two-column", "three-card", "image-and-text",
-  "comparison", "horizontal-process", "vertical-process", "timeline",
-  "roadmap", "kpi-cards", "chart-and-insight", "full-width-chart",
-  "table", "matrix", "architecture", "case-study", "recommendation",
-  "quote", "q-and-a", "closing",
+  "title-slide",
+  "agenda",
+  "section-divider",
+  "executive-summary",
+  "title-and-bullets",
+  "two-column",
+  "three-card",
+  "image-and-text",
+  "comparison",
+  "horizontal-process",
+  "vertical-process",
+  "timeline",
+  "roadmap",
+  "kpi-cards",
+  "chart-and-insight",
+  "full-width-chart",
+  "table",
+  "matrix",
+  "architecture",
+  "case-study",
+  "recommendation",
+  "quote",
+  "q-and-a",
+  "closing",
 ];
 
 const THEME_TOKENS = {

@@ -44,7 +44,10 @@ function ingestPlainText(text, { title, sourceFile = "", metadata = {} } = {}) {
 
     // Detect section headers (simple heuristic: ALL CAPS line or line ending with ":")
     const isSectionHeader =
-      trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 100 && /[A-Z]/.test(trimmed);
+      trimmed === trimmed.toUpperCase() &&
+      trimmed.length > 3 &&
+      trimmed.length < 100 &&
+      /[A-Z]/.test(trimmed);
 
     if (isSectionHeader) {
       currentSection = { name: trimmed, order: sourceOrder };
@@ -114,7 +117,13 @@ function accumulateParagraph(lines, startIndex) {
     if (trimmed === "") break;
 
     // Stop if this looks like a section header
-    if (trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 100 && /[A-Z]/.test(trimmed)) break;
+    if (
+      trimmed === trimmed.toUpperCase() &&
+      trimmed.length > 3 &&
+      trimmed.length < 100 &&
+      /[A-Z]/.test(trimmed)
+    )
+      break;
 
     parts.push(trimmed);
   }

@@ -14,17 +14,9 @@ const {
   isBuiltinProfile,
 } = require("./schema.js");
 
-const {
-  loadProfile,
-  resolveBrandConfig,
-} = require("./loader.js");
+const { loadProfile, resolveBrandConfig } = require("./loader.js");
 
-const {
-  MINIMAL_MODERN,
-  BUSINESS_CONSULTING,
-  ACADEMIC_CLEAN,
-  BUILTINS,
-} = require("./builtins.js");
+const { MINIMAL_MODERN, BUSINESS_CONSULTING, ACADEMIC_CLEAN, BUILTINS } = require("./builtins.js");
 
 module.exports = {
   // Schema

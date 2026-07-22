@@ -146,7 +146,7 @@ async function main() {
     if (summary.topic && summary.topic.length > 5) {
       pass(`Topic extracted: "${summary.topic.substring(0, 50)}..."`);
     } else {
-      fail(`Topic extraction weak: "${summary.topic || '(empty)'}"`);
+      fail(`Topic extraction weak: "${summary.topic || "(empty)"}"`);
       domainResult.issues.push("Weak topic extraction");
     }
 
@@ -154,7 +154,7 @@ async function main() {
     if (summary.purpose) {
       pass(`Purpose detected: "${summary.purpose}"`);
     } else {
-      fail(`Purpose not detected`);
+      fail("Purpose not detected");
       domainResult.issues.push("Purpose not detected");
     }
 
@@ -196,7 +196,7 @@ async function main() {
         const stats = fs.statSync(outputPath);
         pass(`PPTX generated: ${outputPath} (${stats.size} bytes)`);
       } else {
-        fail(`PPTX file not found after generation`);
+        fail("PPTX file not found after generation");
         domainResult.issues.push("PPTX file missing after generation");
         allPassed = false;
       }

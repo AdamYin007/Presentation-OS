@@ -30,7 +30,9 @@ function loadProfile(profileNameOrPath) {
     // Validate built-in (should always pass, but safety check)
     const result = validateProfile(profile);
     if (!result.valid) {
-      throw new Error(`Built-in profile "${input}" failed internal validation: ${result.errors.join("; ")}`);
+      throw new Error(
+        `Built-in profile "${input}" failed internal validation: ${result.errors.join("; ")}`,
+      );
     }
     return { profile, source: "builtin" };
   }
@@ -40,8 +42,8 @@ function loadProfile(profileNameOrPath) {
   if (!fs.existsSync(resolvedPath)) {
     throw new Error(
       `Brand profile not found: "${input}". ` +
-      `Available built-ins: ${getBuiltInProfiles().join(", ")}. ` +
-      `Or provide an absolute path to a JSON file.`
+        `Available built-ins: ${getBuiltInProfiles().join(", ")}. ` +
+        "Or provide an absolute path to a JSON file.",
     );
   }
 
@@ -62,7 +64,7 @@ function loadProfile(profileNameOrPath) {
   const validation = validateProfile(profile);
   if (!validation.valid) {
     throw new Error(
-      `Brand profile validation failed for "${resolvedPath}":\n  - ${validation.errors.join("\n  - ")}`
+      `Brand profile validation failed for "${resolvedPath}":\n  - ${validation.errors.join("\n  - ")}`,
     );
   }
 

@@ -13,7 +13,12 @@
 
 const fs = require("fs");
 const path = require("path");
-const { checkLogoSafeArea, DEFAULT_SAFE_AREA, SLIDE_WIDTH_PX, SLIDE_HEIGHT_PX } = require("../packages/logo-safe-area-gate/src/index.js");
+const {
+  checkLogoSafeArea,
+  DEFAULT_SAFE_AREA,
+  SLIDE_WIDTH_PX,
+  SLIDE_HEIGHT_PX,
+} = require("../packages/logo-safe-area-gate/src/index.js");
 
 const ROOT = path.join(__dirname, "..");
 const FIXTURES_DIR = path.join(ROOT, "fixtures", "m12-19");
@@ -53,15 +58,31 @@ function ensureFixtures() {
   // PASS fixture: all logos within safe area
   const passSpecs = [
     {
-      id: "s1", index: 1, section: "Intro", role: "title-slide", title: "Title",
-      keyMessage: "", body: [], visualType: "none", layout: "title-slide",
-      speakerNotes: "", sourceRefs: [],
+      id: "s1",
+      index: 1,
+      section: "Intro",
+      role: "title-slide",
+      title: "Title",
+      keyMessage: "",
+      body: [],
+      visualType: "none",
+      layout: "title-slide",
+      speakerNotes: "",
+      sourceRefs: [],
       designHints: { logo: { boundingBox: { x: 50, y: 50, width: 80, height: 30 } } },
     },
     {
-      id: "s2", index: 2, section: "Content", role: "content", title: "Content Slide",
-      keyMessage: "", body: ["Item 1"], visualType: "none", layout: "title-and-bullets",
-      speakerNotes: "", sourceRefs: [],
+      id: "s2",
+      index: 2,
+      section: "Content",
+      role: "content",
+      title: "Content Slide",
+      keyMessage: "",
+      body: ["Item 1"],
+      visualType: "none",
+      layout: "title-and-bullets",
+      speakerNotes: "",
+      sourceRefs: [],
       designHints: { logo: { boundingBox: { x: 1000, y: 600, width: 80, height: 30 } } },
     },
   ];
@@ -69,9 +90,17 @@ function ensureFixtures() {
   // NEEDS_REVIEW fixture: logos declared but no bounding box
   const reviewSpecs = [
     {
-      id: "s1", index: 1, section: "Intro", role: "title-slide", title: "Title",
-      keyMessage: "", body: [], visualType: "none", layout: "title-slide",
-      speakerNotes: "", sourceRefs: [],
+      id: "s1",
+      index: 1,
+      section: "Intro",
+      role: "title-slide",
+      title: "Title",
+      keyMessage: "",
+      body: [],
+      visualType: "none",
+      layout: "title-slide",
+      speakerNotes: "",
+      sourceRefs: [],
       designHints: { logo: { x: 50, y: 50 } }, // no bounding box, no explicit box
     },
   ];
@@ -79,9 +108,17 @@ function ensureFixtures() {
   // FAIL fixture: logo protrudes outside safe area
   const failSpecs = [
     {
-      id: "s1", index: 1, section: "Intro", role: "title-slide", title: "Title",
-      keyMessage: "", body: [], visualType: "none", layout: "title-slide",
-      speakerNotes: "", sourceRefs: [],
+      id: "s1",
+      index: 1,
+      section: "Intro",
+      role: "title-slide",
+      title: "Title",
+      keyMessage: "",
+      body: [],
+      visualType: "none",
+      layout: "title-slide",
+      speakerNotes: "",
+      sourceRefs: [],
       designHints: { logo: { boundingBox: { x: 0, y: 0, width: 200, height: 200 } } }, // way outside
     },
   ];
@@ -89,9 +126,17 @@ function ensureFixtures() {
   // No-logo fixture: should return NEEDS_REVIEW
   const noLogoSpecs = [
     {
-      id: "s1", index: 1, section: "Intro", role: "content", title: "Content",
-      keyMessage: "", body: ["Item 1"], visualType: "none", layout: "title-and-bullets",
-      speakerNotes: "", sourceRefs: [],
+      id: "s1",
+      index: 1,
+      section: "Intro",
+      role: "content",
+      title: "Content",
+      keyMessage: "",
+      body: ["Item 1"],
+      visualType: "none",
+      layout: "title-and-bullets",
+      speakerNotes: "",
+      sourceRefs: [],
     },
   ];
 
@@ -126,7 +171,10 @@ function testPassScenario() {
   assertEqual(result.failCount, 0, "Zero failures");
   assertEqual(result.warnCount, 0, "Zero warnings");
   assertEqual(result.totalLogosChecked, 2, "Two logos checked");
-  assert(result.results.every(r => r.status === "pass"), "All results are pass status");
+  assert(
+    result.results.every((r) => r.status === "pass"),
+    "All results are pass status",
+  );
 }
 
 function testFailScenario() {
@@ -138,8 +186,14 @@ function testFailScenario() {
   assertEqual(result.verdict, "FAIL", "Verdict is FAIL when logo protrudes outside safe area");
   assertEqual(result.failCount, 1, "One failure detected");
   assertEqual(result.passCount, 0, "Zero passes");
-  assert(result.issues.some(i => i.category === "logo_outside_safe_area"), "Issue category is logo_outside_safe_area");
-  assert(result.results.some(r => r.status === "fail"), "At least one fail result");
+  assert(
+    result.issues.some((i) => i.category === "logo_outside_safe_area"),
+    "Issue category is logo_outside_safe_area",
+  );
+  assert(
+    result.results.some((r) => r.status === "fail"),
+    "At least one fail result",
+  );
 }
 
 function testNeedsReview_NoBoundingBox() {
@@ -148,10 +202,17 @@ function testNeedsReview_NoBoundingBox() {
   const layoutPlan = { slideWidth: SLIDE_WIDTH_PX, slideHeight: SLIDE_HEIGHT_PX };
   const result = checkLogoSafeArea(reviewSpecs, layoutPlan);
 
-  assertEqual(result.verdict, "NEEDS_REVIEW", "Verdict is NEEDS_REVIEW when logo lacks bounding box");
+  assertEqual(
+    result.verdict,
+    "NEEDS_REVIEW",
+    "Verdict is NEEDS_REVIEW when logo lacks bounding box",
+  );
   assertEqual(result.warnCount, 1, "One warning for missing bounding box");
   assertEqual(result.totalLogosChecked, 0, "No logos actually checked (no bounding box)");
-  assert(result.issues.some(i => i.category === "logo_no_bounding_box"), "Issue category is logo_no_bounding_box");
+  assert(
+    result.issues.some((i) => i.category === "logo_no_bounding_box"),
+    "Issue category is logo_no_bounding_box",
+  );
 }
 
 function testNeedsReview_NoLogos() {
@@ -181,7 +242,11 @@ function testCustomMargins() {
   const tightMargins = { top: 100, bottom: 100, left: 100, right: 100 };
   const result = checkLogoSafeArea(passSpecs, layoutPlan, { logoSafeArea: tightMargins });
 
-  assertEqual(result.verdict, "FAIL", "Custom tight margins can turn an otherwise safe logo into FAIL");
+  assertEqual(
+    result.verdict,
+    "FAIL",
+    "Custom tight margins can turn an otherwise safe logo into FAIL",
+  );
   assert(result.margins.top === 100, "Custom top margin applied");
   assert(result.margins.right === 100, "Custom right margin applied");
 }
@@ -190,9 +255,17 @@ function testVisualSpecLogoSource() {
   console.log("\n[Test] Logo from visualSpec instead of designHints");
   const specs = [
     {
-      id: "s1", index: 1, section: "Intro", role: "content", title: "Test",
-      keyMessage: "", body: [], visualType: "none", layout: "content",
-      speakerNotes: "", sourceRefs: [],
+      id: "s1",
+      index: 1,
+      section: "Intro",
+      role: "content",
+      title: "Test",
+      keyMessage: "",
+      body: [],
+      visualType: "none",
+      layout: "content",
+      speakerNotes: "",
+      sourceRefs: [],
       visualSpec: { logo: { boundingBox: { x: 50, y: 50, width: 80, height: 30 } } },
     },
   ];
@@ -208,11 +281,50 @@ function testMixedScenario() {
   console.log("\n[Test] Mixed scenario — some pass, some fail, some warn");
   const specs = [
     // Pass
-    { id: "s1", index: 1, section: "A", role: "content", title: "A", keyMessage: "", body: [], visualType: "none", layout: "content", speakerNotes: "", sourceRefs: [], designHints: { logo: { boundingBox: { x: 50, y: 50, width: 80, height: 30 } } } },
+    {
+      id: "s1",
+      index: 1,
+      section: "A",
+      role: "content",
+      title: "A",
+      keyMessage: "",
+      body: [],
+      visualType: "none",
+      layout: "content",
+      speakerNotes: "",
+      sourceRefs: [],
+      designHints: { logo: { boundingBox: { x: 50, y: 50, width: 80, height: 30 } } },
+    },
     // Fail
-    { id: "s2", index: 2, section: "B", role: "content", title: "B", keyMessage: "", body: [], visualType: "none", layout: "content", speakerNotes: "", sourceRefs: [], designHints: { logo: { boundingBox: { x: 0, y: 0, width: 200, height: 200 } } } },
+    {
+      id: "s2",
+      index: 2,
+      section: "B",
+      role: "content",
+      title: "B",
+      keyMessage: "",
+      body: [],
+      visualType: "none",
+      layout: "content",
+      speakerNotes: "",
+      sourceRefs: [],
+      designHints: { logo: { boundingBox: { x: 0, y: 0, width: 200, height: 200 } } },
+    },
     // Warn (no bbox)
-    { id: "s3", index: 3, section: "C", role: "content", title: "C", keyMessage: "", body: [], visualType: "none", layout: "content", speakerNotes: "", sourceRefs: [], designHints: { logo: { x: 50 } } },
+    {
+      id: "s3",
+      index: 3,
+      section: "C",
+      role: "content",
+      title: "C",
+      keyMessage: "",
+      body: [],
+      visualType: "none",
+      layout: "content",
+      speakerNotes: "",
+      sourceRefs: [],
+      designHints: { logo: { x: 50 } },
+    },
   ];
   const layoutPlan = { slideWidth: SLIDE_WIDTH_PX, slideHeight: SLIDE_HEIGHT_PX };
   const result = checkLogoSafeArea(specs, layoutPlan);
@@ -232,7 +344,10 @@ function testScriptExists() {
 function testNpmScriptsRegistered() {
   console.log("\n[Test] NPM scripts registered in package.json");
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
-  assert(pkg.scripts["check:m12-19-logo-safe-area-enforcement"] !== undefined, "npm script check:m12-19-logo-safe-area-enforcement is registered");
+  assert(
+    pkg.scripts["check:m12-19-logo-safe-area-enforcement"] !== undefined,
+    "npm script check:m12-19-logo-safe-area-enforcement is registered",
+  );
 }
 
 function testPackageExists() {

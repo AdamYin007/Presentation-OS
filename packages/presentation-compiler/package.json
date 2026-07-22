@@ -1,0 +1,12 @@
+{
+  "name": "@awe/presentation-compiler",
+  "version": "1.0.0",
+  "description": "Presentation Compiler — global optimization layer that generates Render Plans before rendering",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node ../../tests/presentation-compiler/presentation-compiler.test.js"
+  },
+  "keywords": ["presentation", "compiler", "render-plan"],
+  "author": "",
+  "license": "ISC"
+}

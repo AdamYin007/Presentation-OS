@@ -1,0 +1,269 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-07-21T03:42:22.435Z",
+  "input": "fixtures/document-ingest/sample-markdown.md",
+  "pipeline": {
+    "format": "markdown",
+    "style": "minimal-modern",
+    "title": "sample-markdown"
+  },
+  "deck": {
+    "slideCount": 10,
+    "contentSlides": 6,
+    "sectionDividers": 3,
+    "closingSlide": true
+  },
+  "checks": [
+    {
+      "id": "title-completeness",
+      "category": "content",
+      "status": "pass",
+      "message": "All 10 slides have non-empty titles"
+    },
+    {
+      "id": "source-ref-coverage",
+      "category": "content",
+      "status": "pass",
+      "message": "6/6 content slides have sourceRefs (100%) — REQUIRED: 100%"
+    },
+    {
+      "id": "duplicate-detection",
+      "category": "content",
+      "status": "pass",
+      "message": "Found 0 duplicate pairs out of 10 unique — REQUIRED: 0 duplicates"
+    },
+    {
+      "id": "section-dividers",
+      "category": "structure",
+      "status": "pass",
+      "message": "Found 3 section dividers — RECOMMENDED: minimum 2"
+    },
+    {
+      "id": "section-divider-structure",
+      "category": "structure",
+      "status": "pass",
+      "message": "All 3 section dividers have non-empty titles"
+    },
+    {
+      "id": "closing-slide",
+      "category": "structure",
+      "status": "pass",
+      "message": "Found 1 closing slide(s) — REQUIRED: exactly 1"
+    },
+    {
+      "id": "closing-slide-content",
+      "category": "structure",
+      "status": "pass",
+      "message": "Closing slide present (no body content — reported as info)"
+    },
+    {
+      "id": "layout-diversity",
+      "category": "structure",
+      "status": "pass",
+      "message": "4 distinct layouts across 10 slides (ratio: 40%)"
+    }
+  ],
+  "warnings": [
+    "Closing slide has no body content — consider adding summary or contact info"
+  ],
+  "summary": {
+    "passCount": 8,
+    "failCount": 0,
+    "warnCount": 0,
+    "overallStatus": "pass",
+    "qualityScore": 100,
+    "m12_15PassCount": 15,
+    "m12_15FailCount": 0,
+    "m12_15WarnCount": 0,
+    "m12_15Checks": [
+      {
+        "id": "m12_15_pass_0",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "PPTX generated (126,483 bytes)"
+      },
+      {
+        "id": "m12_15_pass_1",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "LibreOffice/OpenOffice available for PDF conversion"
+      },
+      {
+        "id": "m12_15_pass_2",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "Slide count in package matches specs: 10"
+      },
+      {
+        "id": "m12_15_pass_3",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "No absolute path leakage in PPTX XML (0 hits)"
+      },
+      {
+        "id": "m12_15_pass_4",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "No bad relationship targets (0)"
+      },
+      {
+        "id": "m12_15_pass_5",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "Media entries are package-relative (1 files)"
+      },
+      {
+        "id": "m12_15_pass_6",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "Zero-size boxes: 0"
+      },
+      {
+        "id": "m12_15_pass_7",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "Negative coordinates: 0"
+      },
+      {
+        "id": "m12_15_pass_8",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "Out-of-bounds boxes: 0"
+      },
+      {
+        "id": "m12_15_pass_9",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "Estimated overlaps: 0"
+      },
+      {
+        "id": "m12_15_pass_10",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "Critical overflow suspected: 0"
+      },
+      {
+        "id": "m12_15_pass_11",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "High density slides: 0"
+      },
+      {
+        "id": "m12_15_pass_12",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "PDF page count matches slide specs: 10/10"
+      },
+      {
+        "id": "m12_15_pass_13",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "Blank rendered slides: 0"
+      },
+      {
+        "id": "m12_15_pass_14",
+        "category": "m12.15",
+        "status": "pass",
+        "message": "Sparse content slides: 0"
+      }
+    ]
+  },
+  "m12_15": {
+    "rendererAvailable": true,
+    "packageCheck": {
+      "valid": true,
+      "totalEntries": 75,
+      "mediaCount": 1,
+      "relationshipCount": 25,
+      "slideCount": 10,
+      "absolutePathHits": 0,
+      "badTargets": 0,
+      "mediaSafe": true
+    },
+    "geometryCheck": {
+      "zeroSize": 0,
+      "negative": 0,
+      "outOfBounds": 0,
+      "overlap": 0,
+      "overflowSuspected": 0,
+      "highDensity": 0
+    },
+    "renderedCheck": {
+      "blankSlides": 0,
+      "sparseSlides": 0,
+      "perPage": [
+        {
+          "page": 1,
+          "role": "content",
+          "sparse": false,
+          "charCount": 251,
+          "isLikelyBlank": false
+        },
+        {
+          "page": 2,
+          "role": "architecture",
+          "sparse": false,
+          "charCount": 251,
+          "isLikelyBlank": false
+        },
+        {
+          "page": 3,
+          "role": "section-divider",
+          "sparse": false,
+          "charCount": 11,
+          "isLikelyBlank": false
+        },
+        {
+          "page": 4,
+          "role": "process",
+          "sparse": false,
+          "charCount": 85,
+          "isLikelyBlank": false
+        },
+        {
+          "page": 5,
+          "role": "process",
+          "sparse": false,
+          "charCount": 80,
+          "isLikelyBlank": false
+        },
+        {
+          "page": 6,
+          "role": "section-divider",
+          "sparse": false,
+          "charCount": 7,
+          "isLikelyBlank": false
+        },
+        {
+          "page": 7,
+          "role": "content",
+          "sparse": false,
+          "charCount": 244,
+          "isLikelyBlank": false
+        },
+        {
+          "page": 8,
+          "role": "section-divider",
+          "sparse": false,
+          "charCount": 10,
+          "isLikelyBlank": false
+        },
+        {
+          "page": 9,
+          "role": "content",
+          "sparse": false,
+          "charCount": 307,
+          "isLikelyBlank": false
+        },
+        {
+          "page": 10,
+          "role": "closing",
+          "sparse": false,
+          "charCount": 36,
+          "isLikelyBlank": false
+        }
+      ]
+    },
+    "degraded": false
+  }
+}

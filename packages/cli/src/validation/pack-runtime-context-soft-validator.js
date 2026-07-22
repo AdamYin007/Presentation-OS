@@ -41,12 +41,7 @@ const REQUIRED_TOP_LEVEL_SECTIONS = [
  * @readonly
  * @type {string[]}
  */
-const RESERVED_NAMESPACES = [
-  "__internal",
-  "__reserved",
-  "experimental",
-  "deprecated",
-];
+const RESERVED_NAMESPACES = ["__internal", "__reserved", "experimental", "deprecated"];
 
 /**
  * Warning codes emitted by this validator.
@@ -81,10 +76,7 @@ module.exports = {
  * @returns {{ok: boolean, severity: "info"|"warning"|"error", warnings: Array<object>, errors: Array<object>, report: object}}
  */
 function validatePackRuntimeContext(context, options) {
-  var opts = Object.assign(
-    { includeTimestamp: true, source: "", soft: true },
-    options || {}
-  );
+  var opts = Object.assign({ includeTimestamp: true, source: "", soft: true }, options || {});
 
   var warnings = [];
   var errors = [];
@@ -99,7 +91,8 @@ function validatePackRuntimeContext(context, options) {
       path: "$",
       expected: "object",
       actual: context === null ? "null" : Array.isArray(context) ? "array" : typeof context,
-      migrationHint: "Ensure context is constructed as a plain object literal or via Object.create(null).",
+      migrationHint:
+        "Ensure context is constructed as a plain object literal or via Object.create(null).",
       sourceDocument: "docs/M8_PACK_RUNTIME_CONTEXT_CONTRACT_SCHEMA.md",
     });
     return buildResult(false, "error", warnings, errors, opts, gates);
@@ -132,7 +125,8 @@ function validatePackRuntimeContext(context, options) {
       path: "contractVersion",
       expected: "contractVersion string",
       actual: "absent",
-      migrationHint: "Consider adding contractVersion for future hard gate eligibility (see M9.0 Contract Version Readiness Design).",
+      migrationHint:
+        "Consider adding contractVersion for future hard gate eligibility (see M9.0 Contract Version Readiness Design).",
       sourceDocument: "docs/M9_CONTRACT_VERSION_READINESS_DESIGN.md",
     });
   } else if (typeof context.contractVersion !== "string") {

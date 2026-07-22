@@ -48,14 +48,14 @@ test("buildMacLauncher contains dry-run and Studio startup behavior", () => {
   assert(script.includes("PRESENTATION_OS_DRY_RUN"));
   assert(script.includes("delivery-studio.js"));
   assert(script.includes("nohup"));
-  assert(script.includes("open \"$APP_URL\""));
+  assert(script.includes('open "$APP_URL"'));
 });
 
 test("buildWindowsLauncher contains dry-run and portable startup behavior", () => {
   const script = buildWindowsLauncher({ repoRoot: ROOT_DIR, port: 9200 });
   assert(script.includes("PRESENTATION_OS_DRY_RUN"));
   assert(script.includes("Run Studio Server.cmd"));
-  assert(script.includes("start \"\" \"%APP_URL%\""));
+  assert(script.includes('start "" "%APP_URL%"'));
   assert(script.includes("where node"));
 });
 
@@ -102,8 +102,8 @@ test("generated macOS launcher dry-run reports repo, port, and URL", () => {
     const script = fs.readFileSync(mac.executablePath, "utf8");
     assert(script.includes("platform=macos"));
     assert(script.includes(`REPO_ROOT="\${PRESENTATION_OS_ROOT:-${ROOT_DIR}}"`));
-    assert(script.includes("PORT=\"${PRESENTATION_OS_PORT:-9302}\""));
-    assert(script.includes("APP_URL=\"http://localhost:$PORT\""));
+    assert(script.includes('PORT="${PRESENTATION_OS_PORT:-9302}"'));
+    assert(script.includes('APP_URL="http://localhost:$PORT"'));
     return;
   }
 
@@ -142,20 +142,29 @@ test("generated Windows launcher dry-run is present for Windows users", () => {
 
 test("build script CLI creates requested platform only", () => {
   fs.rmSync(TEST_OUTPUT_DIR, { recursive: true, force: true });
-  const result = spawnSync(process.execPath, [
-    path.join(ROOT_DIR, "scripts", "build-desktop-app.js"),
-    "--platform",
-    "windows",
-    "--output-dir",
-    TEST_OUTPUT_DIR,
-    "--port",
-    "9304",
-  ], { cwd: ROOT_DIR, encoding: "utf8" });
+  const result = spawnSync(
+    process.execPath,
+    [
+      path.join(ROOT_DIR, "scripts", "build-desktop-app.js"),
+      "--platform",
+      "windows",
+      "--output-dir",
+      TEST_OUTPUT_DIR,
+      "--port",
+      "9304",
+    ],
+    { cwd: ROOT_DIR, encoding: "utf8" },
+  );
 
   assert.strictEqual(result.status, 0);
   assert(result.stdout.includes("Built windows"));
-  assertExists(path.join(TEST_OUTPUT_DIR, `${APP_NAME} Windows`, "Start Presentation OS Delivery Studio.cmd"));
-  assert(!fs.existsSync(path.join(TEST_OUTPUT_DIR, `${APP_NAME}.app`)), "macOS app should not be built for --platform windows");
+  assertExists(
+    path.join(TEST_OUTPUT_DIR, `${APP_NAME} Windows`, "Start Presentation OS Delivery Studio.cmd"),
+  );
+  assert(
+    !fs.existsSync(path.join(TEST_OUTPUT_DIR, `${APP_NAME}.app`)),
+    "macOS app should not be built for --platform windows",
+  );
 });
 
 (async () => {

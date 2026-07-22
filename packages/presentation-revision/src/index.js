@@ -3,7 +3,11 @@
  */
 
 const { reviseDeck, parseRevisionInstruction, applyRevisions } = require("./reviser.js");
-const { REVISION_SCHEMA_VERSION, VALID_OPERATIONS, DEFAULT_REVISION_RESULT } = require("./schema.js");
+const {
+  REVISION_SCHEMA_VERSION,
+  VALID_OPERATIONS,
+  DEFAULT_REVISION_RESULT,
+} = require("./schema.js");
 
 module.exports = {
   reviseDeck,

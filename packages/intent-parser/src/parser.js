@@ -1,12 +1,24 @@
-const {
-  createDefaultPresentationIntent,
-  validatePresentationIntent,
-} = require("./schema.js");
+const { createDefaultPresentationIntent, validatePresentationIntent } = require("./schema.js");
 
 const PURPOSE_RULES = [
-  { value: "teach", patterns: [/course|lesson|class|training|tutorial|workshop|teach/i, /课程|课件|教学|培训|入门|课堂/] },
-  { value: "persuade", patterns: [/pitch|proposal|sell|fundraising|convince/i, /路演|提案|销售|融资|说服|招商/] },
-  { value: "review", patterns: [/review|retrospective|business review|quarterly|annual/i, /复盘|汇报|总结|经营分析|年度|季度/] },
+  {
+    value: "teach",
+    patterns: [
+      /course|lesson|class|training|tutorial|workshop|teach/i,
+      /课程|课件|教学|培训|入门|课堂/,
+    ],
+  },
+  {
+    value: "persuade",
+    patterns: [/pitch|proposal|sell|fundraising|convince/i, /路演|提案|销售|融资|说服|招商/],
+  },
+  {
+    value: "review",
+    patterns: [
+      /review|retrospective|business review|quarterly|annual/i,
+      /复盘|汇报|总结|经营分析|年度|季度/,
+    ],
+  },
   { value: "summarize", patterns: [/summary|summarize|briefing|overview/i, /摘要|概览|简报|总结/] },
   { value: "defend", patterns: [/defense|defend|thesis/i, /答辩|辩护/] },
   { value: "inform", patterns: [/report|brief|explain|introduction/i, /报告|介绍|说明/] },
@@ -14,9 +26,18 @@ const PURPOSE_RULES = [
 
 const STYLE_RULES = [
   { value: "technology-dark", patterns: [/tech|technology|dark|futuristic/i, /科技|深色|未来感/] },
-  { value: "business-consulting", patterns: [/consulting|strategy|board|executive/i, /咨询|战略|董事会|高管/] },
-  { value: "academic-clean", patterns: [/academic|research|paper|conference/i, /学术|论文|研究|会议/] },
-  { value: "education-friendly", patterns: [/student|school|teacher|education/i, /学生|高中生|小学生|教育|老师/] },
+  {
+    value: "business-consulting",
+    patterns: [/consulting|strategy|board|executive/i, /咨询|战略|董事会|高管/],
+  },
+  {
+    value: "academic-clean",
+    patterns: [/academic|research|paper|conference/i, /学术|论文|研究|会议/],
+  },
+  {
+    value: "education-friendly",
+    patterns: [/student|school|teacher|education/i, /学生|高中生|小学生|教育|老师/],
+  },
   { value: "government-formal", patterns: [/government|policy|public sector/i, /政府|政策|公文/] },
   { value: "medical-technology", patterns: [/medical|healthcare|clinical/i, /医疗|临床|健康/] },
   { value: "creative-colorful", patterns: [/creative|colorful|playful/i, /创意|活泼|彩色/] },
@@ -31,6 +52,16 @@ const TONE_RULES = [
   { value: "friendly", patterns: [/friendly|casual|simple/i, /通俗|轻松|友好/] },
 ];
 
+/**
+ * Parse a free-form prompt into a structured presentation intent.
+ * Infers language, topic, audience, purpose, slide count, duration, style, tone, and domain.
+ *
+ * @param {string} prompt - User's natural language request
+ * @param {Object} [options] - Optional configuration
+ * @param {string|null} [options.sourceDocument=null] - Source document text for context
+ * @param {Partial<Object>} [options.defaults={}] - Default values to fill gaps
+ * @returns {Object} Structured intent object with all inferred fields
+ */
 function parsePresentationIntent(prompt = "", { sourceDocument = null, defaults = {} } = {}) {
   const text = String(prompt || "").trim();
   const assumptions = [];
@@ -47,8 +78,20 @@ function parsePresentationIntent(prompt = "", { sourceDocument = null, defaults 
   intent.contentDensity = inferDensity(text, assumptions);
   intent.visualPreference = inferVisualPreference(text, assumptions);
   intent.speakerNotes = inferSpeakerNotes(text);
-  intent.mustInclude = extractListAfterMarkers(text, ["must include", "include", "包含", "必须包含", "需要包含"]);
-  intent.mustEmphasize = extractListAfterMarkers(text, ["emphasize", "highlight", "重点突出", "突出", "强调"]);
+  intent.mustInclude = extractListAfterMarkers(text, [
+    "must include",
+    "include",
+    "包含",
+    "必须包含",
+    "需要包含",
+  ]);
+  intent.mustEmphasize = extractListAfterMarkers(text, [
+    "emphasize",
+    "highlight",
+    "重点突出",
+    "突出",
+    "强调",
+  ]);
   intent.mustAvoid = extractListAfterMarkers(text, ["avoid", "must avoid", "不要", "避免"]);
   intent.domain = inferDomain(text, assumptions);
   intent.assumptions = dedupe([...intent.assumptions, ...assumptions]);
@@ -61,6 +104,13 @@ function parsePresentationIntent(prompt = "", { sourceDocument = null, defaults 
   return intent;
 }
 
+/**
+ * Infer presentation language from input text and source document.
+ * @param {string} text - Input prompt text
+ * @param {string|null} sourceDocument - Source document text
+ * @param {Array<string>} assumptions - Accumulated inference assumptions
+ * @returns {string} Language code (e.g., "zh-CN", "en-US")
+ */
 function inferLanguage(text, sourceDocument, assumptions) {
   if (/English|英语|英文/i.test(text)) return "en-US";
   if (/Chinese|中文|汉语/i.test(text)) return "zh-CN";
@@ -71,6 +121,14 @@ function inferLanguage(text, sourceDocument, assumptions) {
   return "zh-CN";
 }
 
+/**
+ * Extract and clean the presentation topic from input text.
+ * Removes filler prefixes like "about", "关于", "for", "制作一份".
+ * @param {string} text - Input prompt text
+ * @param {string|null} sourceDocument - Source document text
+ * @param {Array<string>} assumptions - Accumulated inference assumptions
+ * @returns {string} Cleaned topic string
+ */
 function inferTopic(text, sourceDocument, assumptions) {
   const quoted = text.match(/["“](.+?)["”]/);
   if (quoted) return cleanTopic(quoted[1]);
@@ -104,10 +162,14 @@ function inferAudience(text, assumptions) {
     if (match?.[1]) {
       const phrase = trimPhrase(match[1]);
       // Reject if it starts with purpose infinitive or long verb phrase
-      if (/^(to|for|aimed at|designed to|built to|meant to|intended to)\s+/i.test(phrase)) continue;
+      if (/^(to|aimed at|designed to|built to|meant to|intended to)\s+/i.test(phrase)) continue;
       // Reject if first word is a common purpose verb
-      const firstWord = phrase.split(' ')[0];
-      if (/^(handle|improve|build|support|manage|process|enable|deliver|create|provide|reduce|increase|optimize|deploy|implement|develop|design|analyze|evaluate|track|monitor|scale|transform|streamline|accelerate|facilitate|ensure|maintain|operate|run|test|debug|fix|solve|address|mitigate|prevent|avoid|achieve|reach|meet|satisfy|fulfill|accomplish|complete|finish|execute|perform|conduct|carry out|make|do|write|code|program|engineer|construct|assemble|configure|setup|install|launch|ship|release|publish|share|distribute|communicate|present|explain|describe|define|specify|document|record|log|store|save|migrate|convert|translate|adapt|customize|personalize|tailor|adjust|tune|refine|polish|enhance|upgrade|modernize|revamp|restructure|reorganize|realign|reposition|rebrand|remodel|renovate|restore|repair|service|assist|help|aid|guide|coach|train|teach|educate|instruct|mentor|advise|consult|recommend|suggest|propose|offer|supply|furnish|show|display|exhibit|demonstrate|illustrate|depict|portray|represent|symbolize|signify|indicate|denote|convey|express|articulate|voice|state|declare|announce|proclaim|pronounce|utter|say|tell|speak|talk|chat|discuss|debate|argue|dispute|contend|assert|affirm|confirm|verify|validate|authenticate|certify|authorize|approve|endorse|sanction|ratify|legalize|legitimize|justify|defend|protect|shield|guard|cover|hide|conceal|mask|disguise|camouflage|obscure|blur|cloud|muddy|pollute|contaminate|infect|poison|corrupt|debase|degrade|lower|diminish|decrease|lessen|minimize|shrink|contract|compress|condense|consolidate|merge|combine|unite|join|link|connect|attach|fasten|secure|lock|seal|close|shut|block|stop|halt|pause|interrupt|break|fracture|crack|split|divide|separate|isolate|detach|disconnect|unlink|untie|unfasten|unlock|open|reveal|expose|uncover|discover|find|locate|identify|recognize|distinguish|differentiate|discriminate|select|choose|pick|elect|opt|prefer|favor|like|love|adore|worship|revere|venerate|honor|respect|admire|appreciate|value|treasure|cherish|prize|esteem|regard|consider|view|see|perceive|observe|notice|spot|catch|grab|seize)/i.test(firstWord)) {
+      const firstWord = phrase.split(" ")[0];
+      if (
+        /^(handle|improve|build|support|manage|process|enable|deliver|create|provide|reduce|increase|optimize|deploy|implement|develop|design|analyze|evaluate|track|monitor|scale|transform|streamline|accelerate|facilitate|ensure|maintain|operate|run|test|debug|fix|solve|address|mitigate|prevent|avoid|achieve|reach|meet|satisfy|fulfill|accomplish|complete|finish|execute|perform|conduct|carry out|make|do|write|code|program|construct|assemble|configure|setup|install|launch|ship|release|publish|share|distribute|communicate|present|explain|describe|define|specify|document|record|log|store|save|migrate|convert|translate|adapt|customize|personalize|tailor|adjust|tune|refine|polish|enhance|upgrade|modernize|revamp|restructure|reorganize|realign|reposition|rebrand|remodel|renovate|restore|repair|service|assist|help|aid|guide|coach|train|teach|educate|instruct|mentor|advise|consult|recommend|suggest|propose|offer|supply|furnish|show|display|exhibit|demonstrate|illustrate|depict|portray|represent|symbolize|signify|indicate|denote|convey|express|articulate|voice|state|declare|announce|proclaim|pronounce|utter|say|tell|speak|talk|chat|discuss|debate|argue|dispute|contend|assert|affirm|confirm|verify|validate|authenticate|certify|authorize|approve|endorse|sanction|ratify|legalize|legitimize|justify|defend|protect|shield|guard|cover|hide|conceal|mask|disguise|camouflage|obscure|blur|cloud|muddy|pollute|contaminate|infect|poison|corrupt|debase|degrade|lower|diminish|decrease|lessen|minimize|shrink|contract|compress|condense|consolidate|merge|combine|unite|join|link|connect|attach|fasten|secure|lock|seal|close|shut|block|stop|halt|pause|interrupt|break|fracture|crack|split|divide|separate|isolate|detach|disconnect|unlink|untie|unfasten|unlock|open|reveal|expose|uncover|discover|find|locate|identify|recognize|distinguish|differentiate|discriminate|select|choose|pick|elect|opt|prefer|favor|like|love|adore|worship|revere|venerate|honor|respect|admire|appreciate|value|treasure|cherish|prize|esteem|regard|consider|view|see|perceive|observe|notice|spot|catch|grab|seize)/i.test(
+          firstWord,
+        )
+      ) {
         continue;
       }
       return phrase;
@@ -129,7 +191,9 @@ function inferSlideCount(text, sourceDocument, assumptions) {
   const match = text.match(/(\d+)[\s-]*(?:slides?|pages?|页|张|P)/i);
   if (match) return clampInt(Number(match[1]), 1, 80);
 
-  const paraCount = Array.isArray(sourceDocument?.paragraphs) ? sourceDocument.paragraphs.length : 0;
+  const paraCount = Array.isArray(sourceDocument?.paragraphs)
+    ? sourceDocument.paragraphs.length
+    : 0;
   if (paraCount > 0) {
     assumptions.push("Slide count inferred from source document length.");
     return clampInt(Math.ceil(paraCount / 3) + 3, 6, 24);
@@ -154,7 +218,8 @@ function inferDensity(text, assumptions) {
 }
 
 function inferVisualPreference(text, assumptions) {
-  if (/visual-heavy|more visuals|图片|图表|流程图|多使用数据图表/i.test(text)) return "visual-heavy";
+  if (/visual-heavy|more visuals|图片|图表|流程图|多使用数据图表/i.test(text))
+    return "visual-heavy";
   if (/text-heavy|文字为主/i.test(text)) return "text-heavy";
   assumptions.push("Visual preference defaulted to balanced.");
   return "balanced";
@@ -168,16 +233,66 @@ function inferSpeakerNotes(text) {
 function inferDomain(text, assumptions) {
   // Check technical/architecture signals FIRST (before generic words like "policy")
   const techSignals = [
-    'architecture', 'distributed system', 'microservices', 'kafka', 'flink', 'postgres',
-    'postgresql', 'redis', 'api gateway', 'kong', 'prometheus', 'grafana', 'kubernetes',
-    'latency', 'event processing', 'throughput', 'scalability', 'deployment', 'ci/cd',
-    'pipeline', 'streaming', 'real-time', 'cloud-native', 'container', 'docker',
-    'restful', 'graphql', 'acidity', 'state management', 'monitoring', 'observability',
-    'tracing', 'alerting', 'load testing', 'performance optimization', 'failover',
-    'penetration testing', 'security audit', 'disaster recovery', 'technical',
-    '技术', '架构', '工程', '分布式', '微服务', '延迟', '吞吐量',
-    '部署', '流水线', '流处理', '实时', '云原生', '容器', '监控', '可观测性',
-    '追踪', '告警', '压测', '性能优化', '故障转移'
+    "architecture",
+    "distributed system",
+    "microservices",
+    "kafka",
+    "flink",
+    "postgres",
+    "postgresql",
+    "redis",
+    "api gateway",
+    "kong",
+    "prometheus",
+    "grafana",
+    "kubernetes",
+    "latency",
+    "event processing",
+    "throughput",
+    "scalability",
+    "deployment",
+    "ci/cd",
+    "pipeline",
+    "streaming",
+    "real-time",
+    "cloud-native",
+    "container",
+    "docker",
+    "restful",
+    "graphql",
+    "acidity",
+    "state management",
+    "monitoring",
+    "observability",
+    "tracing",
+    "alerting",
+    "load testing",
+    "performance optimization",
+    "failover",
+    "penetration testing",
+    "security audit",
+    "disaster recovery",
+    "technical",
+    "技术",
+    "架构",
+    "工程",
+    "分布式",
+    "微服务",
+    "延迟",
+    "吞吐量",
+    "部署",
+    "流水线",
+    "流处理",
+    "实时",
+    "云原生",
+    "容器",
+    "监控",
+    "可观测性",
+    "追踪",
+    "告警",
+    "压测",
+    "性能优化",
+    "故障转移",
   ];
   const lowerText = text.toLowerCase();
   for (const signal of techSignals) {
@@ -216,12 +331,17 @@ function splitItems(value) {
 function cleanTopic(value) {
   return trimPhrase(value)
     .replace(/^(a|an|the)\s+/i, "")
-    .replace(/^(份|个|关于|主题为)/, "")
+    .replace(/^(about|on|for)\s+/i, "")
+    .replace(/^(关于|围绕|主题为|制作一份|生成一份|做一份)/, "")
+    .replace(/^(份|个|关于|主题为)\s*/, "")
     .trim();
 }
 
 function trimPhrase(value) {
-  return String(value || "").replace(/\s+/g, " ").replace(/[，。；;,.]+$/g, "").trim();
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .replace(/[，。；;,.]+$/g, "")
+    .trim();
 }
 
 function clampInt(value, min, max) {

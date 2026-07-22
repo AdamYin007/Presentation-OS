@@ -35,7 +35,7 @@ var STRICT_POLICY_STATUS = {
   UNKNOWN_POLICY_RULE: "unknown-policy-rule",
   INVALID_POLICY_RULE: "invalid-policy-rule",
   POLICY_VERSION_MISMATCH: "policy-version-mismatch",
-  INTERNAL_POLICY_ERROR: "internal-policy-error"
+  INTERNAL_POLICY_ERROR: "internal-policy-error",
 };
 
 /**
@@ -43,51 +43,51 @@ var STRICT_POLICY_STATUS = {
  * @type {Object}
  */
 var STRICT_POLICY_RULES = {
-  "ERROR_CONTEXT_NOT_OBJECT": {
+  ERROR_CONTEXT_NOT_OBJECT: {
     softModeBlocking: false,
     strictModeBlocking: true,
     severity: "error",
     reason: "The PackRuntimeContext root must be an object.",
     introducedInPolicyVersion: 1,
     owner: "validation",
-    reviewRequired: true
+    reviewRequired: true,
   },
-  "WARN_CONTRACT_SECTION_MISSING": {
+  WARN_CONTRACT_SECTION_MISSING: {
     softModeBlocking: false,
     strictModeBlocking: false,
     severity: "warning",
     reason: "Section presence varies by contract maturity.",
     introducedInPolicyVersion: 1,
     owner: "validation",
-    reviewRequired: false
+    reviewRequired: false,
   },
-  "INFO_CONTRACT_VERSION_ABSENT": {
+  INFO_CONTRACT_VERSION_ABSENT: {
     softModeBlocking: false,
     strictModeBlocking: false,
     severity: "info",
     reason: "Missing contract version is informational at this stage.",
     introducedInPolicyVersion: 1,
     owner: "validation",
-    reviewRequired: false
+    reviewRequired: false,
   },
-  "WARN_CONTRACT_VERSION_MALFORMED": {
+  WARN_CONTRACT_VERSION_MALFORMED: {
     softModeBlocking: false,
     strictModeBlocking: false,
     severity: "warning",
     reason: "Malformed version is a data quality concern, not structural failure.",
     introducedInPolicyVersion: 1,
     owner: "validation",
-    reviewRequired: false
+    reviewRequired: false,
   },
-  "WARN_RESERVED_NAMESPACE_USED": {
+  WARN_RESERVED_NAMESPACE_USED: {
     softModeBlocking: false,
     strictModeBlocking: false,
     severity: "warning",
     reason: "Reserved namespace collision is a preventive warning.",
     introducedInPolicyVersion: 1,
     owner: "validation",
-    reviewRequired: false
-  }
+    reviewRequired: false,
+  },
 };
 
 // Deep freeze all rules
@@ -121,11 +121,29 @@ function classifyFindingForMode(finding, options) {
   var pv = opts.policyVersion != null ? opts.policyVersion : STRICT_POLICY_VERSION;
 
   if (mode !== "soft" && mode !== "strict") {
-    return { policyVersion: pv, mode: mode, code: null, known: false, severity: null, blocking: false, policyStatus: STRICT_POLICY_STATUS.INVALID_POLICY_RULE, reason: "Invalid mode: " + mode };
+    return {
+      policyVersion: pv,
+      mode: mode,
+      code: null,
+      known: false,
+      severity: null,
+      blocking: false,
+      policyStatus: STRICT_POLICY_STATUS.INVALID_POLICY_RULE,
+      reason: "Invalid mode: " + mode,
+    };
   }
 
   if (!finding || typeof finding.code !== "string" || finding.code.length === 0) {
-    return { policyVersion: pv, mode: mode, code: null, known: false, severity: null, blocking: false, policyStatus: STRICT_POLICY_STATUS.INVALID_POLICY_RULE, reason: "Finding missing valid code" };
+    return {
+      policyVersion: pv,
+      mode: mode,
+      code: null,
+      known: false,
+      severity: null,
+      blocking: false,
+      policyStatus: STRICT_POLICY_STATUS.INVALID_POLICY_RULE,
+      reason: "Finding missing valid code",
+    };
   }
 
   var code = finding.code;
@@ -133,19 +151,24 @@ function classifyFindingForMode(finding, options) {
   var isKnown = rule !== null;
   var blocking = false;
   var ps;
-  var sev = isKnown ? rule.severity : (finding.severity || null);
+  var sev = isKnown ? rule.severity : finding.severity || null;
 
   if (isKnown) {
-    blocking = (mode === "soft") ? rule.softModeBlocking : rule.strictModeBlocking;
+    blocking = mode === "soft" ? rule.softModeBlocking : rule.strictModeBlocking;
     ps = blocking ? STRICT_POLICY_STATUS.KNOWN_BLOCKING : STRICT_POLICY_STATUS.KNOWN_NON_BLOCKING;
   } else {
     ps = STRICT_POLICY_STATUS.UNKNOWN_POLICY_RULE;
   }
 
   return {
-    policyVersion: pv, mode: mode, code: code, known: isKnown,
-    severity: sev, blocking: blocking, policyStatus: ps,
-    reason: isKnown ? rule.reason : "No strict policy rule is defined."
+    policyVersion: pv,
+    mode: mode,
+    code: code,
+    known: isKnown,
+    severity: sev,
+    blocking: blocking,
+    policyStatus: ps,
+    reason: isKnown ? rule.reason : "No strict policy rule is defined.",
   };
 }
 
@@ -181,12 +204,18 @@ function applyStrictPolicy(report, options) {
   }
 
   var classified = [];
-  var bc = 0, nb = 0, uc = 0, ec = 0, wc = 0, ic = 0;
+  var bc = 0,
+    nb = 0,
+    uc = 0,
+    ec = 0,
+    wc = 0,
+    ic = 0;
 
   for (var _m = 0; _m < findings.length; _m++) {
     var c = classifyFindingForMode(findings[_m], { mode: mode, policyVersion: pv });
     classified.push(c);
-    if (c.blocking) bc++; else nb++;
+    if (c.blocking) bc++;
+    else nb++;
     if (!c.known) uc++;
     if (c.severity === "error") ec++;
     else if (c.severity === "warning") wc++;
@@ -195,20 +224,35 @@ function applyStrictPolicy(report, options) {
 
   var status, isBlocking;
   if (mode === "soft") {
-    status = "pass"; isBlocking = false;
+    status = "pass";
+    isBlocking = false;
   } else if (bc > 0) {
-    status = "hard-fail"; isBlocking = true;
+    status = "hard-fail";
+    isBlocking = true;
   } else if (ic > 0 || wc > 0) {
-    status = "pass-with-info"; isBlocking = false;
+    status = "pass-with-info";
+    isBlocking = false;
   } else {
-    status = "pass"; isBlocking = false;
+    status = "pass";
+    isBlocking = false;
   }
 
   return {
-    domain: "validation", mode: mode, policyVersion: pv,
-    status: status, blocking: isBlocking,
-    summary: { total: findings.length, blocking: bc, nonBlocking: nb, unknown: uc, errors: ec, warnings: wc, info: ic },
-    results: classified
+    domain: "validation",
+    mode: mode,
+    policyVersion: pv,
+    status: status,
+    blocking: isBlocking,
+    summary: {
+      total: findings.length,
+      blocking: bc,
+      nonBlocking: nb,
+      unknown: uc,
+      errors: ec,
+      warnings: wc,
+      info: ic,
+    },
+    results: classified,
   };
 }
 
@@ -229,10 +273,13 @@ function validateStrictPolicy() {
     var k = keys[i];
     var r = STRICT_POLICY_RULES[k];
     if (typeof r.softModeBlocking !== "boolean") errors.push(k + ": softModeBlocking not boolean");
-    if (typeof r.strictModeBlocking !== "boolean") errors.push(k + ": strictModeBlocking not boolean");
-    if (typeof r.severity !== "string" || r.severity.length === 0) errors.push(k + ": severity missing");
+    if (typeof r.strictModeBlocking !== "boolean")
+      errors.push(k + ": strictModeBlocking not boolean");
+    if (typeof r.severity !== "string" || r.severity.length === 0)
+      errors.push(k + ": severity missing");
     if (typeof r.reason !== "string" || r.reason.length === 0) errors.push(k + ": reason missing");
-    if (typeof r.introducedInPolicyVersion !== "number") errors.push(k + ": introducedInPolicyVersion not number");
+    if (typeof r.introducedInPolicyVersion !== "number")
+      errors.push(k + ": introducedInPolicyVersion not number");
     if (typeof r.owner !== "string" || r.owner.length === 0) errors.push(k + ": owner missing");
     if (typeof r.reviewRequired !== "boolean") errors.push(k + ": reviewRequired not boolean");
     var rk = Object.keys(r);
@@ -240,7 +287,12 @@ function validateStrictPolicy() {
       if (typeof r[rk[j]] === "function") errors.push(k + ": function value in " + rk[j]);
     }
   }
-  return { valid: errors.length === 0, errorCount: errors.length, errors: errors, ruleCount: keys.length };
+  return {
+    valid: errors.length === 0,
+    errorCount: errors.length,
+    errors: errors,
+    ruleCount: keys.length,
+  };
 }
 
 /**
@@ -249,16 +301,22 @@ function validateStrictPolicy() {
  */
 function getStrictPolicySummary() {
   var keys = Object.keys(STRICT_POLICY_RULES).slice().sort();
-  var sbc = [], snbc = [], sbc2 = [];
+  var sbc = [],
+    snbc = [],
+    sbc2 = [];
   for (var i = 0; i < keys.length; i++) {
     var r = STRICT_POLICY_RULES[keys[i]];
-    if (r.strictModeBlocking) sbc.push(keys[i]); else snbc.push(keys[i]);
+    if (r.strictModeBlocking) sbc.push(keys[i]);
+    else snbc.push(keys[i]);
     if (r.softModeBlocking) sbc2.push(keys[i]);
   }
   return {
-    policyVersion: STRICT_POLICY_VERSION, totalRules: keys.length,
-    strictBlockingCodes: sbc, strictNonBlockingCodes: snbc,
-    softBlockingCodes: sbc2, unknownDefaultBlocking: false
+    policyVersion: STRICT_POLICY_VERSION,
+    totalRules: keys.length,
+    strictBlockingCodes: sbc,
+    strictNonBlockingCodes: snbc,
+    softBlockingCodes: sbc2,
+    unknownDefaultBlocking: false,
   };
 }
 
@@ -270,5 +328,5 @@ module.exports = {
   classifyFindingForMode: classifyFindingForMode,
   applyStrictPolicy: applyStrictPolicy,
   validateStrictPolicy: validateStrictPolicy,
-  getStrictPolicySummary: getStrictPolicySummary
+  getStrictPolicySummary: getStrictPolicySummary,
 };

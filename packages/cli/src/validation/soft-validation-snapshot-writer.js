@@ -92,15 +92,15 @@ function mapFixturePathToSnapshotPath(fixturePath, options) {
   if (absFixture.indexOf(absFixtureRoot) !== 0) {
     throw new Error(
       "Fixture path must be within fixtureRoot: expected prefix " +
-        absFixtureRoot + ", got " + absFixture
+        absFixtureRoot +
+        ", got " +
+        absFixture,
     );
   }
 
   // Must end with .json
   if (!fixturePath.endsWith(".json")) {
-    throw new Error(
-      "Non-JSON fixture path rejected: " + fixturePath
-    );
+    throw new Error("Non-JSON fixture path rejected: " + fixturePath);
   }
 
   // Get the repo-relative path inside fixtureRoot
@@ -132,7 +132,10 @@ function mapFixturePathToSnapshotPath(fixturePath, options) {
  * @returns {object}
  */
 function _computeSummary(results) {
-  var infoCount = 0, warningCount = 0, errorCount = 0, gateSet = {};
+  var infoCount = 0,
+    warningCount = 0,
+    errorCount = 0,
+    gateSet = {};
   for (var i = 0; i < results.length; i++) {
     var r = results[i];
     if (r.severity === "info") infoCount++;
@@ -141,7 +144,14 @@ function _computeSummary(results) {
     if (r.gateId && r.gateId !== "UNKNOWN_GATE") gateSet[r.gateId] = true;
   }
   var gates = Object.keys(gateSet).length;
-  return { total: results.length, info: infoCount, warnings: warningCount, errors: errorCount, gatesChecked: gates, gatesWithFindings: gates };
+  return {
+    total: results.length,
+    info: infoCount,
+    warnings: warningCount,
+    errors: errorCount,
+    gatesChecked: gates,
+    gatesWithFindings: gates,
+  };
 }
 
 /**
@@ -242,7 +252,7 @@ function normalizeSnapshotResult(result, index) {
   }
 
   return {
-    id: result.id || ("UNKNOWN:" + index),
+    id: result.id || "UNKNOWN:" + index,
     gateId: result.gateId || "UNKNOWN_GATE",
     code: result.code || "UNKNOWN_CODE",
     severity: result.severity || "info",
@@ -410,9 +420,11 @@ function createNormalizedSnapshotReport(fixturePath, options) {
     includeTimestamp: includeTs,
     generatedAt: fixedTs,
     source: source,
-    metadata: normalizeSnapshotMetadata(Object.assign({}, extraMeta, {
-      fixturePath: fixturePath,
-    })),
+    metadata: normalizeSnapshotMetadata(
+      Object.assign({}, extraMeta, {
+        fixturePath: fixturePath,
+      }),
+    ),
   });
 
   // 4. Normalize report fields

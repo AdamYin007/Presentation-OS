@@ -1,0 +1,27 @@
+{
+  "gate": "m12_19_logo_safe_area",
+  "verdict": "NEEDS_REVIEW",
+  "passCount": 0,
+  "failCount": 0,
+  "warnCount": 0,
+  "totalLogosChecked": 0,
+  "margins": {
+    "top": 60,
+    "bottom": 60,
+    "left": 60,
+    "right": 60
+  },
+  "slideDimensions": {
+    "width": 1279,
+    "height": 720
+  },
+  "results": [],
+  "issues": [
+    {
+      "category": "no_logo_data",
+      "severity": "info",
+      "suggestion": "No slides declare logo bounding-box data. To enable logo safe-area enforcement, add designHints.logo.boundingBox to relevant SlideSpec entries."
+    }
+  ],
+  "brandProfile": "file:/Users/adamyin/Projects/awe/fixtures/m12-21/custom-brand.json"
+}

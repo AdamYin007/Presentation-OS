@@ -106,7 +106,7 @@ async function checkCLIPipeline() {
   // Dry-run + json — parse JSON from stdout (may have conda preamble + trailing text)
   let stdoutClean = r1.stdout;
   // Strip any conda error preamble (starts with '#' and ends before '{')
-  const jsonStart = stdoutClean.indexOf('{');
+  const jsonStart = stdoutClean.indexOf("{");
   if (jsonStart === -1) {
     console.error(r1.stderr);
     fail("No JSON found in stdout");
@@ -118,8 +118,8 @@ async function checkCLIPipeline() {
   let jsonEnd = -1;
   for (let i = 0; i < stdoutClean.length; i++) {
     const ch = stdoutClean[i];
-    if (ch === '{' || ch === '[') depth++;
-    else if (ch === '}' || ch === ']') {
+    if (ch === "{" || ch === "[") depth++;
+    else if (ch === "}" || ch === "]") {
       depth--;
       if (depth === 0) { jsonEnd = i + 1; break; }
     }

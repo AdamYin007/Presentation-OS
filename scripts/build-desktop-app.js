@@ -62,10 +62,7 @@ Builds desktop launchers for the local Presentation OS Delivery Studio.`;
 }
 
 function plistEscape(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function shellEscapeSingleQuoted(value) {
@@ -77,7 +74,10 @@ function shellEscapeDoubleQuoted(value) {
 }
 
 function bundleIdentifier(appName) {
-  return `com.presentation-os.${appName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
+  return `com.presentation-os.${appName
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")}`;
 }
 
 function windowsPath(value) {
@@ -251,14 +251,18 @@ function buildMacApp(options) {
   fs.writeFileSync(path.join(contentsPath, "Info.plist"), buildInfoPlist(options), "utf8");
   fs.writeFileSync(executablePath, buildMacLauncher(options), { encoding: "utf8", mode: 0o755 });
   fs.chmodSync(executablePath, 0o755);
-  fs.writeFileSync(path.join(resourcesPath, "README.txt"), [
-    options.appName,
-    "",
-    "Double-click this app to launch the local Presentation OS Delivery Studio.",
-    `Default URL: http://localhost:${options.port}`,
-    "Generated PPTX jobs are saved locally under deliverables/studio.",
-    "",
-  ].join("\n"), "utf8");
+  fs.writeFileSync(
+    path.join(resourcesPath, "README.txt"),
+    [
+      options.appName,
+      "",
+      "Double-click this app to launch the local Presentation OS Delivery Studio.",
+      `Default URL: http://localhost:${options.port}`,
+      "Generated PPTX jobs are saved locally under deliverables/studio.",
+      "",
+    ].join("\n"),
+    "utf8",
+  );
 
   return { platform: "macos", path: appPath, executablePath };
 }
@@ -272,18 +276,22 @@ function buildWindowsPortable(options) {
   fs.mkdirSync(folderPath, { recursive: true });
   fs.writeFileSync(launcherPath, buildWindowsLauncher(options), "utf8");
   fs.writeFileSync(serverPath, buildWindowsServerScript(), "utf8");
-  fs.writeFileSync(path.join(folderPath, "README-WINDOWS.txt"), [
-    options.appName,
-    "",
-    "Windows usage:",
-    "1. Install Node.js from https://nodejs.org/ if it is not already installed.",
-    "2. Double-click Start Presentation OS Delivery Studio.cmd.",
-    `3. The launcher opens http://localhost:${options.port}.`,
-    "",
-    "Generated PPTX jobs are saved locally under deliverables/studio.",
-    "For a moved repo, set PRESENTATION_OS_ROOT to the Presentation OS repo root.",
-    "",
-  ].join("\r\n"), "utf8");
+  fs.writeFileSync(
+    path.join(folderPath, "README-WINDOWS.txt"),
+    [
+      options.appName,
+      "",
+      "Windows usage:",
+      "1. Install Node.js from https://nodejs.org/ if it is not already installed.",
+      "2. Double-click Start Presentation OS Delivery Studio.cmd.",
+      `3. The launcher opens http://localhost:${options.port}.`,
+      "",
+      "Generated PPTX jobs are saved locally under deliverables/studio.",
+      "For a moved repo, set PRESENTATION_OS_ROOT to the Presentation OS repo root.",
+      "",
+    ].join("\r\n"),
+    "utf8",
+  );
 
   return { platform: "windows", path: folderPath, executablePath: launcherPath, serverPath };
 }

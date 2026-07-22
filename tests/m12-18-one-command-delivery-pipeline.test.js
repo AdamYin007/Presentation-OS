@@ -55,7 +55,9 @@ function ensureFixtures() {
   // Good fixture: standard content, should produce PASS
   const goodFixture = path.join(FIXTURES_DIR, "good.md");
   if (!fs.existsSync(goodFixture)) {
-    fs.writeFileSync(goodFixture, `# Quarterly Business Review
+    fs.writeFileSync(
+      goodFixture,
+      `# Quarterly Business Review
 
 ## Introduction
 
@@ -97,7 +99,9 @@ API response times improved by 25%.
 
 Thank you for your attention.
 Questions welcome.
-`, "utf8");
+`,
+      "utf8",
+    );
   }
 
   // Empty fixture: should trigger errors
@@ -130,7 +134,10 @@ function testMissingInput() {
   });
 
   assertEqual(result.status, 2, "Exit code is 2 for missing input");
-  assert(result.stderr.includes("not found") || result.stdout.includes("not found"), "Error message mentions file not found");
+  assert(
+    result.stderr.includes("not found") || result.stdout.includes("not found"),
+    "Error message mentions file not found",
+  );
 }
 
 // ─── Test: Empty Input File Returns Exit Code 2 ────────────────────
@@ -148,7 +155,10 @@ function testEmptyInput() {
   });
 
   assertEqual(result.status, 2, "Exit code is 2 for empty input");
-  assert(result.stderr.includes("empty") || result.stdout.includes("empty"), "Error message mentions empty input");
+  assert(
+    result.stderr.includes("empty") || result.stdout.includes("empty"),
+    "Error message mentions empty input",
+  );
 }
 
 // ─── Test: Good Fixture Produces All Artifacts ─────────────────────
@@ -159,11 +169,15 @@ function testGoodFixtureArtifacts() {
   const tmpOut = path.join(TEST_OUTPUT_DIR, "good-artifacts");
   fs.mkdirSync(tmpOut, { recursive: true });
 
-  const result = cp.spawnSync("node", [DELIVER_SCRIPT, goodFixture, tmpOut, "--style", "minimal-modern"], {
-    cwd: ROOT,
-    encoding: "utf8",
-    timeout: 120000,
-  });
+  const result = cp.spawnSync(
+    "node",
+    [DELIVER_SCRIPT, goodFixture, tmpOut, "--style", "minimal-modern"],
+    {
+      cwd: ROOT,
+      encoding: "utf8",
+      timeout: 120000,
+    },
+  );
 
   assertEqual(result.status, 0, "Good fixture exits 0 (PASS/NEEDS_REVIEW)");
 
@@ -197,11 +211,15 @@ function testGoodFixtureNotFail() {
   const tmpOut = path.join(TEST_OUTPUT_DIR, "good-not-crash");
   fs.mkdirSync(tmpOut, { recursive: true });
 
-  const result = cp.spawnSync("node", [DELIVER_SCRIPT, goodFixture, tmpOut, "--style", "business-consulting"], {
-    cwd: ROOT,
-    encoding: "utf8",
-    timeout: 120000,
-  });
+  const result = cp.spawnSync(
+    "node",
+    [DELIVER_SCRIPT, goodFixture, tmpOut, "--style", "business-consulting"],
+    {
+      cwd: ROOT,
+      encoding: "utf8",
+      timeout: 120000,
+    },
+  );
 
   assertEqual(result.status, 0, "Good fixture exits 0");
 
@@ -246,7 +264,7 @@ function testDifferentStyles() {
 
   // Check that different styles produce different file sizes
   if (sizes.length >= 2) {
-    const uniqueSizes = new Set(sizes.map(s => s.size));
+    const uniqueSizes = new Set(sizes.map((s) => s.size));
     assert(uniqueSizes.size >= 1, "Different styles produce varying outputs");
   }
 }
@@ -256,11 +274,15 @@ function testJsonMode() {
   console.log("\n[Test] --json mode outputs machine-readable report to stdout");
   const { goodFixture } = ensureFixtures();
 
-  const result = cp.spawnSync("node", [DELIVER_SCRIPT, goodFixture, "--json", "--style", "minimal-modern"], {
-    cwd: ROOT,
-    encoding: "utf8",
-    timeout: 120000,
-  });
+  const result = cp.spawnSync(
+    "node",
+    [DELIVER_SCRIPT, goodFixture, "--json", "--style", "minimal-modern"],
+    {
+      cwd: ROOT,
+      encoding: "utf8",
+      timeout: 120000,
+    },
+  );
 
   assert(result.status === 0, "JSON mode exits 0 for good fixture, got " + result.status);
 
@@ -270,14 +292,24 @@ function testJsonMode() {
 
   try {
     const parsed = JSON.parse(output);
-    assert(["PASS", "NEEDS_REVIEW"].includes(parsed.overallVerdict), "JSON good fixture is not FAIL: " + parsed.overallVerdict);
+    assert(
+      ["PASS", "NEEDS_REVIEW"].includes(parsed.overallVerdict),
+      "JSON good fixture is not FAIL: " + parsed.overallVerdict,
+    );
     assert(parsed.gateResults !== undefined, "JSON contains gateResults object");
     assert(parsed.environment !== undefined, "JSON contains environment object");
     assert(parsed.totalChecks !== undefined, "JSON contains totalChecks object");
     assert(typeof parsed.remediations === "object", "JSON contains remediations array/object");
   } catch (e) {
     // If parsing fails, show first 200 chars for debugging
-    assert(false, "JSON output is valid JSON: " + e.message + " (first 200 chars: " + JSON.stringify(output.substring(0, 200)) + ")");
+    assert(
+      false,
+      "JSON output is valid JSON: " +
+        e.message +
+        " (first 200 chars: " +
+        JSON.stringify(output.substring(0, 200)) +
+        ")",
+    );
   }
 }
 
@@ -309,7 +341,10 @@ function testPackageExports() {
     assert(typeof mod.checkPixelContrast === "function", "checkPixelContrast is exported");
     assert(typeof mod.checkColorBlindness === "function", "checkColorBlindness is exported");
     assert(typeof mod.checkFontFallback === "function", "checkFontFallback is exported");
-    assert(typeof mod.mergeCommercialReadiness === "function", "mergeCommercialReadiness is exported");
+    assert(
+      typeof mod.mergeCommercialReadiness === "function",
+      "mergeCommercialReadiness is exported",
+    );
     assert(typeof mod.computeColorContrast === "function", "computeColorContrast is exported");
     assert(typeof mod.estimatePixelContrast === "function", "estimatePixelContrast is exported");
   }
@@ -326,27 +361,60 @@ function testPackageReturnsValidData() {
 
   // test detectEnvironment
   const env = mod.detectEnvironment();
-  assert(typeof env.hasLibreOffice === "boolean", "detectEnvironment returns hasLibreOffice boolean");
-  assert(typeof env.hasImagemagick === "boolean", "detectEnvironment returns hasImagemagick boolean");
+  assert(
+    typeof env.hasLibreOffice === "boolean",
+    "detectEnvironment returns hasLibreOffice boolean",
+  );
+  assert(
+    typeof env.hasImagemagick === "boolean",
+    "detectEnvironment returns hasImagemagick boolean",
+  );
   assert(typeof env.hasPoppler === "boolean", "detectEnvironment returns hasPoppler boolean");
 
   // test checkPixelContrast with empty input
   const pixelResult = mod.checkPixelContrast([], [], null);
-  assertEqual(pixelResult.verdict, "NEEDS_REVIEW", "checkPixelContrast with no PNGs returns NEEDS_REVIEW");
+  assertEqual(
+    pixelResult.verdict,
+    "NEEDS_REVIEW",
+    "checkPixelContrast with no PNGs returns NEEDS_REVIEW",
+  );
   assert(pixelResult.degraded === true, "checkPixelContrast with no PNGs is degraded");
 
   // test checkColorBlindness with empty layout
   const cbResult = mod.checkColorBlindness(null);
-  assertEqual(cbResult.verdict, "NEEDS_REVIEW", "checkColorBlindness with null layout returns NEEDS_REVIEW");
+  assertEqual(
+    cbResult.verdict,
+    "NEEDS_REVIEW",
+    "checkColorBlindness with null layout returns NEEDS_REVIEW",
+  );
 
   // test checkFontFallback with empty specs
   const fontResult = mod.checkFontFallback([], null, [], { hasPoppler: false });
-  assertEqual(fontResult.verdict, "NEEDS_REVIEW", "checkFontFallback with no specs returns NEEDS_REVIEW");
+  assertEqual(
+    fontResult.verdict,
+    "NEEDS_REVIEW",
+    "checkFontFallback with no specs returns NEEDS_REVIEW",
+  );
 
   // test mergeCommercialReadiness
-  const merged = mod.mergeCommercialReadiness("PASS", { overallVerdict: "PASS", remediationSuggestions: [] }, { verdict: "PASS", passCount: 1, failCount: 0, warnCount: 0, findings: [] }, { verdict: "PASS", passCount: 1, failCount: 0, warnCount: 0, findings: [] }, { verdict: "PASS", passCount: 1, failCount: 0, warnCount: 0, findings: [] }, {});
-  assertEqual(merged.overallVerdict, "PASS", "mergeCommercialReadiness returns PASS when all gates pass");
-  assertEqual(Object.keys(merged.gateResults).length, 5, "mergeCommercialReadiness has 5 gate results");
+  const merged = mod.mergeCommercialReadiness(
+    "PASS",
+    { overallVerdict: "PASS", remediationSuggestions: [] },
+    { verdict: "PASS", passCount: 1, failCount: 0, warnCount: 0, findings: [] },
+    { verdict: "PASS", passCount: 1, failCount: 0, warnCount: 0, findings: [] },
+    { verdict: "PASS", passCount: 1, failCount: 0, warnCount: 0, findings: [] },
+    {},
+  );
+  assertEqual(
+    merged.overallVerdict,
+    "PASS",
+    "mergeCommercialReadiness returns PASS when all gates pass",
+  );
+  assertEqual(
+    Object.keys(merged.gateResults).length,
+    5,
+    "mergeCommercialReadiness has 5 gate results",
+  );
 }
 
 // ─── Test: NPM Scripts Registered ──────────────────────────────────
@@ -357,11 +425,17 @@ function testNpmScriptsRegistered() {
   const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
 
   assert(pkg.scripts["deliver:pptx"] !== undefined, "npm script deliver:pptx is registered");
-  assert(pkg.scripts["check:m12-18-one-command-delivery-pipeline"] !== undefined, "npm script check:m12-18-one-command-delivery-pipeline is registered");
+  assert(
+    pkg.scripts["check:m12-18-one-command-delivery-pipeline"] !== undefined,
+    "npm script check:m12-18-one-command-delivery-pipeline is registered",
+  );
 
   // Check that deliver:pptx uses the correct script
   if (pkg.scripts["deliver:pptx"]) {
-    assert(pkg.scripts["deliver:pptx"].includes("deliver-pptx.js"), "deliver:pptx script references deliver-pptx.js");
+    assert(
+      pkg.scripts["deliver:pptx"].includes("deliver-pptx.js"),
+      "deliver:pptx script references deliver-pptx.js",
+    );
   }
 }
 
@@ -373,27 +447,37 @@ function testGracefulDegradation() {
   const tmpOut = path.join(TEST_OUTPUT_DIR, "degraded");
   fs.mkdirSync(tmpOut, { recursive: true });
 
-  const result = cp.spawnSync("node", [DELIVER_SCRIPT, goodFixture, tmpOut, "--style", "minimal-modern"], {
-    cwd: ROOT,
-    encoding: "utf8",
-    timeout: 120000,
-  });
+  const result = cp.spawnSync(
+    "node",
+    [DELIVER_SCRIPT, goodFixture, tmpOut, "--style", "minimal-modern"],
+    {
+      cwd: ROOT,
+      encoding: "utf8",
+      timeout: 120000,
+    },
+  );
 
-  assert(result.status === 0 || result.status === null, "Script completes without crash or hard fail (exit 0/null), got " + result.status);
+  assert(
+    result.status === 0 || result.status === null,
+    "Script completes without crash or hard fail (exit 0/null), got " + result.status,
+  );
 
   // Read machine report
   const reportPath = path.join(tmpOut, "machine-report.json");
   if (fs.existsSync(reportPath)) {
     const report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
-    assert(["PASS", "NEEDS_REVIEW"].includes(report.overallVerdict), "Missing tools do not cause FAIL: " + report.overallVerdict);
+    assert(
+      ["PASS", "NEEDS_REVIEW"].includes(report.overallVerdict),
+      "Missing tools do not cause FAIL: " + report.overallVerdict,
+    );
   }
 }
 
 // ─── Run All Tests ─────────────────────────────────────────────────
 
-console.log("=" .repeat(65));
+console.log("=".repeat(65));
 console.log("M12.18 — One-Command Delivery Pipeline Tests");
-console.log("=" .repeat(65));
+console.log("=".repeat(65));
 
 try {
   testScriptExists();

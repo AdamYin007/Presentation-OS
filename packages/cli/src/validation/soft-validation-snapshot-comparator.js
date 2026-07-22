@@ -180,7 +180,7 @@ function collectSnapshotDifferences(expected, actual, options) {
       }
       var len = Math.min(eObj.length, aObj.length);
       for (var i = 0; i < len; i++) {
-        var ap = (prefix ? prefix + "[" + i + "]" : "[" + i + "]");
+        var ap = prefix ? prefix + "[" + i + "]" : "[" + i + "]";
         walk(eObj[i], aObj[i], ap);
       }
       return;
@@ -196,7 +196,10 @@ function collectSnapshotDifferences(expected, actual, options) {
         var ek = eKeys[i];
         var found = false;
         for (var j = 0; j < aKeys.length; j++) {
-          if (aKeys[j] === ek) { found = true; break; }
+          if (aKeys[j] === ek) {
+            found = true;
+            break;
+          }
         }
         if (!found) {
           differences.push({
@@ -213,7 +216,10 @@ function collectSnapshotDifferences(expected, actual, options) {
         var ak = aKeys[i];
         var found2 = false;
         for (var j = 0; j < eKeys.length; j++) {
-          if (eKeys[j] === ak) { found2 = true; break; }
+          if (eKeys[j] === ak) {
+            found2 = true;
+            break;
+          }
         }
         if (!found2) {
           differences.push({
@@ -230,7 +236,10 @@ function collectSnapshotDifferences(expected, actual, options) {
         var ek2 = eKeys[i];
         var found3 = false;
         for (var j = 0; j < aKeys.length; j++) {
-          if (aKeys[j] === ek2) { found3 = true; break; }
+          if (aKeys[j] === ek2) {
+            found3 = true;
+            break;
+          }
         }
         if (found3) {
           var cp = (prefix ? prefix + "." : "") + ek2;
@@ -307,7 +316,11 @@ function formatSnapshotDifference(result, options) {
     lines.push("Expected snapshot: " + result.snapshotPath);
     lines.push("");
     lines.push("Run explicitly to create:");
-    lines.push("  node scripts/write-pack-runtime-context-snapshots.cjs --fixture " + result.fixturePath + " --update");
+    lines.push(
+      "  node scripts/write-pack-runtime-context-snapshots.cjs --fixture " +
+        result.fixturePath +
+        " --update",
+    );
   } else if (result.status === SNAPSHOT_COMPARE_STATUS.INVALID_SNAPSHOT_JSON) {
     lines.push("Invalid snapshot JSON");
     lines.push("Fixture: " + result.fixturePath);
@@ -441,7 +454,10 @@ function compareSnapshotForFixture(fixturePath, options) {
   var absSnapshotPath = path.resolve(cwd, mapping.snapshotPath);
   if (!fs.existsSync(absSnapshotPath)) {
     result.status = SNAPSHOT_COMPARE_STATUS.MISSING_SNAPSHOT;
-    result.migrationHint = "Run: node scripts/write-pack-runtime-context-snapshots.cjs --fixture " + fixturePath + " --update";
+    result.migrationHint =
+      "Run: node scripts/write-pack-runtime-context-snapshots.cjs --fixture " +
+      fixturePath +
+      " --update";
     return result;
   }
 
@@ -459,13 +475,15 @@ function compareSnapshotForFixture(fixturePath, options) {
     snapshotParsed = JSON.parse(snapshotRaw);
   } catch (e) {
     result.status = SNAPSHOT_COMPARE_STATUS.INVALID_SNAPSHOT_JSON;
-    result.differences = [{
-      path: "root",
-      expected: "valid JSON",
-      actual: "parse error",
-      kind: "type-changed",
-      message: e.message,
-    }];
+    result.differences = [
+      {
+        path: "root",
+        expected: "valid JSON",
+        actual: "parse error",
+        kind: "type-changed",
+        message: e.message,
+      },
+    ];
     return result;
   }
 
@@ -493,8 +511,8 @@ function compareSnapshotForFixture(fixturePath, options) {
   // Step 6: Byte comparison
   var serializedCommitted = snapshotRaw;
   result.expectedBytes = Buffer.byteLength(serializedCommitted, "utf8");
-  result.byteEqual = (result.expectedBytes === result.actualBytes) &&
-    (serializedCommitted === serializedCandidate);
+  result.byteEqual =
+    result.expectedBytes === result.actualBytes && serializedCommitted === serializedCandidate;
 
   // Step 7: Classify
   result.status = classifySnapshotDifference(result.semanticEqual, result.byteEqual);
@@ -517,7 +535,9 @@ function discoverFixtureFiles(fixtureRoot, cwd) {
 
   function walk(relPrefix) {
     var entries = fs.readdirSync(path.join(absRoot, relPrefix || ""), { withFileTypes: true });
-    entries.sort(function (a, b) { return a.name < b.name ? -1 : 1; });
+    entries.sort(function (a, b) {
+      return a.name < b.name ? -1 : 1;
+    });
     for (var i = 0; i < entries.length; i++) {
       var entry = entries[i];
       if (entry.name.charAt(0) === ".") continue;
@@ -578,7 +598,9 @@ function findOrphanSnapshots(options) {
 
   function walkSnap(relPrefix) {
     var entries = fs.readdirSync(path.join(absSnapRoot, relPrefix || ""), { withFileTypes: true });
-    entries.sort(function (a, b) { return a.name < b.name ? -1 : 1; });
+    entries.sort(function (a, b) {
+      return a.name < b.name ? -1 : 1;
+    });
     for (var i = 0; i < entries.length; i++) {
       var entry = entries[i];
       if (entry.name.charAt(0) === ".") continue;
@@ -683,12 +705,17 @@ function compareAllSnapshots(options) {
 
   var orphans = [];
   if (detectOrphans) {
-    orphans = findOrphanSnapshots({ cwd: cwd, fixtureRoot: fixtureRoot, snapshotRoot: snapshotRoot });
+    orphans = findOrphanSnapshots({
+      cwd: cwd,
+      fixtureRoot: fixtureRoot,
+      snapshotRoot: snapshotRoot,
+    });
     summary.orphanSnapshots = orphans.length;
     if (orphans.length > 0) summary.failed++;
   }
 
-  var overallStatus = summary.failed === 0 ? SNAPSHOT_COMPARE_STATUS.MATCH : SNAPSHOT_COMPARE_STATUS.CONTENT_DRIFT;
+  var overallStatus =
+    summary.failed === 0 ? SNAPSHOT_COMPARE_STATUS.MATCH : SNAPSHOT_COMPARE_STATUS.CONTENT_DRIFT;
 
   return {
     status: overallStatus,

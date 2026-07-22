@@ -1,0 +1,76 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-07-21T03:42:22.786Z",
+  "input": "../fixtures/document-ingest/sample-markdown.md",
+  "pipeline": {
+    "format": "markdown",
+    "style": "minimal-modern",
+    "title": "sample-markdown"
+  },
+  "deck": {
+    "slideCount": 10,
+    "contentSlides": 6,
+    "sectionDividers": 3,
+    "closingSlide": true
+  },
+  "checks": [
+    {
+      "id": "title-completeness",
+      "category": "content",
+      "status": "pass",
+      "message": "All 10 slides have non-empty titles"
+    },
+    {
+      "id": "source-ref-coverage",
+      "category": "content",
+      "status": "pass",
+      "message": "6/6 content slides have sourceRefs (100%) — REQUIRED: 100%"
+    },
+    {
+      "id": "duplicate-detection",
+      "category": "content",
+      "status": "pass",
+      "message": "Found 0 duplicate pairs out of 10 unique — REQUIRED: 0 duplicates"
+    },
+    {
+      "id": "section-dividers",
+      "category": "structure",
+      "status": "pass",
+      "message": "Found 3 section dividers — RECOMMENDED: minimum 2"
+    },
+    {
+      "id": "section-divider-structure",
+      "category": "structure",
+      "status": "pass",
+      "message": "All 3 section dividers have non-empty titles"
+    },
+    {
+      "id": "closing-slide",
+      "category": "structure",
+      "status": "pass",
+      "message": "Found 1 closing slide(s) — REQUIRED: exactly 1"
+    },
+    {
+      "id": "closing-slide-content",
+      "category": "structure",
+      "status": "pass",
+      "message": "Closing slide present (no body content — reported as info)"
+    },
+    {
+      "id": "layout-diversity",
+      "category": "structure",
+      "status": "pass",
+      "message": "4 distinct layouts across 10 slides (ratio: 40%)"
+    }
+  ],
+  "warnings": [
+    "Closing slide has no body content — consider adding summary or contact info"
+  ],
+  "summary": {
+    "passCount": 8,
+    "failCount": 0,
+    "warnCount": 0,
+    "overallStatus": "pass",
+    "qualityScore": 100
+  }
+}

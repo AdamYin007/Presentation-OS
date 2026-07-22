@@ -1,0 +1,23 @@
+{
+  "name": "@awe/core",
+  "version": "1.0.0",
+  "description": "AWE Presentation OS core library — Markdown to PPTX pipeline",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node ../../tests/e2e-integration.test.js"
+  },
+  "keywords": [
+    "presentation",
+    "pptx",
+    "markdown",
+    "ai",
+    "generator"
+  ],
+  "author": "AWE Team",
+  "license": "MIT",
+  "dependencies": {
+    "@awe/presentation-pipeline": "^1.0.0",
+    "@awe/presentation-compiler": "^1.0.0",
+    "@awe/presentation-audience-engine": "^1.0.0"
+  }
+}

@@ -30,25 +30,52 @@ const { runPipeline } = require("../packages/presentation-pipeline/src/index.js"
 
 function parseArgs(argv) {
   const args = argv.slice(2);
-  const result = { inputFile: null, outputFile: null, style: "minimal-modern", dryRun: false, json: false, help: false };
+  const result = {
+    inputFile: null,
+    outputFile: null,
+    style: "minimal-modern",
+    dryRun: false,
+    json: false,
+    help: false,
+  };
 
   let i = 0;
   while (i < args.length) {
     const a = args[i];
-    if (a === "--help" || a === "-h") { result.help = true; i++; continue; }
-    if (a === "--dry-run") { result.dryRun = true; i++; continue; }
-    if (a === "--json") { result.json = true; i++; continue; }
+    if (a === "--help" || a === "-h") {
+      result.help = true;
+      i++;
+      continue;
+    }
+    if (a === "--dry-run") {
+      result.dryRun = true;
+      i++;
+      continue;
+    }
+    if (a === "--json") {
+      result.json = true;
+      i++;
+      continue;
+    }
     if (a === "--style") {
       i++;
-      if (i >= args.length) { console.error("Error: --style requires a value"); process.exit(1); }
+      if (i >= args.length) {
+        console.error("Error: --style requires a value");
+        process.exit(1);
+      }
       result.style = args[i];
       i++;
       continue;
     }
     if (!a.startsWith("-")) {
-      if (!result.inputFile) { result.inputFile = a; }
-      else if (!result.outputFile) { result.outputFile = a; }
-      else { console.error(`Error: unexpected argument: ${a}`); process.exit(1); }
+      if (!result.inputFile) {
+        result.inputFile = a;
+      } else if (!result.outputFile) {
+        result.outputFile = a;
+      } else {
+        console.error(`Error: unexpected argument: ${a}`);
+        process.exit(1);
+      }
       i++;
       continue;
     }
@@ -71,7 +98,9 @@ async function main() {
 
   if (!opts.inputFile) {
     console.error("Error: missing input markdown file");
-    console.error("Usage: node scripts/make-pptx.js <input.md> <output.pptx> [--style <name>] [--dry-run] [--json]");
+    console.error(
+      "Usage: node scripts/make-pptx.js <input.md> <output.pptx> [--style <name>] [--dry-run] [--json]",
+    );
     process.exit(1);
   }
 
@@ -140,7 +169,9 @@ async function main() {
       if (opts.json) {
         console.log(JSON.stringify(summary, null, 2));
       } else {
-        console.log(`Dry-run complete: ${result.slideCount} slides, ${result.pptxBuffer.length} bytes`);
+        console.log(
+          `Dry-run complete: ${result.slideCount} slides, ${result.pptxBuffer.length} bytes`,
+        );
       }
       process.exit(0);
       return;
@@ -155,7 +186,9 @@ async function main() {
     if (opts.json) {
       console.log(JSON.stringify({ ...summary, outputPath }, null, 2));
     } else {
-      console.log(`Done: ${outputPath} (${result.pptxBuffer.length} bytes, ${result.slideCount} slides)`);
+      console.log(
+        `Done: ${outputPath} (${result.pptxBuffer.length} bytes, ${result.slideCount} slides)`,
+      );
     }
   } catch (e) {
     console.error(`Pipeline failed: ${e.message}`);

@@ -1,0 +1,11 @@
+{
+  "name": "@awe/audience-engine",
+  "version": "1.0.0",
+  "description": "Universal Audience Engine — dynamically adapts presentation content based on speaker and audience profiles",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node ../../tests/presentation-audience-engine/audience-engine.test.js"
+  },
+  "keywords": ["presentation", "audience", "adaptation"],
+  "license": "MIT"
+}

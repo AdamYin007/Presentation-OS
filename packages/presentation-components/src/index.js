@@ -18,5 +18,5 @@ module.exports = {
   card,
   timeline,
   platformHub,
-  layeredArchitecture
+  layeredArchitecture,
 };

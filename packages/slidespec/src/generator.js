@@ -8,11 +8,7 @@
 
 "use strict";
 
-const {
-  createDefaultSlideSpec,
-  validateSlideSpec,
-  VALID_LAYOUTS,
-} = require("./schema.js");
+const { createDefaultSlideSpec, validateSlideSpec, VALID_LAYOUTS } = require("./schema.js");
 
 /**
  * Map DeckPlan slide roles to SlideSpec layout families.
@@ -21,24 +17,24 @@ const {
  * data-chart, closing, agenda, executive-summary.
  */
 const ROLE_TO_LAYOUT = {
-  "title": "title-slide",
-  "agenda": "agenda",
+  title: "title-slide",
+  agenda: "agenda",
   "section-divider": "section-divider",
   "executive-summary": "executive-summary",
-  "content": "title-and-bullets",
-  "comparison": "comparison",
-  "process": "horizontal-process",
-  "timeline": "timeline",
-  "roadmap": "roadmap",
+  content: "title-and-bullets",
+  comparison: "comparison",
+  process: "horizontal-process",
+  timeline: "timeline",
+  roadmap: "roadmap",
   "data-chart": "chart-and-insight",
-  "table": "table",
-  "matrix": "matrix",
-  "architecture": "title-and-bullets",
+  table: "table",
+  matrix: "matrix",
+  architecture: "title-and-bullets",
   "case-study": "two-column",
-  "recommendation": "title-and-bullets",
-  "quote": "title-and-bullets",
+  recommendation: "title-and-bullets",
+  quote: "title-and-bullets",
   "q-and-a": "title-and-bullets",
-  "closing": "closing",
+  closing: "closing",
 };
 
 /**
@@ -62,7 +58,9 @@ function generateSlideSpecs(deckPlan) {
       if (specs.length > 0) {
         specs[0].designHints = specs[0].designHints || {};
         specs[0].designHints._validationWarnings = specs[0].designHints._validationWarnings || [];
-        specs[0].designHints._validationWarnings.push(`Slide ${spec.id}: ${validation.errors.join("; ")}`);
+        specs[0].designHints._validationWarnings.push(
+          `Slide ${spec.id}: ${validation.errors.join("; ")}`,
+        );
       }
     }
   }
@@ -124,11 +122,16 @@ function mapDeckPlanToSlideSpec(slidePlan, deckPlan) {
 
 /**
  * Generate a slide title from the DeckPlan entry.
- * 
+ *
  * For content slides within a section that has multiple slides,
  * generates differentiated titles based on the page-specific source paragraph.
  */
 function generateTitle(role, slidePlan, sectionTitle, deckPlan) {
+  // If the slide plan already has an explicit title (from content-plan), use it directly
+  if (slidePlan._explicitTitle && slidePlan._explicitTitle.trim()) {
+    return slidePlan._explicitTitle;
+  }
+
   if (role === "title") {
     return deckPlan.deckTitle || "Untitled";
   }
@@ -162,19 +165,19 @@ function generateTitle(role, slidePlan, sectionTitle, deckPlan) {
  */
 function generateContentTitle(slidePlan, sectionTitle, deckPlan) {
   const km = (slidePlan.keyMessage || "").trim();
-  
+
   // Try to extract page-specific insight from source paragraph
   const pageSpecificInsight = extractPageSpecificInsight(slidePlan, deckPlan);
-  
+
   if (pageSpecificInsight) {
     return pageSpecificInsight;
   }
-  
+
   // If no page-specific insight, check if this is the only slide in its section
   const sectionSlides = deckPlan.slides.filter(
-    s => s.section === slidePlan.section && s.role !== "section-divider"
+    (s) => s.section === slidePlan.section && s.role !== "section-divider",
   );
-  
+
   if (sectionSlides.length <= 1) {
     // Only one slide in this section, safe to use keyMessage
     if (km && km.length < 60) {
@@ -187,7 +190,7 @@ function generateContentTitle(slidePlan, sectionTitle, deckPlan) {
       return km;
     }
   }
-  
+
   return null;
 }
 
@@ -196,43 +199,43 @@ function generateContentTitle(slidePlan, sectionTitle, deckPlan) {
  */
 function extractPageSpecificInsight(slidePlan, deckPlan) {
   // Find the section this slide belongs to
-  const section = deckPlan.sections.find(s => s.title === slidePlan.section);
-  
+  const section = deckPlan.sections.find((s) => s.title === slidePlan.section);
+
   if (!section || !section.sourceParagraphs || section.sourceParagraphs.length === 0) {
     return null;
   }
-  
+
   // Find which paragraph index this slide should use (round-robin distribution)
   const sectionSlides = deckPlan.slides.filter(
-    s => s.section === slidePlan.section && s.role !== "section-divider"
+    (s) => s.section === slidePlan.section && s.role !== "section-divider",
   );
-  const slideLocalIdx = sectionSlides.findIndex(s => s.index === slidePlan.index);
-  
+  const slideLocalIdx = sectionSlides.findIndex((s) => s.index === slidePlan.index);
+
   if (slideLocalIdx < 0) {
     return null;
   }
-  
+
   // Use modular indexing so we don't exceed available paragraphs
   const paraIdx = slideLocalIdx % section.sourceParagraphs.length;
   const para = section.sourceParagraphs[paraIdx];
   if (!para || !para.originalText) {
     return null;
   }
-  
+
   // Extract a concise conclusion from the source paragraph
   const text = para.originalText.trim();
-  
+
   // If text is short enough, use it directly
   if (text.length <= 80) {
     return text;
   }
-  
+
   // Otherwise, extract first meaningful clause (up to 80 chars)
   const match = text.match(/^.{1,80}(?:\s*[,.。；；]|$)/);
   if (match) {
-    return match[0].replace(/[,.。；；]$/, '').trim();
+    return match[0].replace(/[,.。；；]$/, "").trim();
   }
-  
+
   return text.substring(0, 80).trim();
 }
 
@@ -243,16 +246,16 @@ function isDifferentiatedKeyMessage(keyMessage, currentSlide, sectionSlides) {
   // Count how many other slides in this section have similar keyMessage
   let similarCount = 0;
   const normalizedCurrent = normalizeForComparison(keyMessage);
-  
+
   for (const otherSlide of sectionSlides) {
     if (otherSlide.index === currentSlide.index) continue;
-    
+
     const otherKm = (otherSlide.keyMessage || "").trim();
     if (normalizeForComparison(otherKm) === normalizedCurrent) {
       similarCount++;
     }
   }
-  
+
   // If more than 50% of other slides have the same keyMessage, it's not differentiated
   return similarCount < sectionSlides.length / 2;
 }
@@ -261,7 +264,10 @@ function isDifferentiatedKeyMessage(keyMessage, currentSlide, sectionSlides) {
  * Normalize text for comparison (lowercase, trim, remove punctuation).
  */
 function normalizeForComparison(text) {
-  return text.toLowerCase().trim().replace(/[^\w\s]/g, '');
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s]/g, "");
 }
 
 function getPartNumber(slidePlan) {
@@ -285,17 +291,34 @@ function generateBody(role, slidePlan, deckPlan, title) {
   const keyMsg = slidePlan.keyMessage || "";
   const MAX_BULLETS = 5;
 
+  // ── Explicit content plan: use pre-parsed bodyItems directly ──
+  if (Array.isArray(slidePlan.bodyItems) && slidePlan.bodyItems.length > 0) {
+    for (const item of slidePlan.bodyItems) {
+      if (!item) continue;
+      let bullet = item.trim();
+      // Strip Markdown ** bold markers for plain text rendering
+      bullet = bullet.replace(/\*\*(.*?)\*\*/g, '$1');
+      // Skip known metadata marker lines (e.g. "标题：xxx", "内容：xxx")
+      if (/^(?:标题|副标题|关键句|模板要求|视觉建议|边界|内容)[：:]/.test(bullet)) continue;
+      if (bullet.length < 2) continue;
+      if (bullet.length > 120) bullet = bullet.slice(0, 117) + "...";
+      body.push(bullet);
+      if (body.length >= MAX_BULLETS) break;
+    }
+    if (body.length > 0) return body;
+  }
+
   // Try to get source paragraph text from deckPlan sections
   if (deckPlan.sections && slidePlan.sourceRefs && slidePlan.sourceRefs.length > 0) {
     const section = deckPlan.sections.find((s) => s.title === slidePlan.section);
     if (section && section.sourceParagraphs && section.sourceParagraphs.length > 0) {
       // Distribute paragraphs across slides in this section by position
       const sectionSlides = deckPlan.slides.filter(
-        (s) => s.section === slidePlan.section && s.role !== "section-divider"
+        (s) => s.section === slidePlan.section && s.role !== "section-divider",
       );
       const slideLocalIdx = sectionSlides.findIndex((s) => s.index === slidePlan.index);
       const totalSourcePara = section.sourceParagraphs.length;
-      
+
       if (totalSourcePara > 0) {
         // Each slide gets up to MAX_BULLETS paragraphs starting from its local index
         // Use modular indexing so slides with few paragraphs still get content
@@ -306,8 +329,8 @@ function generateBody(role, slidePlan, deckPlan, title) {
           const para = section.sourceParagraphs[paraIdx];
           if (para && para.originalText) {
             let bullet = para.originalText.trim();
-            
-            // Avoid title/body duplication: truncate bullets that are identical or 
+
+            // Avoid title/body duplication: truncate bullets that are identical or
             // prefix-similar to the slide title (which comes from the same paragraph)
             const titleLower = (title || "").toLowerCase().trim();
             if (titleLower && bullet.toLowerCase().startsWith(titleLower)) {
@@ -321,7 +344,7 @@ function generateBody(role, slidePlan, deckPlan, title) {
                 bullet = keyMsg;
               }
             }
-            
+
             if (bullet && bullet.length > 120) {
               bullet = bullet.slice(0, 117) + "...";
             }
@@ -336,10 +359,16 @@ function generateBody(role, slidePlan, deckPlan, title) {
   }
 
   // Deduplicate body items that are identical to the title (case-insensitive)
-  const titleNorm = (title || "").trim().toLowerCase().replace(/[.,!?;:]+$/, "");
+  const titleNorm = (title || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[.,!?;:]+$/, "");
   const deduped = [];
   for (const item of body) {
-    const itemNorm = item.trim().toLowerCase().replace(/[.,!?;:]+$/, "");
+    const itemNorm = item
+      .trim()
+      .toLowerCase()
+      .replace(/[.,!?;:]+$/, "");
     if (!titleNorm || titleNorm !== itemNorm) {
       deduped.push(item);
     }
@@ -350,7 +379,10 @@ function generateBody(role, slidePlan, deckPlan, title) {
     if (keyMsg && !titleNorm) {
       deduped.push(keyMsg);
     } else if (keyMsg) {
-      const keyMsgNorm = keyMsg.trim().toLowerCase().replace(/[.,!?;:]+$/, "");
+      const keyMsgNorm = keyMsg
+        .trim()
+        .toLowerCase()
+        .replace(/[.,!?;:]+$/, "");
       if (keyMsgNorm !== titleNorm) {
         deduped.push(keyMsg);
       } else {
@@ -371,7 +403,7 @@ function generateBody(role, slidePlan, deckPlan, title) {
       deduped.push(keyMsg);
     } else {
       // Title and keyMessage are the same — use first available source paragraph
-      const section = deckPlan.sections?.find(s => s.title === slidePlan.section);
+      const section = deckPlan.sections?.find((s) => s.title === slidePlan.section);
       if (section?.sourceParagraphs?.length > 0) {
         const firstPara = section.sourceParagraphs[0].originalText?.trim();
         if (firstPara) {
@@ -396,11 +428,11 @@ function generateBody(role, slidePlan, deckPlan, title) {
 function generateBodyPoint(index, role, deckPlan) {
   const templates = {
     "data-chart": ["Data point analysis", "Trend observation", "Statistical finding"],
-    "comparison": ["Alternative A perspective", "Alternative B perspective", "Trade-off analysis"],
-    "process": ["Step one: preparation", "Step two: execution", "Step three: validation"],
-    "roadmap": ["Phase 1: Foundation", "Phase 2: Expansion", "Phase 3: Optimization"],
+    comparison: ["Alternative A perspective", "Alternative B perspective", "Trade-off analysis"],
+    process: ["Step one: preparation", "Step two: execution", "Step three: validation"],
+    roadmap: ["Phase 1: Foundation", "Phase 2: Expansion", "Phase 3: Optimization"],
     "executive-summary": ["Bottom line summary", "Key recommendation", "Expected impact"],
-    "content": ["Supporting detail", "Evidence point", "Contextual note"],
+    content: ["Supporting detail", "Evidence point", "Contextual note"],
   };
 
   const pool = templates[role] || templates["content"];
@@ -453,12 +485,12 @@ function mapVisualType(candidate, role) {
     // Determine visual type from role
     const roleVisualMap = {
       "data-chart": "bar-chart",
-      "comparison": "comparison",
-      "process": "process",
-      "roadmap": "timeline",
+      comparison: "comparison",
+      process: "process",
+      roadmap: "timeline",
       "case-study": "image",
-      "table": "table",
-      "matrix": "matrix",
+      table: "table",
+      matrix: "matrix",
     };
     return roleVisualMap[role] || "none";
   }
@@ -473,7 +505,9 @@ function generateVisualSpec(visualType, role, slidePlan) {
 
   const spec = {};
 
-  if (["bar-chart", "line-chart", "area-chart", "pie-chart", "scatter-chart"].includes(visualType)) {
+  if (
+    ["bar-chart", "line-chart", "area-chart", "pie-chart", "scatter-chart"].includes(visualType)
+  ) {
     spec.type = visualType;
     spec.hasDataLabel = true;
     spec.hasLegend = true;

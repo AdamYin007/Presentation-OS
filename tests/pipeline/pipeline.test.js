@@ -4,13 +4,18 @@ const fs = require("fs");
 const path = require("path");
 const root = path.join(__dirname, "..", "..");
 
-function fail(m) { throw new Error(m); }
+function fail(m) {
+  throw new Error(m);
+}
 
 console.log("M12.7 End-to-End Pipeline Tests");
 console.log("===============================\n");
 
 // Load sample input
-const mdInput = fs.readFileSync(path.join(root, "fixtures/document-ingest/sample-markdown.md"), "utf8");
+const mdInput = fs.readFileSync(
+  path.join(root, "fixtures/document-ingest/sample-markdown.md"),
+  "utf8",
+);
 
 // ── Module exports ──
 
@@ -36,7 +41,9 @@ console.log("\nFull pipeline:");
   console.log(`  ✓ Intent: topic="${result.intent.topic}", purpose="${result.intent.purpose}"`);
   console.log(`  ✓ DeckPlan: ${result.deckPlan.slides?.length || "N/A"} slides planned`);
   console.log(`  ✓ SlideSpecs: ${result.slideSpecs.length} entries`);
-  console.log(`  ✓ LayoutPlan: theme=${result.layoutPlan.theme}, ${result.layoutPlan.totalSlides} layouts`);
+  console.log(
+    `  ✓ LayoutPlan: theme=${result.layoutPlan.theme}, ${result.layoutPlan.totalSlides} layouts`,
+  );
   console.log(`  ✓ PPTX buffer: ${result.pptxBuffer.length} bytes`);
 
   // Verify PPTX is valid ZIP
@@ -52,7 +59,10 @@ console.log("\nFull pipeline:");
 
   console.log("\nDifferent style:");
   const consultingResult = await runPipeline(mdInput, { style: "business-consulting" });
-  assert(consultingResult.layoutPlan.theme === "business-consulting", "Should use business-consulting theme");
+  assert(
+    consultingResult.layoutPlan.theme === "business-consulting",
+    "Should use business-consulting theme",
+  );
   console.log("  ✓ business-consulting style applied");
 
   // ── Empty input edge case ──

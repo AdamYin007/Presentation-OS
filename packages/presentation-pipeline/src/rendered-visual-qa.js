@@ -68,7 +68,8 @@ function checkPptxPackage(pptxPath) {
   // Absolute path leakage
   const absolutePathHits = xmlText.match(/(?:\/Users\/|\/private\/|file:\/\/|[A-Z]:\\)/g) || [];
   const relText = rels.map((entry) => readPptxEntry(pptxPath, entry)).join("\n");
-  const badTargets = relText.match(/Target=["'](?:file:\/\/|\/Users\/|\/private\/|[A-Z]:\\)/g) || [];
+  const badTargets =
+    relText.match(/Target=["'](?:file:\/\/|\/Users\/|\/private\/|[A-Z]:\\)/g) || [];
 
   // Media integrity — no ".." in paths
   const mediaSafe = media.every((e) => !e.includes(".."));
@@ -95,12 +96,11 @@ function renderToPdf(pptxPath, outputDir, renderer) {
 
   const pdfOutputPath = path.join(outputDir, "output.pdf");
   try {
-    cp.execFileSync(renderer.cmd, [
-      "--headless",
-      "--convert-to", "pdf",
-      "--outdir", outputDir,
-      pptxPath,
-    ], { timeout: 90000 });
+    cp.execFileSync(
+      renderer.cmd,
+      ["--headless", "--convert-to", "pdf", "--outdir", outputDir, pptxPath],
+      { timeout: 90000 },
+    );
     return { success: fs.existsSync(pdfOutputPath), pdfPath: pdfOutputPath };
   } catch (e) {
     return { success: false, reason: `Conversion failed: ${e.message}` };
@@ -125,8 +125,9 @@ function getPdfTextByPage(pdfPath, pageCount) {
   for (let i = 1; i <= pageCount; i++) {
     try {
       const text = cp.execFileSync(
-        "pdftotext", ["-f", String(i), "-l", String(i), "-layout", pdfPath, "-"],
-        { encoding: "utf8", timeout: 30000 }
+        "pdftotext",
+        ["-f", String(i), "-l", String(i), "-layout", pdfPath, "-"],
+        { encoding: "utf8", timeout: 30000 },
       );
       pages.push({ page: i, charCount: text.replace(/\s+/g, "").length, rawLength: text.length });
     } catch {
@@ -141,7 +142,9 @@ function renderPdfToPng(pdfPath, outputDir, pageCount) {
   // Use pdfimages with quiet flag to list images without help text
   try {
     if (commandExists("pdfimages")) {
-      const result = cp.execFileSync("pdfimages", ["-q", "-png", "-list", pdfPath], { encoding: "utf8" });
+      const result = cp.execFileSync("pdfimages", ["-q", "-png", "-list", pdfPath], {
+        encoding: "utf8",
+      });
       result.split(/\r?\n/).forEach((line) => {
         const m = line.match(/^(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(.+\.png)$/);
         if (m) pngFiles.push({ num: parseInt(m[1], 10), file: m[5] });
@@ -155,7 +158,9 @@ function renderPdfToPng(pdfPath, outputDir, pageCount) {
   if (!pngFiles.length && commandExists("pdfimages")) {
     try {
       const baseName = path.basename(pdfPath, ".pdf");
-      cp.execFileSync("pdfimages", ["-q", "-png", pdfPath, path.join(outputDir, baseName)], { timeout: 60000 });
+      cp.execFileSync("pdfimages", ["-q", "-png", pdfPath, path.join(outputDir, baseName)], {
+        timeout: 60000,
+      });
       for (let i = 1; i <= pageCount; i++) {
         const expected = path.join(outputDir, `${baseName}-${i}.png`);
         if (fs.existsSync(expected)) {
@@ -173,7 +178,9 @@ function renderPdfToPng(pdfPath, outputDir, pageCount) {
 function analyzePngInkRatio(pngFile) {
   // Use ImageMagick identify if available, otherwise fall back
   try {
-    const out = cp.execFileSync("identify", ["-format", "%w %h %[fx:mean]", pngFile], { encoding: "utf8" });
+    const out = cp.execFileSync("identify", ["-format", "%w %h %[fx:mean]", pngFile], {
+      encoding: "utf8",
+    });
     const parts = out.trim().split(/\s+/);
     if (parts.length >= 3) {
       const w = parseFloat(parts[0]);
@@ -245,7 +252,7 @@ function validateLayoutGeometry(slideSpecs, layoutPlan) {
       }
     }
 
-    const body = Array.isArray(spec.body) ? spec.body.join(" ") : (spec.body || "");
+    const body = Array.isArray(spec.body) ? spec.body.join(" ") : spec.body || "";
     const bodyChars = body.length;
     const bodyBox = boxes.find((b) => b.label === "body");
     const bodyArea = bodyBox ? bodyBox.w * bodyBox.h : 1;
@@ -302,34 +309,48 @@ function computeVerdict(manifest, renderedResults, rendererAvailable) {
   const warnings = [];
 
   if (renderedResults) {
-    if (renderedResults.blankSlides > 0) hardFails.push(`${renderedResults.blankSlides} blank slide(s) detected`);
-    if (renderedResults.overflowSuspected > 0) hardFails.push(`${renderedResults.overflowSuspected} critical overflow suspected`);
-    if (renderedResults.zeroSize > 0) hardFails.push(`${renderedResults.zeroSize} zero-size render box(es)`);
-    if (renderedResults.negative > 0) hardFails.push(`${renderedResults.negative} negative coordinate(s)`);
+    if (renderedResults.blankSlides > 0)
+      hardFails.push(`${renderedResults.blankSlides} blank slide(s) detected`);
+    if (renderedResults.overflowSuspected > 0)
+      hardFails.push(`${renderedResults.overflowSuspected} critical overflow suspected`);
+    if (renderedResults.zeroSize > 0)
+      hardFails.push(`${renderedResults.zeroSize} zero-size render box(es)`);
+    if (renderedResults.negative > 0)
+      hardFails.push(`${renderedResults.negative} negative coordinate(s)`);
   }
 
   // Package-level hard gates
   if (manifest.packageSummary) {
-    if (manifest.packageSummary.absolutePathHits > 0) hardFails.push(`${manifest.packageSummary.absolutePathHits} absolute path leak(s) in PPTX XML`);
-    if (manifest.packageSummary.badTargets > 0) hardFails.push(`${manifest.packageSummary.badTargets} bad relationship target(s)`);
+    if (manifest.packageSummary.absolutePathHits > 0)
+      hardFails.push(
+        `${manifest.packageSummary.absolutePathHits} absolute path leak(s) in PPTX XML`,
+      );
+    if (manifest.packageSummary.badTargets > 0)
+      hardFails.push(`${manifest.packageSummary.badTargets} bad relationship target(s)`);
   }
 
   // Quality score gates
-  if (qualityScore < 50) hardFails.push(`Quality score ${qualityScore}/100 below minimum threshold`);
-  else if (qualityScore < 80) warnings.push(`Quality score ${qualityScore}/100 below PASS threshold (>= 80)`);
+  if (qualityScore < 50)
+    hardFails.push(`Quality score ${qualityScore}/100 below minimum threshold`);
+  else if (qualityScore < 80)
+    warnings.push(`Quality score ${qualityScore}/100 below PASS threshold (>= 80)`);
 
   if (failCount > 0) hardFails.push(`${failCount} quality check(s) failed`);
 
   // Warning-level gates
   if (renderedResults) {
-    if (renderedResults.sparseSlides > 0) warnings.push(`${renderedResults.sparseSlides} sparse content slide(s)`);
-    if (renderedResults.highDensity > 0) warnings.push(`${renderedResults.highDensity} high-density slide(s)`);
+    if (renderedResults.sparseSlides > 0)
+      warnings.push(`${renderedResults.sparseSlides} sparse content slide(s)`);
+    if (renderedResults.highDensity > 0)
+      warnings.push(`${renderedResults.highDensity} high-density slide(s)`);
   }
 
   // Degradation note
   const degraded = !rendererAvailable;
   if (degraded) {
-    warnings.push("Rendered page checks skipped — LibreOffice unavailable (package + geometry checks only)");
+    warnings.push(
+      "Rendered page checks skipped — LibreOffice unavailable (package + geometry checks only)",
+    );
   }
 
   // Compute verdict

@@ -7,11 +7,7 @@ const fs = require("fs");
 const http = require("http");
 const path = require("path");
 const { spawnSync } = require("child_process");
-const {
-  createServer,
-  parseCliArgs,
-  validateRequest,
-} = require("../scripts/delivery-studio.js");
+const { createServer, parseCliArgs, validateRequest } = require("../scripts/delivery-studio.js");
 
 const ROOT_DIR = path.join(__dirname, "..");
 const TEST_OUTPUT_DIR = path.join(ROOT_DIR, "fixtures", "m12-22", "test-output");
@@ -34,28 +30,37 @@ function listen(server) {
 
 function close(server) {
   return new Promise((resolve, reject) => {
-    server.close((err) => err ? reject(err) : resolve());
+    server.close((err) => (err ? reject(err) : resolve()));
   });
 }
 
 function request(port, method, pathname, body = null) {
   return new Promise((resolve, reject) => {
     const data = body ? JSON.stringify(body) : null;
-    const req = http.request({
-      hostname: "127.0.0.1",
-      port,
-      path: pathname,
-      method,
-      headers: data ? {
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(data),
-      } : undefined,
-    }, (res) => {
-      let responseBody = "";
-      res.setEncoding("utf8");
-      res.on("data", (chunk) => { responseBody += chunk; });
-      res.on("end", () => resolve({ statusCode: res.statusCode, body: responseBody, headers: res.headers }));
-    });
+    const req = http.request(
+      {
+        hostname: "127.0.0.1",
+        port,
+        path: pathname,
+        method,
+        headers: data
+          ? {
+              "Content-Type": "application/json",
+              "Content-Length": Buffer.byteLength(data),
+            }
+          : undefined,
+      },
+      (res) => {
+        let responseBody = "";
+        res.setEncoding("utf8");
+        res.on("data", (chunk) => {
+          responseBody += chunk;
+        });
+        res.on("end", () =>
+          resolve({ statusCode: res.statusCode, body: responseBody, headers: res.headers }),
+        );
+      },
+    );
     req.on("error", reject);
     if (data) req.write(data);
     req.end();
@@ -94,13 +99,24 @@ const sampleMarkdown = `# M12.22 Delivery Studio
 - Clear local artifact handoff`;
 
 test("parseCliArgs supports explicit port and studio directory", () => {
-  const parsed = parseCliArgs(["node", "scripts/delivery-studio.js", "--port", "0", "--studio-dir", "/tmp/studio"]);
+  const parsed = parseCliArgs([
+    "node",
+    "scripts/delivery-studio.js",
+    "--port",
+    "0",
+    "--studio-dir",
+    "/tmp/studio",
+  ]);
   assert.strictEqual(parsed.port, 0);
   assert.strictEqual(parsed.studioDir, "/tmp/studio");
 });
 
 test("validateRequest accepts markdown, style, and built-in brand profile", () => {
-  const result = validateRequest({ markdown: sampleMarkdown, style: "business-consulting", brandProfile: "business-consulting" });
+  const result = validateRequest({
+    markdown: sampleMarkdown,
+    style: "business-consulting",
+    brandProfile: "business-consulting",
+  });
   assert.strictEqual(result.style, "business-consulting");
   assert.strictEqual(result.brandProfile, "business-consulting");
 });
@@ -164,10 +180,14 @@ test("POST /api/deliver generates PPTX and commercial reports", async () => {
 });
 
 test("existing deliver:pptx CLI remains callable", () => {
-  const result = spawnSync(process.execPath, [path.join(ROOT_DIR, "scripts", "deliver-pptx.js"), "--help"], {
-    cwd: ROOT_DIR,
-    encoding: "utf8",
-  });
+  const result = spawnSync(
+    process.execPath,
+    [path.join(ROOT_DIR, "scripts", "deliver-pptx.js"), "--help"],
+    {
+      cwd: ROOT_DIR,
+      encoding: "utf8",
+    },
+  );
   assert.strictEqual(result.status, 0);
   assert(result.stdout.includes("Usage: node scripts/deliver-pptx.js"));
   assert(result.stdout.includes("--brand-profile"));

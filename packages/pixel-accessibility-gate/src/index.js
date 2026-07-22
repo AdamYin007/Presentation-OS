@@ -48,9 +48,11 @@ function commandExists(cmd) {
 function detectEnvironment() {
   // LibreOffice detection reused from rendered-visual-qa
   const macSoffice = "/Applications/LibreOffice.app/Contents/MacOS/soffice";
-  const hasLibreOffice = fs.existsSync(macSoffice) || commandExists("soffice") || commandExists("libreoffice");
+  const hasLibreOffice =
+    fs.existsSync(macSoffice) || commandExists("soffice") || commandExists("libreoffice");
   const hasImagemagick = commandExists("identify") && commandExists("magick");
-  const hasPoppler = commandExists("pdfinfo") && commandExists("pdftotext") && commandExists("pdfimages");
+  const hasPoppler =
+    commandExists("pdfinfo") && commandExists("pdftotext") && commandExists("pdfimages");
   const hasPython = commandExists("python3");
   return { hasLibreOffice, hasImagemagick, hasPoppler, hasPython };
 }
@@ -73,23 +75,41 @@ function estimatePixelContrast(pngPath) {
   try {
     tmpPath = path.join(path.dirname(pngPath), ".m12_17_tmp_" + path.basename(pngPath));
     txtPath = tmpPath + ".txt";
-    cp.execFileSync("magick", [pngPath, "-filter", "point", "-resize", "100x56!", "-type", "TrueColorAlpha", tmpPath], { timeout: 30000 });
+    cp.execFileSync(
+      "magick",
+      [pngPath, "-filter", "point", "-resize", "100x56!", "-type", "TrueColorAlpha", tmpPath],
+      { timeout: 30000 },
+    );
 
-    const dims = cp.execFileSync("identify", ["-format", "%w %h", tmpPath], { encoding: "utf8" }).trim().split(/\s+/);
+    const dims = cp
+      .execFileSync("identify", ["-format", "%w %h", tmpPath], { encoding: "utf8" })
+      .trim()
+      .split(/\s+/);
     const w = parseInt(dims[0], 10);
     const h = parseInt(dims[1], 10);
     if (!w || !h) {
-      try { fs.unlinkSync(tmpPath); } catch {}
-      try { fs.unlinkSync(txtPath); } catch {}
+      try {
+        fs.unlinkSync(tmpPath);
+      } catch {}
+      try {
+        fs.unlinkSync(txtPath);
+      } catch {}
       return null;
     }
 
     cp.execFileSync("magick", [tmpPath, `txt:${txtPath}`], { timeout: 30000 });
     const txtOutput = fs.readFileSync(txtPath, "utf8");
-    const lines = txtOutput.trim().split("\n").filter(l => l.match(/^\d+,\d+:/));
+    const lines = txtOutput
+      .trim()
+      .split("\n")
+      .filter((l) => l.match(/^\d+,\d+:/));
     if (!lines.length) {
-      try { fs.unlinkSync(tmpPath); } catch {}
-      try { fs.unlinkSync(txtPath); } catch {}
+      try {
+        fs.unlinkSync(tmpPath);
+      } catch {}
+      try {
+        fs.unlinkSync(txtPath);
+      } catch {}
       return null;
     }
 
@@ -140,7 +160,8 @@ function estimatePixelContrast(pngPath) {
       else lightLums.push(lum);
     }
 
-    if (!darkLums.length || !lightLums.length) return { estimatedContrast: 1.0, sampleSize: samples.length, confidence: "low" };
+    if (!darkLums.length || !lightLums.length)
+      return { estimatedContrast: 1.0, sampleSize: samples.length, confidence: "low" };
 
     const darkMean = darkLums.reduce((a, b) => a + b, 0) / darkLums.length;
     const lightMean = lightLums.reduce((a, b) => a + b, 0) / lightLums.length;
@@ -154,12 +175,24 @@ function estimatePixelContrast(pngPath) {
     if (ratioSmall > 0.15) confidence = "medium";
     if (ratioSmall > 0.25) confidence = "high";
 
-    try { fs.unlinkSync(tmpPath); } catch {}
-    try { fs.unlinkSync(txtPath); } catch {}
-    return { estimatedContrast: parseFloat(ratio.toFixed(2)), sampleSize: samples.length, confidence };
+    try {
+      fs.unlinkSync(tmpPath);
+    } catch {}
+    try {
+      fs.unlinkSync(txtPath);
+    } catch {}
+    return {
+      estimatedContrast: parseFloat(ratio.toFixed(2)),
+      sampleSize: samples.length,
+      confidence,
+    };
   } catch {
-    try { fs.unlinkSync(tmpPath); } catch {}
-    try { fs.unlinkSync(txtPath); } catch {}
+    try {
+      fs.unlinkSync(tmpPath);
+    } catch {}
+    try {
+      fs.unlinkSync(txtPath);
+    } catch {}
     return null;
   }
 }
@@ -175,10 +208,20 @@ function computeColorContrast(hex1, hex2) {
     if (!h) return null;
     const c = h.replace("#", "");
     if (c.length !== 6) return null;
-    return [parseInt(c.substring(0, 2), 16) / 255, parseInt(c.substring(2, 4), 16) / 255, parseInt(c.substring(4, 6), 16) / 255];
+    return [
+      parseInt(c.substring(0, 2), 16) / 255,
+      parseInt(c.substring(2, 4), 16) / 255,
+      parseInt(c.substring(4, 6), 16) / 255,
+    ];
   }
-  function srgbToLinear(c) { return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
-  function luminance(rgb) { return 0.2126 * srgbToLinear(rgb[0]) + 0.7152 * srgbToLinear(rgb[1]) + 0.0722 * srgbToLinear(rgb[2]); }
+  function srgbToLinear(c) {
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  }
+  function luminance(rgb) {
+    return (
+      0.2126 * srgbToLinear(rgb[0]) + 0.7152 * srgbToLinear(rgb[1]) + 0.0722 * srgbToLinear(rgb[2])
+    );
+  }
   const rgb1 = parseHex(hex1);
   const rgb2 = parseHex(hex2);
   if (!rgb1 || !rgb2) return 1;
@@ -207,9 +250,19 @@ function checkPixelContrast(pngFiles, slideSpecs, layoutPlan) {
 
   if (!pngFiles || !pngFiles.length) {
     return {
-      verdict: "NEEDS_REVIEW", passCount: 1, failCount: 0, warnCount: 0,
-      results: [{ status: "warn", message: "No rendered PNG files available — pixel contrast analysis skipped" }],
-      findings: [], degraded: true, reason: "no_png_files",
+      verdict: "NEEDS_REVIEW",
+      passCount: 1,
+      failCount: 0,
+      warnCount: 0,
+      results: [
+        {
+          status: "warn",
+          message: "No rendered PNG files available — pixel contrast analysis skipped",
+        },
+      ],
+      findings: [],
+      degraded: true,
+      reason: "no_png_files",
     };
   }
 
@@ -231,14 +284,35 @@ function checkPixelContrast(pngFiles, slideSpecs, layoutPlan) {
         const aaThreshold = role === "title" || role === "section-divider" ? 3.0 : 4.5;
         if (ratio < aaThreshold) {
           failCount++;
-          findings.push({ page: i + 1, role, method: "color_proxy", ratio, threshold: `AA (${aaThreshold}:1)`, severity: "fail" });
+          findings.push({
+            page: i + 1,
+            role,
+            method: "color_proxy",
+            ratio,
+            threshold: `AA (${aaThreshold}:1)`,
+            severity: "fail",
+          });
         } else {
           passCount++;
-          findings.push({ page: i + 1, role, method: "color_proxy", ratio, threshold: `AA (${aaThreshold}:1)`, severity: "pass" });
+          findings.push({
+            page: i + 1,
+            role,
+            method: "color_proxy",
+            ratio,
+            threshold: `AA (${aaThreshold}:1)`,
+            severity: "pass",
+          });
         }
       } else {
         warnCount++;
-        findings.push({ page: i + 1, role, method: "none", ratio: null, severity: "warn", note: "No color data available" });
+        findings.push({
+          page: i + 1,
+          role,
+          method: "none",
+          ratio: null,
+          severity: "warn",
+          note: "No color data available",
+        });
       }
       continue;
     }
@@ -246,7 +320,14 @@ function checkPixelContrast(pngFiles, slideSpecs, layoutPlan) {
     const pixelResult = estimatePixelContrast(fullPath);
     if (!pixelResult) {
       warnCount++;
-      findings.push({ page: i + 1, role, method: "failed", ratio: null, severity: "warn", note: "ImageMagick identify failed on page" });
+      findings.push({
+        page: i + 1,
+        role,
+        method: "failed",
+        ratio: null,
+        severity: "warn",
+        note: "ImageMagick identify failed on page",
+      });
       continue;
     }
 
@@ -254,17 +335,50 @@ function checkPixelContrast(pngFiles, slideSpecs, layoutPlan) {
     if (pixelResult.estimatedContrast < aaThreshold) {
       if (pixelResult.confidence === "low") {
         warnCount++;
-        findings.push({ page: i + 1, role, method: "pixel_sample", ratio: pixelResult.estimatedContrast, threshold: `AA (${aaThreshold}:1)`, severity: "warn", confidence: pixelResult.confidence, note: "Low-confidence pixel clustering; requires human review before hard failure." });
+        findings.push({
+          page: i + 1,
+          role,
+          method: "pixel_sample",
+          ratio: pixelResult.estimatedContrast,
+          threshold: `AA (${aaThreshold}:1)`,
+          severity: "warn",
+          confidence: pixelResult.confidence,
+          note: "Low-confidence pixel clustering; requires human review before hard failure.",
+        });
       } else {
         failCount++;
-        findings.push({ page: i + 1, role, method: "pixel_sample", ratio: pixelResult.estimatedContrast, threshold: `AA (${aaThreshold}:1)`, severity: "fail", confidence: pixelResult.confidence });
+        findings.push({
+          page: i + 1,
+          role,
+          method: "pixel_sample",
+          ratio: pixelResult.estimatedContrast,
+          threshold: `AA (${aaThreshold}:1)`,
+          severity: "fail",
+          confidence: pixelResult.confidence,
+        });
       }
     } else if (pixelResult.estimatedContrast < 7.0) {
       warnCount++;
-      findings.push({ page: i + 1, role, method: "pixel_sample", ratio: pixelResult.estimatedContrast, threshold: "AAA (7:1)", severity: "warn", confidence: pixelResult.confidence });
+      findings.push({
+        page: i + 1,
+        role,
+        method: "pixel_sample",
+        ratio: pixelResult.estimatedContrast,
+        threshold: "AAA (7:1)",
+        severity: "warn",
+        confidence: pixelResult.confidence,
+      });
     } else {
       passCount++;
-      findings.push({ page: i + 1, role, method: "pixel_sample", ratio: pixelResult.estimatedContrast, threshold: "AAA (7:1)", severity: "pass", confidence: pixelResult.confidence });
+      findings.push({
+        page: i + 1,
+        role,
+        method: "pixel_sample",
+        ratio: pixelResult.estimatedContrast,
+        threshold: "AAA (7:1)",
+        severity: "pass",
+        confidence: pixelResult.confidence,
+      });
     }
   }
 
@@ -274,30 +388,37 @@ function checkPixelContrast(pngFiles, slideSpecs, layoutPlan) {
   else verdict = "PASS";
 
   return {
-    verdict, passCount, failCount, warnCount,
-    results: findings.map((f) => ({ status: f.severity === "pass" ? "pass" : f.severity === "warn" ? "warn" : "fail", message: `Page ${f.page} ${f.role} contrast ${f.ratio}:1` })),
-    findings, degraded: !hasImagemagick,
+    verdict,
+    passCount,
+    failCount,
+    warnCount,
+    results: findings.map((f) => ({
+      status: f.severity === "pass" ? "pass" : f.severity === "warn" ? "warn" : "fail",
+      message: `Page ${f.page} ${f.role} contrast ${f.ratio}:1`,
+    })),
+    findings,
+    degraded: !hasImagemagick,
   };
 }
 
 // ─── 2. Color-Blindness Simulation ──────────────────────────────────
 
 const PROTANOPIA_MATRIX = [
-  [0.56667, 0.43333, 0.00000],
-  [0.55833, 0.44167, 0.00000],
-  [0.00000, 0.24167, 0.75833],
+  [0.56667, 0.43333, 0.0],
+  [0.55833, 0.44167, 0.0],
+  [0.0, 0.24167, 0.75833],
 ];
 
 const DEUTERANOPIA_MATRIX = [
-  [0.62500, 0.37500, 0.00000],
-  [0.70000, 0.30000, 0.00000],
-  [0.00000, 0.30000, 0.70000],
+  [0.625, 0.375, 0.0],
+  [0.7, 0.3, 0.0],
+  [0.0, 0.3, 0.7],
 ];
 
 const TRITANOPIA_MATRIX = [
-  [0.95000, 0.05000, 0.00000],
-  [0.00000, 0.43333, 0.56667],
-  [0.00000, 0.47500, 0.52500],
+  [0.95, 0.05, 0.0],
+  [0.0, 0.43333, 0.56667],
+  [0.0, 0.475, 0.525],
 ];
 
 function applyColorBlindMatrix(rgb, matrix) {
@@ -326,7 +447,11 @@ function parseHexRgb(hex) {
   const c = hex.replace("#", "");
   if (c.length !== 6) return null;
   try {
-    return [parseInt(c.substring(0, 2), 16), parseInt(c.substring(2, 4), 16), parseInt(c.substring(4, 6), 16)];
+    return [
+      parseInt(c.substring(0, 2), 16),
+      parseInt(c.substring(2, 4), 16),
+      parseInt(c.substring(4, 6), 16),
+    ];
   } catch {
     return null;
   }
@@ -340,7 +465,11 @@ function parseHexRgb(hex) {
  * @returns {{ simType, originalDist, simDist, distinguishable, simFg, simBg } | null}
  */
 function checkColorDistinguishability(originalFg, originalBg, simType) {
-  const matrices = { protanopia: PROTANOPIA_MATRIX, deuteranopia: DEUTERANOPIA_MATRIX, tritanopia: TRITANOPIA_MATRIX };
+  const matrices = {
+    protanopia: PROTANOPIA_MATRIX,
+    deuteranopia: DEUTERANOPIA_MATRIX,
+    tritanopia: TRITANOPIA_MATRIX,
+  };
   const matrix = matrices[simType];
   if (!matrix) return null;
 
@@ -354,11 +483,12 @@ function checkColorDistinguishability(originalFg, originalBg, simType) {
   const simDist = colorDistance(simFg, simBg);
 
   return {
-    simType, originalDist: parseFloat(origDist.toFixed(1)),
+    simType,
+    originalDist: parseFloat(origDist.toFixed(1)),
     simDist: parseFloat(simDist.toFixed(1)),
     distinguishable: simDist >= 30,
-    simFg: simFg.map(v => v.toString(16).padStart(2, "0")).join(""),
-    simBg: simBg.map(v => v.toString(16).padStart(2, "0")).join(""),
+    simFg: simFg.map((v) => v.toString(16).padStart(2, "0")).join(""),
+    simBg: simBg.map((v) => v.toString(16).padStart(2, "0")).join(""),
   };
 }
 
@@ -378,9 +508,18 @@ function checkColorBlindness(layoutPlan) {
 
   if (!layoutPlan || !layoutPlan.layouts || !layoutPlan.layouts.length) {
     return {
-      verdict: "NEEDS_REVIEW", passCount: 1, failCount: 0, warnCount: 0,
-      results: [{ status: "warn", message: "No layout data available — color-blindness simulation skipped" }],
-      findings: [], degraded: true,
+      verdict: "NEEDS_REVIEW",
+      passCount: 1,
+      failCount: 0,
+      warnCount: 0,
+      results: [
+        {
+          status: "warn",
+          message: "No layout data available — color-blindness simulation skipped",
+        },
+      ],
+      findings: [],
+      degraded: true,
     };
   }
 
@@ -389,11 +528,24 @@ function checkColorBlindness(layoutPlan) {
     if (!colors) continue;
 
     const pairsToCheck = [];
-    if (colors.text && colors.accent) pairsToCheck.push({ fg: colors.text, bg: colors.accent, label: "text on accent" });
-    if (colors.text && colors.background) pairsToCheck.push({ fg: colors.text, bg: colors.background, label: "text on background" });
-    if (colors.secondaryText && colors.background) pairsToCheck.push({ fg: colors.secondaryText, bg: colors.background, label: "secondaryText on background" });
-    if (colors.primary && colors.background) pairsToCheck.push({ fg: colors.primary, bg: colors.background, label: "primary on background" });
-    if (colors.text && colors.surface) pairsToCheck.push({ fg: colors.text, bg: colors.surface, label: "text on surface" });
+    if (colors.text && colors.accent)
+      pairsToCheck.push({ fg: colors.text, bg: colors.accent, label: "text on accent" });
+    if (colors.text && colors.background)
+      pairsToCheck.push({ fg: colors.text, bg: colors.background, label: "text on background" });
+    if (colors.secondaryText && colors.background)
+      pairsToCheck.push({
+        fg: colors.secondaryText,
+        bg: colors.background,
+        label: "secondaryText on background",
+      });
+    if (colors.primary && colors.background)
+      pairsToCheck.push({
+        fg: colors.primary,
+        bg: colors.background,
+        label: "primary on background",
+      });
+    if (colors.text && colors.surface)
+      pairsToCheck.push({ fg: colors.text, bg: colors.surface, label: "text on surface" });
 
     for (const pair of pairsToCheck) {
       for (const simType of simTypes) {
@@ -402,14 +554,37 @@ function checkColorBlindness(layoutPlan) {
 
         if (result.distinguishable) {
           passCount++;
-          findings.push({ page: layout.index, pair: pair.label, simType, origDist: result.originalDist, simDist: result.simDist, severity: "pass" });
+          findings.push({
+            page: layout.index,
+            pair: pair.label,
+            simType,
+            origDist: result.originalDist,
+            simDist: result.simDist,
+            severity: "pass",
+          });
         } else {
           if (simType === "deuteranopia" || simType === "protanopia") {
             failCount++;
-            findings.push({ page: layout.index, pair: pair.label, simType, origDist: result.originalDist, simDist: result.simDist, severity: "fail", suggestion: `Colors may be indistinguishable in ${simType}. Consider using patterns, labels, or higher-contrast palette.` });
+            findings.push({
+              page: layout.index,
+              pair: pair.label,
+              simType,
+              origDist: result.originalDist,
+              simDist: result.simDist,
+              severity: "fail",
+              suggestion: `Colors may be indistinguishable in ${simType}. Consider using patterns, labels, or higher-contrast palette.`,
+            });
           } else {
             warnCount++;
-            findings.push({ page: layout.index, pair: pair.label, simType, origDist: result.originalDist, simDist: result.simDist, severity: "warn", suggestion: `Colors may have low distinguishability in ${simType}.` });
+            findings.push({
+              page: layout.index,
+              pair: pair.label,
+              simType,
+              origDist: result.originalDist,
+              simDist: result.simDist,
+              severity: "warn",
+              suggestion: `Colors may have low distinguishability in ${simType}.`,
+            });
           }
         }
       }
@@ -422,9 +597,16 @@ function checkColorBlindness(layoutPlan) {
   else verdict = "PASS";
 
   return {
-    verdict, passCount, failCount, warnCount,
-    results: findings.map((f) => ({ status: f.severity === "pass" ? "pass" : f.severity === "warn" ? "warn" : "fail", message: `Slide ${f.page} ${f.pair} ${f.simType} dist=${f.simDist}` })),
-    findings, degraded: false,
+    verdict,
+    passCount,
+    failCount,
+    warnCount,
+    results: findings.map((f) => ({
+      status: f.severity === "pass" ? "pass" : f.severity === "warn" ? "warn" : "fail",
+      message: `Slide ${f.page} ${f.pair} ${f.simType} dist=${f.simDist}`,
+    })),
+    findings,
+    degraded: false,
   };
 }
 
@@ -449,9 +631,13 @@ function checkFontFallback(slideSpecs, layoutPlan, pdfTextPages, environment) {
 
   if (!slideSpecs || !slideSpecs.length) {
     return {
-      verdict: "NEEDS_REVIEW", passCount: 1, failCount: 0, warnCount: 0,
+      verdict: "NEEDS_REVIEW",
+      passCount: 1,
+      failCount: 0,
+      warnCount: 0,
       results: [{ status: "warn", message: "No slide specs available — font checks skipped" }],
-      findings: [], degraded: true,
+      findings: [],
+      degraded: true,
     };
   }
 
@@ -468,12 +654,31 @@ function checkFontFallback(slideSpecs, layoutPlan, pdfTextPages, environment) {
     }
   }
 
-  const safeFallbacks = ["sans-serif", "serif", "monospace", "Arial", "Helvetica", "Times New Roman", "Georgia", "Verdana", "Calibri", "Segoe UI", "Roboto", "system-ui", "-apple-system"];
+  const safeFallbacks = [
+    "sans-serif",
+    "serif",
+    "monospace",
+    "Arial",
+    "Helvetica",
+    "Times New Roman",
+    "Georgia",
+    "Verdana",
+    "Calibri",
+    "Segoe UI",
+    "Roboto",
+    "system-ui",
+    "-apple-system",
+  ];
 
   for (const fontFamily of fontFamilies) {
     if (!safeFallbacks.includes(fontFamily.toLowerCase())) {
       warnCount++;
-      findings.push({ category: "font_fallback", font: fontFamily, severity: "warn", suggestion: `Custom font "${fontFamily}" may not render correctly on all systems. Add fallback stack: "${fontFamily}, sans-serif"` });
+      findings.push({
+        category: "font_fallback",
+        font: fontFamily,
+        severity: "warn",
+        suggestion: `Custom font "${fontFamily}" may not render correctly on all systems. Add fallback stack: "${fontFamily}, sans-serif"`,
+      });
     } else {
       passCount++;
       findings.push({ category: "font_fallback", font: fontFamily, severity: "pass" });
@@ -485,7 +690,14 @@ function checkFontFallback(slideSpecs, layoutPlan, pdfTextPages, environment) {
       const maxSize = Math.max(...sizes);
       if (minSize > 0 && maxSize / minSize > 4) {
         warnCount++;
-        findings.push({ category: "font_size_variance", font: fontFamily, minSize, maxSize, severity: "warn", suggestion: `Large font size range (${minSize}-${maxSize}pt) for "${fontFamily}". Verify visual hierarchy is intentional.` });
+        findings.push({
+          category: "font_size_variance",
+          font: fontFamily,
+          minSize,
+          maxSize,
+          severity: "warn",
+          suggestion: `Large font size range (${minSize}-${maxSize}pt) for "${fontFamily}". Verify visual hierarchy is intentional.`,
+        });
       }
     }
   }
@@ -500,18 +712,42 @@ function checkFontFallback(slideSpecs, layoutPlan, pdfTextPages, environment) {
 
       if (page.charCount === 0) {
         failCount++;
-        findings.push({ category: "text_extraction", page: i + 1, role, charCount: 0, severity: "fail", suggestion: `Page ${i + 1} (${role}) has no extractable text. Font embedding may be broken or text rendered as shapes.` });
+        findings.push({
+          category: "text_extraction",
+          page: i + 1,
+          role,
+          charCount: 0,
+          severity: "fail",
+          suggestion: `Page ${i + 1} (${role}) has no extractable text. Font embedding may be broken or text rendered as shapes.`,
+        });
       } else if (page.charCount < 10) {
         warnCount++;
-        findings.push({ category: "sparse_text", page: i + 1, role, charCount: page.charCount, severity: "warn", suggestion: `Page ${i + 1} (${role}) has very little extractable text (${page.charCount} chars). Verify content is not lost in rendering.` });
+        findings.push({
+          category: "sparse_text",
+          page: i + 1,
+          role,
+          charCount: page.charCount,
+          severity: "warn",
+          suggestion: `Page ${i + 1} (${role}) has very little extractable text (${page.charCount} chars). Verify content is not lost in rendering.`,
+        });
       } else {
         passCount++;
-        findings.push({ category: "text_extraction", page: i + 1, role, charCount: page.charCount, severity: "pass" });
+        findings.push({
+          category: "text_extraction",
+          page: i + 1,
+          role,
+          charCount: page.charCount,
+          severity: "pass",
+        });
       }
     }
   } else if (environment.hasPoppler === false) {
     warnCount++;
-    findings.push({ category: "degraded", severity: "warn", note: "PDF text extraction unavailable — font readability checks limited to metadata" });
+    findings.push({
+      category: "degraded",
+      severity: "warn",
+      note: "PDF text extraction unavailable — font readability checks limited to metadata",
+    });
   }
 
   let verdict;
@@ -520,9 +756,16 @@ function checkFontFallback(slideSpecs, layoutPlan, pdfTextPages, environment) {
   else verdict = "PASS";
 
   return {
-    verdict, passCount, failCount, warnCount,
-    results: findings.map((f) => ({ status: f.severity === "pass" ? "pass" : f.severity === "warn" ? "warn" : "fail", message: `${f.category}: ${JSON.stringify(f)}` })),
-    findings, degraded: !environment.hasPoppler,
+    verdict,
+    passCount,
+    failCount,
+    warnCount,
+    results: findings.map((f) => ({
+      status: f.severity === "pass" ? "pass" : f.severity === "warn" ? "warn" : "fail",
+      message: `${f.category}: ${JSON.stringify(f)}`,
+    })),
+    findings,
+    degraded: !environment.hasPoppler,
   };
 }
 
@@ -541,9 +784,23 @@ function checkFontFallback(slideSpecs, layoutPlan, pdfTextPages, environment) {
  * @param {Object} [m12_19_logo] - Optional logo safe-area check result
  * @returns {{ overallVerdict, gateResults, environment, remediations, totalChecks }}
  */
-function mergeCommercialReadiness(m12_15_verdict, m12_16_gate, m12_17_pixel, m12_17_colorblind, m12_17_font, environment, m12_19_logo) {
-  const verdictPriority = { "FAIL": 3, "NEEDS_REVIEW": 2, "PASS": 1 };
-  const verdicts = [m12_15_verdict, m12_16_gate.overallVerdict, m12_17_pixel.verdict, m12_17_colorblind.verdict, m12_17_font.verdict];
+function mergeCommercialReadiness(
+  m12_15_verdict,
+  m12_16_gate,
+  m12_17_pixel,
+  m12_17_colorblind,
+  m12_17_font,
+  environment,
+  m12_19_logo,
+) {
+  const verdictPriority = { FAIL: 3, NEEDS_REVIEW: 2, PASS: 1 };
+  const verdicts = [
+    m12_15_verdict,
+    m12_16_gate.overallVerdict,
+    m12_17_pixel.verdict,
+    m12_17_colorblind.verdict,
+    m12_17_font.verdict,
+  ];
   if (m12_19_logo && m12_19_logo.verdict) verdicts.push(m12_19_logo.verdict);
   let overallVerdict = "PASS";
   let overallScore = 0;
@@ -560,25 +817,41 @@ function mergeCommercialReadiness(m12_15_verdict, m12_16_gate, m12_17_pixel, m12
 
   if (m12_16_gate.remediationSuggestions) {
     for (const r of m12_16_gate.remediationSuggestions) {
-      remediations.push({ priority: r.severity === "fail" ? "high" : "medium", category: r.category || "visual_design", suggestion: r.suggestion });
+      remediations.push({
+        priority: r.severity === "fail" ? "high" : "medium",
+        category: r.category || "visual_design",
+        suggestion: r.suggestion,
+      });
     }
   }
 
   for (const f of m12_17_colorblind.findings || []) {
     if (f.suggestion) {
-      remediations.push({ priority: f.severity === "fail" ? "high" : "medium", category: "color_blindness", suggestion: f.suggestion });
+      remediations.push({
+        priority: f.severity === "fail" ? "high" : "medium",
+        category: "color_blindness",
+        suggestion: f.suggestion,
+      });
     }
   }
 
   for (const f of m12_17_font.findings || []) {
     if (f.suggestion) {
-      remediations.push({ priority: f.severity === "fail" ? "high" : "low", category: "font_readability", suggestion: f.suggestion });
+      remediations.push({
+        priority: f.severity === "fail" ? "high" : "low",
+        category: "font_readability",
+        suggestion: f.suggestion,
+      });
     }
   }
 
   for (const f of m12_17_pixel.findings || []) {
     if (f.severity === "fail") {
-      remediations.push({ priority: "high", category: "pixel_contrast", suggestion: `Page ${f.page}: estimated contrast ${f.ratio}:1 below AA threshold. Lighten background or darken foreground.` });
+      remediations.push({
+        priority: "high",
+        category: "pixel_contrast",
+        suggestion: `Page ${f.page}: estimated contrast ${f.ratio}:1 below AA threshold. Lighten background or darken foreground.`,
+      });
     }
   }
 
@@ -594,14 +867,18 @@ function mergeCommercialReadiness(m12_15_verdict, m12_16_gate, m12_17_pixel, m12
   if (m12_19_logo && m12_19_logo.issues) {
     for (const issue of m12_19_logo.issues) {
       if (issue.suggestion) {
-        uniqueRemediations.push({ priority: issue.severity === "fail" ? "high" : "medium", category: "logo_safe_area", suggestion: issue.suggestion });
+        uniqueRemediations.push({
+          priority: issue.severity === "fail" ? "high" : "medium",
+          category: "logo_safe_area",
+          suggestion: issue.suggestion,
+        });
       }
     }
   }
 
-  const logoPass = m12_19_logo ? (m12_19_logo.passCount || 0) : 0;
-  const logoFail = m12_19_logo ? (m12_19_logo.failCount || 0) : 0;
-  const logoWarn = m12_19_logo ? (m12_19_logo.warnCount || 0) : 0;
+  const logoPass = m12_19_logo ? m12_19_logo.passCount || 0 : 0;
+  const logoFail = m12_19_logo ? m12_19_logo.failCount || 0 : 0;
+  const logoWarn = m12_19_logo ? m12_19_logo.warnCount || 0 : 0;
 
   return {
     overallVerdict,
