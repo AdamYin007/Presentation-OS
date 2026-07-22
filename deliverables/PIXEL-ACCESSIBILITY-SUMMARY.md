@@ -1,8 +1,8 @@
 # Pixel-Level Accessibility & Rendered Visual Robustness
 
-**Generated**: 7/21/2026, 11:42:38 AM
+**Generated**: 7/23/2026, 12:42:37 PM
 **Overall Verdict**: NEEDS_REVIEW
-**Total Checks**: 81 (77 pass, 0 fail, 4 warn)
+**Total Checks**: 81 (76 pass, 0 fail, 5 warn)
 
 ## Environment
 
@@ -31,11 +31,11 @@
 | Page | Role | Method | Ratio | Severity |
 |------|------|--------|-------|----------|
 | 1 | content | pixel_sample | 6.17:1 | WARN |
-| 2 | section-divider | pixel_sample | 3.55:1 | WARN |
+| 2 | section-divider | pixel_sample | 2.25:1 | WARN |
 | 3 | content | pixel_sample | 7.6:1 | PASS |
-| 4 | section-divider | pixel_sample | 4.55:1 | WARN |
+| 4 | section-divider | pixel_sample | 1.68:1 | WARN |
 | 5 | content | pixel_sample | 4.08:1 | WARN |
-| 6 | closing | pixel_sample | 9.4:1 | PASS |
+| 6 | closing | pixel_sample | 2.5:1 | WARN |
 
 ### Color-Blindness Simulation
 
@@ -60,7 +60,7 @@ All color pairs maintain distinguishability across all three simulations.
 
 # Visual Design Standards Gate — M12.16
 
-**Generated**: 7/21/2026, 11:42:38 AM
+**Generated**: 7/23/2026, 12:42:37 PM
 **Overall Verdict**: PASS
 **Quality Score**: 100/100
 

@@ -1,6 +1,6 @@
 # Commercial Delivery Verdict
 
-**Generated**: 7/21/2026, 11:42:22 AM
+**Generated**: 7/23/2026, 12:35:52 AM
 **Input**: `/Users/adamyin/Projects/awe/fixtures/document-ingest/sample-markdown.md`
 **Deck**: 10 slides
 **Quality Score**: 100/100

@@ -79,7 +79,7 @@ function extractDocTitle(text) {
     if (m && m[1]) {
       let title = m[1].trim();
       // Clean markdown markers and whitespace
-      title = title.replace(/^#+\s*/, '').replace(/\s+/g, ' ');
+      title = title.replace(/^#+\s*/, "").replace(/\s+/g, " ");
       if (title.length >= 3 && title.length <= 30) return title;
     }
   }
@@ -87,7 +87,7 @@ function extractDocTitle(text) {
   // Fallback: first H1 heading
   const h1Match = text.match(/^#{1}\s+(.+)$/m);
   if (h1Match) {
-    let title = h1Match[1].trim().replace(/^#+\s*/, '').substring(0, 30);
+    let title = h1Match[1].trim().replace(/^#+\s*/, "").substring(0, 30);
     if (title.length >= 3) return title;
   }
   
@@ -95,7 +95,7 @@ function extractDocTitle(text) {
 }
 
 function extractStructuredHeadings(text) {
-  const lines = text.split('\n');
+  const lines = text.split("\n");
   const headings = [];
 
   for (let i = 0; i < lines.length; i++) {
@@ -147,8 +147,8 @@ function classifySections(headings, text) {
 
     // Extract text between current heading and next heading
     const startLine = current.lineIndex;
-    const endLine = next ? next.lineIndex : text.split('\n').length;
-    const sectionText = text.split('\n').slice(startLine + 1, endLine).join('\n');
+    const endLine = next ? next.lineIndex : text.split("\n").length;
+    const sectionText = text.split("\n").slice(startLine + 1, endLine).join("\n");
 
     // Classify section type (use ordered patterns array)
     const classification = classifyHeading(current.text, sectionText);
@@ -208,7 +208,7 @@ function classifyHeading(headingText, sectionText) {
   // Default: use cleaned heading text
   return {
     id: "content",
-    title: headingText.replace(/^#{1,3}\s*/, '').substring(0, 20),
+    title: headingText.replace(/^#{1,3}\s*/, "").substring(0, 20),
     type: "content",
   };
 }
@@ -217,20 +217,20 @@ function extractKeyMessage(sectionText, classification) {
   // Goal: produce a SHORT conclusion-type statement (≤20 chars).
   // CRITICAL: Must NOT contain bullet markers, punctuation, or whitespace artifacts.
   
-  const lines = sectionText.split('\n')
+  const lines = sectionText.split("\n")
     .map(l => l.trim())
-    .filter(l => l.length > 5 && !l.startsWith('#'));
+    .filter(l => l.length > 5 && !l.startsWith("#"));
   
   // Clean bullet markers from all lines first
   const cleanedLines = lines.map(l => 
-    l.replace(/^[-*+]\s*/, '').replace(/^\d+[.)、\s]+\s*/, '').trim()
+    l.replace(/^[-*+]\s*/, "").replace(/^\d+[.)、\s]+\s*/, "").trim()
   );
   
   // Priority 1: Data-driven conclusions with numbers
   for (const line of cleanedLines) {
     const m = line.match(/(.{3,12})(?:增长|上升|提升|增加|提高|扩大|下降|降低|减少|缩减|达到|超过|低于|覆盖)(?:了|到|至|达)?\s*(\d+%?\s*万?\s*元?\s*例?\s*家?)?/);
     if (m && m[1].length <= 12) {
-      return m[1].trim().replace(/[，。；,.;！!？?]+$/, '');
+      return m[1].trim().replace(/[，。；,.;！!？?]+$/, "");
     }
   }
   
@@ -246,9 +246,9 @@ function extractKeyMessage(sectionText, classification) {
   const numberedItems = sectionText.match(/(?:^|\n)\s*\d+[.)、]\s+(.+?)(?=\n\s*\d+[.)、]|$)/gm);
   if (numberedItems && numberedItems.length > 0) {
     const bestItem = numberedItems.sort((a, b) => b.length - a.length)[0];
-    let clean = bestItem.replace(/^\s*\d+[.)、]\s+/, '').trim();
+    let clean = bestItem.replace(/^\s*\d+[.)、]\s+/, "").trim();
     // Clean trailing punctuation
-    clean = clean.replace(/[，。；,.;！!？?]+$/, '');
+    clean = clean.replace(/[，。；,.;！!？?]+$/, "");
     if (clean.length <= 20) return clean;
     return clean.substring(0, 20);
   }
@@ -257,8 +257,8 @@ function extractKeyMessage(sectionText, classification) {
   const bullets = sectionText.match(/[-*+]\s+(.+?)(?=\n[-*+]|\n##|$)/g);
   if (bullets && bullets.length > 0) {
     const bestBullet = bullets.sort((a, b) => b.length - a.length)[0];
-    let clean = bestBullet.replace(/^[-*+]\s+/, '').trim();
-    clean = clean.replace(/[，。；,.;！!？?]+$/, '');
+    let clean = bestBullet.replace(/^[-*+]\s+/, "").trim();
+    clean = clean.replace(/[，。；,.;！!？?]+$/, "");
     if (clean.length <= 20) return clean;
     return clean.substring(0, 20);
   }
@@ -266,9 +266,9 @@ function extractKeyMessage(sectionText, classification) {
   // Fallback: use section heading cleaned
   const headingMatch = sectionText.match(/^#{1,3}\s+(.+)$/m);
   if (headingMatch) {
-    let h = headingMatch[1].replace(/^#{1,3}\s*/, '').trim();
-    h = h.replace(/^(?:第[一二三四五六七八九十百]+部分|[一二三四五六七八九十]+：)\s*/, '');
-    h = h.replace(/[，。；,.;！!？?]+$/, '');
+    let h = headingMatch[1].replace(/^#{1,3}\s*/, "").trim();
+    h = h.replace(/^(?:第[一二三四五六七八九十百]+部分|[一二三四五六七八九十]+：)\s*/, "");
+    h = h.replace(/[，。；,.;！!？?]+$/, "");
     if (h.length >= 3 && h.length <= 10) return h;
     if (h.length > 10) return h.substring(0, 10);
   }
@@ -283,7 +283,7 @@ function extractParagraphs(text) {
 
   // Helper: add if unique and long enough, skip metadata/template lines
   function add(line) {
-    const clean = line.replace(/\*\*/g, '').trim();
+    const clean = line.replace(/\*\*/g, "").trim();
     // Skip template instructions and metadata lines
     if (/^(?:模板|标题|副标题|关键句|创建日期|幻灯片数量|叙事策略|核心逻辑|目标受众)/.test(clean)) return;
     if (/^使用 Layout/.test(clean)) return;
@@ -303,7 +303,7 @@ function extractParagraphs(text) {
   const bulletLines = text.match(/^[ \t]*[-*+]\s+(.+)$/gm);
   if (bulletLines) {
     for (const b of bulletLines) {
-      const item = b.replace(/^\s*[-*+]\s+/, '').trim();
+      const item = b.replace(/^\s*[-*+]\s+/, "").trim();
       add(item);
     }
   }
@@ -312,7 +312,7 @@ function extractParagraphs(text) {
   const numberedLines = text.match(/^[ \t]*\d+[.)、]\s+(.+)$/gm);
   if (numberedLines) {
     for (const n of numberedLines) {
-      const item = n.replace(/^\s*\d+[.)、]\s+/, '').trim();
+      const item = n.replace(/^\s*\d+[.)、]\s+/, "").trim();
       add(item);
     }
   }
@@ -322,14 +322,14 @@ function extractParagraphs(text) {
   if (tableRows) {
     let inTable = false;
     for (const row of tableRows) {
-      const cells = row.replace(/^\|(.+)\|$/, '$1').split('|').map(c => c.trim());
+      const cells = row.replace(/^\|(.+)\|$/, "$1").split("|").map(c => c.trim());
       if (cells.length >= 3 && cells.every(c => /[-:]/.test(c))) continue; // separator row
       if (cells.length >= 3 && !inTable) {
         inTable = true;
         continue; // skip header
       }
       if (inTable && cells.length >= 3) {
-        const bullet = cells.map(c => c.replace(/[-|]/g, '')).join(' → ');
+        const bullet = cells.map(c => c.replace(/[-|]/g, "")).join(" → ");
         add(bullet);
       }
     }
@@ -342,7 +342,7 @@ function extractParagraphs(text) {
       // Use the answer part as the paragraph (it's the insight)
       const parts = qa.split(/[→:]/);
       if (parts.length >= 2) {
-        const answer = parts.slice(1).join(':').trim();
+        const answer = parts.slice(1).join(":").trim();
         add(answer);
       }
     }
@@ -352,7 +352,7 @@ function extractParagraphs(text) {
   if (blocks.length < 10) {
     const paras = text.split(/\n\s*\n/)
       .map(p => p.trim())
-      .filter(p => p.length > 30 && !p.startsWith('#') && !blocks.includes(p));
+      .filter(p => p.length > 30 && !p.startsWith("#") && !blocks.includes(p));
     for (const p of paras) {
       if (blocks.length >= 10) break;
       add(p);

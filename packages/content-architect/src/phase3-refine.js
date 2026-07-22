@@ -99,7 +99,7 @@ function refinePages(skeleton, rawText) {
     slide_id: globalSlideId++,
     type: "Cover",
     title: coverTitle,
-    subtitle: `报告人 · ${new Date().toLocaleDateString('zh-CN')}`,
+    subtitle: `报告人 · ${new Date().toLocaleDateString("zh-CN")}`,
     content: [],
     visual_suggestion: "建议使用与主题相关的高清背景图，叠加半透明遮罩",
     notes: "开场白：简要介绍汇报背景和目的",
@@ -159,7 +159,7 @@ function refinePages(skeleton, rawText) {
       );
       
       // Track this title to prevent future duplicates (normalize for comparison)
-      const normalizedTitle = title.replace(/^以|在|对|将|从|向|把|用|由|于|被|为|与|同|跟|和|及|或|之|其|该|本|此|这|那|每|各|全|总|都|已|既|尚|未|还|更|较|极|最|太|很|非常|十分|特别|格外|极其|极为|相当|比较|相对|大致|粗略|简单|初步|全面|深入|详细|充分|充分|完全|彻底|根本|彻底|彻底|彻底/g, '').trim();
+      const normalizedTitle = title.replace(/^以|在|对|将|从|向|把|用|由|于|被|为|与|同|跟|和|及|或|之|其|该|本|此|这|那|每|各|全|总|都|已|既|尚|未|还|更|较|极|最|太|很|非常|十分|特别|格外|极其|极为|相当|比较|相对|大致|粗略|简单|初步|全面|深入|详细|充分|充分|完全|彻底|根本|彻底|彻底|彻底/g, "").trim();
       usedTitles.add(normalizedTitle);
 
       // Generate body content based on layout type
@@ -218,11 +218,11 @@ function generateConciseTitle(section, slideIndex, startIdx, endIdx, allBullets,
     if (!bestBullet) bestBullet = bullets[startIdx] || bullets[0];
     
     let text = bestBullet
-      .replace(/\\*\\*/g, '')
-      .replace(/^[-*+]\\s*/, '')
-      .replace(/^\\d+[.)、]\\s*/, '')
-      .replace(/→|➜/g, '→')
-      .replace(/\\n/g, ' ')
+      .replace(/\\*\\*/g, "")
+      .replace(/^[-*+]\\s*/, "")
+      .replace(/^\\d+[.)、]\\s*/, "")
+      .replace(/→|➜/g, "→")
+      .replace(/\\n/g, " ")
       .trim();
     
     // Try "subject → result" pattern — but ONLY if there's meaningful content after arrow
@@ -255,7 +255,7 @@ function generateConciseTitle(section, slideIndex, startIdx, endIdx, allBullets,
     }
     
     // Try "label: insight" pattern — find LAST colon for best result
-    const lastColonIdx = Math.max(text.lastIndexOf('：'), text.lastIndexOf(':'));
+    const lastColonIdx = Math.max(text.lastIndexOf("："), text.lastIndexOf(":"));
     if (lastColonIdx > 0) {
       const afterColon = text.substring(lastColonIdx + 1).trim();
       if (afterColon.length >= 3 && afterColon.length <= 20 && !isStopWord(afterColon)) {
@@ -266,7 +266,7 @@ function generateConciseTitle(section, slideIndex, startIdx, endIdx, allBullets,
           const punctMatch = insight.match(/^(.{3,10})[，。；,.;！!？?、]/);
           if (punctMatch) insight = punctMatch[1];
           else {
-            const endings = ['系统','平台','方案','建设','发展','提升','优化','完善','保障','机制','体系','模式','能力','水平','质量','效率','覆盖','服务','管理','数据','信息','技术','实现','构建','建立','引入','部署','打造','探索','培训','人才','团队'];
+            const endings = ["系统","平台","方案","建设","发展","提升","优化","完善","保障","机制","体系","模式","能力","水平","质量","效率","覆盖","服务","管理","数据","信息","技术","实现","构建","建立","引入","部署","打造","探索","培训","人才","团队"];
             for (const ending of endings) {
               const idx = insight.indexOf(ending);
               if (idx >= 0 && idx + ending.length <= 10) { insight = insight.substring(0, idx + ending.length); break; }
@@ -286,7 +286,7 @@ function generateConciseTitle(section, slideIndex, startIdx, endIdx, allBullets,
     const clauses = text.split(/[，,。；;！!？?、]/).map(c => {
       const trimmed = c.trim();
       // Strip any "label:" prefix from clause
-      return trimmed.replace(/^[^：:]+[：:]/, '').trim();
+      return trimmed.replace(/^[^：:]+[：:]/, "").trim();
     }).filter(c => c.length >= 2);
     
     for (const clause of clauses) {
@@ -311,7 +311,7 @@ function generateConciseTitle(section, slideIndex, startIdx, endIdx, allBullets,
   
   // Final fallback: section keyMessage, max 10 chars
   let base = section.keyMessage || section.title || "核心要点";
-  base = base.replace(/\\*\\*/g, '').replace(/[:：].+$/, '').replace(/[，。；,.;！!？?]/g, '').replace(/→/g, ' ').replace(/\\|/g, ' ').trim();
+  base = base.replace(/\\*\\*/g, "").replace(/[:：].+$/, "").replace(/[，。；,.;！!？?]/g, "").replace(/→/g, " ").replace(/\\|/g, " ").trim();
   // Strip stop-word prefixes
   base = normalizeForDedup(base);
   const candidate = smartTruncate(base, 10);
@@ -330,7 +330,7 @@ function generateConciseTitle(section, slideIndex, startIdx, endIdx, allBullets,
 }
 
 function normalizeForDedup(title) {
-  return title.replace(/^(以|在|对|将|从|向|把|用|由|于|被|为|与|同|跟|和|及|或|之|其|该|本|此|这|那|每|各|全|总|都|已|既|尚|未|还|更|较|极|最|太|很|非常|十分|特别|格外|极其|极为|相当|比较|相对|大致|粗略|简单|初步|全面|深入|详细|充分|完全|彻底|根本|原则|同意)/g, '').trim();
+  return title.replace(/^(以|在|对|将|从|向|把|用|由|于|被|为|与|同|跟|和|及|或|之|其|该|本|此|这|那|每|各|全|总|都|已|既|尚|未|还|更|较|极|最|太|很|非常|十分|特别|格外|极其|极为|相当|比较|相对|大致|粗略|简单|初步|全面|深入|详细|充分|完全|彻底|根本|原则|同意)/g, "").trim();
 }
 
 function smartTruncate(text, limit) {
@@ -340,7 +340,7 @@ function smartTruncate(text, limit) {
   const punctMatch = text.match(/^(.{3,10})[，。；,.;！!？?、]/);
   if (punctMatch) return punctMatch[1];
   
-  const endings = ['系统', '平台', '方案', '建设', '发展', '提升', '优化', '完善', '保障', '机制', '体系', '模式', '能力', '水平', '质量', '效率', '覆盖', '服务', '管理', '数据', '信息', '技术', '实现', '构建', '建立', '引入', '部署', '打造', '探索', '培训', '人才', '团队'];
+  const endings = ["系统", "平台", "方案", "建设", "发展", "提升", "优化", "完善", "保障", "机制", "体系", "模式", "能力", "水平", "质量", "效率", "覆盖", "服务", "管理", "数据", "信息", "技术", "实现", "构建", "建立", "引入", "部署", "打造", "探索", "培训", "人才", "团队"];
   for (const ending of endings) {
     const idx = text.indexOf(ending);
     if (idx >= 0 && idx + ending.length <= limit) {
@@ -404,7 +404,7 @@ function generateThreeColumnContent(bullets, section) {
 }
 
 function truncateBullet(text) {
-  text = text.replace(/\*\*(.*?)\*\*/g, '$1');
+  text = text.replace(/\*\*(.*?)\*\*/g, "$1");
   if (text.length > 60) {
     text = text.substring(0, 60) + "...";
   }
@@ -442,7 +442,7 @@ function suggestVisual(layoutType, section, content, contentSignals, rawParagrap
   }
   
   // Default: analyze content for visual suggestions
-  const text = rawParagraphs?.join('\n') || '';
+  const text = rawParagraphs?.join("\n") || "";
   if (contentSignals.includes("trends-and-comparisons")) {
     return "建议插入柱状图或折线图展示趋势对比";
   }
@@ -464,7 +464,7 @@ function generateSpeakerNotes(section, slideIndex, content) {
   notes.push(`本页目标：${section.keyMessage}`);
   if (Array.isArray(content) && content.length > 0) {
     const flatContent = content.flatMap(c => 
-      typeof c === 'object' && c.bullets ? c.bullets : [c]
+      typeof c === "object" && c.bullets ? c.bullets : [c]
     );
     notes.push(`核心要点：${flatContent.join("；")}`);
   }

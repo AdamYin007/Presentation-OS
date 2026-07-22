@@ -1,9 +1,9 @@
 {
-  "path": "/Users/adamyin/Projects/awe/fixtures/m12-22/test-output/20260721-114240-f8yhjb/quality-manifest.json",
-  "summaryPath": "/Users/adamyin/Projects/awe/fixtures/m12-22/test-output/20260721-114240-f8yhjb/QA-SUMMARY.md",
+  "path": "/Users/adamyin/Projects/awe/fixtures/m12-22/test-output/20260723-003607-lfeiof/quality-manifest.json",
+  "summaryPath": "/Users/adamyin/Projects/awe/fixtures/m12-22/test-output/20260723-003607-lfeiof/QA-SUMMARY.md",
   "version": "1.0.0",
-  "generatedAt": "2026-07-21T03:42:40.472Z",
-  "input": "test-output/20260721-114240-f8yhjb/input.md",
+  "generatedAt": "2026-07-22T16:36:07.336Z",
+  "input": "test-output/20260723-003607-lfeiof/input.md",
   "pipeline": {
     "format": "markdown",
     "style": "minimal-modern",

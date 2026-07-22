@@ -116,7 +116,7 @@ function validateArchitectOutput(slides) {
     // TwoColumns / ThreeColumns structure check
     if (slide.type === "TwoColumns" || slide.type === "ThreeColumns") {
       // Support both old content[] format and new columns[] format
-      if (Array.isArray(slide.content) && slide.content.length > 0 && typeof slide.content[0] === 'object' && slide.content[0].label) {
+      if (Array.isArray(slide.content) && slide.content.length > 0 && typeof slide.content[0] === "object" && slide.content[0].label) {
         // New format: content is [{label, bullets[]}]
         const colCount = slide.content.length;
         if (slide.type === "TwoColumns" && colCount !== 2) {
@@ -145,8 +145,8 @@ function validateArchitectOutput(slides) {
       // Should have numeric content or metrics
       if (Array.isArray(slide.content) && slide.content.length > 0) {
         const hasNumeric = slide.content.some(c => 
-          typeof c === 'string' && /\d/.test(c) ||
-          (typeof c === 'object' && c && (c.value || c.label))
+          typeof c === "string" && /\d/.test(c) ||
+          (typeof c === "object" && c && (c.value || c.label))
         );
         if (!hasNumeric) {
           errors.push(`${prefix}: BigNumber should contain numeric data`);

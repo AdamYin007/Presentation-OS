@@ -1,6 +1,6 @@
 # Pixel-Level Accessibility & Rendered Visual Robustness
 
-**Generated**: 7/21/2026, 11:42:42 AM
+**Generated**: 7/23/2026, 12:36:09 AM
 **Overall Verdict**: FAIL
 **Total Checks**: 206 (194 pass, 0 fail, 12 warn)
 
@@ -30,19 +30,19 @@
 
 | Page | Role | Method | Ratio | Severity |
 |------|------|--------|-------|----------|
-| 1 | agenda | pixel_sample | 4.48:1 | WARN |
-| 2 | content | pixel_sample | 4.97:1 | WARN |
-| 3 | content | pixel_sample | 4.48:1 | WARN |
+| 1 | agenda | pixel_sample | 3.82:1 | WARN |
+| 2 | content | pixel_sample | 6.2:1 | WARN |
+| 3 | content | pixel_sample | 3.82:1 | WARN |
 | 4 | content | pixel_sample | 9.09:1 | PASS |
-| 5 | section-divider | pixel_sample | 6.3:1 | WARN |
-| 6 | content | pixel_sample | 3.79:1 | WARN |
-| 7 | content | pixel_sample | 6.3:1 | WARN |
-| 8 | content | pixel_sample | 3.79:1 | WARN |
+| 5 | section-divider | pixel_sample | 6.14:1 | WARN |
+| 6 | content | pixel_sample | 3.83:1 | WARN |
+| 7 | content | pixel_sample | 6.14:1 | WARN |
+| 8 | content | pixel_sample | 3.83:1 | WARN |
 | 9 | content | pixel_sample | 9.74:1 | PASS |
-| 10 | section-divider | pixel_sample | 3.79:1 | WARN |
-| 11 | content | pixel_sample | 3.48:1 | WARN |
-| 12 | content | pixel_sample | 3.79:1 | WARN |
-| 13 | content | pixel_sample | 3.48:1 | WARN |
+| 10 | section-divider | pixel_sample | 5.54:1 | WARN |
+| 11 | content | pixel_sample | 5.64:1 | WARN |
+| 12 | content | pixel_sample | 5.54:1 | WARN |
+| 13 | content | pixel_sample | 5.64:1 | WARN |
 | 14 | content | pixel_sample | 4.22:1 | WARN |
 
 ### Color-Blindness Simulation
@@ -68,7 +68,7 @@ All color pairs maintain distinguishability across all three simulations.
 
 # Visual Design Standards Gate — M12.16
 
-**Generated**: 7/21/2026, 11:42:41 AM
+**Generated**: 7/23/2026, 12:36:09 AM
 **Overall Verdict**: NEEDS_REVIEW
 **Quality Score**: 100/100
 

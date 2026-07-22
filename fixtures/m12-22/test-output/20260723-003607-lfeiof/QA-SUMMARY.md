@@ -1,7 +1,7 @@
 # Presentation Quality Summary
 
-**Input**: `test-output/20260721-114240-f8yhjb/input.md`
-**Generated**: 7/21/2026, 11:42:40 AM
+**Input**: `test-output/20260723-003607-lfeiof/input.md`
+**Generated**: 7/23/2026, 12:36:07 AM
 **Quality Score**: 80/100 ✅
 
 ---

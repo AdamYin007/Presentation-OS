@@ -97,7 +97,7 @@ function analyzeIntent(rawText) {
 
 function extractHeadings(text) {
   const headings = [];
-  const lines = text.split('\n');
+  const lines = text.split("\n");
 
   for (const line of lines) {
     const trimmed = line.trim();

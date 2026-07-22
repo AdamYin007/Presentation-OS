@@ -22,8 +22,8 @@
     }
   ],
   "totalChecks": {
-    "pass": 77,
+    "pass": 76,
     "fail": 0,
-    "warn": 4
+    "warn": 5
   }
 }

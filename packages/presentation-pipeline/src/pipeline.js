@@ -48,24 +48,24 @@ async function runPipeline(markdownInput, options) {
   // Step 1.5: Content Architect (M12.28) — opt-in structured outline generation
   if (opts.contentArchitect && opts.contentArchitect.enabled !== false) {
     try {
-      console.log('[Pipeline] Running Content Architect...');
+      console.log("[Pipeline] Running Content Architect...");
       const architectResult = architect(markdownInput, { enabled: true });
       if (architectResult.ok && architectResult.slides.length > 0) {
         console.log(`[Pipeline] Content Architect generated ${architectResult.slides.length} slides`);
         
         // Convert architect JSON to markdown content-plan format
         const architectMarkdown = architectToMarkdown(architectResult.slides);
-        console.log('[Pipeline] Converting architect output to content-plan format...');
+        console.log("[Pipeline] Converting architect output to content-plan format...");
         
         // Re-ingest as content-plan
         ingestResult = ingestDocument(architectMarkdown);
         sourceDocument = ingestResult.model;
         console.log(`[Pipeline] Content plan ready: ${sourceDocument.paragraphs.length} slides in model`);
       } else {
-        console.log('[Pipeline] Content Architect produced no output, falling back to default pipeline');
+        console.log("[Pipeline] Content Architect produced no output, falling back to default pipeline");
       }
     } catch (e) {
-      console.warn('[Pipeline] Content Architect failed:', e.message);
+      console.warn("[Pipeline] Content Architect failed:", e.message);
       // Non-fatal — continue with default pipeline
     }
   }
@@ -143,22 +143,22 @@ async function runPipeline(markdownInput, options) {
 
   // Step 6.5: Template decorative elements injection (M12.27)
   if (opts.templatePath) {
-    const tmpDir = fs.mkdtempSync('/tmp/presentation-os-inject-');
-    const inputPptx = path.join(tmpDir, 'input.pptx');
-    const outputPptx = path.join(tmpDir, 'output.pptx');
-    const roleMapPath = path.join(tmpDir, 'role-map.json');
+    const tmpDir = fs.mkdtempSync("/tmp/presentation-os-inject-");
+    const inputPptx = path.join(tmpDir, "input.pptx");
+    const outputPptx = path.join(tmpDir, "output.pptx");
+    const roleMapPath = path.join(tmpDir, "role-map.json");
     
     fs.writeFileSync(inputPptx, buffer);
     
     // Build role map from slideSpecs roles
     const roleMap = {};
     const roleToTemplate = opts.templateRoleMap || {
-      cover: 1, title: 1, agenda: 2, 'section-divider': 3, content: 4, closing: 5,
+      cover: 1, title: 1, agenda: 2, "section-divider": 3, content: 4, closing: 5,
     };
     for (let i = 0; i < slideSpecs.length; i++) {
       const spec = slideSpecs[i];
       const slideNum = spec.index || (i + 1);
-      const role = spec.role || 'content';
+      const role = spec.role || "content";
       const tmplIdx = roleToTemplate[role];
       if (tmplIdx) {
         roleMap[String(slideNum)] = tmplIdx;
@@ -166,19 +166,19 @@ async function runPipeline(markdownInput, options) {
     }
     fs.writeFileSync(roleMapPath, JSON.stringify(roleMap));
     
-    const injectorScript = path.join(__dirname, '..', 'scripts', 'template-injector.py');
-    console.log('[Pipeline] Injector script:', injectorScript);
-    console.log('[Pipeline] Role map:', JSON.stringify(roleMap));
+    const injectorScript = path.join(__dirname, "..", "scripts", "template-injector.py");
+    console.log("[Pipeline] Injector script:", injectorScript);
+    console.log("[Pipeline] Role map:", JSON.stringify(roleMap));
     try {
       execSync(
         `python3 "${injectorScript}" "${inputPptx}" "${opts.templatePath}" "${outputPptx}" "${roleMapPath}"`,
-        { stdio: 'pipe', timeout: 60000 }
+        { stdio: "pipe", timeout: 60000 }
       );
       buffer = fs.readFileSync(outputPptx);
-      console.log('[Pipeline] Template injection successful');
+      console.log("[Pipeline] Template injection successful");
     } catch (e) {
       // Injection failure is non-fatal — continue with undecorated output
-      console.warn('[Pipeline] Template injection failed:', e.message);
+      console.warn("[Pipeline] Template injection failed:", e.message);
     }
     
     // Cleanup temp files

@@ -297,7 +297,7 @@ function generateBody(role, slidePlan, deckPlan, title) {
       if (!item) continue;
       let bullet = item.trim();
       // Strip Markdown ** bold markers for plain text rendering
-      bullet = bullet.replace(/\*\*(.*?)\*\*/g, '$1');
+      bullet = bullet.replace(/\*\*(.*?)\*\*/g, "$1");
       // Skip known metadata marker lines (e.g. "标题：xxx", "内容：xxx")
       if (/^(?:标题|副标题|关键句|模板要求|视觉建议|边界|内容)[：:]/.test(bullet)) continue;
       if (bullet.length < 2) continue;

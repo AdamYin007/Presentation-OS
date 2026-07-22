@@ -518,12 +518,12 @@ function renderDiagramSlide(slide, spec, layout, colors, fontSize, maxWidth, spa
     const lineX = 0.5;
     const lineW = maxWidth / 96 - 1.0;
 
-    // Timeline line
-    slide.addLine({
-      x1: lineX,
-      y1: timelineY,
-      x2: lineX + lineW,
-      y2: timelineY,
+    // Timeline line (use addShape 'line' — PptxGenJS v4 has no addLine)
+    slide.addShape("line", {
+      x: lineX,
+      y: timelineY,
+      w: lineW,
+      h: 0,
       line: { color: "D1D5DB", width: 2 },
     });
 
@@ -600,19 +600,27 @@ function normalizeFontFace(fontFamily) {
 
 /**
  * M12.21: Apply brand-driven footer to a slide.
- * Respects footerConvention from brand profile:
+ * Supports footerConvention values:
  *   - "none": no footer
- *   - "slide-number": slide number only
- *   - "brand": brand name + slide number
+ *   - "slide-number": e.g. "1 / 3" (spaces around /)
+ *   - "brand-name": just the brand name
+ *   - "both": "© BrandName | 1 / 3"
  */
 function applyBrandFooter(slide, spec, layout, totalSlides, footerConvention, brandName, slideNumber) {
   if (footerConvention === "none") return;
 
   let footerText = "";
-  if (footerConvention === "brand" && brandName) {
-    footerText = `${brandName} | ${slideNumber}/${totalSlides}`;
+  if (footerConvention === "brand-name" && brandName) {
+    footerText = brandName;
+  } else if (footerConvention === "both" && brandName) {
+    footerText = `© ${brandName} | ${slideNumber} / ${totalSlides}`;
+  } else if (footerConvention === "slide-number") {
+    footerText = `${slideNumber} / ${totalSlides}`;
+  } else if (brandName) {
+    // fallback: treat unknown as brand
+    footerText = `${brandName} | ${slideNumber} / ${totalSlides}`;
   } else {
-    footerText = `${slideNumber}/${totalSlides}`;
+    footerText = `${slideNumber} / ${totalSlides}`;
   }
 
   slide.addText(footerText, {
@@ -629,4 +637,6 @@ function applyBrandFooter(slide, spec, layout, totalSlides, footerConvention, br
 module.exports = {
   renderPptx,
   generateBuffer,
+  normalizeFontFace,
+  applyBrandFooter,
 };
