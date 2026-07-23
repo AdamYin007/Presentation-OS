@@ -143,22 +143,64 @@ function validateArchitectOutput(slides) {
     // BigNumber structure check
     if (slide.type === "BigNumber") {
       // Should have numeric content or metrics
-      if (Array.isArray(slide.content) && slide.content.length > 0) {
-        const hasNumeric = slide.content.some(c => 
-          typeof c === "string" && /\d/.test(c) ||
-          (typeof c === "object" && c && (c.value || c.label))
-        );
-        if (!hasNumeric) {
-          errors.push(`${prefix}: BigNumber should contain numeric data`);
-        }
+      const hasNumeric = Array.isArray(slide.content) && slide.content.length > 0 && slide.content.some(c => 
+        (typeof c === "string" && /\d/.test(c)) ||
+        (typeof c === "object" && c && (c.value || c.label))
+      );
+      if (!hasNumeric) {
+        errors.push(`${prefix}: BigNumber should contain numeric data`);
+      }
+      // BigNumber should have exactly 1-3 big numbers
+      const count = Array.isArray(slide.content) ? slide.content.filter(c => typeof c === "string" && /\d/.test(c)).length : 0;
+      if (count > 3) {
+        errors.push(`${prefix}: BigNumber should have at most 3 data points, got ${count}`);
       }
     }
     
     // Timeline structure check
     if (slide.type === "Timeline") {
-      // Should have sequential steps
-      if (Array.isArray(slide.content) && slide.content.length < 2) {
-        errors.push(`${prefix}: Timeline should have at least 2 steps`);
+      // Should have sequential steps with at least 2 and at most 8 events
+      const stepCount = Array.isArray(slide.content) ? slide.content.length : 0;
+      if (stepCount < 2) {
+        errors.push(`${prefix}: Timeline should have at least 2 steps, got ${stepCount}`);
+      }
+      if (stepCount > 8) {
+        errors.push(`${prefix}: Timeline should have at most 8 steps, got ${stepCount}`);
+      }
+      // Each timeline item should have a title and optionally description
+      for (let ti = 0; ti < stepCount; ti++) {
+        const item = slide.content[ti];
+        if (typeof item === "string") continue; // legacy string format is OK
+        if (typeof item === "object" && item) {
+          if (!item.title && !item.event) {
+            errors.push(`${prefix}[step ${ti}]: Timeline item must have 'title' or 'event' field`);
+          }
+        }
+      }
+    }
+
+    // Quote structure check
+    if (slide.type === "Quote") {
+      // Should have a quote text and optionally an attribution
+      const hasQuote = Array.isArray(slide.content) && slide.content.length > 0;
+      if (!hasQuote) {
+        errors.push(`${prefix}: Quote slide should have at least one quote text`);
+      }
+    }
+
+    // Matrix structure check
+    if (slide.type === "Matrix") {
+      // Should have 4 quadrants with labels and descriptions
+      if (Array.isArray(slide.content) && slide.content.length > 0) {
+        const hasQuadrants = slide.content.every((q, i) => {
+          if (typeof q === "object" && q) {
+            return q.label || q.title || q.name;
+          }
+          return false;
+        });
+        if (!hasQuadrants) {
+          errors.push(`${prefix}: Matrix should have labeled quadrants in content array`);
+        }
       }
     }
   }

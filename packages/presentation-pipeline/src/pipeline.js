@@ -1,13 +1,17 @@
 /**
  * Pipeline Orchestrator — M12.7 / M12.14 / M12.21 / M12.24 / M12.25
  *
- * Chains: ingest → intent → story-planner → slidespec → [audience-engine] → theme-layout → [compiler] → renderer
+ * Chains: ingest → intent → story-planner → slidespec → [audience-engine] → theme-layout → [compiler] → renderer → [visual-qa] → manifest
  * M12.21: brandConfig is threaded through layoutPlan generation and renderer
  * so that brand profiles affect actual PPTX output (colors, fonts, footer, title).
  * M12.24: Presentation Compiler sits between layout/theme and renderer as an opt-in
  * global optimization layer. When enabled, generates a Render Plan before rendering.
  * M12.25: Audience Engine sits between slidespec and theme-layout as an opt-in
  * dynamic adaptation layer. When enabled, adjusts slide specs based on speaker/audience profiles.
+ * M12.26: Template backgrounds support via opts.templateBackgrounds.
+ * M12.27: Template decorative elements injection via template-injector.py (Step 6.5).
+ * M12.28: Content Architect structured outline generation (Step 1.5).
+ * M12.30: Visual QA engine — PPTX→PDF→JPEG→AI/heuristic analysis (Step 7.5).
  */
 const { ingestDocument } = require("../../document-ingest/src/index.js");
 const { parsePresentationIntent } = require("../../intent-parser/src/index.js");
@@ -20,6 +24,8 @@ const { compilePresentation, COMPILER_MODES } = require("../../presentation-comp
 const { renderPptx, generateBuffer } = require("../../pptx-renderer/src/index.js");
 const { runQualityChecks, buildManifest, writeManifest, writeSummary } = require("./qa-utils.js");
 const { architect, architectToMarkdown } = require("../../content-architect/src/index.js");
+const { runVisualQa } = require("./visual-qa.js");
+const { parseTemplateSpec, generateRoleMap } = require("./template-parser.js");
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
@@ -37,6 +43,8 @@ const { execSync } = require("child_process");
  * @param {object} [options.title] - Presentation title override
  * @param {boolean|string} [options.compiler=false] - Enable compiler ("standard"|"optimized")
  * @param {object} [options.audienceEngine] - Audience engine config: { speaker, audience, customRules }
+ * @param {string} [options.templateSpecPath] - Path to template spec .md file (auto-generates roleMap)
+ * @param {string} [options.templateBackgroundsDir] - Directory containing template background images
  */
 async function runPipeline(markdownInput, options) {
   const opts = { style: "minimal-modern", ...(options || {}) };
@@ -143,6 +151,43 @@ async function runPipeline(markdownInput, options) {
 
   // Step 6.5: Template decorative elements injection (M12.27)
   if (opts.templatePath) {
+    // Auto-generate roleMap from template spec if available
+    let roleMap = opts.templateRoleMap || {};
+    if (opts.templateSpecPath && !opts.templateRoleMap) {
+      try {
+        console.log("[Pipeline] Parsing template spec:", opts.templateSpecPath);
+        const specData = parseTemplateSpec(opts.templateSpecPath);
+        const roleMapData = generateRoleMap(specData);
+        roleMap = roleMapData.roleMap;
+        opts.templateRoleMap = roleMap;
+        console.log(`[Pipeline] Auto-generated role map: ${Object.keys(roleMap).length} slides mapped`);
+        if (result.templateSpec) {
+          result.templateSpec = { ...specData, roleMap };
+        }
+      } catch (e) {
+        console.warn("[Pipeline] Template spec parsing failed (using manual roleMap):", e.message);
+      }
+    }
+
+    // Auto-load template backgrounds from directory
+    if (opts.templateBackgroundsDir && !opts.templateBackgrounds) {
+      try {
+        const bgFiles = fs.readdirSync(opts.templateBackgroundsDir)
+          .filter(f => /\.(png|jpg|jpeg)$/i.test(f))
+          .sort();
+        if (bgFiles.length > 0) {
+          const backgrounds = {};
+          for (let i = 0; i < Math.min(bgFiles.length, slideSpecs.length); i++) {
+            backgrounds[String(i + 1)] = path.join(opts.templateBackgroundsDir, bgFiles[i]);
+          }
+          opts.templateBackgrounds = backgrounds;
+          console.log(`[Pipeline] Loaded ${Object.keys(backgrounds).length} template backgrounds`);
+        }
+      } catch (e) {
+        console.warn("[Pipeline] Background loading failed:", e.message);
+      }
+    }
+
     const tmpDir = fs.mkdtempSync("/tmp/presentation-os-inject-");
     const inputPptx = path.join(tmpDir, "input.pptx");
     const outputPptx = path.join(tmpDir, "output.pptx");
@@ -150,21 +195,27 @@ async function runPipeline(markdownInput, options) {
     
     fs.writeFileSync(inputPptx, buffer);
     
-    // Build role map from slideSpecs roles
-    const roleMap = {};
+    // Build role map from slideSpecs roles (only if not already set by template spec parser)
+    if (!opts.templateRoleMap) {
+      const fallbackRoleMap = {};
     const roleToTemplate = opts.templateRoleMap || {
       cover: 1, title: 1, agenda: 2, "section-divider": 3, content: 4, closing: 5,
     };
-    for (let i = 0; i < slideSpecs.length; i++) {
-      const spec = slideSpecs[i];
-      const slideNum = spec.index || (i + 1);
-      const role = spec.role || "content";
-      const tmplIdx = roleToTemplate[role];
-      if (tmplIdx) {
-        roleMap[String(slideNum)] = tmplIdx;
+      for (let i = 0; i < slideSpecs.length; i++) {
+        const spec = slideSpecs[i];
+        const slideNum = spec.index || (i + 1);
+        const role = spec.role || "content";
+        const tmplIdx = roleToTemplate[role];
+        if (tmplIdx) {
+          fallbackRoleMap[String(slideNum)] = tmplIdx;
+        }
       }
+      roleMap = fallbackRoleMap;
+      fs.writeFileSync(roleMapPath, JSON.stringify(roleMap));
+    } else {
+      // roleMap was already set by template spec parser
+      fs.writeFileSync(roleMapPath, JSON.stringify(roleMap));
     }
-    fs.writeFileSync(roleMapPath, JSON.stringify(roleMap));
     
     const injectorScript = path.join(__dirname, "..", "scripts", "template-injector.py");
     console.log("[Pipeline] Injector script:", injectorScript);
@@ -196,6 +247,21 @@ async function runPipeline(markdownInput, options) {
     slideCount: slideSpecs.length,
   };
 
+  // Step 7 (optional): Visual QA — PPTX → PDF → JPEG → AI/heuristic analysis
+  let visualQaResult = null;
+  if (opts.visualQa) {
+    try {
+      console.log("[Pipeline] Running Visual QA...");
+      const qaOpts = typeof opts.visualQa === "object" ? opts.visualQa : {};
+      const outputDir = qaOpts.outputDir || path.join(process.cwd(), ".visual-qa-output");
+      visualQaResult = await runVisualQa(buffer, { outputDir, skipAi: qaOpts.skipAi, aiConfig: qaOpts.aiConfig });
+      result.visualQa = visualQaResult;
+      console.log(`[Pipeline] Visual QA complete: ${visualQaResult.summary?.totalSlides || "?"} slides analyzed`);
+    } catch (e) {
+      console.warn("[Pipeline] Visual QA failed (non-fatal):", e.message);
+    }
+  }
+
   // Attach audience engine metadata if enabled
   if (audienceResult) {
     result.audienceEngine = {
@@ -219,7 +285,7 @@ async function runPipeline(markdownInput, options) {
     };
   }
 
-  // Step 7 (optional): Quality manifest emission
+  // Step 7 (optional): Quality manifest emission (M12.14)
   if (opts.emitManifest) {
     const outputDir = opts.outputDir || process.cwd();
     fs.mkdirSync(outputDir, { recursive: true });

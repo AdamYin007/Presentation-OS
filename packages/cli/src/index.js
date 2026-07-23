@@ -14,6 +14,7 @@ const commands = {
   run: require("./commands/run.js"),
   registry: require("./commands/registry-list.js"),
   sprint: require("./commands/sprint.js"),
+  present: require("./commands/present.js"),
 };
 
 if (!cmd || cmd === "help") {
