@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-07-22T16:35:52.896Z",
+  "generatedAt": "2026-07-25T06:42:19.590Z",
   "input": "/Users/adamyin/Projects/awe/fixtures/document-ingest/sample-markdown.md",
   "pptxPath": "/Users/adamyin/Projects/awe/examples/business-review/m12-15-audit/output.pptx",
-  "pptxSize": 123431,
+  "pptxSize": 123451,
   "slideCount": 10,
   "renderer": {
     "available": true,
@@ -107,7 +107,7 @@
   "checks": [
     {
       "status": "pass",
-      "message": "PPTX generated (123,431 bytes)"
+      "message": "PPTX generated (123,451 bytes)"
     },
     {
       "status": "pass",

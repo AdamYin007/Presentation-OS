@@ -19,7 +19,8 @@ const { execSync } = require("child_process");
 
 // ─── Configuration ────────────────────────────────────────────────────────
 
-const SOFFICE_PATH = process.env.LIBREOFFICE_PATH || "/Applications/LibreOffice.app/Contents/MacOS/soffice";
+const { getToolPath } = require("./tool-paths.js");
+const SOFFICE_PATH = getToolPath("soffice");
 const PDFTOPPM_PATH = "pdftoppm";
 const DEFAULT_PDF_DPI = 150;
 

@@ -2,7 +2,7 @@
   "path": "/Users/adamyin/Projects/awe/fixtures/m12-18/test-output/good-artifacts/quality-manifest.json",
   "summaryPath": "/Users/adamyin/Projects/awe/fixtures/m12-18/test-output/good-artifacts/QA-SUMMARY.md",
   "version": "1.0.0",
-  "generatedAt": "2026-07-22T16:35:55.503Z",
+  "generatedAt": "2026-07-25T06:42:22.014Z",
   "input": "good.md",
   "pipeline": {
     "format": "markdown",

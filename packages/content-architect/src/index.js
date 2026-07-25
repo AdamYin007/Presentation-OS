@@ -1,8 +1,9 @@
 /**
- * @awe/content-architect — PPT 内容架构师 (M12.28)
- *
+ * @awe/content-architect — PPT 内容架构师 (M12.28 / M12.31)
+ * 
  * Takes raw document text and produces a structured JSON outline following
  * the Content Architect principles:
+ *   Phase 0: Template Analysis (load template-principles.md if available)
  *   Phase 1: Deep reading & intent recognition
  *   Phase 2: Logical skeleton building  
  *   Phase 3: Page refinement & visual mapping
@@ -13,6 +14,9 @@
  *   BigNumber | Quote | Timeline | Matrix | End
  */
 
+const fs = require("fs");
+const path = require("path");
+const { analyzeTemplate } = require("../../template-analyzer/src/index.js");
 const { analyzeIntent } = require("./phase1-intent.js");
 const { buildSkeleton } = require("./phase2-skeleton.js");
 const { refinePages } = require("./phase3-refine.js");
@@ -25,14 +29,16 @@ const { architectToMarkdown, architectToSourceDocument } = require("./json-to-ma
  * @param {string} rawText - Raw document text (markdown/plain)
  * @param {object} options - Options
  * @param {boolean} [options.enabled=false] - Enable architect mode (skip intent parser)
- * @returns {{ ok: boolean, slides: object[], errors?: string[], warnings?: string[] }}
+ * @param {string} [options.templatePath] - Path to PPTX template file
+ * @param {string} [options.outputDir] - Directory for template-principles.md output
+ * @returns {{ ok: boolean, slides: object[], errors?: string[], warnings?: string[], templatePrinciples?: object }}
  */
 function architect(rawText, options = {}) {
-  const opts = { enabled: false, ...(options || {}) };
+  const opts = { enabled: false, outputDir: process.cwd(), ...options };
   const warnings = [];
+  let templatePrinciples = null;
 
   if (!opts.enabled) {
-    // Architect not enabled — return empty result, pipeline falls back to default
     return { ok: true, slides: [], warnings: ["Content architect disabled"] };
   }
 
@@ -40,18 +46,39 @@ function architect(rawText, options = {}) {
     return { ok: false, errors: ["Empty input text"], slides: [] };
   }
 
-  // Phase 1: Deep reading & intent recognition
+  // ── Phase 0: Template Analysis ────────────────────────────────
+  if (opts.templatePath && fs.existsSync(opts.templatePath)) {
+    try {
+      console.log("[Content Architect] Analyzing template:", opts.templatePath);
+      const result = analyzeTemplate(opts.templatePath, { outputDir: opts.outputDir });
+      if (result.principles) {
+        templatePrinciples = result.principles;
+        warnings.push(`Template analyzed: ${result.metadata.totalSlides} slides, ${result.commonElements.brandElements.length} brand elements`);
+        
+        // Validate template exists and is parseable
+        if (result.warnings.length > 0) {
+          warnings.push(...result.warnings.filter(w => !w.startsWith("Saved to")));
+        }
+      } else {
+        warnings.push("Template analysis produced no principles — proceeding without template constraints");
+      }
+    } catch (e) {
+      warnings.push(`Template analysis failed (non-fatal): ${e.message}`);
+    }
+  }
+
+  // ── Phase 1: Deep reading & intent recognition ────────────────
   const intent = analyzeIntent(rawText);
   warnings.push(`Detected: purpose=${intent.purpose}, audience=${intent.audience}, domain=${intent.domain}`);
 
-  // Phase 2: Logical skeleton building
+  // ── Phase 2: Logical skeleton building ────────────────────────
   const skeleton = buildSkeleton(intent, rawText);
   warnings.push(`Skeleton: ${skeleton.totalSlides} slides, ${skeleton.sections.length} sections`);
 
-  // Phase 3: Page refinement & visual mapping
+  // ── Phase 3: Page refinement & visual mapping ─────────────────
   const slides = refinePages(skeleton, rawText);
 
-  // Phase 4: Validate output
+  // ── Phase 4: Validate output ─────────────────────────────────
   const validation = validateArchitectOutput(slides);
   if (!validation.ok) {
     return {
@@ -65,6 +92,7 @@ function architect(rawText, options = {}) {
   return {
     ok: true,
     slides,
+    templatePrinciples,
     warnings,
   };
 }

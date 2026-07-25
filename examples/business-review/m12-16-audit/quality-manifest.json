@@ -2,7 +2,7 @@
   "path": "/Users/adamyin/Projects/awe/examples/business-review/m12-16-audit/quality-manifest.json",
   "summaryPath": "/Users/adamyin/Projects/awe/examples/business-review/m12-16-audit/QA-SUMMARY.md",
   "version": "1.0.0",
-  "generatedAt": "2026-07-22T16:35:53.123Z",
+  "generatedAt": "2026-07-25T06:42:19.754Z",
   "input": "../fixtures/document-ingest/sample-markdown.md",
   "pipeline": {
     "format": "markdown",

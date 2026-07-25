@@ -148,7 +148,11 @@ async function main() {
   }
 
   try {
-    const result = await runPipeline(markdownInput, { style: opts.style });
+    const result = await runPipeline(markdownInput, { 
+      style: opts.style,
+      // Suppress pipeline console.log when --json is used (stdout must be pure JSON)
+      _quiet: opts.json || opts.dryRun,
+    });
 
     const summary = {
       slideCount: result.slideCount,

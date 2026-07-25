@@ -2,7 +2,7 @@
   "path": "/Users/adamyin/Projects/awe/deliverables/quality-manifest.json",
   "summaryPath": "/Users/adamyin/Projects/awe/deliverables/QA-SUMMARY.md",
   "version": "1.0.0",
-  "generatedAt": "2026-07-23T04:42:36.004Z",
+  "generatedAt": "2026-07-25T06:42:34.451Z",
   "input": "awe/fixtures/m12-21/good.md",
   "pipeline": {
     "format": "markdown",

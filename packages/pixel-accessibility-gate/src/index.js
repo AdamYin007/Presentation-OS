@@ -47,9 +47,9 @@ function commandExists(cmd) {
  */
 function detectEnvironment() {
   // LibreOffice detection reused from rendered-visual-qa
-  const macSoffice = "/Applications/LibreOffice.app/Contents/MacOS/soffice";
-  const hasLibreOffice =
-    fs.existsSync(macSoffice) || commandExists("soffice") || commandExists("libreoffice");
+  const { getToolPath } = require("../../presentation-pipeline/src/tool-paths.js");
+  const sofficePath = getToolPath("soffice");
+  const hasLibreOffice = !!sofficePath || commandExists("soffice") || commandExists("libreoffice");
   const hasImagemagick = commandExists("identify") && commandExists("magick");
   const hasPoppler =
     commandExists("pdfinfo") && commandExists("pdftotext") && commandExists("pdfimages");
@@ -88,12 +88,8 @@ function estimatePixelContrast(pngPath) {
     const w = parseInt(dims[0], 10);
     const h = parseInt(dims[1], 10);
     if (!w || !h) {
-      try {
-        fs.unlinkSync(tmpPath);
-      } catch {}
-      try {
-        fs.unlinkSync(txtPath);
-      } catch {}
+      try { fs.unlinkSync(tmpPath); } catch { /* ignore cleanup */ }
+      try { fs.unlinkSync(txtPath); } catch { /* ignore cleanup */ }
       return null;
     }
 
@@ -104,12 +100,8 @@ function estimatePixelContrast(pngPath) {
       .split("\n")
       .filter((l) => l.match(/^\d+,\d+:/));
     if (!lines.length) {
-      try {
-        fs.unlinkSync(tmpPath);
-      } catch {}
-      try {
-        fs.unlinkSync(txtPath);
-      } catch {}
+      try { fs.unlinkSync(tmpPath); } catch { /* ignore cleanup */ }
+      try { fs.unlinkSync(txtPath); } catch { /* ignore cleanup */ }
       return null;
     }
 
@@ -175,24 +167,17 @@ function estimatePixelContrast(pngPath) {
     if (ratioSmall > 0.15) confidence = "medium";
     if (ratioSmall > 0.25) confidence = "high";
 
-    try {
-      fs.unlinkSync(tmpPath);
-    } catch {}
-    try {
-      fs.unlinkSync(txtPath);
-    } catch {}
+    try { fs.unlinkSync(tmpPath); } catch { /* ignore cleanup */ }
+    try { fs.unlinkSync(txtPath); } catch { /* ignore cleanup */ }
     return {
       estimatedContrast: parseFloat(ratio.toFixed(2)),
       sampleSize: samples.length,
       confidence,
     };
-  } catch {
-    try {
-      fs.unlinkSync(tmpPath);
-    } catch {}
-    try {
-      fs.unlinkSync(txtPath);
-    } catch {}
+  } catch (cleanupErr) {
+    try { fs.unlinkSync(tmpPath); } catch { /* ignore cleanup */ }
+    try { fs.unlinkSync(txtPath); } catch { /* ignore cleanup */ }
+    console.warn("[pixel-accessibility-gate] estimatePixelContrast failed:", cleanupErr.message);
     return null;
   }
 }

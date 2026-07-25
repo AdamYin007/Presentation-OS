@@ -28,8 +28,9 @@ function commandExists(cmd) {
 }
 
 function resolveRenderer() {
-  const macSoffice = "/Applications/LibreOffice.app/Contents/MacOS/soffice";
-  if (fs.existsSync(macSoffice)) return { available: true, cmd: macSoffice };
+  const { getToolPath } = require("./tool-paths.js");
+  const sofficePath = getToolPath("soffice");
+  if (sofficePath) return { available: true, cmd: sofficePath };
   if (commandExists("soffice")) return { available: true, cmd: "soffice" };
   if (commandExists("libreoffice")) return { available: true, cmd: "libreoffice" };
   return { available: false, reason: "No LibreOffice/OpenOffice installation found" };

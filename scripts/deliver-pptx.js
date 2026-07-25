@@ -256,7 +256,7 @@ async function main() {
 
   let pipelineResult;
   try {
-    pipelineResult = await runPipeline(inputText, pipelineOpts);
+    pipelineResult = await runPipeline(inputText, { ...pipelineOpts, _quiet: true });
   } catch (err) {
     console.error(`Pipeline error: ${err.message}`);
     if (!options.json) {
