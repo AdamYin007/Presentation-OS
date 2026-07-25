@@ -47,3 +47,24 @@ npm-debug.log*
 # Testing
 coverage/
 .nyc_output/
+
+# Generated test output and artifacts
+fixtures/*/test-output/
+output/
+deliverables/
+examples/*/output-page-*.png
+examples/*/quality-manifest.json
+examples/*/qa-report.*
+examples/*/COMMERCIAL-VERDICT.md
+examples/*/QA-SUMMARY.md
+examples/*/PIXEL-ACCESSIBILITY-SUMMARY.md
+examples/*/VISUAL-DESIGN-SUMMARY.md
+examples/*/LOGO-SAFE-AREA-SUMMARY.md
+examples/*/machine-report.json
+examples/*/rendered-qa-report.json
+examples/*/logo-safe-area-report.json
+examples/*/visual-design-report.json
+examples/*/p*
+
+# Hermes desktop attachments
+.hermes/desktop-attachments/
