@@ -120,9 +120,15 @@ def is_full_slide_pic(element):
 
 
 def has_text_content(element):
-    """Check if element contains any text in <a:t> descendants."""
+    """Check if element contains actual text content (not empty placeholders).
+    
+    Decorative shapes may have <a:t></a:t> with no text - these should NOT be skipped.
+    Only skip elements that have meaningful text content (actual words, not empty).
+    """
     for t in element.iter(f'{{{A_NS}}}t'):
-        if t.text and t.text.strip():
+        text = t.text or ""
+        # Only count as "has text" if there's actual non-whitespace content
+        if text and text.strip():
             return True
     return False
 

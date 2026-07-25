@@ -213,6 +213,12 @@ function resolveTemplateBackground(templateBackgrounds, role, slide) {
     return templateBackgrounds[role];
   }
 
+  // Alias: title → cover (diagnostic fix P0-2)
+  const roleAliases = { "title": "cover" };
+  if (roleAliases[role] && templateBackgrounds[roleAliases[role]]) {
+    return templateBackgrounds[roleAliases[role]];
+  }
+
   // Try generic "content" fallback for unspecified roles
   if (templateBackgrounds.content && !templateBackgrounds[role]) {
     return templateBackgrounds.content;

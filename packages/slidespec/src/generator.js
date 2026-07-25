@@ -108,7 +108,7 @@ function mapDeckPlanToSlideSpec(slidePlan, deckPlan) {
     section: sectionTitle,
     role,
     title,
-    subtitle: "",
+    subtitle: slidePlan.subtitle || "",
     keyMessage: slidePlan.keyMessage || "",
     body,
     visualType,
