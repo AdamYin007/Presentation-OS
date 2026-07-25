@@ -32,7 +32,9 @@ function assert(condition, message) {
 
 function assertEqual(actual, expected, message) {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) {
-    throw new Error(message || `Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+    throw new Error(
+      message || `Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
+    );
   }
 }
 
@@ -92,7 +94,9 @@ test("ingestPlainText detects section headers", () => {
 test("ingestPlainText preserves sourceMap entries", () => {
   const model = ingestPlainText("Line one.\nLine two.");
   assert(model.sourceMap.length > 0, "Should have sourceMap entries");
-  assert(model.sourceMap.every((ref) => ref.sourceId && ref.sourceType && ref.sourceOrder !== undefined));
+  assert(
+    model.sourceMap.every((ref) => ref.sourceId && ref.sourceType && ref.sourceOrder !== undefined),
+  );
 });
 
 test("ingestPlainText with explicit title", () => {
@@ -152,7 +156,9 @@ test("ingestMarkdown parses ordered lists", () => {
 });
 
 test("ingestMarkdown parses pipe tables", () => {
-  const model = ingestMarkdown("# Title\n\n| Col A | Col B |\n|---|---|\n| Val 1 | Val 2 |\n| Val 3 | Val 4 |");
+  const model = ingestMarkdown(
+    "# Title\n\n| Col A | Col B |\n|---|---|\n| Val 1 | Val 2 |\n| Val 3 | Val 4 |",
+  );
   assert(model.tables.length > 0, "Should have tables");
   assert(model.tables[0].header.length === 2, "Header should have 2 columns");
   assert(model.tables[0].rows.length === 2, "Should have 2 data rows");

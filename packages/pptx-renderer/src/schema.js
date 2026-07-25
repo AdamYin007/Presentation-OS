@@ -1,14 +1,28 @@
 /**
- * PPTX Renderer Schema — M12.6
+ * PPTX Renderer Schema — M12.6 / M12.26
  *
  * Defines render options and output contract.
  */
 
 const VALID_ROLES = [
-  "title", "agenda", "section-divider", "executive-summary", "content",
-  "comparison", "process", "timeline", "roadmap", "data-chart", "table",
-  "matrix", "architecture", "case-study", "recommendation", "quote",
-  "q-and-a", "closing",
+  "title",
+  "agenda",
+  "section-divider",
+  "executive-summary",
+  "content",
+  "comparison",
+  "process",
+  "timeline",
+  "roadmap",
+  "data-chart",
+  "table",
+  "matrix",
+  "architecture",
+  "case-study",
+  "recommendation",
+  "quote",
+  "q-and-a",
+  "closing",
 ];
 
 const RENDER_OPTIONS_DEFAULTS = {
@@ -18,13 +32,19 @@ const RENDER_OPTIONS_DEFAULTS = {
   subject: "",
   slideSize: { width: 13.33, height: 7.5 }, // 16:9 widescreen
   themeColor: "#3B82F6",
+  // Template support (M12.26)
+  templatePath: null,
+  templateSlides: {}, // Maps role to template slide number
 };
 
 function validateRenderOptions(options) {
   const errors = [];
   if (options && typeof options === "object") {
     if (options.slideSize) {
-      if (typeof options.slideSize.width !== "number" || typeof options.slideSize.height !== "number") {
+      if (
+        typeof options.slideSize.width !== "number" ||
+        typeof options.slideSize.height !== "number"
+      ) {
         errors.push("slideSize must have numeric width and height");
       }
     }

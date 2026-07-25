@@ -10,10 +10,7 @@
 
 "use strict";
 
-const {
-  createDefaultDeckPlan,
-  validateDeckPlan,
-} = require("./schema.js");
+const { createDefaultDeckPlan, validateDeckPlan } = require("./schema.js");
 const { selectNarrativePattern } = require("./narrative-patterns.js");
 
 /**
@@ -23,13 +20,53 @@ function planDeck(intent, sourceDocument) {
   const assumptions = [];
   const warnings = [];
 
+  // ── 0. If source document is a content plan with explicit slide definitions,
+  //     skip narrative pattern selection and use those slides directly. ──
+  if (sourceDocument && sourceDocument.metadata?.sourceType === "content-plan") {
+    const explicitSlides = (sourceDocument.paragraphs || []).filter(
+      p => p.sourceType === "slide-content"
+    );
+    if (explicitSlides.length > 0) {
+      const deckTitle = intent.topic || "Untitled Presentation";
+      const deckPlan = createDefaultDeckPlan({
+        deckTitle,
+        subtitle: "",
+        audience: intent.audience || "",
+        purpose: intent.purpose || "",
+        language: intent.language || "",
+        narrativePattern: "explicit-content-plan",
+        sections: [],
+        slides: explicitSlides.map((p, i) => ({
+          slideId: p.sourceId,
+          index: p.slideNumber || i + 1,
+          role: p.role || "content",
+          section: "",
+          title: p.title || "",
+          _explicitTitle: p.title || "",
+          subtitle: p.subtitle || "",
+          keyMessage: p.keyMessage || "",
+          body: p.body || p.originalText || "",
+          bodyItems: Array.isArray(p.bodyItems) ? p.bodyItems : [],
+          candidateVisual: null,
+          sourceRefs: [],
+          speakerNotes: p.speakerNotes || "",
+        })),
+        assumptions: [...assumptions, "Content plan used directly — narrative pattern skipped"],
+        warnings,
+      });
+      return deckPlan;
+    }
+  }
+
   // ── 1. Select narrative pattern ──
   let pattern = selectNarrativePattern(intent);
   if (!pattern) {
     // Fallback: use context-analysis-conclusion as safest default
     const fallback = NARRATIVE_PATTERNS_FALLBACK;
     pattern = fallback;
-    assumptions.push(`No strong narrative signal detected; using default pattern: ${fallback.name}`);
+    assumptions.push(
+      `No strong narrative signal detected; using default pattern: ${fallback.name}`,
+    );
   }
 
   // ── 2. Build deck title ──
@@ -50,7 +87,12 @@ function planDeck(intent, sourceDocument) {
 
   // ── 3. Allocate slides based on target count ──
   const targetSlideCount = intent.targetSlideCount || pattern.defaultSlideCount;
-  const sections = allocateSlidesToSections(pattern.sections, targetSlideCount, sourceDocument, intent);
+  const sections = allocateSlidesToSections(
+    pattern.sections,
+    targetSlideCount,
+    sourceDocument,
+    intent,
+  );
 
   // ── 4. Generate slide planning entries ──
   const slides = generateSlideEntries(sections, intent, sourceDocument, assumptions, warnings);
@@ -326,7 +368,9 @@ function normalizeSectionPath(sectionPath) {
 }
 
 function conciseMessageFromParagraph(paragraph, fallback) {
-  const text = (paragraph && paragraph.originalText ? paragraph.originalText : fallback || "").trim();
+  const text = (
+    paragraph && paragraph.originalText ? paragraph.originalText : fallback || ""
+  ).trim();
   if (!text) return fallback || "";
   const firstLine = text.split(/\r?\n/).find((line) => line.trim().length > 0) || text;
   if (firstLine.length <= 120) return firstLine;
@@ -376,7 +420,8 @@ function extractKeyMessage(section, index, sourceDocument, globalOffset = 0) {
     for (const tableEntry of sourceDocument.tables) {
       if (_matchesSectionKeyword(tableEntry.sectionPath, "", keywords)) {
         if (tableEntry.header) {
-          for (const h of tableEntry.header) allContent.push({ _type: "table-cell", originalText: h });
+          for (const h of tableEntry.header)
+            allContent.push({ _type: "table-cell", originalText: h });
         }
         if (tableEntry.rows) {
           for (const row of tableEntry.rows) {
@@ -400,18 +445,18 @@ function extractKeyMessage(section, index, sourceDocument, globalOffset = 0) {
 function suggestVisual(role, intent) {
   const visualMap = {
     "data-chart": "bar-chart",
-    "comparison": "comparison",
-    "process": "process",
-    "roadmap": "timeline",
+    comparison: "comparison",
+    process: "process",
+    roadmap: "timeline",
     "case-study": "image",
     "executive-summary": "metric-cards",
     "section-divider": "none",
-    "title": "none",
-    "agenda": "none",
-    "closing": "none",
+    title: "none",
+    agenda: "none",
+    closing: "none",
     "q-and-a": "none",
-    "quote": "none",
-    "recommendation": "none",
+    quote: "none",
+    recommendation: "none",
   };
   return visualMap[role] || "none";
 }
@@ -423,7 +468,9 @@ function checkConstraints(intent, sections, slides, assumptions, warnings) {
   const totalPlanned = sections.reduce((sum, s) => sum + s.slideAllocation, 0);
 
   if (totalPlanned > 25) {
-    warnings.push(`Slide budget (${totalPlanned}) exceeds recommended maximum of 25. Consider splitting into multiple decks.`);
+    warnings.push(
+      `Slide budget (${totalPlanned}) exceeds recommended maximum of 25. Consider splitting into multiple decks.`,
+    );
   }
 
   if (totalPlanned < 4) {
@@ -431,10 +478,15 @@ function checkConstraints(intent, sections, slides, assumptions, warnings) {
   }
 
   if (intent.mustInclude && intent.mustInclude.length > 0) {
-    const coveredTopics = slides.map((s) => `${s.role} ${s.keyMessage}`).join(" ").toLowerCase();
+    const coveredTopics = slides
+      .map((s) => `${s.role} ${s.keyMessage}`)
+      .join(" ")
+      .toLowerCase();
     for (const mustInclude of intent.mustInclude) {
       if (!coveredTopics.includes(mustInclude.toLowerCase())) {
-        warnings.push(`mustInclude item "${mustInclude}" may not be adequately addressed in the current plan.`);
+        warnings.push(
+          `mustInclude item "${mustInclude}" may not be adequately addressed in the current plan.`,
+        );
       }
     }
   }
@@ -445,10 +497,75 @@ function checkConstraints(intent, sections, slides, assumptions, warnings) {
  * Bridges narrative patterns (e.g., "Background") with arbitrary source doc headings.
  */
 const DECK_SECTION_SOURCE_MAPPING = {
-  Background: ["background", "背景", "overview", "概览", "introduction", "简介", "current", "现状", "challenge", "挑战", "problem", "问题", "context", "环境", "landscape"],
-  Methodology: ["method", "方法", "design", "设计", "approach", "方案", "process", "流程", "framework", "框架", "architecture", "架构", "implementation", "实施", "phase", "阶段"],
-  Results: ["result", "结果", "outcome", "成果", "finding", "发现", "data", "数据", "evidence", "证据", "performance", "表现", "expected", "预期"],
-  Discussion: ["discussion", "讨论", "limitation", "局限", "implication", "意义", "conclusion", "结论", "summary", "总结", "takeaway", "要点", "risk", "风险", "mitigation", "缓解"],
+  Background: [
+    "background",
+    "背景",
+    "overview",
+    "概览",
+    "introduction",
+    "简介",
+    "current",
+    "现状",
+    "challenge",
+    "挑战",
+    "problem",
+    "问题",
+    "context",
+    "环境",
+    "landscape",
+  ],
+  Methodology: [
+    "method",
+    "方法",
+    "design",
+    "设计",
+    "approach",
+    "方案",
+    "process",
+    "流程",
+    "framework",
+    "框架",
+    "architecture",
+    "架构",
+    "implementation",
+    "实施",
+    "phase",
+    "阶段",
+  ],
+  Results: [
+    "result",
+    "结果",
+    "outcome",
+    "成果",
+    "finding",
+    "发现",
+    "data",
+    "数据",
+    "evidence",
+    "证据",
+    "performance",
+    "表现",
+    "expected",
+    "预期",
+  ],
+  Discussion: [
+    "discussion",
+    "讨论",
+    "limitation",
+    "局限",
+    "implication",
+    "意义",
+    "conclusion",
+    "结论",
+    "summary",
+    "总结",
+    "takeaway",
+    "要点",
+    "risk",
+    "风险",
+    "mitigation",
+    "缓解",
+  ],
 };
 
 /**
@@ -522,7 +639,11 @@ function matchesSourceRef(paragraph, slideSection, slideSectionKeywords) {
   for (const kw of slideSectionKeywords) {
     const kwLower = kw.toLowerCase();
     // Check for word-boundary match in section path (section headers use clean names)
-    if (pathLower.match(new RegExp('\\b' + kwLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i'))) {
+    if (
+      pathLower.match(
+        new RegExp("\\b" + kwLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i"),
+      )
+    ) {
       pathMatchScore += 2;
     }
     // Also check for substring match (fallback for compound paths)
@@ -530,7 +651,7 @@ function matchesSourceRef(paragraph, slideSection, slideSectionKeywords) {
       pathMatchScore += 1;
     }
   }
-  
+
   // If no path match at all, skip this paragraph entirely
   if (pathMatchScore === 0) return false;
 
@@ -540,7 +661,7 @@ function matchesSourceRef(paragraph, slideSection, slideSectionKeywords) {
   for (const kw of slideSectionKeywords) {
     const kwLower = kw.toLowerCase();
     // Use word boundary regex to avoid partial matches like "designed" -> "design"
-    const regex = new RegExp('\\b' + kwLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+    const regex = new RegExp("\\b" + kwLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i");
     if (regex.test(text)) {
       textMatchCount++;
     }
@@ -561,7 +682,11 @@ function matchesListTableRef(entry, slideSection, slideKeywords) {
   for (const kw of slideKeywords) {
     const kwLower = kw.toLowerCase();
     // Check for word-boundary match in section path
-    if (pathLower.match(new RegExp('\\b' + kwLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i'))) {
+    if (
+      pathLower.match(
+        new RegExp("\\b" + kwLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i"),
+      )
+    ) {
       pathMatchScore += 2;
     }
     // Also check for substring match (fallback for compound paths)
@@ -696,7 +821,7 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
       if (!sectionContentMap[slide.section]) {
         sectionContentMap[slide.section] = [];
       }
-      const existingIds = new Set(sectionContentMap[slide.section].map(c => c.sourceId));
+      const existingIds = new Set(sectionContentMap[slide.section].map((c) => c.sourceId));
       for (const content of matchedContent) {
         if (!existingIds.has(content.sourceId)) {
           sectionContentMap[slide.section].push(content);
@@ -710,16 +835,28 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
 
   // Enhanced fallback: try to assign refs to slides that still don't have any
   for (const slide of slides) {
-    if (slide.sourceRefs.length === 0 && slide.role !== "section-divider" && slide.role !== "closing" && slide.role !== "title" && slide.role !== "agenda") {
-      const section = sections.find(s => s.title === slide.section);
-      
-      if (section && sectionContentMap[section.title] && sectionContentMap[section.title].length > 0) {
+    if (
+      slide.sourceRefs.length === 0 &&
+      slide.role !== "section-divider" &&
+      slide.role !== "closing" &&
+      slide.role !== "title" &&
+      slide.role !== "agenda"
+    ) {
+      const section = sections.find((s) => s.title === slide.section);
+
+      if (
+        section &&
+        sectionContentMap[section.title] &&
+        sectionContentMap[section.title].length > 0
+      ) {
         const firstItem = sectionContentMap[section.title][0];
-        slide.sourceRefs = [{
-          sourceId: firstItem.sourceId,
-          sourceType: firstItem._type || "paragraph",
-          fileReference: "",
-        }];
+        slide.sourceRefs = [
+          {
+            sourceId: firstItem.sourceId,
+            sourceType: firstItem._type || "paragraph",
+            fileReference: "",
+          },
+        ];
         slide.keyMessage = conciseMessageFromParagraph(firstItem, slide.keyMessage);
         sectionContentMap[section.title].push({
           sourceId: firstItem.sourceId,
@@ -731,18 +868,22 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
         }
       } else if (sourceDocument.paragraphs && sourceDocument.paragraphs.length > 0) {
         const assignedIds = new Set();
-        slides.forEach(s => (s.sourceRefs || []).forEach(r => assignedIds.add(r.sourceId)));
-        
-        const availableParas = sourceDocument.paragraphs.filter(p => !assignedIds.has(p.sourceId));
+        slides.forEach((s) => (s.sourceRefs || []).forEach((r) => assignedIds.add(r.sourceId)));
+
+        const availableParas = sourceDocument.paragraphs.filter(
+          (p) => !assignedIds.has(p.sourceId),
+        );
         if (availableParas.length > 0) {
           const para = availableParas[0];
-          slide.sourceRefs = [{
-            sourceId: para.sourceId,
-            sourceType: "paragraph",
-            fileReference: "",
-          }];
+          slide.sourceRefs = [
+            {
+              sourceId: para.sourceId,
+              sourceType: "paragraph",
+              fileReference: "",
+            },
+          ];
           slide.keyMessage = conciseMessageFromParagraph(para, slide.keyMessage);
-          const sectionForSlide = sections.find(s => s.title === slide.section);
+          const sectionForSlide = sections.find((s) => s.title === slide.section);
           if (sectionForSlide) {
             sectionContentMap[sectionForSlide.title].push({
               sourceId: para.sourceId,
@@ -759,10 +900,10 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
   }
 
   // Fallback: if NO slides have refs, distribute content proportionally across sections
-  const totalSlidesWithRefs = slides.filter(s => s.sourceRefs.length > 0).length;
+  const totalSlidesWithRefs = slides.filter((s) => s.sourceRefs.length > 0).length;
   if (totalSlidesWithRefs === 0) {
     const numSections = sections.length;
-    
+
     // Gather all available content types
     const allContent = [];
     if (sourceDocument.paragraphs) {
@@ -809,15 +950,15 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
         }
       }
     }
-    
+
     if (allContent.length > 0) {
       const contentPerSection = Math.ceil(allContent.length / numSections);
       for (let i = 0; i < sections.length; i++) {
         const startIdx = i * contentPerSection;
         const endIdx = Math.min(startIdx + contentPerSection, allContent.length);
         const sectionContent = allContent.slice(startIdx, endIdx);
-        
-        sectionContentMap[sections[i].title] = sectionContent.map(c => ({
+
+        sectionContentMap[sections[i].title] = sectionContent.map((c) => ({
           sourceId: c.sourceId,
           originalText: c.originalText || "",
           sectionPath: c.sectionPath || [],
@@ -825,7 +966,7 @@ function preserveSourceRefs(sections, slides, sourceDocument, intent) {
 
         for (const slide of slides) {
           if (slide.section === sections[i].title && slide.sourceRefs.length === 0) {
-            slide.sourceRefs = sectionContent.slice(0, 3).map(c => ({
+            slide.sourceRefs = sectionContent.slice(0, 3).map((c) => ({
               sourceId: c.sourceId,
               sourceType: c._type || "paragraph",
               fileReference: c.fileReference || "",

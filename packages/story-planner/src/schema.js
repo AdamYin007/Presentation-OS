@@ -21,8 +21,22 @@ const DEFAULT_DECK_PLAN = {
   warnings: [],
 };
 
-const REQUIRED_SECTION_FIELDS = ["id", "title", "purpose", "keyMessage", "slideAllocation", "sourceRefs"];
-const REQUIRED_SLIDE_FIELDS = ["slideId", "role", "objective", "keyMessage", "candidateVisual", "sourceRefs"];
+const REQUIRED_SECTION_FIELDS = [
+  "id",
+  "title",
+  "purpose",
+  "keyMessage",
+  "slideAllocation",
+  "sourceRefs",
+];
+const REQUIRED_SLIDE_FIELDS = [
+  "slideId",
+  "role",
+  "objective",
+  "keyMessage",
+  "candidateVisual",
+  "sourceRefs",
+];
 
 /**
  * Create a minimal DeckPlan skeleton with defaults.
@@ -50,7 +64,14 @@ function validateDeckPlan(plan) {
   }
 
   // Top-level required fields
-  const requiredTopFields = ["deckTitle", "audience", "purpose", "narrativePattern", "sections", "slides"];
+  const requiredTopFields = [
+    "deckTitle",
+    "audience",
+    "purpose",
+    "narrativePattern",
+    "sections",
+    "slides",
+  ];
   for (const field of requiredTopFields) {
     if (!(field in plan)) {
       errors.push(`Missing required field: ${field}`);

@@ -60,10 +60,7 @@ module.exports = {
  * @returns {object} Structured validation result
  */
 function validatePackRuntimeContext(context, options) {
-  var opts = Object.assign(
-    { mode: "soft", includeTimestamp: true },
-    options || {}
-  );
+  var opts = Object.assign({ mode: "soft", includeTimestamp: true }, options || {});
 
   var mode = opts.mode === "strict" ? "strict" : "soft";
 
@@ -84,7 +81,15 @@ function validatePackRuntimeContext(context, options) {
       status: STRICT_VALIDATION_STATUS.INTERNAL_ERROR,
       blocking: false,
       policyVersion: strictPolicy.STRICT_POLICY_VERSION,
-      summary: { total: 0, blocking: 0, nonBlocking: 0, unknown: 0, errors: 0, warnings: 0, info: 0 },
+      summary: {
+        total: 0,
+        blocking: 0,
+        nonBlocking: 0,
+        unknown: 0,
+        errors: 0,
+        warnings: 0,
+        info: 0,
+      },
       results: [],
       error: "Internal validation error",
     };
@@ -148,10 +153,10 @@ function buildStrictResult(softReport) {
   var status = policyResult.blocking
     ? STRICT_VALIDATION_STATUS.HARD_FAIL
     : summary.info > 0 || summary.warnings > 0
-    ? STRICT_VALIDATION_STATUS.PASS_WITH_INFO
-    : summary.total === 0
-    ? STRICT_VALIDATION_STATUS.PASS
-    : STRICT_VALIDATION_STATUS.SOFT_FAIL;
+      ? STRICT_VALIDATION_STATUS.PASS_WITH_INFO
+      : summary.total === 0
+        ? STRICT_VALIDATION_STATUS.PASS
+        : STRICT_VALIDATION_STATUS.SOFT_FAIL;
 
   return {
     domain: "validation",

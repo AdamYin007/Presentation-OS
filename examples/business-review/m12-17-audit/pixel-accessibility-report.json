@@ -1,0 +1,22 @@
+{
+  "overallVerdict": "NEEDS_REVIEW",
+  "gateResults": {
+    "m12_15_rendered_qa": "PASS",
+    "m12_16_visual_design": "PASS",
+    "m12_17_pixel_contrast": "NEEDS_REVIEW",
+    "m12_17_color_blindness": "PASS",
+    "m12_17_font_readability": "PASS"
+  },
+  "environment": {
+    "hasLibreOffice": true,
+    "hasImagemagick": true,
+    "hasPoppler": true,
+    "hasPython": true
+  },
+  "remediations": [],
+  "totalChecks": {
+    "pass": 128,
+    "fail": 0,
+    "warn": 7
+  }
+}

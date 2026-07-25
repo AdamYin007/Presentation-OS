@@ -50,7 +50,17 @@ function validatePresentationIntent(intent) {
     }
   }
 
-  const stringFields = ["topic", "audience", "purpose", "language", "tone", "style", "contentDensity", "visualPreference", "domain"];
+  const stringFields = [
+    "topic",
+    "audience",
+    "purpose",
+    "language",
+    "tone",
+    "style",
+    "contentDensity",
+    "visualPreference",
+    "domain",
+  ];
   for (const field of stringFields) {
     if (field in intent && typeof intent[field] !== "string") {
       errors.push(`Field "${field}" must be a string`);

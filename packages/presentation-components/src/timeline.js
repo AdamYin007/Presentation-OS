@@ -43,7 +43,7 @@ function _renderHorizontalTimeline(slide, stages, pptx, opts) {
     y: lineY,
     w: lineW,
     h: 0,
-    line: { color: C.border, width: opts.connectorWidth || 2 }
+    line: { color: C.border, width: opts.connectorWidth || 2 },
   });
 
   // Arrow connectors between stages
@@ -53,10 +53,12 @@ function _renderHorizontalTimeline(slide, stages, pptx, opts) {
       const x2 = startX + (i + 1) * (cardW + gap);
       const arrowY = dotY + dotSize / 2;
       slide.addShape(pptx.ShapeType.rightArrow, {
-        x: x1, y: arrowY - 0.04,
-        w: x2 - x1 - 0.08, h: 0.08,
+        x: x1,
+        y: arrowY - 0.04,
+        w: x2 - x1 - 0.08,
+        h: 0.08,
         fill: { color: C.border },
-        line: { color: C.border }
+        line: { color: C.border },
       });
     }
   }
@@ -67,8 +69,14 @@ function _renderHorizontalTimeline(slide, stages, pptx, opts) {
 
     // Stage label above
     slide.addText(s.label || "", {
-      x, y: 1.55, w: cardW, h: 0.25,
-      fontSize: 12, color: C.gray, align: "center", margin: 0
+      x,
+      y: 1.55,
+      w: cardW,
+      h: 0.25,
+      fontSize: 12,
+      color: C.gray,
+      align: "center",
+      margin: 0,
     });
 
     // Numbered circle
@@ -78,7 +86,7 @@ function _renderHorizontalTimeline(slide, stages, pptx, opts) {
       w: dotSize,
       h: dotSize,
       fill: { color },
-      line: { color }
+      line: { color },
     });
     slide.addText(String(i + 1), {
       x: x + cardW / 2 - dotSize / 2 + 0.12,
@@ -88,7 +96,7 @@ function _renderHorizontalTimeline(slide, stages, pptx, opts) {
       fontSize: 15,
       bold: true,
       color: C.white,
-      margin: 0
+      margin: 0,
     });
 
     // Card below
@@ -114,7 +122,7 @@ function _renderVerticalTimeline(slide, stages, pptx, opts) {
     y: startY + dotR,
     w: 0,
     h: lineBottom - startY - dotR * 2,
-    line: { color: C.border, width: opts.connectorWidth || 2 }
+    line: { color: C.border, width: opts.connectorWidth || 2 },
   });
 
   stages.forEach((s, i) => {
@@ -125,21 +133,37 @@ function _renderVerticalTimeline(slide, stages, pptx, opts) {
 
     // Dot on the line
     slide.addShape(pptx.ShapeType.ellipse, {
-      x: cx - dotR, y: cy - dotR,
-      w: dotR * 2, h: dotR * 2,
+      x: cx - dotR,
+      y: cy - dotR,
+      w: dotR * 2,
+      h: dotR * 2,
       fill: { color },
-      line: { color }
+      line: { color },
     });
     slide.addText(String(i + 1), {
-      x: cx - dotR + 0.02, y: cy - dotR + 0.02,
-      w: dotR * 2 - 0.04, h: dotR * 2 - 0.04,
-      fontSize: 8, bold: true, color: C.white,
-      align: "center", margin: 0
+      x: cx - dotR + 0.02,
+      y: cy - dotR + 0.02,
+      w: dotR * 2 - 0.04,
+      h: dotR * 2 - 0.04,
+      fontSize: 8,
+      bold: true,
+      color: C.white,
+      align: "center",
+      margin: 0,
     });
 
     // Card to the right
-    card(slide, startX + dotR * 2 + 0.1, y, cardW - dotR * 2 - 0.1, cardH,
-      s.label || `Step ${i + 1}`, s.title || "", color, pptx);
+    card(
+      slide,
+      startX + dotR * 2 + 0.1,
+      y,
+      cardW - dotR * 2 - 0.1,
+      cardH,
+      s.label || `Step ${i + 1}`,
+      s.title || "",
+      color,
+      pptx,
+    );
   });
 
   return slide;

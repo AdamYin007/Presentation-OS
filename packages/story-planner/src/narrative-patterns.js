@@ -14,11 +14,46 @@ const NARRATIVE_PATTERNS = [
     purposeMatches: ["persuade", "propose", "sell"],
     domainMatches: ["general", "business"],
     sections: [
-      { id: "context", title: "Context", purpose: "Set the stage", keyMessage: "Why this matters now", slideAllocation: 1, sourceRefs: [] },
-      { id: "problem", title: "Problem", purpose: "Define the core challenge", keyMessage: "What is broken or at risk", slideAllocation: 2, sourceRefs: [] },
-      { id: "insight", title: "Insight", purpose: "Present key finding", keyMessage: "The critical data point or observation", slideAllocation: 2, sourceRefs: [] },
-      { id: "solution", title: "Solution", purpose: "Propose approach", keyMessage: "How we address the problem", slideAllocation: 3, sourceRefs: [] },
-      { id: "action", title: "Action Plan", purpose: "Next steps and timeline", keyMessage: "Concrete actions with owners", slideAllocation: 2, sourceRefs: [] },
+      {
+        id: "context",
+        title: "Context",
+        purpose: "Set the stage",
+        keyMessage: "Why this matters now",
+        slideAllocation: 1,
+        sourceRefs: [],
+      },
+      {
+        id: "problem",
+        title: "Problem",
+        purpose: "Define the core challenge",
+        keyMessage: "What is broken or at risk",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "insight",
+        title: "Insight",
+        purpose: "Present key finding",
+        keyMessage: "The critical data point or observation",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "solution",
+        title: "Solution",
+        purpose: "Propose approach",
+        keyMessage: "How we address the problem",
+        slideAllocation: 3,
+        sourceRefs: [],
+      },
+      {
+        id: "action",
+        title: "Action Plan",
+        purpose: "Next steps and timeline",
+        keyMessage: "Concrete actions with owners",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
     ],
     defaultSlideCount: 10,
   },
@@ -30,10 +65,38 @@ const NARRATIVE_PATTERNS = [
     purposeMatches: ["persuade", "sell", "propose"],
     domainMatches: ["general", "business", "technical"],
     sections: [
-      { id: "why", title: "Why", purpose: "Purpose and motivation", keyMessage: "The reason this exists", slideAllocation: 1, sourceRefs: [] },
-      { id: "what", title: "What", purpose: "Product or concept definition", keyMessage: "What we are building or proposing", slideAllocation: 2, sourceRefs: [] },
-      { id: "how", title: "How", purpose: "Execution plan", keyMessage: "How it works in practice", slideAllocation: 3, sourceRefs: [] },
-      { id: "value", title: "Value", purpose: "Impact and ROI", keyMessage: "Measurable outcomes", slideAllocation: 2, sourceRefs: [] },
+      {
+        id: "why",
+        title: "Why",
+        purpose: "Purpose and motivation",
+        keyMessage: "The reason this exists",
+        slideAllocation: 1,
+        sourceRefs: [],
+      },
+      {
+        id: "what",
+        title: "What",
+        purpose: "Product or concept definition",
+        keyMessage: "What we are building or proposing",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "how",
+        title: "How",
+        purpose: "Execution plan",
+        keyMessage: "How it works in practice",
+        slideAllocation: 3,
+        sourceRefs: [],
+      },
+      {
+        id: "value",
+        title: "Value",
+        purpose: "Impact and ROI",
+        keyMessage: "Measurable outcomes",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
     ],
     defaultSlideCount: 8,
   },
@@ -45,10 +108,38 @@ const NARRATIVE_PATTERNS = [
     purposeMatches: ["propose", "review", "inform"],
     domainMatches: ["general", "business"],
     sections: [
-      { id: "current", title: "Current State", purpose: "Baseline assessment", keyMessage: "Where we stand today", slideAllocation: 2, sourceRefs: [] },
-      { id: "gap", title: "Gap Analysis", purpose: "Identify deficiencies", keyMessage: "What separates current from target", slideAllocation: 2, sourceRefs: [] },
-      { id: "target", title: "Target State", purpose: "Vision of success", keyMessage: "What success looks like", slideAllocation: 2, sourceRefs: [] },
-      { id: "roadmap", title: "Roadmap", purpose: "Path to target", keyMessage: "Phased milestones and dependencies", slideAllocation: 3, sourceRefs: [] },
+      {
+        id: "current",
+        title: "Current State",
+        purpose: "Baseline assessment",
+        keyMessage: "Where we stand today",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "gap",
+        title: "Gap Analysis",
+        purpose: "Identify deficiencies",
+        keyMessage: "What separates current from target",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "target",
+        title: "Target State",
+        purpose: "Vision of success",
+        keyMessage: "What success looks like",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "roadmap",
+        title: "Roadmap",
+        purpose: "Path to target",
+        keyMessage: "Phased milestones and dependencies",
+        slideAllocation: 3,
+        sourceRefs: [],
+      },
     ],
     defaultSlideCount: 9,
   },
@@ -60,23 +151,64 @@ const NARRATIVE_PATTERNS = [
     purposeMatches: ["inform", "persuade", "review"],
     domainMatches: ["general", "business"],
     sections: [
-      { id: "exec-summary", title: "Executive Summary", purpose: "Bottom line up front", keyMessage: "Key conclusion and recommendation", slideAllocation: 1, sourceRefs: [] },
-      { id: "evidence", title: "Evidence", purpose: "Supporting data", keyMessage: "Facts and figures that justify the conclusion", slideAllocation: 4, sourceRefs: [] },
-      { id: "recommendation", title: "Recommendation", purpose: "Actionable next steps", keyMessage: "What decision is needed", slideAllocation: 2, sourceRefs: [] },
+      {
+        id: "exec-summary",
+        title: "Executive Summary",
+        purpose: "Bottom line up front",
+        keyMessage: "Key conclusion and recommendation",
+        slideAllocation: 1,
+        sourceRefs: [],
+      },
+      {
+        id: "evidence",
+        title: "Evidence",
+        purpose: "Supporting data",
+        keyMessage: "Facts and figures that justify the conclusion",
+        slideAllocation: 4,
+        sourceRefs: [],
+      },
+      {
+        id: "recommendation",
+        title: "Recommendation",
+        purpose: "Actionable next steps",
+        keyMessage: "What decision is needed",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
     ],
     defaultSlideCount: 7,
   },
   {
     id: "context-analysis-conclusion",
     name: "Context → Analysis → Conclusion",
-    description:
-      "General analytical narrative: set context, present analysis, draw conclusions.",
+    description: "General analytical narrative: set context, present analysis, draw conclusions.",
     purposeMatches: ["inform", "summarize"],
     domainMatches: ["general", "research", "technical"],
     sections: [
-      { id: "context", title: "Context", purpose: "Background and scope", keyMessage: "What we are analyzing and why", slideAllocation: 1, sourceRefs: [] },
-      { id: "analysis", title: "Analysis", purpose: "Detailed findings", keyMessage: "Key results of the analysis", slideAllocation: 4, sourceRefs: [] },
-      { id: "conclusion", title: "Conclusion", purpose: "Summary and implications", keyMessage: "What the analysis means", slideAllocation: 2, sourceRefs: [] },
+      {
+        id: "context",
+        title: "Context",
+        purpose: "Background and scope",
+        keyMessage: "What we are analyzing and why",
+        slideAllocation: 1,
+        sourceRefs: [],
+      },
+      {
+        id: "analysis",
+        title: "Analysis",
+        purpose: "Detailed findings",
+        keyMessage: "Key results of the analysis",
+        slideAllocation: 4,
+        sourceRefs: [],
+      },
+      {
+        id: "conclusion",
+        title: "Conclusion",
+        purpose: "Summary and implications",
+        keyMessage: "What the analysis means",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
     ],
     defaultSlideCount: 7,
   },
@@ -88,10 +220,38 @@ const NARRATIVE_PATTERNS = [
     purposeMatches: ["review", "inform", "summarize"],
     domainMatches: ["general", "business", "technical"],
     sections: [
-      { id: "objective", title: "Objectives", purpose: "What we set out to do", keyMessage: "Goals and success criteria", slideAllocation: 1, sourceRefs: [] },
-      { id: "progress", title: "Progress", purpose: "Accomplishments to date", keyMessage: "Key milestones achieved", slideAllocation: 3, sourceRefs: [] },
-      { id: "issues", title: "Issues & Risks", purpose: "Blockers and concerns", keyMessage: "What needs attention", slideAllocation: 2, sourceRefs: [] },
-      { id: "next-steps", title: "Next Steps", purpose: "Upcoming priorities", keyMessage: "Immediate actions and timeline", slideAllocation: 2, sourceRefs: [] },
+      {
+        id: "objective",
+        title: "Objectives",
+        purpose: "What we set out to do",
+        keyMessage: "Goals and success criteria",
+        slideAllocation: 1,
+        sourceRefs: [],
+      },
+      {
+        id: "progress",
+        title: "Progress",
+        purpose: "Accomplishments to date",
+        keyMessage: "Key milestones achieved",
+        slideAllocation: 3,
+        sourceRefs: [],
+      },
+      {
+        id: "issues",
+        title: "Issues & Risks",
+        purpose: "Blockers and concerns",
+        keyMessage: "What needs attention",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "next-steps",
+        title: "Next Steps",
+        purpose: "Upcoming priorities",
+        keyMessage: "Immediate actions and timeline",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
     ],
     defaultSlideCount: 8,
   },
@@ -103,10 +263,38 @@ const NARRATIVE_PATTERNS = [
     purposeMatches: ["sell", "persuade", "propose"],
     domainMatches: ["general", "business"],
     sections: [
-      { id: "market", title: "Market Opportunity", purpose: "Size and trends", keyMessage: "Why this market matters", slideAllocation: 2, sourceRefs: [] },
-      { id: "product", title: "Product / Solution", purpose: "What we offer", keyMessage: "Core value proposition", slideAllocation: 2, sourceRefs: [] },
-      { id: "advantage", title: "Competitive Advantage", purpose: "Differentiation", keyMessage: "Why us vs. alternatives", slideAllocation: 2, sourceRefs: [] },
-      { id: "business-model", title: "Business Model", purpose: "How we create value", keyMessage: "Revenue, cost, and growth mechanics", slideAllocation: 2, sourceRefs: [] },
+      {
+        id: "market",
+        title: "Market Opportunity",
+        purpose: "Size and trends",
+        keyMessage: "Why this market matters",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "product",
+        title: "Product / Solution",
+        purpose: "What we offer",
+        keyMessage: "Core value proposition",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "advantage",
+        title: "Competitive Advantage",
+        purpose: "Differentiation",
+        keyMessage: "Why us vs. alternatives",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "business-model",
+        title: "Business Model",
+        purpose: "How we create value",
+        keyMessage: "Revenue, cost, and growth mechanics",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
     ],
     defaultSlideCount: 8,
   },
@@ -118,10 +306,38 @@ const NARRATIVE_PATTERNS = [
     purposeMatches: ["inform", "teach"],
     domainMatches: ["research", "education"],
     sections: [
-      { id: "background", title: "Background", purpose: "Research context", keyMessage: "What is known and the gap", slideAllocation: 2, sourceRefs: [] },
-      { id: "method", title: "Methodology", purpose: "Approach and design", keyMessage: "How the research was conducted", slideAllocation: 2, sourceRefs: [] },
-      { id: "results", title: "Results", purpose: "Key findings", keyMessage: "What the data shows", slideAllocation: 3, sourceRefs: [] },
-      { id: "discussion", title: "Discussion", purpose: "Interpretation and limits", keyMessage: "What results mean for the field", slideAllocation: 2, sourceRefs: [] },
+      {
+        id: "background",
+        title: "Background",
+        purpose: "Research context",
+        keyMessage: "What is known and the gap",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "method",
+        title: "Methodology",
+        purpose: "Approach and design",
+        keyMessage: "How the research was conducted",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "results",
+        title: "Results",
+        purpose: "Key findings",
+        keyMessage: "What the data shows",
+        slideAllocation: 3,
+        sourceRefs: [],
+      },
+      {
+        id: "discussion",
+        title: "Discussion",
+        purpose: "Interpretation and limits",
+        keyMessage: "What results mean for the field",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
     ],
     defaultSlideCount: 9,
   },
@@ -133,10 +349,38 @@ const NARRATIVE_PATTERNS = [
     purposeMatches: ["teach", "inform"],
     domainMatches: ["education"],
     sections: [
-      { id: "concept", title: "Concept", purpose: "Learning objective", keyMessage: "Core idea and definitions", slideAllocation: 2, sourceRefs: [] },
-      { id: "example", title: "Example", purpose: "Illustration", keyMessage: "Concrete application of the concept", slideAllocation: 2, sourceRefs: [] },
-      { id: "practice", title: "Practice", purpose: "Hands-on application", keyMessage: "How learners apply the concept", slideAllocation: 2, sourceRefs: [] },
-      { id: "summary", title: "Summary & Key Takeaways", purpose: "Reinforcement", keyMessage: "What to remember", slideAllocation: 1, sourceRefs: [] },
+      {
+        id: "concept",
+        title: "Concept",
+        purpose: "Learning objective",
+        keyMessage: "Core idea and definitions",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "example",
+        title: "Example",
+        purpose: "Illustration",
+        keyMessage: "Concrete application of the concept",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "practice",
+        title: "Practice",
+        purpose: "Hands-on application",
+        keyMessage: "How learners apply the concept",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "summary",
+        title: "Summary & Key Takeaways",
+        purpose: "Reinforcement",
+        keyMessage: "What to remember",
+        slideAllocation: 1,
+        sourceRefs: [],
+      },
     ],
     defaultSlideCount: 7,
   },
@@ -148,11 +392,46 @@ const NARRATIVE_PATTERNS = [
     purposeMatches: ["propose", "persuade"],
     domainMatches: ["general", "business", "technical"],
     sections: [
-      { id: "proposal", title: "Proposal Overview", purpose: "What is being proposed", keyMessage: "High-level description and value", slideAllocation: 1, sourceRefs: [] },
-      { id: "scope", title: "Scope", purpose: "Boundaries and deliverables", keyMessage: "What is in and out of scope", slideAllocation: 1, sourceRefs: [] },
-      { id: "plan", title: "Implementation Plan", purpose: "Timeline and milestones", keyMessage: "How and when work gets done", slideAllocation: 3, sourceRefs: [] },
-      { id: "budget", title: "Budget", purpose: "Resource allocation", keyMessage: "Cost breakdown and justification", slideAllocation: 2, sourceRefs: [] },
-      { id: "risk", title: "Risk Management", purpose: "Risks and mitigations", keyMessage: "What could go wrong and how we handle it", slideAllocation: 2, sourceRefs: [] },
+      {
+        id: "proposal",
+        title: "Proposal Overview",
+        purpose: "What is being proposed",
+        keyMessage: "High-level description and value",
+        slideAllocation: 1,
+        sourceRefs: [],
+      },
+      {
+        id: "scope",
+        title: "Scope",
+        purpose: "Boundaries and deliverables",
+        keyMessage: "What is in and out of scope",
+        slideAllocation: 1,
+        sourceRefs: [],
+      },
+      {
+        id: "plan",
+        title: "Implementation Plan",
+        purpose: "Timeline and milestones",
+        keyMessage: "How and when work gets done",
+        slideAllocation: 3,
+        sourceRefs: [],
+      },
+      {
+        id: "budget",
+        title: "Budget",
+        purpose: "Resource allocation",
+        keyMessage: "Cost breakdown and justification",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
+      {
+        id: "risk",
+        title: "Risk Management",
+        purpose: "Risks and mitigations",
+        keyMessage: "What could go wrong and how we handle it",
+        slideAllocation: 2,
+        sourceRefs: [],
+      },
     ],
     defaultSlideCount: 9,
   },
@@ -180,7 +459,10 @@ function selectNarrativePattern(intent) {
         score += 3;
       }
       // Problem-solution pattern is preferred for propose/sell
-      if (pattern.id === "problem-insight-solution-action" && (purpose === "propose" || purpose === "sell")) {
+      if (
+        pattern.id === "problem-insight-solution-action" &&
+        (purpose === "propose" || purpose === "sell")
+      ) {
         score += 2;
       }
     }
@@ -193,8 +475,14 @@ function selectNarrativePattern(intent) {
     // Audience hints
     if (audience) {
       const audLower = audience.toLowerCase();
-      if ((purpose === "teach" || domain === "education") &&
-          (audLower.includes("student") || audLower.includes("learn") || audLower.includes("class") || audLower.includes("高中生") || audLower.includes("学生"))) {
+      if (
+        (purpose === "teach" || domain === "education") &&
+        (audLower.includes("student") ||
+          audLower.includes("learn") ||
+          audLower.includes("class") ||
+          audLower.includes("高中生") ||
+          audLower.includes("学生"))
+      ) {
         // Boost teaching patterns more than research patterns
         if (pattern.id === "concept-example-practice-summary") {
           score += 10;
@@ -202,12 +490,24 @@ function selectNarrativePattern(intent) {
           score += 6;
         }
       }
-      if ((purpose === "inform" || purpose === "review") &&
-          (audLower.includes("executive") || audLower.includes("management") || audLower.includes("领导") || audLower.includes("董事会") || audLower.includes("管理"))) {
+      if (
+        (purpose === "inform" || purpose === "review") &&
+        (audLower.includes("executive") ||
+          audLower.includes("management") ||
+          audLower.includes("领导") ||
+          audLower.includes("董事会") ||
+          audLower.includes("管理"))
+      ) {
         score += 6;
       }
-      if ((purpose === "inform" || purpose === "summarize") &&
-          (audLower.includes("research") || audLower.includes("academic") || audLower.includes("university") || audLower.includes("学者") || audLower.includes("研究"))) {
+      if (
+        (purpose === "inform" || purpose === "summarize") &&
+        (audLower.includes("research") ||
+          audLower.includes("academic") ||
+          audLower.includes("university") ||
+          audLower.includes("学者") ||
+          audLower.includes("研究"))
+      ) {
         score += 6;
       }
     }

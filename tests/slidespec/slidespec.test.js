@@ -1,5 +1,9 @@
 const assert = require("assert");
-const { generateSlideSpecs, validateSlideSpec, createDefaultSlideSpec } = require("../../packages/slidespec/src/index.js");
+const {
+  generateSlideSpecs,
+  validateSlideSpec,
+  createDefaultSlideSpec,
+} = require("../../packages/slidespec/src/index.js");
 const fs = require("fs");
 const path = require("path");
 
@@ -11,9 +15,17 @@ console.log("======================\n");
 console.log("Schema validation:");
 
 const validSpec = createDefaultSlideSpec({
-  id: "slide-001", index: 1, section: "Test", role: "content",
-  title: "Test Title", keyMessage: "Test message", body: ["item"],
-  visualType: "none", layout: "title-and-bullets", speakerNotes: "", sourceRefs: [],
+  id: "slide-001",
+  index: 1,
+  section: "Test",
+  role: "content",
+  title: "Test Title",
+  keyMessage: "Test message",
+  body: ["item"],
+  visualType: "none",
+  layout: "title-and-bullets",
+  speakerNotes: "",
+  sourceRefs: [],
 });
 let result = validateSlideSpec(validSpec);
 assert(result.ok, "Valid spec should pass");
@@ -40,11 +52,14 @@ console.log("  PASS invalid layout rejected");
 console.log("\nDeckPlan → SlideSpec conversion:");
 
 const deckPlan = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "../../examples/business-review/deck-plan.json"), "utf8")
+  fs.readFileSync(path.join(__dirname, "../../examples/business-review/deck-plan.json"), "utf8"),
 );
 
 const specs = generateSlideSpecs(deckPlan);
-assert(specs.length === deckPlan.slides.length, `Expected ${deckPlan.slides.length} specs, got ${specs.length}`);
+assert(
+  specs.length === deckPlan.slides.length,
+  `Expected ${deckPlan.slides.length} specs, got ${specs.length}`,
+);
 console.log(`  PASS generated ${specs.length} SlideSpec entries`);
 
 // Check required fields present on every spec
@@ -94,7 +109,10 @@ const withNotes = specs.filter((s) => s.speakerNotes && s.speakerNotes.length > 
 assert(withNotes.length > 0, "Should have speaker notes on content slides");
 for (const s of withNotes.slice(0, 3)) {
   assert(s.speakerNotes.includes("Purpose:"), `Slide ${s.id} notes should include purpose`);
-  assert(s.speakerNotes.includes("Key argument:"), `Slide ${s.id} notes should include key argument`);
+  assert(
+    s.speakerNotes.includes("Key argument:"),
+    `Slide ${s.id} notes should include key argument`,
+  );
 }
 console.log(`  PASS speaker notes generated (${withNotes.length} slides)`);
 
@@ -107,7 +125,8 @@ const inlineDeckPlan = {
   ...deckPlan,
   slides: deckPlan.slides.map((s, i) => ({
     ...s,
-    sourceRefs: i < 3 ? [{ sourceId: `p${i+1}`, sourceType: "paragraph", fileReference: "input.md" }] : [],
+    sourceRefs:
+      i < 3 ? [{ sourceId: `p${i + 1}`, sourceType: "paragraph", fileReference: "input.md" }] : [],
   })),
 };
 const inlineSpecs = generateSlideSpecs(inlineDeckPlan);
@@ -124,8 +143,12 @@ console.log("  PASS sourceRefs preserved through conversion");
 console.log("\nVisual type mapping:");
 const chartSlides = specs.filter((s) => s.role === "data-chart");
 for (const s of chartSlides) {
-  assert(["bar-chart","line-chart","area-chart","pie-chart","scatter-chart","table"].includes(s.visualType),
-    `Chart slide ${s.id} should map to a chart visualType, got ${s.visualType}`);
+  assert(
+    ["bar-chart", "line-chart", "area-chart", "pie-chart", "scatter-chart", "table"].includes(
+      s.visualType,
+    ),
+    `Chart slide ${s.id} should map to a chart visualType, got ${s.visualType}`,
+  );
 }
 console.log("  PASS visual types mapped correctly");
 

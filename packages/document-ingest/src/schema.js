@@ -80,7 +80,15 @@ function validateSourceDocumentModel(model) {
   }
 
   // Array fields must be arrays
-  const arrayFields = ["sections", "paragraphs", "lists", "tables", "images", "dataBlocks", "sourceMap"];
+  const arrayFields = [
+    "sections",
+    "paragraphs",
+    "lists",
+    "tables",
+    "images",
+    "dataBlocks",
+    "sourceMap",
+  ];
   for (const field of arrayFields) {
     if (field in model && !Array.isArray(model[field])) {
       errors.push(`Field "${field}" must be an array`);

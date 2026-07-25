@@ -80,7 +80,9 @@ function validateProfile(profile) {
   if (profile.footerConvention !== undefined) {
     const validFooter = ["none", "slide-number", "brand-name", "both"];
     if (!validFooter.includes(profile.footerConvention)) {
-      errors.push(`footerConvention must be one of ${validFooter.join(", ")}, got "${profile.footerConvention}"`);
+      errors.push(
+        `footerConvention must be one of ${validFooter.join(", ")}, got "${profile.footerConvention}"`,
+      );
     }
   }
 

@@ -27,7 +27,11 @@ function parseRevisionInstruction(instruction, currentDeckPlan, currentSlideSpec
   if (lower.includes("process") && !lower.includes("horizontal")) {
     const idx = findSlideIndex(lower, currentSlideSpecs);
     if (idx >= 0) {
-      ops.push({ operation: "replace-slide-layout", targetSlide: idx, newLayout: "horizontal-process" });
+      ops.push({
+        operation: "replace-slide-layout",
+        targetSlide: idx,
+        newLayout: "horizontal-process",
+      });
     }
   }
   if (lower.includes("three-card")) {
@@ -45,12 +49,19 @@ function parseRevisionInstruction(instruction, currentDeckPlan, currentSlideSpec
   if (lower.includes("kpi") || lower.includes("metric")) {
     const idx = findSlideIndex(lower, currentSlideSpecs);
     if (idx >= 0) {
-      ops.push({ operation: "replace-slide-layout", targetSlide: idx, newLayout: "executive-summary" });
+      ops.push({
+        operation: "replace-slide-layout",
+        targetSlide: idx,
+        newLayout: "executive-summary",
+      });
     }
   }
 
   // === TITLE MODIFICATIONS ===
-  if ((instruction || "").toLowerCase().startsWith("rename ") || (instruction || "").toLowerCase().startsWith("title is ")) {
+  if (
+    (instruction || "").toLowerCase().startsWith("rename ") ||
+    (instruction || "").toLowerCase().startsWith("title is ")
+  ) {
     const lower = (instruction || "").toLowerCase();
     let newText = null;
     // Try alternate pattern first: "rename slide X to Y"
@@ -72,21 +83,37 @@ function parseRevisionInstruction(instruction, currentDeckPlan, currentSlideSpec
   }
 
   // === BODY CONTENT MODIFICATIONS ===
-  if (lower.includes("add bullet") || lower.includes("add point") || lower.includes("add section")) {
+  if (
+    lower.includes("add bullet") ||
+    lower.includes("add point") ||
+    lower.includes("add section")
+  ) {
     const slideIdx = extractSlideNumber(lower);
     ops.push({ operation: "modify-body", targetSlide: slideIdx, action: "add" });
   }
-  if (lower.includes("remove bullet") || lower.includes("remove point") || lower.includes("delete point")) {
+  if (
+    lower.includes("remove bullet") ||
+    lower.includes("remove point") ||
+    lower.includes("delete point")
+  ) {
     const slideIdx = extractSlideNumber(lower);
     ops.push({ operation: "modify-body", targetSlide: slideIdx, action: "remove" });
   }
-  if (lower.includes("rewrite body") || lower.includes("change content") || lower.includes("update body")) {
+  if (
+    lower.includes("rewrite body") ||
+    lower.includes("change content") ||
+    lower.includes("update body")
+  ) {
     const slideIdx = extractSlideNumber(lower);
     ops.push({ operation: "modify-body", targetSlide: slideIdx, action: "rewrite" });
   }
 
   // === SLIDE DELETION ===
-  if (lower.includes("delete slide") || lower.includes("remove slide") || lower.includes("drop slide")) {
+  if (
+    lower.includes("delete slide") ||
+    lower.includes("remove slide") ||
+    lower.includes("drop slide")
+  ) {
     const slideIdx = extractSlideNumber(lower);
     ops.push({ operation: "delete-slide", targetSlide: slideIdx });
   }
@@ -99,10 +126,16 @@ function parseRevisionInstruction(instruction, currentDeckPlan, currentSlideSpec
 
   // === REORDERING ===
   if (lower.includes("move slide") || lower.includes("reorder")) {
-    const moveMatch = lower.match(/move\s+(?:slide\s*)?(\d+)\s+(?:to\s+)?(?:after|before)\s+(?:slide\s*)?(\d+)/);
+    const moveMatch = lower.match(
+      /move\s+(?:slide\s*)?(\d+)\s+(?:to\s+)?(?:after|before)\s+(?:slide\s*)?(\d+)/,
+    );
     if (moveMatch) {
       // Convert 1-based slide numbers to 0-based indices
-      ops.push({ operation: "reorder-slides", fromIndex: parseInt(moveMatch[1]) - 1, toIndex: parseInt(moveMatch[2]) - 1 });
+      ops.push({
+        operation: "reorder-slides",
+        fromIndex: parseInt(moveMatch[1]) - 1,
+        toIndex: parseInt(moveMatch[2]) - 1,
+      });
     }
   }
 
@@ -117,12 +150,16 @@ function parseRevisionInstruction(instruction, currentDeckPlan, currentSlideSpec
   // === COMPRESS/EXPAND COUNT ===
   if (lower.includes("compress") || lower.includes("reduce") || lower.includes("shorten")) {
     const countMatch = lower.match(/(\d+)\s*(?:slide|page)/);
-    const targetCount = countMatch ? parseInt(countMatch[1]) : Math.floor(currentSlideSpecs.length * 0.8);
+    const targetCount = countMatch
+      ? parseInt(countMatch[1])
+      : Math.floor(currentSlideSpecs.length * 0.8);
     ops.push({ operation: "compress-count", targetCount });
   }
   if (lower.includes("expand") || lower.includes("longer")) {
     const countMatch = lower.match(/(\d+)\s*(?:slide|page)/);
-    const targetCount = countMatch ? parseInt(countMatch[1]) : Math.ceil(currentSlideSpecs.length * 1.25);
+    const targetCount = countMatch
+      ? parseInt(countMatch[1])
+      : Math.ceil(currentSlideSpecs.length * 1.25);
     ops.push({ operation: "expand-count", targetCount });
   }
 
@@ -133,7 +170,7 @@ function parseRevisionInstruction(instruction, currentDeckPlan, currentSlideSpec
   }
 
   // === AUDIENCE/DURATION ===
-  if (lower.includes("change audience") || lower.includes("for ") && lower.includes("audience")) {
+  if (lower.includes("change audience") || (lower.includes("for ") && lower.includes("audience"))) {
     const audienceMatch = lower.match(/change\s+audience\s+(?:to\s+)?(.+)$/);
     if (audienceMatch) {
       ops.push({ operation: "change-audience", newAudience: audienceMatch[1].trim() });
@@ -160,7 +197,7 @@ function findSlideIndex(instruction, slideSpecs) {
     const slide = slideSpecs[i];
     const searchable = `${slide.title} ${slide.role} ${slide.keyMessage}`.toLowerCase();
     // Check if any significant word in instruction matches this slide
-    const words = lower.split(/\s+/).filter(w => w.length > 2);
+    const words = lower.split(/\s+/).filter((w) => w.length > 2);
     for (const word of words) {
       if (searchable.includes(word)) return i;
     }
@@ -294,7 +331,12 @@ function applyRevisions(deckPlan, slideSpecs, ops) {
       case "reorder-slides": {
         const fromIdx = op.fromIndex;
         let toIdx = op.toIndex;
-        if (fromIdx < 0 || fromIdx >= slideSpecs.length || toIdx < 0 || toIdx >= slideSpecs.length) {
+        if (
+          fromIdx < 0 ||
+          fromIdx >= slideSpecs.length ||
+          toIdx < 0 ||
+          toIdx >= slideSpecs.length
+        ) {
           warnings.push(`reorder: indices out of range (${fromIdx}, ${toIdx})`);
           continue;
         }
@@ -376,7 +418,10 @@ function applyRevisions(deckPlan, slideSpecs, ops) {
           warnings.push(`add-notes: slide ${slideIdx} out of range`);
           continue;
         }
-        if (!slideSpecs[slideIdx].speakerNotes || slideSpecs[slideIdx].speakerNotes.trim().length < 10) {
+        if (
+          !slideSpecs[slideIdx].speakerNotes ||
+          slideSpecs[slideIdx].speakerNotes.trim().length < 10
+        ) {
           slideSpecs[slideIdx].speakerNotes = `[Speaker notes for: ${slideSpecs[slideIdx].title}]`;
         }
         break;
@@ -429,7 +474,7 @@ function reviseDeck(instruction, deckPlan, slideSpecs) {
     result.success = false;
     return result;
   }
-  result.appliedOperations = ops.map(o => o.operation);
+  result.appliedOperations = ops.map((o) => o.operation);
 
   // Step 2: Apply operations
   const { warnings, success } = applyRevisions(deckPlan, slideSpecs, ops);

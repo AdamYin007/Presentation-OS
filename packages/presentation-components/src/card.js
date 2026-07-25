@@ -7,9 +7,9 @@ const { C } = require("./helpers");
 // Supported card variants
 const VARIANTS = {
   default: { accentBar: true, icon: false, badge: false },
-  icon:    { accentBar: false, icon: true,  badge: false },
-  badge:   { accentBar: false, icon: false, badge: true },
-  flat:    { accentBar: false, icon: false, badge: false },
+  icon: { accentBar: false, icon: true, badge: false },
+  badge: { accentBar: false, icon: false, badge: true },
+  flat: { accentBar: false, icon: false, badge: false },
 };
 
 /**
@@ -33,19 +33,24 @@ function card(slide, x, y, w, h, header, body, color, pptx, opts) {
 
   // White background with border
   slide.addShape(pptx.ShapeType.roundRect, {
-    x, y, w, h,
+    x,
+    y,
+    w,
+    h,
     rectRadius: 0.08,
     fill: { color: C.white },
-    line: { color: C.border, width: 1 }
+    line: { color: C.border, width: 1 },
   });
 
   // Accent bar (top)
   if (variant.accentBar) {
     slide.addShape(pptx.ShapeType.rect, {
-      x, y,
-      w, h: 0.08,
+      x,
+      y,
+      w,
+      h: 0.08,
       fill: { color },
-      line: { color }
+      line: { color },
     });
   }
 
@@ -58,7 +63,7 @@ function card(slide, x, y, w, h, header, body, color, pptx, opts) {
       w: iconR * 2,
       h: iconR * 2,
       fill: { color },
-      line: { color }
+      line: { color },
     });
     slide.addText(opts.iconChar || "●", {
       x: x + 0.2 + iconR * 0.35,
@@ -68,7 +73,7 @@ function card(slide, x, y, w, h, header, body, color, pptx, opts) {
       fontSize: iconR * 1.8,
       color: C.white,
       margin: 0,
-      align: "center"
+      align: "center",
     });
   }
 
@@ -83,7 +88,7 @@ function card(slide, x, y, w, h, header, body, color, pptx, opts) {
       h: badgeH,
       rectRadius: 0.04,
       fill: { color },
-      line: { color }
+      line: { color },
     });
     slide.addText(opts.badgeText, {
       x: x + w - badgeW - 0.08,
@@ -94,7 +99,7 @@ function card(slide, x, y, w, h, header, body, color, pptx, opts) {
       bold: true,
       color: C.white,
       align: "center",
-      margin: 0
+      margin: 0,
     });
   }
 
@@ -109,7 +114,7 @@ function card(slide, x, y, w, h, header, body, color, pptx, opts) {
     fontSize: 15,
     bold: true,
     color: C.navy,
-    margin: 0
+    margin: 0,
   });
 
   // Body text
@@ -122,7 +127,7 @@ function card(slide, x, y, w, h, header, body, color, pptx, opts) {
     fontSize: 10.5,
     color: C.gray,
     fit: "shrink",
-    margin: 0
+    margin: 0,
   });
 
   return slide;

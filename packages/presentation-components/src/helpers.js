@@ -12,14 +12,19 @@ const C = {
   orange: "EA580C",
   red: "DC2626",
   white: "FFFFFF",
-  cyan: "0891B2"
+  cyan: "0891B2",
 };
 
 function makeFooter(slide, pptx, storyMeta, page) {
   const style = (storyMeta && storyMeta.style) || "consulting";
   slide.addText(`AWE Presentation OS · ${style} · ${page}`, {
-    x: 0.55, y: 7.12, w: 5, h: 0.2,
-    fontSize: 8, color: "94A3B8", margin: 0
+    x: 0.55,
+    y: 7.12,
+    w: 5,
+    h: 0.2,
+    fontSize: 8,
+    color: "94A3B8",
+    margin: 0,
   });
 }
 
@@ -33,7 +38,7 @@ function makeTitle(slide, text, subtitle, opts) {
     fontSize: opts.fontSize || 24,
     bold: true,
     color: opts.color || C.navy,
-    margin: 0
+    margin: 0,
   });
   if (subtitle) {
     slide.addText(subtitle, {
@@ -43,7 +48,7 @@ function makeTitle(slide, text, subtitle, opts) {
       h: 0.35,
       fontSize: opts.subFontSize || 12,
       color: C.gray,
-      margin: 0
+      margin: 0,
     });
   }
 }

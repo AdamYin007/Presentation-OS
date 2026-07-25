@@ -1,5 +1,10 @@
 const assert = require("assert");
-const { generateLayoutPlan, LAYOUT_FAMILIES, THEME_TOKENS, getThemeTokens } = require("../../packages/theme-layout/src/index.js");
+const {
+  generateLayoutPlan,
+  LAYOUT_FAMILIES,
+  THEME_TOKENS,
+  getThemeTokens,
+} = require("../../packages/theme-layout/src/index.js");
 const fs = require("fs");
 const path = require("path");
 
@@ -39,7 +44,9 @@ console.log("  ✓ Unknown theme falls back to minimal-modern");
 // ── Layout resolution ──
 
 console.log("\nLayout resolution:");
-const specs = JSON.parse(fs.readFileSync(path.join(__dirname, "../../examples/business-review/slidespec.json"), "utf8"));
+const specs = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "../../examples/business-review/slidespec.json"), "utf8"),
+);
 const plan = generateLayoutPlan(specs, { style: "minimal-modern" });
 
 assert(plan.theme === "minimal-modern", "Theme should be minimal-modern");
@@ -61,28 +68,37 @@ console.log("  ✓ All layouts have required fields");
 // Check role-based layout selection
 const sectionDividerLayouts = plan.layouts.filter((l) => l.role === "section-divider");
 for (const l of sectionDividerLayouts) {
-  assert(l.layoutFamily === "section-divider", `Section divider should use section-divider layout, got ${l.layoutFamily}`);
+  assert(
+    l.layoutFamily === "section-divider",
+    `Section divider should use section-divider layout, got ${l.layoutFamily}`,
+  );
 }
 console.log("  ✓ Section dividers use section-divider layout");
 
 const closingLayouts = plan.layouts.filter((l) => l.role === "closing");
 for (const l of closingLayouts) {
-  assert(l.layoutFamily === "closing", `Closing should use closing layout`);
+  assert(l.layoutFamily === "closing", "Closing should use closing layout");
 }
 console.log("  ✓ Closing slides use closing layout");
 
 const contentLayouts = plan.layouts.filter((l) => l.role === "content");
 for (const l of contentLayouts) {
   // Content slides can use title-and-bullets OR chart layouts depending on visualType
-  assert(["title-and-bullets", "chart-and-insight"].includes(l.layoutFamily),
-    `Content slide ${l.slideId} should use title-and-bullets or chart layout, got ${l.layoutFamily}`);
+  assert(
+    ["title-and-bullets", "chart-and-insight"].includes(l.layoutFamily),
+    `Content slide ${l.slideId} should use title-and-bullets or chart layout, got ${l.layoutFamily}`,
+  );
 }
-console.log(`  ✓ Content slides: ${contentLayouts.filter((l) => l.layoutFamily === "title-and-bullets").length} bullets, ${contentLayouts.filter((l) => l.layoutFamily !== "title-and-bullets").length} charts`);
+console.log(
+  `  ✓ Content slides: ${contentLayouts.filter((l) => l.layoutFamily === "title-and-bullets").length} bullets, ${contentLayouts.filter((l) => l.layoutFamily !== "title-and-bullets").length} charts`,
+);
 
 const chartLayouts = plan.layouts.filter((l) => l.role === "data-chart");
 for (const l of chartLayouts) {
-  assert(["chart-and-insight", "full-width-chart"].includes(l.layoutFamily),
-    `Chart slide should use chart layout, got ${l.layoutFamily}`);
+  assert(
+    ["chart-and-insight", "full-width-chart"].includes(l.layoutFamily),
+    `Chart slide should use chart layout, got ${l.layoutFamily}`,
+  );
 }
 console.log("  ✓ Data chart slides use chart-and-insight layout");
 
@@ -97,8 +113,10 @@ if (contentSlideLayouts.length > 0) {
   } else {
     // All content slides may have medium/high emphasis; verify accent is valid
     for (const l of contentSlideLayouts) {
-      assert(["#E5E7EB", "#3B82F6"].includes(l.colors.accent),
-        `Accent should be border or primary, got ${l.colors.accent}`);
+      assert(
+        ["#E5E7EB", "#3B82F6"].includes(l.colors.accent),
+        `Accent should be border or primary, got ${l.colors.accent}`,
+      );
     }
     console.log("  ✓ Content slide accents are valid theme colors");
   }
@@ -128,7 +146,10 @@ if (titleLayout) {
 
 console.log("\nFont sizes:");
 for (const layout of plan.layouts) {
-  assert(layout.fontSize.heading > 0, `Layout ${layout.slideId} should have positive heading font size`);
+  assert(
+    layout.fontSize.heading > 0,
+    `Layout ${layout.slideId} should have positive heading font size`,
+  );
   assert(layout.fontSize.body > 0, `Layout ${layout.slideId} should have positive body font size`);
   assert(layout.fontSize.heading >= layout.fontSize.body, "Heading should be >= body");
 }
@@ -147,7 +168,10 @@ console.log("  ✓ Chart layouts have wide max widths");
 
 console.log("\nLayout diversity:");
 const usedFamilies = plan.layoutFamiliesUsed;
-assert(usedFamilies.length >= 3, `Should use at least 3 layout families, got ${usedFamilies.length}: ${usedFamilies.join(", ")}`);
+assert(
+  usedFamilies.length >= 3,
+  `Should use at least 3 layout families, got ${usedFamilies.length}: ${usedFamilies.join(", ")}`,
+);
 console.log(`  ✓ Uses ${usedFamilies.length} layout families: ${usedFamilies.join(", ")}`);
 
 // ── No PPTX rendering leakage ──
@@ -172,7 +196,10 @@ console.log("  ✓ Empty specs handled");
 const consultingPlan = generateLayoutPlan(specs, { style: "business-consulting" });
 assert(consultingPlan.theme === "business-consulting", "Should use business-consulting theme");
 const firstConsultingLayout = consultingPlan.layouts[0];
-assert(firstConsultingLayout.colors.text === "#1A202C", "Primary text should be dark gray (not navy)");
+assert(
+  firstConsultingLayout.colors.text === "#1A202C",
+  "Primary text should be dark gray (not navy)",
+);
 console.log("  ✓ Business consulting theme applied");
 
 console.log("\n==============================");

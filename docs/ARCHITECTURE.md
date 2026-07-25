@@ -1,91 +1,127 @@
-# AWE Presentation OS — Architecture v1
+# AWE Presentation OS — Architecture v2
 
-> **Version**: 1.0.0  
-> **Date**: 2026-06-30  
-> **Status**: Frozen — Production-ready baseline  
+> **Version**: 2.0.0
+> **Date**: 2026-07-19
+> **Status**: Production-ready baseline + Optimization Layer Active
 
 ---
 
 ## 1. System Overview
 
+### 1.1 Pipeline Data Flow
+
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Story Layer                               │
-│  story JSON → slide objects { no, type, title, message, hero? } │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-              ┌──────────────┴──────────────┐
-              ▼                             ▼
-   ┌──────────────────────┐      ┌──────────────────────┐
-   │   Content Engine     │      │   Layout Engine      │
-   │ (data model)         │      │ (spatial plan)       │
-   │ compileContent()     │      │ compileLayoutPlan()  │
-   └──────────┬───────────┘      └──────────┬───────────┘
-              │                              │
-              ▼                              ▼
-   ┌──────────────────────────────────────────────────────┐
-   │              Hero Engine                             │
-   │  enrichStoryWithHero() — narrative enrichment        │
-   └──────────────────────┬───────────────────────────────┘
-                          │
-              ┌───────────┴───────────┐
-              ▼                       ▼
-   ┌──────────────────┐    ┌──────────────────┐
-   │ Theme Engine     │    │ Layout Adapters  │
-   │ (design tokens)  │    │ (rendering)      │
-   └────────┬─────────┘    └────────┬─────────┘
-            │                       │
-            └───────────┬───────────┘
-                        ▼
-            ┌──────────────────────┐
-            │   Renderer Engine    │
-            │  adapter first       │
-            │  legacy fallback     │
-            └──────────┬───────────┘
-                       ▼
-            ┌──────────────────────┐
-            │   PPTX Output        │
-            │   pptxgenjs          │
-            └──────────────────────┘
+Markdown / Source Document
+        │
+        ▼
+┌──────────────────┐
+│  Ingest          │  M12.1
+│  document-ingest │
+└────────┬─────────┘
+         │ SourceDocumentModel
+         ▼
+┌──────────────────┐
+│  Intent Parser   │  M12.2
+│  intent-parser   │
+└────────┬─────────┘
+         │ PresentationIntent
+         ▼
+┌──────────────────┐
+│  Story Planner   │  M12.3
+│  story-planner   │
+└────────┬─────────┘
+         │ DeckPlan
+         ▼
+┌──────────────────┐
+│  SlideSpec Gen   │  M12.4
+│  slidespec       │
+└────────┬─────────┘
+         │ SlideSpec[]
+         │
+         ├──── [M12.25 Audience Engine] ────▶ Adapted SlideSpec[]
+         │     (speaker × audience)
+         │
+         ▼
+┌──────────────────┐
+│  Theme-Layout    │  M12.5
+│  theme-layout    │
+└────────┬─────────┘
+         │ LayoutPlan[]
+         │
+         ├──── [M12.24 Presentation Compiler] ──▶ Render Plan[]
+         │      (overflow / pagination / dedup)
+         │
+         ▼
+┌──────────────────┐
+│  PPTX Renderer   │  M12.6
+│  pptx-renderer   │
+└────────┬─────────┘
+         │ .pptx buffer
+         ▼
+┌──────────────────┐
+│  Quality Gates   │  M12.8–17
+│  QA / Visual /   │
+│  Accessibility   │
+└──────────────────┘
+```
+
+### 1.2 Monorepo Package Map
+
+```
+packages/
+├── document-ingest/          # M12.1 — Markdown/text ingestion
+├── intent-parser/            # M12.2 — Prompt → PresentationIntent
+├── story-planner/            # M12.3 — Intent → DeckPlan
+├── slidespec/                # M12.4 — DeckPlan → SlideSpec[]
+├── presentation-audience-engine/  # M12.25 — Speaker × Audience adaptation
+├── theme-layout/             # M12.5 — SlideSpec[] → LayoutPlan[]
+├── presentation-compiler/    # M12.24 — Global optimization layer
+├── pptx-renderer/            # M12.6 — LayoutPlan[] → .pptx buffer
+├── presentation-pipeline/    # M12.7 — End-to-end orchestrator
+├── brand-profiles/           # M12.20 — Brand template profiles
+├── logo-safe-area-gate/      # M12.19 — Logo safe area enforcement
+├── pixel-accessibility-gate/ # M12.17 — Pixel contrast & color blindness
+├── visual-design-gate/       # M12.16 — Visual design standards
+├── presentation-revision/    # M12.9 — Natural language revision
+└── cli/                      # M12.11 — CLI skill packaging
 ```
 
 ---
 
-## 2. Seven-Layer Architecture
+## 2. Architecture Layers
 
-### Layer 1 — Story Layer
+### Layer 1 — Story Layer (M12.3)
 
 **职责**：唯一数据源。定义幻灯片结构。
 
-**输入**：`story.json`  
-**输出**：`{ name, audience, slides: [{ no, type, title, message }] }`
+**位置**：`packages/story-planner/`
+
+**输入**：`PresentationIntent` + `SourceDocumentModel`
+**输出**：`DeckPlan { name, purpose, narrativePattern, slides: [...] }`
+
+**核心函数**：
+- `planDeck(intent, sourceDocument)` — 根据意图和源文档规划幻灯片结构
+- `selectNarrativePattern(purpose)` — 选择叙事模式（teaching/persuade/review/summarize/inform）
 
 **规则**：
-- 禁止修改 story JSON 结构
-- 禁止新增 story 字段
-- 新增 slide type 需先确认不影响现有渲染
+- 不执行渲染
+- 不依赖 theme、layout、brand
+- 纯数据模型
 
 ---
 
-### Layer 2 — Content Engine
+### Layer 2 — Content Engine (M12.4)
 
 **职责**：组织每页的内容数据模型。
 
-**位置**：`src/content-engine/`
+**位置**：`packages/slidespec/`
 
-**文件结构**：
-```
-content-engine/
-├── index.js          # compileContent(), dispatch()
-├── schema.js         # 内容数据结构定义
-└── planners/
-    ├── executive.js  # planExecutive()
-    └── generic.js    # planGeneric()
-```
+**输入**：`DeckPlan`
+**输出**：`SlideSpec[]`
 
 **核心函数**：
-- `compileContent(slide, story)` — 根据 slide type 生成内容数据
-- `dispatch(type)` — 按类型路由到对应 planner
+- `generateSlideSpecs(deckPlan)` — 将 DeckPlan 映射为 SlideSpec 数组
+- `mapDeckPlanToSlideSpec(slidePlan, deckPlan)` — 单页映射
 
 **约束**：
 - 不输出任何视觉信息
@@ -94,11 +130,56 @@ content-engine/
 
 ---
 
-### Layer 3 — Hero Engine
+### Layer 3 — Audience Engine (M12.25)
+
+**职责**：看人下菜碟。根据讲者身份和听众特征双向动态调整内容深度、术语层级、视觉优先级。
+
+**位置**：`packages/presentation-audience-engine/`
+
+**输入**：`SlideSpec[]` + `{ speaker: string, audience: string, customRules?: object }`
+**输出**：`AdaptationResult { contract, slideAdjustments, deckHints, assumptions }`
+
+**核心函数**：
+- `adaptDeck(slideSpecs, deckMetadata, options)` — 主入口，返回适配计划
+- `resolveSpeakerProfile(profile)` — 解析讲者画像（executive / manager / specialist / student / general_public）
+- `resolveAudienceRole(role)` — 解析听众角色（board / executives / managers / engineers / students / investors / customers / general）
+- `deriveContract(speaker, audience)` — 基于讲者权威性和听众时间预算推导适配合同
+- `applySlideAdjustments(slideSpecs, adjustments)` — 将适配结果应用到 SlideSpec
+
+**8 个适配维度**：
+
+| Dimension | Values | Driven By |
+|-----------|--------|-----------|
+| `titleDepth` | executive / professional / educational / technical | 讲者权威性 × 听众时间预算 |
+| `bodyDetailLevel` | minimal / moderate / detailed | 讲者权威性 × 听众时间预算 |
+| `terminology` | business / professional / technical / educational | 听众专业度 |
+| `visualPriority` | high / medium / low | 讲者权威性 |
+| `emphasis` | financial / operational / strategic / technical | 讲者权威性 |
+| `speakerNotesTone` | organized / conversational / formal / detailed | 讲者权威性 |
+| `metricDepth` | summary / insight / granular | 听众专业度 |
+| `narrativeAngle` | problem-solution / data-driven / chronological / comparative | 讲者权威性 |
+
+**权重逻辑**：
+- **听众专业度** 决定 terminology 和 metricDepth
+- **讲者权威性** 决定 titleDepth、bodyDetailLevel、emphasis、notesTone
+- **听众时间预算** 降低 titleDepth 和 bodyDetailLevel
+- **讲者权威性低** 时提升 titleDepth（弥补可信度缺口）
+
+**规则**：
+- Opt-in：`opts.audienceEngine` 存在时才激活
+- Non-destructive：返回 `AdaptationResult`，不修改原始 SlideSpec
+- Pipeline 在调用方决定是否应用 `slideAdjustments`
+- 未知 profile 不崩溃，记录 warning 并使用默认值
+
+**CLI**：`--audience <role>` + `--speaker <profile>`
+
+---
+
+### Layer 4 — Hero Engine (Legacy / Optional)
 
 **职责**：叙事增强。将 hero sequence 注入到 slide 数据中。
 
-**位置**：`src/hero-engine.js`
+**位置**：`packages/story-planner/src/narrative-patterns.js` + legacy `enrichStoryWithHero()`
 
 **核心函数**：
 - `enrichStoryWithHero(story, heroSequence, options)` — 合并 hero 叙事层
@@ -109,32 +190,26 @@ content-engine/
 **规则**：
 - 默认模式不激活
 - 注入字段：`slide.hero.pattern_id`, `slide.hero.statement`, `slide.hero.visual_focus`
+- Hero sequences 尚未接入 Audience Engine（M5 Intelligence 待完成）
 
 ---
 
-### Layer 4 — Layout Engine
+### Layer 5 — Layout Engine (M12.5)
 
 **职责**：空间规划。为每页幻灯片生成 Layout Plan。
 
-**位置**：`src/layout-engine/`
+**位置**：`packages/theme-layout/`
+
+**输入**：`SlideSpec[]`（可选：Audience Engine 适配后的版本）
+**输出**：`LayoutPlan[]`
 
 **文件结构**：
 ```
-layout-engine/
-├── index.js          # compileLayoutPlan(), schema
-├── schema.js         # 布局数据结构定义
-├── planner.js        # registry + dispatch + compileLayoutPlan()
-└── planners/
-    ├── cover.js      # planCover()
-    ├── executive.js  # planExecutive()
-    ├── workflow.js   # planWorkflow()
-    ├── generic.js    # planGeneric()
-    ├── governance.js # planGovernance()
-    ├── research.js   # planResearch()
-    ├── collaboration.js # planCollaboration()
-    ├── roi.js        # planROI()
-    ├── differentiation.js # planDifferentiation()
-    └── recommendation.js # planRecommendation()
+theme-layout/
+├── src/
+│   ├── index.js          # generateLayoutPlan()
+│   ├── schema.js         # LAYOUT_FAMILIES, THEME_TOKENS, DEFAULT_THEME
+│   └── generator.js      # resolveLayout(), selectTheme(), generateColorPalette()
 ```
 
 **Layout Plan 结构**：
@@ -149,8 +224,10 @@ layout-engine/
 ```
 
 **核心函数**：
-- `compileLayoutPlan(slide)` — 输入 slide，输出 validated Layout Plan
-- 每个 `planXxx()` 函数只负责生成对应 slide type 的布局方案
+- `generateLayoutPlan(slideSpecs, options)` — 输入 slide specs，输出 validated Layout Plan 数组
+- `resolveLayout(slideSpec)` — 根据 role + density + visualType 选择 layout family
+- `selectTheme(deckMetadata)` — 根据 deck metadata 选择主题风格
+- `generateColorPalette(themeName, slideSpec, themeTokensOverride)` — 生成颜色调色板
 
 **约束**：
 - 不执行渲染
@@ -159,93 +236,63 @@ layout-engine/
 
 ---
 
-### Layer 5 — Theme Engine
+### Layer 6 — Presentation Compiler (M12.24)
 
-**职责**：设计令牌系统。提供颜色、字体、间距等主题数据。
+**职责**：全局优化调度器。在 layout planning 之后、rendering 之前，检测溢出、自动分页、去重资源、求解布局冲突，生成优化后的 Render Plan。
 
-**位置**：`src/theme/`
+**位置**：`packages/presentation-compiler/`
 
-**文件结构**：
-```
-theme/
-├── index.js          # 导出所有主题能力
-├── registry.js       # createTheme(), getTheme(), listThemes()
-└── helpers.js        # resolveColor(), applyTypography(), computeSpacing()
-```
+**输入**：`LayoutPlan[]` + `SlideSpec[]` + `{ mode: 'fast'|'standard'|'optimized' }`
+**输出**：`CompileResult { renderPlan, analysis, warnings }`
 
-**核心函数**：
-- `resolveColor(theme, "colors.blue")` → `"2563EB"`
-- `applyTypography(theme, "heading1")` → `{ fontSize: 28, bold: true, ... }`
-- `computeSpacing(theme, 2)` → `0.4`
+**7 阶段 Pipeline**：
+
+| Stage | Function | Responsibility |
+|-------|----------|----------------|
+| 1. Input Analyzer | `analyzeInput()` | 统计 slide 数量、类型分布、内容密度 |
+| 2. Constraint Solver | `solveConstraints()` | 调和布局/主题/可访问性冲突 |
+| 3. Overflow Detector | `detectOverflow()` | 检测 bullet 过载、长标题、内容溢出 |
+| 4. Pagination Manager | `paginateContent()` | 自动分页，添加 `continued...` 标记 |
+| 5. Theme Resolver | `resolveThemeFonts()` | 统一字体映射，减少变体 |
+| 6. Resource Optimizer | `optimizeResources()` | 跨页图表/图标去重缓存 |
+| 7. Render Plan Generator | `generateRenderPlan()` | 输出最终 Render Plan |
+
+**三种编译模式**：
+
+| Mode | Flag | Behavior |
+|------|------|----------|
+| Fast | （未启用） | 零开销，直接透传 LayoutPlan |
+| Standard | `--compiler` | 溢出检测 + 字体映射 + 警告 |
+| Optimized | `--optimize` | 全量约束求解 + 分页 + 去重 + 无障碍检查 |
 
 **规则**：
-- 当前默认使用 `components/helpers.js` 中的 C 调色板
-- Theme Engine 是未来多主题支持的抽象层
-- 当前不强制使用，legacy renderer 仍直接引用 `comp.C.*`
+- Opt-in：`opts.compiler` 存在且非 false 时才激活
+- Graceful degradation：缺失 `layoutPlan` 时记录 warning 但不崩溃
+- 分页后标记 `continued...`，跨页内容不丢失
+- 重复图表/图标只渲染一次，通过 hash 缓存
+
+**CLI**：`--compiler`（standard）或 `--optimize`（optimized）
 
 ---
 
-### Layer 6 — Layout Adapters
+### Layer 7 — Renderer Engine (M12.6)
 
-**职责**：消费 Layout Plan 并执行渲染。
+**职责**：消费 Layout Plan 并执行实际 PPTX 渲染。
 
-**位置**：`src/layout-adapters/`
+**位置**：`packages/pptx-renderer/`
 
-**文件结构**：
-```
-layout-adapters/
-├── index.js          # dispatchAdapter() — registry + lookup + fallback
-├── cover.js          # Cover adapter
-├── executive.js      # Executive adapter
-└── workflow.js       # Workflow adapter
-```
+**输入**：`LayoutPlan[]` + （可选）Compiler Render Plan
+**输出**：`.pptx` Buffer
 
 **核心函数**：
-```javascript
-dispatchAdapter({ slide, comp, pptx, story, layoutPlan })
-```
+- `renderPptx(layoutPlans, options)` — 渲染完整 PPTX
+- `generateBuffer(layoutPlans, options)` — 生成 pptxgenjs buffer
 
 **工作流程**：
-1. 从 `ADAPTERS` 对象中按 `slide.type` 查找适配器
-2. 找到 → 执行 → 返回 `true`（已处理）
-3. 未找到 → 返回 `false`（触发 legacy fallback）
-
-**约束**：
-- 必须读取 `layoutPlan.zones`、`layoutPlan.constraints`、`layoutPlan.flow`
-- 不得使用硬编码布局逻辑
-- 必须使用 `comp.*` 组件，不直接使用 pptxgenjs
-
----
-
-### Layer 7 — Renderer Engine
-
-**职责**：渲染调度器。决定每页走 adapter 路径还是 legacy 路径。
-
-**位置**：`src/renderer-engine/`
-
-**文件结构**：
-```
-renderer-engine/
-├── index.js          # createRendererEngine() — 工厂函数
-├── registry.js       # registerLegacyRenderer() + getLegacyRenderer()
-└── dispatcher.js     # dispatchRender() — 安全分发器
-```
-
-**核心函数**：
-```javascript
-const renderSlide = createRendererEngine({
-  useLayoutEngine: true/false,
-  layoutPlans: [...],
-  legacyRenderer: (slide) => { ... }
-});
-renderSlide(slide, comp, pptx, story); // → boolean
-```
-
-**工作流程**：
-1. 如果 `useLayoutEngine` 为 `true`，优先尝试 `dispatchAdapter()`
-2. Adapter 返回 `true` → 渲染成功，跳过 legacy
-3. Adapter 返回 `false` → fallback 到 `legacyRenderer()`
-4. 如果 `useLayoutEngine` 为 `false` → 直接走 legacy
+1. Adapter-first：优先查找对应 slide type 的 adapter
+2. Adapter 返回成功 → 跳过 legacy
+3. Adapter 失败或未找到 → fallback 到 legacy renderer
+4. Compiler Render Plan 覆盖默认布局参数
 
 **约束**：
 - 只做调度，不包含任何渲染代码
@@ -282,20 +329,27 @@ Presentation OS
 
 ### Core Platform Contents
 
-| Engine | Responsibility | Domain Knowledge |
-|---|---|---|
-| Story Engine | Define slide structure | None |
-| Content Engine | Organize content data | None |
-| Hero Engine | Narrative enrichment | None |
-| Layout Engine | Spatial planning | None |
-| Theme Engine | Design tokens | None |
-| Renderer Engine | Render dispatch | None |
-| Future Compiler | Constraint solving, overflow detection | None |
+| Engine | Package | Responsibility | Milestone |
+|--------|---------|----------------|-----------|
+| Document Ingest | `document-ingest` | Parse markdown/plain text into SourceDocumentModel | M12.1 |
+| Intent Parser | `intent-parser` | Extract topic, purpose, tone, style from prompt | M12.2 |
+| Story Planner | `story-planner` | Generate DeckPlan from intent + source doc | M12.3 |
+| SlideSpec Generator | `slidespec` | Map DeckPlan to page-level contracts | M12.4 |
+| Audience Engine | `presentation-audience-engine` | Speaker × Audience dynamic adaptation | M12.25 |
+| Theme-Layout | `theme-layout` | Spatial planning + theme tokens | M12.5 |
+| Presentation Compiler | `presentation-compiler` | Global optimization + Render Plan | M12.24 |
+| PPTX Renderer | `pptx-renderer` | Adapter-first rendering to .pptx | M12.6 |
+| Pipeline Orchestrator | `presentation-pipeline` | End-to-end chain coordination | M12.7 |
+| Brand Profiles | `brand-profiles` | Template profile packs + resolution | M12.20 |
+| Logo Safe Area | `logo-safe-area-gate` | Logo boundary enforcement | M12.19 |
+| Pixel Accessibility | `pixel-accessibility-gate` | Contrast + color blindness checks | M12.17 |
+| Visual Design | `visual-design-gate` | Visual design standards gate | M12.16 |
+| Revision | `presentation-revision` | Natural language slide revision | M12.9 |
 
 ### Presentation Pack Examples
 
 | Pack | Industry |
-|---|---|
+|------|----------|
 | Medical AI | Artificial intelligence in medicine |
 | Digital Pathology | Digital pathology workflows |
 | Medical Devices | Ultrasound bone scalpel, surgical robots |
@@ -316,109 +370,149 @@ The Core Platform is designed to allow third-party Presentation Pack development
 
 ---
 
-## 4. File Structure
+## 4. File Structure (Monorepo)
 
 ```
-registry/packages/ppt-factory/
-├── bin/
-│   └── run.js                    # CLI 入口，coordinator（逐步变薄）
-├── src/
-│   ├── content-engine/           # Content Engine
-│   │   ├── index.js              # compileContent(), dispatch()
-│   │   ├── schema.js             # 内容数据结构
-│   │   └── planners/             # 内容规划器
-│   │       ├── executive.js
-│   │       └── generic.js
-│   ├── hero-engine.js            # Hero Engine
-│   ├── layout-engine/            # Layout Engine
-│   │   ├── index.js              # compileLayoutPlan(), schema
-│   │   ├── schema.js             # 布局数据结构
-│   │   ├── planner.js            # registry + dispatch
-│   │   └── planners/             # 布局规划器
-│   │       ├── cover.js
-│   │       ├── executive.js
-│   │       ├── workflow.js
-│   │       ├── generic.js
-│   │       ├── governance.js
-│   │       ├── research.js
-│   │       ├── collaboration.js
-│   │       ├── roi.js
-│   │       ├── differentiation.js
-│   │       └── recommendation.js
-│   ├── layout-adapters/          # Layout Adapters
-│   │   ├── index.js              # dispatchAdapter()
-│   │   ├── cover.js
-│   │   ├── executive.js
-│   │   └── workflow.js
-│   ├── renderer-engine/          # Renderer Engine
-│   │   ├── index.js              # createRendererEngine()
-│   │   ├── registry.js           # legacy renderer registry
-│   │   └── dispatcher.js         # safe dispatch
-│   ├── theme/                    # Theme Engine
-│   │   ├── index.js
-│   │   ├── registry.js
-│   │   └── helpers.js
-│   └── layout/
-│       └── base.js               # getSlide(), bg()
-├── components/                   # 共享组件库
-│   ├── index.js
-│   ├── helpers.js                # C palette, makeTitle, makeFooter
-│   ├── card.js
-│   ├── timeline.js
-│   ├── platform-hub.js
-│   └── layered-architecture.js
-└── story/                        # Story JSON 数据
-    └── digital-pathology-15.json
+packages/
+├── document-ingest/
+│   ├── package.json
+│   └── src/
+│       ├── index.js          # ingestDocument(), detectFormat()
+│       ├── schema.js         # SourceDocumentModel
+│       ├── plain-text.js
+│       └── markdown.js
+├── intent-parser/
+│   ├── package.json
+│   └── src/
+│       ├── index.js
+│       ├── parser.js         # parsePresentationIntent()
+│       └── schema.js         # PresentationIntent contract
+├── story-planner/
+│   ├── package.json
+│   └── src/
+│       ├── index.js
+│       ├── planner.js        # planDeck(), validateDeckPlan()
+│       ├── schema.js
+│       └── narrative-patterns.js
+├── slidespec/
+│   ├── package.json
+│   └── src/
+│       ├── index.js
+│       ├── generator.js      # generateSlideSpecs()
+│       └── schema.js
+├── presentation-audience-engine/
+│   ├── package.json
+│   └── src/
+│       ├── index.js          # adaptDeck()
+│       ├── schema.js         # ADAPTATION_DIMENSIONS, profiles
+│       └── engine.js         # resolveSpeakerProfile(), deriveContract()
+├── theme-layout/
+│   ├── package.json
+│   └── src/
+│       ├── index.js          # generateLayoutPlan()
+│       ├── schema.js         # LAYOUT_FAMILIES, THEME_TOKENS
+│       └── generator.js      # resolveLayout(), selectTheme()
+├── presentation-compiler/
+│   ├── package.json
+│   └── src/
+│       ├── index.js          # compilePresentation()
+│       ├── schema.js         # COMPILER_MODES, RenderPlan
+│       └── compiler.js       # 7-stage optimization pipeline
+├── pptx-renderer/
+│   ├── package.json
+│   └── src/
+│       ├── index.js          # renderPptx(), generateBuffer()
+│       ├── renderer.js       # adapter dispatch + legacy fallback
+│       └── schema.js         # SlideSpec contract
+├── presentation-pipeline/
+│   ├── package.json
+│   └── src/
+│       ├── index.js
+│       └── pipeline.js       # runPipeline() orchestrator
+├── brand-profiles/
+│   ├── package.json
+│   └── src/
+│       ├── index.js          # loadProfile(), resolveBrandConfig()
+│       ├── loader.js
+│       ├── schema.js
+│       └── builtins.js
+├── logo-safe-area-gate/
+│   ├── package.json
+│   └── src/
+│       └── index.js          # checkLogoSafeArea()
+├── pixel-accessibility-gate/
+│   ├── package.json
+│   └── src/
+│       └── index.js          # pixel contrast + color blindness
+├── visual-design-gate/
+│   ├── package.json
+│   └── src/
+│       └── index.js          # visual design standards
+├── presentation-revision/
+│   ├── package.json
+│   └── src/
+│       ├── index.js          # reviseDeck()
+│       └── revision-parser.js
+├── presentation-components/
+│   ├── package.json
+│   └── src/
+│       └── index.js          # comp.card(), comp.timeline(), etc.
+└── cli/
+    ├── package.json
+    └── src/
+        └── index.js          # awe / awe-dev CLI entrypoints
 ```
 
 ---
 
 ## 5. Key Principles
 
-### 5.1 默认模式永不改变
+### 5.1 Opt-In, Zero Default Change
 
-- 不加任何 flag → 100% legacy renderer
+- 不加任何 flag → 行为与 v1 完全一致
 - 所有新能力都是 opt-in
-- `--layout-engine` 控制 Layout Engine + Adapters
+- Compiler 通过 `--compiler` / `--optimize` 控制
+- Audience Engine 通过 `--audience` / `--speaker` 控制
 - `--hero` 控制 Hero Engine
 
-### 5.2 Adapter First, Legacy Fallback
+### 5.2 Non-Destructive Adaptation
 
-- Layout Adapters 优先尝试渲染
-- 不能处理的 slide type 自动 fallback 到 legacy
-- 两种路径输出必须完全一致
+- Audience Engine 返回 `AdaptationResult`，不修改原始 SlideSpec
+- Pipeline 在调用方决定是否应用 `slideAdjustments`
+- Compiler 返回 `CompileResult`，不修改原始 LayoutPlan
+- Pipeline 在调用方决定是否使用 `renderPlan`
 
 ### 5.3 Registry over Switch
 
-- `layout-adapters/index.js`：`ADAPTERS[type]` 对象查找
-- `renderer-engine/registry.js`：`registerLegacyRenderer(type, fn)` 注册表
+- `presentation-audience-engine/src/schema.js`：profile 注册表
+- `theme-layout/src/schema.js`：LAYOUT_FAMILIES, THEME_TOKENS
+- `pptx-renderer/src/renderer.js`：adapter registry + legacy fallback
 - 禁止在 index.js 中使用超过 10 行的 switch
 
-### 5.4 统一模块结构
+### 5.4 Unified Module Structure
 
-三个 Engine 采用一致的结构模式：
+每个 Engine 采用一致的结构模式：
 ```
 engine-name/
-├── index.js          # 主导出：compileXxx() / dispatch()
-├── schema.js         # 数据结构定义
-└── planners/         # 或 adapters/ — 按类型拆分
-    ├── type-a.js
-    └── type-b.js
+├── package.json
+├── src/
+│   ├── index.js          # 主导出
+│   ├── schema.js         # 数据结构定义
+│   └── engine.js         # 核心逻辑
+└── tests/
+    └── engine-name.test.js
 ```
 
-### 5.5 run.js 逐步变成 Coordinator
+### 5.5 Pipeline as Single Entry Point
 
-当前 run.js 职责：
-1. CLI 参数解析
-2. Story 加载
-3. Hero 接入（可选）
-4. Layout Plan 预编译（可选）
-5. 调用 Renderer Engine
-6. 输出 PPTX
+`packages/presentation-pipeline/src/pipeline.js` 是端到端编排入口：
+```
+runPipeline(markdownInput, options) → { specs, layoutPlan, renderPlan?, pptxBuffer, qualityManifest }
+```
 
-禁止在 run.js 中添加新的渲染逻辑。
+所有 CLI 工具（`deliver-pptx.js`、`studio:pptx`）都通过 pipeline 调用各引擎。
 
-### 5.6 组件共享
+### 5.6 Component Sharing
 
 Adapters 和 legacy renderers 使用相同的 `comp.*` 组件 API：
 - `comp.card()`
@@ -435,40 +529,51 @@ Adapters 和 legacy renderers 使用相同的 `comp.*` 组件 API：
 ### 6.1 新增 Slide Type
 
 **步骤**：
-1. 在 story JSON 中添加新 slide（type 字段）
-2. 在 `layout-engine/planners/` 中创建 `planNewType.js`
-3. 在 `layout-engine/planner.js` 中注册
-4. 在 `layout-adapters/` 中创建 `new-type.js` adapter
-5. 在 `layout-adapters/index.js` 中注册
-6. （可选）在 `content-engine/planners/` 中创建内容规划器
-7. 在 `renderer-engine/registry.js` 中注册 legacy renderer
+1. 在 slidespec 中确认新 slide type 的映射
+2. 在 `theme-layout/src/generator.js` 的 `resolveLayout()` 中添加 layout 选择逻辑
+3. 在 `pptx-renderer/` 中创建对应 adapter
+4. 更新 `pptx-renderer/src/renderer.js` 的 adapter registry
+5. （可选）在 `presentation-compiler/` 中添加该类型的约束规则
+6. 测试 adapter 路径和 legacy fallback 路径输出一致
 
 **约束**：
-- 必须同时提供 adapter 和 legacy renderer
+- 必须同时提供 adapter 和 legacy renderer（PR32 前）
 - 两种路径输出必须一致
-- 默认模式下 legacy 生效
+- PR32 后 legacy renderer 移除
 
 ### 6.2 新增 Theme
 
 **步骤**：
-1. 在 `theme/registry.js` 中 `createTheme(name, definitions)`
-2. 在 `theme/helpers.js` 中配置 `resolveColor` 路径映射
-3. 在 `run.js` 中选择加载哪个 theme
+1. 在 `theme-layout/src/schema.js` 的 `THEME_TOKENS` 中注册新主题
+2. 在 `generateColorPalette()` 中配置颜色映射
+3. 通过 `--style` 或 `brandProfile` 选择加载
 
-### 6.3 新增 Hero Sequence
+### 6.3 新增 Audience Profile
 
 **步骤**：
-1. 在 `story/` 中创建 `{story-name}-hero-sequence.json`
-2. 格式：`{ slides: [{ no, pattern_id, statement, visual_focus }] }`
-3. 运行时传入 `--hero` 自动加载
+1. 在 `presentation-audience-engine/src/schema.js` 的 `SPEAKER_PROFILES` 或 `AUDIENCE_ROLES` 中添加
+2. 定义该 profile 的权重（authority、timeBudget、expertise）
+3. 在 `engine.js` 的 `deriveContract()` 中验证新权重是否合理
+4. 编写测试覆盖新 profile 组合
 
-### 6.4 新增 Presentation Pack
+**约束**：
+- 不得修改 Core 数据模型
+- 新 profile 必须有明确的 authority / timeBudget / expertise 权重
+- 未知 profile 降级为 default，不崩溃
+
+### 6.4 新增 Compiler Rule
+
+**步骤**：
+1. 在 `presentation-compiler/src/compiler.js` 的对应 stage 中添加规则
+2. 在 `schema.js` 中定义新的 constraint 类型
+3. 编写测试覆盖新规则的触发和降级场景
+
+### 6.5 新增 Presentation Pack
 
 **步骤**：
 1. 创建 `presentation-packs/{pack-name}/` 目录
 2. 在 pack 中包含 story templates、hero patterns、content planners、theme variants
-3. 注册 pack 到 platform configuration
-4. 测试 pack 与 Core 引擎的兼容性
+3. 测试 pack 与 Core 引擎的兼容性
 
 **约束**：
 - Presentation Pack 不得修改 Core 引擎代码
@@ -479,19 +584,20 @@ Adapters 和 legacy renderers 使用相同的 `comp.*` 组件 API：
 
 ## 7. Architecture Debt
 
-| 债务 | 影响 | 解决方案 | 优先级 |
-|---|---|---|---|
-| Legacy renderers 仍在 run.js 中 | run.js 持续增长 | 逐步迁移到 `renderer-engine/renderers/` | 高 |
-| Theme Engine 未强制使用 | 新旧路径颜色不一致 | Phase 2 中统一 | 中 |
-| 无自动化测试 | 回归风险 | 建立 PPTX 对比测试 | 高 |
-| Layout Plan 未缓存 | 重复计算 | Presentation Compiler 中处理 | 低 |
-| Dispatcher 暂未使用 | 代码冗余 | Phase 2 中集成 | 低 |
+| 债务 | 影响 | 解决方案 | 状态 |
+|------|------|----------|------|
+| Legacy renderers 仍在 run.js 中 | PR32 pending | 生产验证通过后移除 | ⏳ Future Hardening |
+| Hero sequences 未接入 Audience Engine | M5 Intelligence | 扩展 `enrichStoryWithHero()` 支持 audience contract | 🔴 Pending |
+| Theme Engine 未强制使用 | 新旧路径颜色不一致 | Phase 2 中统一 | 🟡 Low |
+| 无 PPTX diff 自动化测试 | 回归风险 | M12.24+ 已有 snapshot + commercial gate | 🟡 In Progress |
+| M5.8 Source-of-truth decision | Pack runtime 边界模糊 | M8.0 已选 Option A，待执行 | 🟡 Pending |
+| M10 快照比较器 checkpoint 未标记完成 | ROADMAP 不一致 | 需刷新 checkbox 状态 | 🟡 Documentation |
 
 ---
 
-## 9. Governance
+## 8. Governance
 
-### RFC-0001 Compliance
+### RFC Compliance
 
 - The architecture follows **RFC-0001 — Presentation OS Platform Specification**.
 - The Core is **domain-agnostic** — it contains zero industry-specific knowledge.
@@ -513,10 +619,11 @@ Therefore: **always prefer extending via Packs before modifying the Core.**
 
 ---
 
-## 10. Version History
+## 9. Version History
 
 | Version | Date | Changes |
-|---|---|---|
-| 1.2.0 | 2026-07-01 | RFC governance integration: Core changes require RFC, Pack/Application changes do not. Added Section 9 Governance. |
+|---------|------|---------|
+| 2.0.0 | 2026-07-19 | Added Audience Engine (M12.25) and Presentation Compiler (M12.24) to architecture. Rewrote system overview as pipeline data flow. Added monorepo package map. Expanded Core Platform table. Updated extension guide for audience profiles and compiler rules. Refreshed architecture debt. |
+| 1.2.0 | 2026-07-01 | RFC governance integration: Core changes require RFC, Pack/Application changes do not. Added governance section. |
 | 1.1.0 | 2026-06-30 | Platform strategy: Core + Presentation Packs + Applications. Domain-agnostic Core declared. |
 | 1.0.0 | 2026-06-30 | Initial architecture freeze. Seven layers defined. |

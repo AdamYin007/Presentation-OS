@@ -157,8 +157,8 @@ async function main() {
   if (logoResult.margins) {
     summaryLines.push("## Safe Area Configuration");
     summaryLines.push("");
-    summaryLines.push(`| Margin | Value |`);
-    summaryLines.push(`|--------|-------|`);
+    summaryLines.push("| Margin | Value |");
+    summaryLines.push("|--------|-------|");
     summaryLines.push(`| Top    | ${logoResult.margins.top}px |`);
     summaryLines.push(`| Bottom | ${logoResult.margins.bottom}px |`);
     summaryLines.push(`| Left   | ${logoResult.margins.left}px |`);

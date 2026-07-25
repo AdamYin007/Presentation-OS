@@ -2,7 +2,10 @@
 // Run: node tests/story-planner/story-planner.test.js
 
 const { planDeck } = require("../../packages/story-planner/src/index.js");
-const { validateDeckPlan, DEFAULT_DECK_PLAN } = require("../../packages/story-planner/src/schema.js");
+const {
+  validateDeckPlan,
+  DEFAULT_DECK_PLAN,
+} = require("../../packages/story-planner/src/schema.js");
 
 let passed = 0;
 let failed = 0;
@@ -51,8 +54,10 @@ test("education prompt selects teaching narrative pattern", () => {
 
   const deckPlan = planDeck(intent);
 
-  assert(deckPlan.narrativePattern === "concept-example-practice-summary",
-    `Expected concept-example-practice-summary, got ${deckPlan.narrativePattern}`);
+  assert(
+    deckPlan.narrativePattern === "concept-example-practice-summary",
+    `Expected concept-example-practice-summary, got ${deckPlan.narrativePattern}`,
+  );
   assert(deckPlan.sections.length > 0, "Should have sections");
   assert(deckPlan.slides.length > 0, "Should have slides");
 });
@@ -80,8 +85,10 @@ test("education deck has appropriate roles", () => {
   const deckPlan = planDeck(intent);
   const roles = deckPlan.slides.map((s) => s.role);
 
-  assert(roles.includes("case-study") || roles.includes("content"),
-    "Should have content or case-study slides for education");
+  assert(
+    roles.includes("case-study") || roles.includes("content"),
+    "Should have content or case-study slides for education",
+  );
 });
 
 // ── Business review narrative ──
@@ -111,8 +118,10 @@ test("business review selects executive summary pattern", () => {
   const deckPlan = planDeck(intent);
 
   // exec-summary-evidence-recommendation is preferred for review + management audience
-  assert(deckPlan.narrativePattern === "exec-summary-evidence-recommendation",
-    `Expected exec-summary-evidence-recommendation, got ${deckPlan.narrativePattern}`);
+  assert(
+    deckPlan.narrativePattern === "exec-summary-evidence-recommendation",
+    `Expected exec-summary-evidence-recommendation, got ${deckPlan.narrativePattern}`,
+  );
 });
 
 test("business deck respects mustInclude warnings", () => {
@@ -167,8 +176,10 @@ test("research briefing selects academic pattern", () => {
 
   const deckPlan = planDeck(intent);
 
-  assert(deckPlan.narrativePattern === "background-method-results-discussion",
-    `Expected academic pattern, got ${deckPlan.narrativePattern}`);
+  assert(
+    deckPlan.narrativePattern === "background-method-results-discussion",
+    `Expected academic pattern, got ${deckPlan.narrativePattern}`,
+  );
   assert(deckPlan.audience === "university researchers", "Audience preserved");
   assert(deckPlan.purpose === "inform", "Purpose preserved");
 });
@@ -200,7 +211,12 @@ test("sparse source produces minimal but valid deck plan", () => {
   const sourceDocument = {
     title: "Weekly Status",
     paragraphs: [
-      { sourceId: "p1", sourceType: "paragraph", originalText: "Project on track.", sectionPath: ["Progress"] },
+      {
+        sourceId: "p1",
+        sourceType: "paragraph",
+        originalText: "Project on track.",
+        sectionPath: ["Progress"],
+      },
     ],
     sections: [{ originalText: "Progress" }],
     metadata: {},
@@ -242,8 +258,10 @@ test("slide count is respected within tolerance", () => {
   // Count content slides (excluding section dividers)
   const contentSlides = deckPlan.slides.filter((s) => s.role !== "section-divider");
   // Allow some flexibility due to closing slide and section dividers
-  assert(contentSlides.length >= 6 && contentSlides.length <= 12,
-    `Expected ~8 content slides, got ${contentSlides.length}`);
+  assert(
+    contentSlides.length >= 6 && contentSlides.length <= 12,
+    `Expected ~8 content slides, got ${contentSlides.length}`,
+  );
 });
 
 test("large slide count generates warning", () => {
@@ -267,8 +285,10 @@ test("large slide count generates warning", () => {
   };
 
   const deckPlan = planDeck(intent);
-  assert(deckPlan.warnings.some((w) => w.toLowerCase().includes("exceeds")),
-    "Should warn about excessive slide count");
+  assert(
+    deckPlan.warnings.some((w) => w.toLowerCase().includes("exceeds")),
+    "Should warn about excessive slide count",
+  );
 });
 
 // ── Assumptions and warnings ──
@@ -305,8 +325,10 @@ test("assumptions are recorded when inferring from source", () => {
   const deckPlan = planDeck(intent, sourceDocument);
 
   assert(deckPlan.assumptions.length > 0, "Should record assumptions when inferring title");
-  assert(deckPlan.assumptions.some((a) => a.toLowerCase().includes("source")),
-    "Assumption should mention source document");
+  assert(
+    deckPlan.assumptions.some((a) => a.toLowerCase().includes("source")),
+    "Assumption should mention source document",
+  );
 });
 
 test("warnings generated for unmet mustInclude", () => {
@@ -330,8 +352,10 @@ test("warnings generated for unmet mustInclude", () => {
   };
 
   const deckPlan = planDeck(intent);
-  assert(deckPlan.warnings.some((w) => w.toLowerCase().includes("very specific unique topic xyz")),
-    "Should warn about unaddressed mustInclude item");
+  assert(
+    deckPlan.warnings.some((w) => w.toLowerCase().includes("very specific unique topic xyz")),
+    "Should warn about unaddressed mustInclude item",
+  );
 });
 
 // ── SourceRefs preservation ──
@@ -361,15 +385,26 @@ test("sourceRefs populated when source document has matching paragraphs", () => 
   const sourceDocument = {
     title: "Q3 Financial Report",
     paragraphs: [
-      { sourceId: "p1", sourceType: "paragraph", originalText: "Revenue up 15%.", sectionPath: ["Revenue"] },
-      { sourceId: "p2", sourceType: "paragraph", originalText: "Costs down 5%.", sectionPath: ["Costs"] },
-      { sourceId: "p3", sourceType: "paragraph", originalText: "Profit margin improved.", sectionPath: ["Profit"] },
+      {
+        sourceId: "p1",
+        sourceType: "paragraph",
+        originalText: "Revenue up 15%.",
+        sectionPath: ["Revenue"],
+      },
+      {
+        sourceId: "p2",
+        sourceType: "paragraph",
+        originalText: "Costs down 5%.",
+        sectionPath: ["Costs"],
+      },
+      {
+        sourceId: "p3",
+        sourceType: "paragraph",
+        originalText: "Profit margin improved.",
+        sectionPath: ["Profit"],
+      },
     ],
-    sections: [
-      { originalText: "Revenue" },
-      { originalText: "Costs" },
-      { originalText: "Profit" },
-    ],
+    sections: [{ originalText: "Revenue" }, { originalText: "Costs" }, { originalText: "Profit" }],
     metadata: {},
   };
 
@@ -377,8 +412,10 @@ test("sourceRefs populated when source document has matching paragraphs", () => 
 
   // At least some slides should have sourceRefs
   const slidesWithRefs = deckPlan.slides.filter((s) => s.sourceRefs.length > 0);
-  assert(slidesWithRefs.length > 0,
-    `Expected some slides with sourceRefs, got ${slidesWithRefs.length} out of ${deckPlan.slides.length}`);
+  assert(
+    slidesWithRefs.length > 0,
+    `Expected some slides with sourceRefs, got ${slidesWithRefs.length} out of ${deckPlan.slides.length}`,
+  );
 });
 
 test("sourceRefs are deduplicated by sourceId", () => {
@@ -404,8 +441,18 @@ test("sourceRefs are deduplicated by sourceId", () => {
   const sourceDocument = {
     title: "Test Doc",
     paragraphs: [
-      { sourceId: "p1", sourceType: "paragraph", originalText: "Content A.", sectionPath: ["Section A"] },
-      { sourceId: "p2", sourceType: "paragraph", originalText: "Content B.", sectionPath: ["Section A"] },
+      {
+        sourceId: "p1",
+        sourceType: "paragraph",
+        originalText: "Content A.",
+        sectionPath: ["Section A"],
+      },
+      {
+        sourceId: "p2",
+        sourceType: "paragraph",
+        originalText: "Content B.",
+        sectionPath: ["Section A"],
+      },
     ],
     sections: [{ originalText: "Section A" }],
     metadata: {},
@@ -416,8 +463,10 @@ test("sourceRefs are deduplicated by sourceId", () => {
   for (const slide of deckPlan.slides) {
     const ids = slide.sourceRefs.map((r) => r.sourceId);
     const uniqueIds = new Set(ids);
-    assert(ids.length === uniqueIds.size,
-      `Duplicate sourceIds in slide ${slide.slideId}: ${ids.join(", ")}`);
+    assert(
+      ids.length === uniqueIds.size,
+      `Duplicate sourceIds in slide ${slide.slideId}: ${ids.join(", ")}`,
+    );
   }
 });
 
@@ -502,10 +551,24 @@ test("validateDeckPlan accepts valid plans", () => {
     language: "en-US",
     narrativePattern: "context-analysis-conclusion",
     sections: [
-      { id: "context", title: "Context", purpose: "Background", keyMessage: "Intro", slideAllocation: 1, sourceRefs: [] },
+      {
+        id: "context",
+        title: "Context",
+        purpose: "Background",
+        keyMessage: "Intro",
+        slideAllocation: 1,
+        sourceRefs: [],
+      },
     ],
     slides: [
-      { slideId: "slide-001", role: "content", objective: "Intro", keyMessage: "Hello", candidateVisual: "none", sourceRefs: [] },
+      {
+        slideId: "slide-001",
+        role: "content",
+        objective: "Intro",
+        keyMessage: "Hello",
+        candidateVisual: "none",
+        sourceRefs: [],
+      },
     ],
     assumptions: [],
     warnings: [],
@@ -571,7 +634,7 @@ test("professional domain works with default patterns", () => {
 
 // ── Summary ──
 
-console.log(`\n============================`);
+console.log("\n============================");
 console.log(`Results: ${passed} passed, ${failed} failed\n`);
 
 if (failed > 0) {

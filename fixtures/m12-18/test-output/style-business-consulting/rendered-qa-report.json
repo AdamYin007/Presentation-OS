@@ -1,0 +1,76 @@
+{
+  "verdict": "NEEDS_REVIEW",
+  "rendererAvailable": true,
+  "pageCount": 8,
+  "geometry": {
+    "zeroSize": 0,
+    "negative": 0,
+    "outOfBounds": 0,
+    "overlap": 0,
+    "overflowSuspected": 0,
+    "highDensity": 0
+  },
+  "renderedResults": {
+    "blankSlides": 0,
+    "sparseSlides": 4,
+    "perPage": [
+      {
+        "page": 1,
+        "role": "content",
+        "sparse": true,
+        "charCount": 32,
+        "isLikelyBlank": false
+      },
+      {
+        "page": 2,
+        "role": "section-divider",
+        "sparse": false,
+        "charCount": 8,
+        "isLikelyBlank": false
+      },
+      {
+        "page": 3,
+        "role": "content",
+        "sparse": true,
+        "charCount": 32,
+        "isLikelyBlank": false
+      },
+      {
+        "page": 4,
+        "role": "section-divider",
+        "sparse": false,
+        "charCount": 12,
+        "isLikelyBlank": false
+      },
+      {
+        "page": 5,
+        "role": "content",
+        "sparse": true,
+        "charCount": 14,
+        "isLikelyBlank": false
+      },
+      {
+        "page": 6,
+        "role": "section-divider",
+        "sparse": false,
+        "charCount": 9,
+        "isLikelyBlank": false
+      },
+      {
+        "page": 7,
+        "role": "content",
+        "sparse": true,
+        "charCount": 39,
+        "isLikelyBlank": false
+      },
+      {
+        "page": 8,
+        "role": "closing",
+        "sparse": false,
+        "charCount": 36,
+        "isLikelyBlank": false
+      }
+    ]
+  },
+  "qualityScore": 100
+}

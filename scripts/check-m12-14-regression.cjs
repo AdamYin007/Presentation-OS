@@ -63,7 +63,7 @@ function compareManifests(current, baseline) {
       }
     } else if (delta > 0) {
       addIssue("info", "qualityScore", `${baseline.summary.qualityScore} → ${current.summary.qualityScore}`,
-        `Score improved`);
+        "Score improved");
     }
   }
 
@@ -72,10 +72,10 @@ function compareManifests(current, baseline) {
     const delta = current.summary.failCount - baseline.summary.failCount;
     if (delta > 0) {
       addIssue("fail", "failCount", `${baseline.summary.failCount} → ${current.summary.failCount}`,
-        `Failed checks increased`);
+        "Failed checks increased");
     } else if (delta < 0) {
       addIssue("info", "failCount", `${baseline.summary.failCount} → ${current.summary.failCount}`,
-        `Failed checks decreased`);
+        "Failed checks decreased");
     }
   }
 
@@ -84,10 +84,10 @@ function compareManifests(current, baseline) {
     const delta = current.summary.warnCount - baseline.summary.warnCount;
     if (delta > 0) {
       addIssue("warn", "warnCount", `${baseline.summary.warnCount} → ${current.summary.warnCount}`,
-        `Warnings increased`);
+        "Warnings increased");
     } else if (delta < 0) {
       addIssue("info", "warnCount", `${baseline.summary.warnCount} → ${current.summary.warnCount}`,
-        `Warnings decreased`);
+        "Warnings decreased");
     }
   }
 
@@ -96,7 +96,7 @@ function compareManifests(current, baseline) {
     const delta = current.deck.slideCount - baseline.deck.slideCount;
     if (delta !== 0) {
       addIssue("info", "slideCount", `${baseline.deck.slideCount} → ${current.deck.slideCount}`,
-        `Deck size changed`);
+        "Deck size changed");
     }
   }
 

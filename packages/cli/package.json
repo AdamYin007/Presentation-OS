@@ -1,0 +1,21 @@
+{
+  "name": "@awe/cli",
+  "version": "1.0.0",
+  "description": "AWE Presentation OS CLI — generate PPTX from Markdown via command line",
+  "main": "src/index.js",
+  "bin": {
+    "awe": "src/index.js"
+  },
+  "scripts": {
+    "test": "node ../../tests/intent-parser/intent-parser.test.js"
+  },
+  "keywords": [
+    "cli",
+    "presentation",
+    "pptx",
+    "markdown",
+    "generator"
+  ],
+  "author": "AWE Team",
+  "license": "MIT"
+}

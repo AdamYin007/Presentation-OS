@@ -1,12 +1,20 @@
 const assert = require("assert");
-const { renderPptx, generateBuffer, RENDER_OPTIONS_DEFAULTS } = require("../../packages/pptx-renderer/src/index.js");
+const {
+  renderPptx,
+  generateBuffer,
+  RENDER_OPTIONS_DEFAULTS,
+} = require("../../packages/pptx-renderer/src/index.js");
 const fs = require("fs");
 const path = require("path");
 const root = path.join(__dirname, "..", "..");
 
 // Load fixtures
-const specs = JSON.parse(fs.readFileSync(path.join(root, "examples/business-review/slidespec.json"), "utf8"));
-const plan = JSON.parse(fs.readFileSync(path.join(root, "examples/business-review/layout-plan.json"), "utf8"));
+const specs = JSON.parse(
+  fs.readFileSync(path.join(root, "examples/business-review/slidespec.json"), "utf8"),
+);
+const plan = JSON.parse(
+  fs.readFileSync(path.join(root, "examples/business-review/layout-plan.json"), "utf8"),
+);
 
 console.log("M12.6 PPTX Renderer Tests");
 console.log("==========================\n");
@@ -27,7 +35,10 @@ console.log("\nRenderPptx basic:");
 const pptx = renderPptx(specs, plan);
 assert(pptx, "Should return a PptxGenJS instance");
 assert(Array.isArray(pptx.slides), "Should have slides array");
-assert(pptx.slides.length === specs.length, `Expected ${specs.length} slides, got ${pptx.slides.length}`);
+assert(
+  pptx.slides.length === specs.length,
+  `Expected ${specs.length} slides, got ${pptx.slides.length}`,
+);
 console.log(`  ✓ Generated ${pptx.slides.length} slides from ${specs.length} specs`);
 
 // ── Slide content verification ──
@@ -49,7 +60,9 @@ console.log("\nRole-specific rendering:");
 const execSummarySlides = pptx.slides.filter((_, i) => specs[i].role === "executive-summary");
 const sectionDividers = pptx.slides.filter((_, i) => specs[i].role === "section-divider");
 const closingSlides = pptx.slides.filter((_, i) => specs[i].role === "closing");
-const contentSlides = pptx.slides.filter((_, i) => ["content", "executive-summary", "recommendation"].includes(specs[i].role));
+const contentSlides = pptx.slides.filter((_, i) =>
+  ["content", "executive-summary", "recommendation"].includes(specs[i].role),
+);
 const chartSlides = pptx.slides.filter((_, i) => specs[i].role === "data-chart");
 
 assert(sectionDividers.length > 0, "Should have section dividers");
@@ -116,8 +129,10 @@ console.log("\nBuffer generation:");
   // Ensure no markdown/docx/pdf rendering leakage
   const exports = Object.keys(require("../../packages/pptx-renderer/src/index.js"));
   for (const exp of exports) {
-    assert(!exp.includes("docx") && !exp.includes("pdf") && !exp.includes("markdown"),
-      `Export ${exp} leaks into non-PPTX domains`);
+    assert(
+      !exp.includes("docx") && !exp.includes("pdf") && !exp.includes("markdown"),
+      `Export ${exp} leaks into non-PPTX domains`,
+    );
   }
   console.log("  ✓ No cross-domain rendering leakage");
 

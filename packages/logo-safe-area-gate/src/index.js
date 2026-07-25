@@ -51,14 +51,22 @@ function extractLogoBox(spec) {
     const lh = spec.designHints.logo;
     if (lh.boundingBox) {
       const b = lh.boundingBox;
-      if (typeof b.x === "number" && typeof b.y === "number" &&
-          typeof b.width === "number" && typeof b.height === "number") {
+      if (
+        typeof b.x === "number" &&
+        typeof b.y === "number" &&
+        typeof b.width === "number" &&
+        typeof b.height === "number"
+      ) {
         return { x: b.x, y: b.y, width: b.width, height: b.height, source: "designHints" };
       }
     }
     // Fallback: absolute position + nominal size
-    if (typeof lh.x === "number" && typeof lh.y === "number" &&
-        typeof lh.width === "number" && typeof lh.height === "number") {
+    if (
+      typeof lh.x === "number" &&
+      typeof lh.y === "number" &&
+      typeof lh.width === "number" &&
+      typeof lh.height === "number"
+    ) {
       return { x: lh.x, y: lh.y, width: lh.width, height: lh.height, source: "designHints" };
     }
   }
@@ -68,13 +76,21 @@ function extractLogoBox(spec) {
     const vl = spec.visualSpec.logo;
     if (vl.boundingBox) {
       const b = vl.boundingBox;
-      if (typeof b.x === "number" && typeof b.y === "number" &&
-          typeof b.width === "number" && typeof b.height === "number") {
+      if (
+        typeof b.x === "number" &&
+        typeof b.y === "number" &&
+        typeof b.width === "number" &&
+        typeof b.height === "number"
+      ) {
         return { x: b.x, y: b.y, width: b.width, height: b.height, source: "visualSpec" };
       }
     }
-    if (typeof vl.x === "number" && typeof vl.y === "number" &&
-        typeof vl.width === "number" && typeof vl.height === "number") {
+    if (
+      typeof vl.x === "number" &&
+      typeof vl.y === "number" &&
+      typeof vl.width === "number" &&
+      typeof vl.height === "number"
+    ) {
       return { x: vl.x, y: vl.y, width: vl.width, height: vl.height, source: "visualSpec" };
     }
   }
@@ -154,7 +170,8 @@ function checkLogoSafeArea(slideSpecs, layoutPlan, brandConfig = {}) {
       if (box.x < minX) violations.push(`left margin (${minX}px)`);
       if (box.x + box.width > maxX) violations.push(`right margin (${slideW - margins.right}px)`);
       if (box.y < minY) violations.push(`top margin (${margins.top}px)`);
-      if (box.y + box.height > maxY) violations.push(`bottom margin (${slideH - margins.bottom}px)`);
+      if (box.y + box.height > maxY)
+        violations.push(`bottom margin (${slideH - margins.bottom}px)`);
 
       issues.push({
         slide: spec.index,
@@ -188,7 +205,8 @@ function checkLogoSafeArea(slideSpecs, layoutPlan, brandConfig = {}) {
       issues.push({
         category: "no_logo_data",
         severity: "info",
-        suggestion: "No slides declare logo bounding-box data. To enable logo safe-area enforcement, add designHints.logo.boundingBox to relevant SlideSpec entries.",
+        suggestion:
+          "No slides declare logo bounding-box data. To enable logo safe-area enforcement, add designHints.logo.boundingBox to relevant SlideSpec entries.",
       });
     }
   } else if (failCount > 0) {

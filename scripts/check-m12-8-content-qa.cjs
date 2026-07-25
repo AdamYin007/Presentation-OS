@@ -289,7 +289,7 @@ async function checkClosingSlide(slideSpecs) {
   
   // Note: field name is `role` not `slideRole`
   const closings = slideSpecs.filter((s) => s.role === "closing");
-  check(closings.length === 1, `Found exactly 1 closing slide`);
+  check(closings.length === 1, "Found exactly 1 closing slide");
   
   if (closings.length > 0) {
     const closing = closings[0];
@@ -368,7 +368,7 @@ async function main() {
   try {
     if (fs.existsSync(sampleMdPath)) {
       const inputMd = fs.readFileSync(sampleMdPath, "utf8");
-      console.log(`Using fixture: fixtures/document-ingest/sample-markdown.md`);
+      console.log("Using fixture: fixtures/document-ingest/sample-markdown.md");
       result = await runPipeline(inputMd, { style: "minimal-modern" });
     } else {
       console.log("  ⚠ No sample-markdown.md found, using minimal content");

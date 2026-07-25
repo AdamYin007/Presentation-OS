@@ -1,0 +1,7 @@
+{
+  "name": "@awe/template-analyzer",
+  "version": "1.0.0",
+  "description": "Template element extraction and principles generation for Presentation OS",
+  "main": "src/index.js",
+  "license": "ISC"
+}
