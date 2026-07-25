@@ -22,8 +22,8 @@
 
 const fs = require("fs");
 const path = require("path");
-const { runPipeline } = require("../../presentation-pipeline/src/pipeline.js");
-const { loadBrandProfile } = require("../../brand-profiles/src/index.js");
+const { runPipeline } = require("../../../presentation-pipeline/src/pipeline.js");
+const { loadBrandProfile } = require("../../../brand-profiles/src/index.js");
 
 function fail(msg) {
   console.error("❌ " + msg);

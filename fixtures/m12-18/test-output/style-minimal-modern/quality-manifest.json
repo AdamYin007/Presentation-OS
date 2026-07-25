@@ -2,7 +2,7 @@
   "path": "/Users/adamyin/Projects/awe/fixtures/m12-18/test-output/style-minimal-modern/quality-manifest.json",
   "summaryPath": "/Users/adamyin/Projects/awe/fixtures/m12-18/test-output/style-minimal-modern/QA-SUMMARY.md",
   "version": "1.0.0",
-  "generatedAt": "2026-07-25T06:42:25.441Z",
+  "generatedAt": "2026-07-25T07:20:45.720Z",
   "input": "good.md",
   "pipeline": {
     "format": "markdown",

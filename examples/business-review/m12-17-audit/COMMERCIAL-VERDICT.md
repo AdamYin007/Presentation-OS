@@ -1,6 +1,6 @@
 # Commercial Delivery Verdict — M12.17
 
-**Generated**: 7/25/2026, 2:42:21 PM
+**Generated**: 7/25/2026, 3:20:41 PM
 **Overall Verdict**: NEEDS_REVIEW
 
 ### Gate Summary
