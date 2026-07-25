@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-07-25T07:20:40.005Z",
+  "generatedAt": "2026-07-25T07:25:58.639Z",
   "input": "../fixtures/document-ingest/sample-markdown.md",
   "pipeline": {
     "format": "markdown",

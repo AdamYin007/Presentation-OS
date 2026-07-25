@@ -2,7 +2,7 @@
   "path": "/Users/adamyin/Projects/awe/fixtures/m12-18/test-output/style-academic-clean/quality-manifest.json",
   "summaryPath": "/Users/adamyin/Projects/awe/fixtures/m12-18/test-output/style-academic-clean/QA-SUMMARY.md",
   "version": "1.0.0",
-  "generatedAt": "2026-07-25T07:20:49.283Z",
+  "generatedAt": "2026-07-25T07:26:07.568Z",
   "input": "good.md",
   "pipeline": {
     "format": "markdown",
