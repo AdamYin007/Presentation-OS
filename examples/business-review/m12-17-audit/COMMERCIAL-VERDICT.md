@@ -1,6 +1,6 @@
 # Commercial Delivery Verdict — M12.17
 
-**Generated**: 7/25/2026, 3:26:00 PM
+**Generated**: 7/26/2026, 1:38:43 AM
 **Overall Verdict**: NEEDS_REVIEW
 
 ### Gate Summary
@@ -13,4 +13,4 @@
 
 ### Quality Score: 100/100
 
-### Checks: 128 pass, 0 fail, 7 warn
+### Checks: 126 pass, 0 fail, 9 warn

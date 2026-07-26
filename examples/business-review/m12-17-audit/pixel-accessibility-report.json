@@ -15,8 +15,8 @@
   },
   "remediations": [],
   "totalChecks": {
-    "pass": 128,
+    "pass": 126,
     "fail": 0,
-    "warn": 7
+    "warn": 9
   }
 }

@@ -46,6 +46,42 @@ function architect(rawText, options = {}) {
     return { ok: false, errors: ["Empty input text"], slides: [] };
   }
 
+  // ── P1-4 Optimization: If input is already a structured content-plan JSON,
+  //     skip the full LLM-based pipeline and extract slides directly. ──
+  try {
+    const parsed = typeof rawText === 'string' ? JSON.parse(rawText) : rawText;
+    if (parsed && Array.isArray(parsed.slides)) {
+      console.log("[Content Architect] Input is already structured JSON, skipping LLM pipeline");
+      return {
+        ok: true,
+        slides: parsed.slides,
+        templatePrinciples,
+        warnings: [...warnings, "Skipped architect pipeline — input already structured"],
+      };
+    }
+    if (parsed && parsed.paragraphs && parsed.metadata?.sourceType === "content-plan") {
+      const slides = parsed.paragraphs
+        .filter(p => p.sourceType === "slide-content")
+        .map((p, i) => ({
+          id: `slide-${String(i + 1).padStart(2, "0")}`,
+          title: p.title || p.slideTitle || "",
+          subtitle: p.subtitle || "",
+          keyMessage: p.keyMessage || "",
+          bodyItems: p.bodyItems || [],
+          layoutType: p.role || "content",
+        }));
+      console.log(`[Content Architect] Converted ${slides.length} content-plan slides from source document`);
+      return {
+        ok: true,
+        slides,
+        templatePrinciples,
+        warnings: [...warnings, `Converted ${slides.length} slides from content-plan`],
+      };
+    }
+  } catch (e) {
+    // Not JSON — proceed with normal architect pipeline
+  }
+
   // ── Phase 0: Template Analysis ────────────────────────────────
   if (opts.templatePath && fs.existsSync(opts.templatePath)) {
     try {

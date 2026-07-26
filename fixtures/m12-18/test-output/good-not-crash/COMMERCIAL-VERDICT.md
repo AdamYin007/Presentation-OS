@@ -1,6 +1,6 @@
 # Commercial Delivery Verdict
 
-**Generated**: 7/25/2026, 3:26:04 PM
+**Generated**: 7/26/2026, 1:38:46 AM
 **Overall Verdict**: NEEDS_REVIEW
 **Quality Score**: 100/100
 
@@ -16,9 +16,9 @@
 ## Quality Metrics
 
 - Total checks: 107
-- Passed: 103
+- Passed: 101
 - Failed: 0
-- Warnings: 4
+- Warnings: 6
 
 ## Top Remediations
 

@@ -1,9 +1,10 @@
 /**
- * PPTX Renderer — M12.6 / M12.21 / M12.26
+ * PPTX Renderer — M12.6 / M12.21 / M12.26 / M12.31 (P2-5: dynamic positioning)
  *
  * Renders SlideSpec[] + LayoutPlan into a real editable .pptx using pptxgenjs.
  * M12.21: brandConfig options override footer convention and title placement.
  * M12.26: templateBackgrounds option enables template-style background images.
+ * M12.31: P2-5 — all render functions now use layout.spacing for dynamic positioning.
  */
 
 "use strict";
@@ -36,6 +37,9 @@ function renderPptx(slideSpecs, layoutPlan, options) {
     };
   }
 
+  // P2-5: Helper to convert spacing pixels to inches (96 DPI standard)
+  const pxToIn = (px) => px / 96;
+
   // M12.21: extract brand profile config for rendering overrides
   const brandConfig =
     opts.brandConfig && typeof opts.brandConfig === "object" ? opts.brandConfig : null;
@@ -62,6 +66,7 @@ function renderPptx(slideSpecs, layoutPlan, options) {
       slideNumber,
       totalSlides: slideSpecs.length,
       templateBackgrounds,
+      pxToIn, // P2-5: pass pixel-to-inch converter
     });
   }
 
@@ -75,6 +80,7 @@ function renderPptx(slideSpecs, layoutPlan, options) {
  */
 function renderSlide(pptx, spec, layout, options, brandRenderOpts) {
   const opts = brandRenderOpts || {};
+  const pxToIn = opts.pxToIn || ((px) => px / 96); // P2-5: pixel to inch conversion
   const slide = pptx.addSlide();
   const colors = layout ? layout.colors : { background: "#FFFFFF", text: "#1A1A1A" };
   const spacing = layout ? layout.spacing : { padding: 32, margin: 16, gap: 12 };
@@ -109,10 +115,10 @@ function renderSlide(pptx, spec, layout, options, brandRenderOpts) {
 
   switch (role) {
     case "title":
-      renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth, titlePlacement);
+      renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth, titlePlacement, pxToIn);
       break;
     case "section-divider":
-      renderSectionDivider(slide, spec, layout, colors, fontSize, maxWidth);
+      renderSectionDivider(slide, spec, layout, colors, fontSize, maxWidth, pxToIn);
       break;
     case "closing":
       renderClosingSlide(
@@ -125,13 +131,14 @@ function renderSlide(pptx, spec, layout, options, brandRenderOpts) {
         titlePlacement,
         brandName,
         totalSlides,
+        pxToIn,
       );
       break;
     case "agenda":
-      renderAgendaSlide(slide, spec, layout, colors, fontSize, maxWidth);
+      renderAgendaSlide(slide, spec, layout, colors, fontSize, maxWidth, pxToIn);
       break;
     case "executive-summary":
-      renderExecutiveSummary(slide, spec, layout, colors, fontSize, maxWidth, spacing);
+      renderExecutiveSummary(slide, spec, layout, colors, fontSize, maxWidth, spacing, pxToIn);
       break;
     case "data-chart":
       renderDataChartSlide(
@@ -144,6 +151,7 @@ function renderSlide(pptx, spec, layout, options, brandRenderOpts) {
         spacing,
         visualType,
         visualSpec,
+        pxToIn,
       );
       break;
     default:
@@ -159,6 +167,7 @@ function renderSlide(pptx, spec, layout, options, brandRenderOpts) {
           spacing,
           visualType,
           visualSpec,
+          pxToIn,
         );
       } else if (["process", "timeline"].includes(visualType)) {
         renderDiagramSlide(
@@ -171,9 +180,10 @@ function renderSlide(pptx, spec, layout, options, brandRenderOpts) {
           spacing,
           visualType,
           visualSpec,
+          pxToIn,
         );
       } else {
-        renderContentSlide(slide, spec, layout, colors, fontSize, maxWidth, spacing, bodyItems);
+        renderContentSlide(slide, spec, layout, colors, fontSize, maxWidth, spacing, bodyItems, pxToIn);
       }
       break;
   }
@@ -231,14 +241,17 @@ function resolveTemplateBackground(templateBackgrounds, role, slide) {
  * Render title slide.
  * M12.21: titlePlacement controls vertical alignment ("top" or "center").
  */
-function renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth, titlePlacement) {
-  const y = titlePlacement === "center" ? 3.0 : 2.5;
+function renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth, titlePlacement, pxToIn) {
+  // P2-5: Use spacing for dynamic positioning
+  const paddingTop = layout && layout.spacing ? layout.spacing.paddingTop : 120;
+  const baseY = pxToIn(paddingTop);
+  const y = titlePlacement === "center" ? baseY + 1.5 : baseY;
   const titleStyle = {
     x: 1,
     y: y,
     w: maxWidth / 96,
     h: 1.5,
-    fontSize: fontSize.heading,
+    fontSize: 28,
     bold: true,
     color: colors.text || "#1A1A1A",
     align: "center",
@@ -249,7 +262,7 @@ function renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth, title
   if (spec.subtitle) {
     slide.addText(spec.subtitle, {
       x: 1,
-      y: y + 2.0,
+      y: y + pxToIn(32), // P2-5: gap between title and subtitle
       w: maxWidth / 96,
       h: 0.5,
       fontSize: 16,
@@ -263,10 +276,13 @@ function renderTitleSlide(slide, spec, layout, colors, fontSize, maxWidth, title
 /**
  * Render section divider slide.
  */
-function renderSectionDivider(slide, spec, layout, colors, fontSize, maxWidth) {
+function renderSectionDivider(slide, spec, layout, colors, fontSize, maxWidth, pxToIn) {
+  // P2-5: Use spacing for dynamic positioning
+  const paddingTop = layout && layout.spacing ? layout.spacing.paddingTop : 160;
+  const baseY = pxToIn(paddingTop);
   slide.addText(spec.title || "", {
     x: 1,
-    y: 2.5,
+    y: baseY,
     w: maxWidth / 96,
     h: 2,
     fontSize: 36,
@@ -291,8 +307,12 @@ function renderClosingSlide(
   titlePlacement,
   brandName,
   totalSlides,
+  pxToIn,
 ) {
-  const y = titlePlacement === "center" ? 3.0 : 2.5;
+  // P2-5: Use spacing for dynamic positioning
+  const paddingTop = layout && layout.spacing ? layout.spacing.paddingTop : 120;
+  const baseY = pxToIn(paddingTop);
+  const y = titlePlacement === "center" ? baseY + 1.5 : baseY;
   slide.addText(spec.title || "Thank You", {
     x: 1,
     y: y,
@@ -308,7 +328,7 @@ function renderClosingSlide(
   if (spec.keyMessage) {
     slide.addText(spec.keyMessage, {
       x: 1,
-      y: y + 2.0,
+      y: y + pxToIn(32), // P2-5: gap
       w: maxWidth / 96,
       h: 0.5,
       fontSize: 16,
@@ -322,10 +342,14 @@ function renderClosingSlide(
 /**
  * Render agenda slide.
  */
-function renderAgendaSlide(slide, spec, layout, colors, fontSize, maxWidth) {
+function renderAgendaSlide(slide, spec, layout, colors, fontSize, maxWidth, pxToIn) {
+  // P2-5: Use spacing for dynamic positioning
+  const paddingTop = layout && layout.spacing ? layout.spacing.paddingTop : 32;
+  const marginTop = layout && layout.spacing ? layout.spacing.margin : 16;
+  const titleY = pxToIn(paddingTop);
   slide.addText(spec.title || "Agenda", {
     x: 0.5,
-    y: 0.5,
+    y: titleY,
     w: maxWidth / 96,
     h: 0.8,
     fontSize: 28,
@@ -347,7 +371,7 @@ function renderAgendaSlide(slide, spec, layout, colors, fontSize, maxWidth) {
       })),
       {
         x: 0.5,
-        y: 1.5,
+        y: titleY + pxToIn(48), // P2-5: gap after title
         w: maxWidth / 96,
         h: 5,
         fontSize: 16,
@@ -360,10 +384,13 @@ function renderAgendaSlide(slide, spec, layout, colors, fontSize, maxWidth) {
 /**
  * Render executive summary slide.
  */
-function renderExecutiveSummary(slide, spec, layout, colors, fontSize, maxWidth, spacing) {
+function renderExecutiveSummary(slide, spec, layout, colors, fontSize, maxWidth, spacing, pxToIn) {
+  // P2-5: Use spacing for dynamic positioning
+  const paddingTop = layout && layout.spacing ? layout.spacing.paddingTop : 32;
+  const titleY = pxToIn(paddingTop);
   slide.addText(spec.title || "", {
     x: 0.5,
-    y: 0.3,
+    y: titleY,
     w: maxWidth / 96,
     h: 0.8,
     fontSize: 24,
@@ -385,7 +412,7 @@ function renderExecutiveSummary(slide, spec, layout, colors, fontSize, maxWidth,
       })),
       {
         x: 0.5,
-        y: 1.2,
+        y: titleY + pxToIn(48), // P2-5: gap after title
         w: maxWidth / 96,
         h: 5.5,
         fontSize: 14,
@@ -398,10 +425,13 @@ function renderExecutiveSummary(slide, spec, layout, colors, fontSize, maxWidth,
 /**
  * Render content slide with bullet points.
  */
-function renderContentSlide(slide, spec, layout, colors, fontSize, maxWidth, spacing, bodyItems) {
+function renderContentSlide(slide, spec, layout, colors, fontSize, maxWidth, spacing, bodyItems, pxToIn) {
+  // P2-5: Use spacing for dynamic positioning
+  const paddingTop = layout && layout.spacing ? layout.spacing.paddingTop : 32;
+  const titleY = pxToIn(paddingTop);
   slide.addText(spec.title || "", {
     x: 0.5,
-    y: 0.3,
+    y: titleY,
     w: 5.5,
     h: 0.7,
     fontSize: fontSize.heading,
@@ -411,14 +441,16 @@ function renderContentSlide(slide, spec, layout, colors, fontSize, maxWidth, spa
 
   if (bodyItems && bodyItems.length > 0) {
     // Position text below the central graphic to avoid overlap with cloud/ripple background
-    const textY = 2.7;
+    // P2-5: Use spacing-based calculation instead of hardcoded 2.7
+    const gapAfterTitle = layout && layout.spacing ? layout.spacing.gap : 12;
+    const textY = titleY + pxToIn(48) + pxToIn(gapAfterTitle);
     const textH = Math.min(3.0, bodyItems.length * 0.52);
     // Add semi-transparent white backing box for readability over cloud graphics
     slide.addShape("roundRect", {
       x: 0.4,
-      y: textY - 0.15,
+      y: textY - pxToIn(16),
       w: 5.7,
-      h: textH + 0.3,
+      h: textH + pxToIn(16),
       fill: { color: "FFFFFF", transparency: 35 },
       rectRadius: 0.06,
       line: { color: "E8F4F8", width: 0.5 },
@@ -449,10 +481,13 @@ function renderContentSlide(slide, spec, layout, colors, fontSize, maxWidth, spa
 /**
  * Render data/chart slide.
  */
-function renderDataChartSlide(slide, spec, layout, colors, fontSize, maxWidth, spacing, visualType, visualSpec) {
+function renderDataChartSlide(slide, spec, layout, colors, fontSize, maxWidth, spacing, visualType, visualSpec, pxToIn) {
+  // P2-5: Use spacing for dynamic positioning
+  const paddingTop = layout && layout.spacing ? layout.spacing.paddingTop : 32;
+  const titleY = pxToIn(paddingTop);
   slide.addText(spec.title || "", {
     x: 0.5,
-    y: 0.3,
+    y: titleY,
     w: maxWidth / 96,
     h: 0.8,
     fontSize: fontSize.heading,
@@ -462,10 +497,11 @@ function renderDataChartSlide(slide, spec, layout, colors, fontSize, maxWidth, s
 
   // Chart rendering handled by pptxgenjs addChart
   if (visualSpec && visualSpec.chartType) {
-    // Placeholder for chart data
+    // Placeholder for chart data — P2-5: use spacing-based Y
+    const chartY = titleY + pxToIn(48);
     slide.addShape("rect", {
       x: 0.5,
-      y: 1.2,
+      y: chartY,
       w: maxWidth / 96,
       h: 4,
       fill: { color: colors.background || "#FFFFFF" },
@@ -473,7 +509,7 @@ function renderDataChartSlide(slide, spec, layout, colors, fontSize, maxWidth, s
     });
     slide.addText("Chart placeholder", {
       x: 0.5,
-      y: 3.0,
+      y: chartY + 2.0,
       w: maxWidth / 96,
       h: 0.5,
       fontSize: 14,
@@ -486,10 +522,13 @@ function renderDataChartSlide(slide, spec, layout, colors, fontSize, maxWidth, s
 /**
  * Render diagram slide (process, timeline, roadmap).
  */
-function renderDiagramSlide(slide, spec, layout, colors, fontSize, maxWidth, spacing, visualType, visualSpec) {
+function renderDiagramSlide(slide, spec, layout, colors, fontSize, maxWidth, spacing, visualType, visualSpec, pxToIn) {
+  // P2-5: Use spacing for dynamic positioning
+  const paddingTop = layout && layout.spacing ? layout.spacing.paddingTop : 32;
+  const titleY = pxToIn(paddingTop);
   slide.addText(spec.title || "", {
     x: 0.5,
-    y: 0.3,
+    y: titleY,
     w: maxWidth / 96,
     h: 0.8,
     fontSize: fontSize.heading,
@@ -499,10 +538,12 @@ function renderDiagramSlide(slide, spec, layout, colors, fontSize, maxWidth, spa
 
   if (visualType === "process" && visualSpec && visualSpec.steps) {
     const stepW = maxWidth / 96 / visualSpec.steps.length;
+    // P2-5: Calculate step Y based on title position + gap
+    const stepsY = titleY + pxToIn(48);
     visualSpec.steps.forEach((step, i) => {
       slide.addShape("rect", {
         x: 0.5 + i * stepW,
-        y: 2.0,
+        y: stepsY,
         w: stepW * 0.8,
         h: 1.0,
         fill: { color: colors.accent || "#3B82F6" },
@@ -510,7 +551,7 @@ function renderDiagramSlide(slide, spec, layout, colors, fontSize, maxWidth, spa
       });
       slide.addText(step.title || "", {
         x: 0.5 + i * stepW,
-        y: 2.2,
+        y: stepsY + pxToIn(16),
         w: stepW * 0.8,
         h: 0.5,
         fontSize: 10,
@@ -520,7 +561,8 @@ function renderDiagramSlide(slide, spec, layout, colors, fontSize, maxWidth, spa
       });
     });
   } else if (visualType === "timeline" && visualSpec && visualSpec.events) {
-    const timelineY = 3.0;
+    // P2-5: Calculate timeline Y based on title position
+    const timelineY = titleY + pxToIn(48);
     const lineX = 0.5;
     const lineW = maxWidth / 96 - 1.0;
 
@@ -552,7 +594,7 @@ function renderDiagramSlide(slide, spec, layout, colors, fontSize, maxWidth, spa
       // Year/title above
       slide.addText(evt.year || "", {
         x: cx - eventW / 4,
-        y: 1.2,
+        y: timelineY - pxToIn(48),
         w: eventW / 2,
         h: 0.3,
         fontSize: 10,
@@ -564,7 +606,7 @@ function renderDiagramSlide(slide, spec, layout, colors, fontSize, maxWidth, spa
       // Event title below
       slide.addText(evt.title || "", {
         x: cx - eventW / 4,
-        y: timelineY + 0.3,
+        y: timelineY + pxToIn(16),
         w: eventW / 2,
         h: 0.4,
         fontSize: 9,
@@ -577,7 +619,7 @@ function renderDiagramSlide(slide, spec, layout, colors, fontSize, maxWidth, spa
       if (evt.description) {
         slide.addText(evt.description, {
           x: cx - eventW / 4,
-          y: timelineY + 0.7,
+          y: timelineY + pxToIn(40),
           w: eventW / 2,
           h: 0.6,
           fontSize: 7,
