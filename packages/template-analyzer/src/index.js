@@ -137,39 +137,27 @@ function parseSlideElements(xmlData) {
   for (const [slideNum, xml] of Object.entries(xmlData.slides)) {
     const elements = [];
     
-    // Extract background info
-    const bgMatch = xml.match(/<p:bg>([\s\S]*?)<\/p:bg>/);
+    // Extract background
+    const bgMatch = extractBackground(slideXml);
     if (bgMatch) {
-      elements.push({ type: "background", content: bgMatch[1].substring(0, 200) });
+      elements.push({ type: "background", ...bgMatch });
     }
-    
-    // Extract all shapes/text boxes
-    const shapeMatches = xml.match(/<p:sp>([\s\S]*?)<\/p:sp>/g) || [];
-    for (const shapeXml of shapeMatches) {
-      const shapeInfo = parseShapeElement(shapeXml);
-      if (shapeInfo) elements.push(shapeInfo);
-    }
-    
+
+    // Extract shapes
+    const shapes = extractShapes(slideXml);
+    elements.push(...shapes);
+
     // Extract tables
-    const tableMatches = xml.match(/<p:tbl>([\s\S]*?)<\/p:tbl>/g) || [];
-    for (const tableXml of tableMatches) {
-      elements.push({ type: "table", content: tableXml.substring(0, 500) });
-    }
-    
+    const tables = extractTables(slideXml);
+    elements.push(...tables);
+
     // Extract charts
-    const chartMatches = xml.match(/<a:graphicFrame>([\s\S]*?)<\/a:graphicFrame>/g) || [];
-    for (const chartXml of chartMatches) {
-      elements.push({ type: "chart", content: chartXml.substring(0, 500) });
-    }
-    
-    // Extract image references
-    const imgMatches = xml.match(/<a:blip r:embed="([^"]+)"/g) || [];
-    for (const img of imgMatches) {
-      const match = img.match(/r:embed="([^"]+)"/);
-      if (match) {
-        elements.push({ type: "image", relationshipId: match[1] });
-      }
-    }
+    const charts = extractCharts(slideXml);
+    elements.push(...charts);
+
+    // Extract images
+    const images = extractImages(slideXml);
+    elements.push(...images);
     
     slides.push({
       slideNum: parseInt(slideNum),
