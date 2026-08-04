@@ -2,7 +2,7 @@
 
 > **Version**: 1.0.0
 > **Date**: 2026-07-19
-> **Status**: M12.22 Local Delivery Studio MVP Complete — Browser-Based Local Delivery Active
+> **Status**: M12.25 Audience Engine Complete — Dynamic Speaker/Audience Adaptation Active
 
 ---
 
@@ -46,8 +46,8 @@
 | **Adapter Migration** | High | Migrate remaining legacy renderers to adapters |
 | **Content Data Migration** | High | Migrate story JSON data to Content Engine planners |
 | **Platform Specification Sprint** | High | All 6 RFCs completed. Next: implement SDK, Pack, Marketplace, Compiler, Audience Engine per RFC specs |
-| **Presentation Compiler** | Medium | Optimize render instructions, batch calls, cache plans (per RFC-0005) |
-| **Audience Engine** | Medium | Adapt output based on `story.audience` metadata (per RFC-0006) |
+| **Presentation Compiler** | ✅ Done | M12.24 — Global optimization layer with overflow detection, pagination, resource deduplication |
+| **Audience Engine** | ✅ Done | M12.25 — Universal dynamic adaptation engine: speaker profile × audience role drives title depth, terminology, body detail, visual priority, emphasis, and narrative angle across all domains |
 | **Theme Engine Enforcement** | Low | Make Theme Engine mandatory for all rendering paths |
 | **Automated Testing** | High | PPTX comparison tests, regression detection |
 
@@ -87,7 +87,7 @@
 - [x] Achieve 16/16 adapter coverage (100%)
 - [x] Enable adapter-first as default rendering path (PR31B)
 - [x] Remove dead code: `dispatcher.js`, `dispatchLegacy()` (PR30)
-- [ ] Remove legacy renderers from `run.js` (PR32 — pending production validation)
+- [x] Remove legacy renderers from `run.js` (PR32 ✅ — fully removed: 16 legacy functions + registry + fallback logic deleted; adapter-first is now the only path)
 - [ ] Resolve hero-sequence story format incompatibility (separate migration)
 
 ### M4 — Presentation Pack Foundation (In Progress)
@@ -157,12 +157,12 @@
 - [x] M6.4 Pack Loader Validation Contract — PR60 ✅
 - [x] M6.5 Pack Loader Contract Regression Guard — PR61 ✅
 - [x] M6.6 M6 Pack Loader Checkpoint — PR62 ✅
-- [ ] M5.8 Source-of-truth decision
+- [x] M5.8 Source-of-truth decision (M8.0 Option A selected — PackRuntimeContext is runtime contract; no JSON schema, no executable validation)
 
 ### M5 — Intelligence
-- [ ] Audience Engine adapts output per audience
-- [ ] Hero sequences become audience-aware
-- [ ] Automated quality checks
+- [x] Audience Engine adapts output per audience (M12.25 — universal dynamic adaptation engine implemented)
+- [ ] Hero sequences become audience-aware (pending: extend `enrichStoryWithHero()` to accept audience contract)
+- [x] Automated quality checks (M12.8–17 — content QA, visual design gate, pixel accessibility, commercial verdict)
 
 ---
 
@@ -180,26 +180,26 @@
 
 ## M9 — Contract Version Readiness
 
-- [ ] M9.0 Contract Version Readiness Design — PR43 ✅
-- [ ] M9.1 PackRuntimeContext Soft Validator Design — PR44 ✅
-- [ ] M9.2 PackRuntimeContext Soft Validator Skeleton — PR45 ✅
-- [ ] M9.3 Soft Validation Report Format Design — PR46 ✅
-- [ ] M9.4 Soft Validation Report Writer Skeleton — PR47 ✅
-- [ ] M9.5 Standalone Soft Validation Report Script — PR48 ✅
-- [ ] M9.6 Soft Validation Checkpoint — PR49 ✅
-- [ ] M9.7 Doctor Summary Preview Design — PR50 ✅
-- [ ] M9.8 Package Script Entrypoint Design — PR51 ✅
+- [x] M9.0 Contract Version Readiness Design — PR43 ✅
+- [x] M9.1 PackRuntimeContext Soft Validator Design — PR44 ✅
+- [x] M9.2 PackRuntimeContext Soft Validator Skeleton — PR45 ✅
+- [x] M9.3 Soft Validation Report Format Design — PR46 ✅
+- [x] M9.4 Soft Validation Report Writer Skeleton — PR47 ✅
+- [x] M9.5 Standalone Soft Validation Report Script — PR48 ✅
+- [x] M9.6 Soft Validation Checkpoint — PR49 ✅
+- [x] M9.7 Doctor Summary Preview Design — PR50 ✅
+- [x] M9.8 Package Script Entrypoint Design — PR51 ✅
 - [x] M9.9 Package Script Entrypoint Implementation — PR52 ✅
-- [ ] M9.10 Soft Validation Package Entrypoint Checkpoint — PR53 ✅
-- [ ] M10.0 Hard Gate Readiness Design — PR55 ✅
-- [ ] M10.1 Fixtures and Snapshot Test Design — PR56 ✅
-- [ ] M10.2 Fixture Directory Skeleton — PR57 ✅
-- [ ] M10.5 Snapshot Writer Skeleton — PR60 ✅
-- [ ] M10.6 Initial Snapshot Generation — PR61 ✅
-- [ ] M10.7 Snapshot Comparator Design — PR62 ✅
-- [ ] M10.8 Snapshot Comparator Module Skeleton — PR63 ✅
-- [ ] M10.9 Snapshot Comparator CLI — PR64 ✅
-- [ ] M10.10 Comparator Validation Checkpoint — PR65 ✅
+- [x] M9.10 Soft Validation Package Entrypoint Checkpoint — PR53 ✅
+- [x] M10.0 Hard Gate Readiness Design — PR55 ✅
+- [x] M10.1 Fixtures and Snapshot Test Design — PR56 ✅
+- [x] M10.2 Fixture Directory Skeleton — PR57 ✅
+- [x] M10.5 Snapshot Writer Skeleton — PR60 ✅
+- [x] M10.6 Initial Snapshot Generation — PR61 ✅
+- [x] M10.7 Snapshot Comparator Design — PR62 ✅
+- [x] M10.8 Snapshot Comparator Module Skeleton — PR63 ✅
+- [x] M10.9 Snapshot Comparator CLI — PR64 ✅
+- [x] M10.10 Comparator Validation Checkpoint — PR65 ✅
 
 ## M11 — Hard Gate Integration
 
@@ -412,6 +412,44 @@
   - Focused test suite covers server UI, profile API, valid delivery, invalid input/profile errors, artifact existence, and existing CLI compatibility
   - NPM scripts: `studio:pptx`, `check:m12-22-local-delivery-studio`, integrated into `check` and `check:all`
   - Spec document: `docs/M12_22_LOCAL_DELIVERY_STUDIO_SPEC.md`
+- [x] M12.23 Desktop App Launcher MVP
+  - Cross-platform launcher builder (`scripts/build-desktop-app.js`) for local desktop product entrypoints
+  - macOS output: `dist/Presentation OS Delivery Studio.app`
+  - Windows output: `dist/Presentation OS Delivery Studio Windows/Start Presentation OS Delivery Studio.cmd`
+  - Both launchers start the local Delivery Studio server and open `http://localhost:9200`
+  - Windows portable flow documented with Node.js prerequisite and `PRESENTATION_OS_ROOT` override
+  - Environment overrides: `PRESENTATION_OS_ROOT`, `PRESENTATION_OS_PORT`, `PRESENTATION_OS_STUDIO_DIR`, `PRESENTATION_OS_NODE`
+  - Dry-run mode for validation via `PRESENTATION_OS_DRY_RUN=1`
+  - NPM scripts: `desktop:build`, `desktop:build:macos`, `desktop:build:windows`, `check:m12-23-desktop-app-launcher`
+  - Focused test suite covers builder args, macOS bundle structure, Windows portable folder, dry-run behavior, and CLI platform selection
+  - Spec document: `docs/M12_23_DESKTOP_APP_LAUNCHER_SPEC.md`
+- [x] M12.24 Presentation Compiler
+  - Global optimization layer (`packages/presentation-compiler/`) sitting between layout/theme and renderer
+  - 7 pipeline stages: Input Analyzer → Constraint Solver → Overflow Detector → Pagination Manager → Theme Resolver → Resource Optimizer → Render Plan Generator
+  - Three modes: Fast (draft), Standard (overflow detection + theme consistency), Optimized (full constraint solving + pagination + resource deduplication)
+  - Opt-in via `--compiler` flag (standard mode) or `--optimize` flag (optimized mode)
+  - Graceful degradation: missing layoutPlan → empty warnings, never crashes rendering
+  - Focused test suite (18 tests): module exports, fast/standard/optimized modes, overflow detection, pagination, theme resolution, resource deduplication, full compile pipeline, constraint solving, graceful degradation
+  - NPM scripts: `check:m12-24-presentation-compiler`, integrated into `check` and `check:all`
+  - Spec document: `docs/M12_24_PRESENTATION_COMPILER_SPEC.md`
+- [x] M12.25 Audience Engine
+  - Universal dynamic adaptation engine (`packages/presentation-audience-engine/`) sitting between slidespec and theme-layout
+  - Dual-profile input: speaker profile (executive/manager/specialist/student/general_public) × audience role (board/executives/managers/engineers/students/investors/customers/general)
+  - 8 adaptation dimensions: title depth, body detail, terminology, visual priority, emphasis, speaker notes tone, metric depth, narrative angle
+  - Weighted contract derivation: audience expertise drives terminology, speaker authority + audience time budget drive title/detail levels
+  - Non-destructive: returns AdaptationPlan without modifying original specs; pipeline applies adjustments in-place before layout
+  - Opt-in via `--audience <role>` and `--speaker <profile>` CLI flags
+  - Focused test suite (59 tests): module exports, profile resolution, contract derivation across 4 speaker×audience combos, slide adjustments, deck hints, graceful degradation, custom rules override
+  - NPM scripts: `check:m12-25-audience-engine`, integrated into `check` and `check:all`
+- [x] M12.31 Template Analyzer Quality Control
+  - Schema validation for template analysis output (`packages/template-analyzer/src/schema.js`)
+  - XML parsing with xml2js library instead of regex-based parsing (`packages/template-analyzer/src/index.js`)
+  - Output contract with required fields: metadata, commonElements, uniqueByType, slideTypes, styleTokens, recommendations
+  - Cross-validation: validates metadata.totalSlides matches actual count, warns on empty slides and slides without text
+  - Schema validation functions: validatePrinciples, validateSlideElement, validateSlide, crossValidate
+  - Focused test suite (50 tests): schema validation, XML parsing integration, element extraction, cross-validation, common elements, slide classification, style token extraction, error handling, markdown generation, npm script registration
+  - NPM scripts: `check:m12-31-template-analyzer`, integrated into `check` and `check:all`
+  - Spec document: `docs/M12_31_TEMPLATE_ANALYZER_QUALITY_CONTROL_SPEC.md`
 
 ## Rules for Future Work
 
