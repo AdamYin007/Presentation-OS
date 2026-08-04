@@ -11,7 +11,7 @@
  * Generates a template-principles.md file that serves as the "design contract"
  * for the presentation generation pipeline.
  * 
- * Uses pptxjs-like parsing via OfficeParser or direct .pptx XML extraction.
+ * Uses xml2js for proper XML parsing and schema validation for output quality.
  */
 
 "use strict";
@@ -19,107 +19,111 @@
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
+const { parseString } = require("xml2js");
+const {
+  validatePrinciples,
+  validateSlide,
+  crossValidate,
+  SCHEMA_VERSION,
+} = require("./schema.js");
 
 // ── Constants ────────────────────────────────────────────────────
 
 const SLIDE_TYPES = {
-  COVER: "cover",           // First slide - title + subtitle
-  AGENDA: "agenda",         // Table of contents
-  SECTION_DIVIDER: "section-divider",  // Chapter transitions
-  CONTENT: "content",       // Main content slides
-  END: "end",               // Thank you / closing
+  COVER: "cover",
+  AGENDA: "agenda",
+  SECTION_DIVIDER: "section-divider",
+  CONTENT: "content",
+  END: "end",
 };
 
-const COMMON_ELEMENTS_THRESHOLD = 0.8; // 80% of slides must have it to be "common"
+const COMMON_ELEMENTS_THRESHOLD = 0.8;
 
-/**
- * Analyze a PPTX template and extract its structural elements.
- * 
- * @param {string} templatePath - Path to the .pptx template file
- * @param {object} options - Analysis options
- * @param {string} [options.outputDir] - Directory to save template-principles.md
- * @returns {{ principles: object, principlesMd: string, warnings: string[] }}
- */
+// ── Main Analysis Function ───────────────────────────────────────
+
 function analyzeTemplate(templatePath, options = {}) {
-  const opts = { outputDir: process.cwd(), ...options };
+  const opts = { 
+    outputDir: process.cwd(), 
+    validate: true,
+    ...options 
+  };
   const warnings = [];
   
   if (!templatePath || !fs.existsSync(templatePath)) {
     return { 
       principles: null, 
       principlesMd: "", 
-      warnings: ["Template file not found: " + templatePath] 
+      warnings: ["Template file not found: " + templatePath],
+      validation: null
     };
   }
   
   try {
-    // Step 1: Extract raw XML from PPTX (it's a ZIP)
     const xmlData = extractPptxXml(templatePath);
-    
-    // Step 2: Parse slide structure and elements
     const slideElements = parseSlideElements(xmlData);
-    
-    // Step 3: Identify common vs unique elements
     const commonElements = identifyCommonElements(slideElements);
     const uniqueElements = identifyUniqueElements(slideElements);
-    
-    // Step 4: Extract style tokens
     const styleTokens = extractStyleTokens(xmlData);
-    
-    // Step 5: Classify slide types
     const slideTypes = classifySlideTypes(slideElements, slideElements.length);
     
-    // Step 6: Build principles document
     const principles = buildPrinciples(
       slideElements, commonElements, uniqueElements, 
       styleTokens, slideTypes, warnings
     );
     
-    // Step 7: Generate markdown
-    const principlesMd = generatePrinciplesMarkdown(principles);
+    const crossValidationWarnings = crossValidate(slideElements, principles);
+    warnings.push(...crossValidationWarnings);
     
-    // Step 8: Save to file
+    let validation = null;
+    if (opts.validate) {
+      validation = validatePrinciples(principles);
+      if (!validation.ok) {
+        warnings.push("Schema validation warnings: " + validation.errors.join("; "));
+      }
+    }
+    
+    const principlesMd = generatePrinciplesMarkdown(principles);
     const outputPath = path.join(opts.outputDir, "template-principles.md");
     fs.writeFileSync(outputPath, principlesMd);
+    warnings.push(`Saved to ${outputPath}`);
     
-    return { principles, principlesMd, warnings: [...warnings, `Saved to ${outputPath}`] };
+    return { principles, principlesMd, warnings, validation };
     
   } catch (e) {
     warnings.push(`Template analysis failed: ${e.message}`);
-    return { principles: null, principlesMd: "", warnings };
+    return { principles: null, principlesMd: "", warnings, validation: null };
   }
 }
 
-/**
- * Extract XML content from a PPTX file (ZIP archive).
- */
+// ── XML Extraction ───────────────────────────────────────────────
+
 function extractPptxXml(pptxPath) {
   const tmpDir = fs.mkdtempSync("/tmp/pptx-extract-");
   try {
-    // Unzip the PPTX
     execSync(`unzip -o "${pptxPath}" -d "${tmpDir}"`, { stdio: "pipe" });
     
-    // Read key XML files
     const slides = {};
     const slideFiles = fs.readdirSync(path.join(tmpDir, "ppt", "slides"))
       .filter(f => f.startsWith("slide") && f.endsWith(".xml"));
     
     for (const slideFile of slideFiles) {
-      const content = fs.readFileSync(path.join(tmpDir, "ppt", "slides", slideFile), "utf8");
+      const xmlContent = fs.readFileSync(path.join(tmpDir, "ppt", "slides", slideFile), "utf8");
       const match = slideFile.match(/slide(\d+)\.xml/);
       if (match) {
-        slides[parseInt(match[1])] = content;
+        const parsed = parseXmlSync(xmlContent);
+        slides[parseInt(match[1])] = parsed;
       }
     }
     
-    // Read theme and master slides
-    let themeXml = "";
-    let masterXml = "";
+    let themeXml = null;
+    let masterXml = null;
     try {
-      themeXml = fs.readFileSync(path.join(tmpDir, "ppt", "theme", "theme1.xml"), "utf8");
+      const themeContent = fs.readFileSync(path.join(tmpDir, "ppt", "theme", "theme1.xml"), "utf8");
+      themeXml = parseXmlSync(themeContent);
     } catch {}
     try {
-      masterXml = fs.readFileSync(path.join(tmpDir, "ppt", "slideMasters", "slideMaster1.xml"), "utf8");
+      const masterContent = fs.readFileSync(path.join(tmpDir, "ppt", "slideMasters", "slideMaster1.xml"), "utf8");
+      masterXml = parseXmlSync(masterContent);
     } catch {}
     
     return { slides, themeXml, masterXml, tmpDir };
@@ -128,13 +132,23 @@ function extractPptxXml(pptxPath) {
   }
 }
 
-/**
- * Parse slide XML to extract elements (shapes, text, images, backgrounds).
- */
+function parseXmlSync(xmlString) {
+  let result = null;
+  parseString(xmlString, { explicitArray: false }, (err, parsed) => {
+    if (err) {
+      throw new Error(`XML parsing failed: ${err.message}`);
+    }
+    result = parsed;
+  });
+  return result;
+}
+
+// ── Element Parsing ──────────────────────────────────────────────
+
 function parseSlideElements(xmlData) {
   const slides = [];
   
-  for (const [slideNum, xml] of Object.entries(xmlData.slides)) {
+  for (const [slideNum, slideXml] of Object.entries(xmlData.slides)) {
     const elements = [];
     
     // Extract background
@@ -142,19 +156,19 @@ function parseSlideElements(xmlData) {
     if (bgMatch) {
       elements.push({ type: "background", ...bgMatch });
     }
-
+    
     // Extract shapes
     const shapes = extractShapes(slideXml);
     elements.push(...shapes);
-
+    
     // Extract tables
     const tables = extractTables(slideXml);
     elements.push(...tables);
-
+    
     // Extract charts
     const charts = extractCharts(slideXml);
     elements.push(...charts);
-
+    
     // Extract images
     const images = extractImages(slideXml);
     elements.push(...images);
@@ -162,49 +176,192 @@ function parseSlideElements(xmlData) {
     slides.push({
       slideNum: parseInt(slideNum),
       elements,
-      hasText: xml.includes("<a:t>"),
-      hasImage: xml.includes("<a:blip"),
-      hasTable: xml.includes("<p:tbl>"),
-      hasChart: xml.includes("<c:chart>"),
+      hasText: hasTextContent(slideXml),
+      hasImage: hasImageContent(slideXml),
+      hasTable: hasTableContent(slideXml),
+      hasChart: hasChartContent(slideXml),
     });
   }
   
   return slides;
 }
 
-/**
- * Parse a single shape element from XML.
- */
-function parseShapeElement(xml) {
-  // Extract text content
-  const textMatch = xml.match(/<a:t>([^<]*)<\/a:t>/);
-  const text = textMatch ? textMatch[1].trim() : "";
+function extractBackground(slideXml) {
+  const slide = slideXml.slide;
+  if (!slide) return null;
   
-  // Extract shape type/name
-  const nameMatch = xml.match(/<a:nvSpPr.*?name="([^"]+)"/);
-  const name = nameMatch ? nameMatch[1] : "unknown";
+  const bg = slide.bg;
+  if (!bg) return null;
   
-  // Detect shape category
-  let category = "text-box";
-  if (/logo|watermark/i.test(name)) category = "brand-element";
-  else if (/title|heading/i.test(name)) category = "heading";
-  else if (/footer|page.?number/i.test(name)) category = "footer";
-  else if (/picture|image/i.test(name)) category = "image";
-  else if (/shape|rectangle|circle/i.test(name)) category = "decorative";
+  const bgPr = bg.bgPr;
+  if (!bgPr) return null;
+  
+  return {
+    type: "background",
+    hasSolidFill: !!bgPr.solidFill,
+    hasGradientFill: !!bgPr.gradFill,
+    hasImageFill: !!bgPr.blipFill,
+  };
+}
+
+function extractShapes(slideXml) {
+  const slide = slideXml.slide;
+  if (!slide || !slide.spTree) return [];
+  
+  const shapes = [];
+  const spElements = slide.spTree.sp;
+  
+  const spArray = Array.isArray(spElements) ? spElements : [spElements];
+  for (const sp of spArray) {
+    shapes.push(parseSingleShape(sp));
+  }
+  
+  return shapes.filter(Boolean);
+}
+
+function parseSingleShape(spXml) {
+  if (!spXml) return null;
+  
+  const nvSpPr = spXml.nvSpPr;
+  const name = nvSpPr?.nvPr?.name || "unknown";
+  const text = extractTextContent(spXml);
+  const category = categorizeShape(name, text);
   
   return {
     type: "shape",
     name,
     category,
-    text: text.substring(0, 100), // Truncate long text
+    text: text?.substring(0, 100),
     isBrandElement: category === "brand-element",
     isFooter: category === "footer",
   };
 }
 
-/**
- * Identify elements that appear on most slides (common elements).
- */
+function extractTextContent(element) {
+  if (!element) return null;
+  
+  const txBody = element.txBody;
+  if (!txBody) return null;
+  
+  const paragraphs = txBody.p;
+  if (!paragraphs) return null;
+  
+  const texts = [];
+  const paraArray = Array.isArray(paragraphs) ? paragraphs : [paragraphs];
+  
+  for (const para of paraArray) {
+    const runs = para.r;
+    if (!runs) continue;
+    
+    const runsArray = Array.isArray(runs) ? runs : [runs];
+    for (const run of runsArray) {
+      const t = run.t;
+      if (t && typeof t === "string") {
+        texts.push(t);
+      }
+    }
+  }
+  
+  return texts.join(" ");
+}
+
+function categorizeShape(name, text) {
+  const combined = `${name} ${text || ""}`.toLowerCase();
+  
+  if (/logo|watermark|brand/i.test(combined)) return "brand-element";
+  if (/title|heading/i.test(combined)) return "heading";
+  if (/footer|page.?number/i.test(combined)) return "footer";
+  if (/picture|image/i.test(combined)) return "image";
+  if (/shape|rectangle|circle/i.test(combined)) return "decorative";
+  
+  return "text-box";
+}
+
+function extractTables(slideXml) {
+  const slide = slideXml.slide;
+  if (!slide || !slide.spTree) return [];
+  
+  const tables = [];
+  const spElements = slide.spTree.sp;
+  
+  const spArray = Array.isArray(spElements) ? spElements : [spElements];
+  for (const sp of spArray) {
+    if (sp?.graphicFrame?.tbl) {
+      tables.push({
+        type: "table",
+        rows: sp.graphicFrame.tbl.row?.length || 0,
+      });
+    }
+  }
+  
+  return tables;
+}
+
+function extractCharts(slideXml) {
+  const slide = slideXml.slide;
+  if (!slide || !slide.spTree) return [];
+  
+  const charts = [];
+  const spElements = slide.spTree.sp;
+  
+  const spArray = Array.isArray(spElements) ? spElements : [spElements];
+  for (const sp of spArray) {
+    if (sp?.graphicFrame?.chart) {
+      charts.push({ type: "chart", hasChart: true });
+    }
+  }
+  
+  return charts;
+}
+
+function extractImages(slideXml) {
+  const slide = slideXml.slide;
+  if (!slide || !slide.spTree) return [];
+  
+  const images = [];
+  const spElements = slide.spTree.sp;
+  
+  const spArray = Array.isArray(spElements) ? spElements : [spElements];
+  for (const sp of spArray) {
+    if (sp?.blipFill) {
+      images.push({
+        type: "image",
+        relationshipId: sp.blipFill?.blip?.["@_embed"] || "unknown",
+      });
+    }
+  }
+  
+  return images;
+}
+
+function hasTextContent(slideXml) {
+  const slide = slideXml.slide;
+  if (!slide || !slide.spTree) return false;
+  
+  const shapes = slide.spTree.sp;
+  const shapesArray = Array.isArray(shapes) ? shapes : [shapes];
+  
+  for (const shape of shapesArray) {
+    if (extractTextContent(shape)) return true;
+  }
+  
+  return false;
+}
+
+function hasImageContent(slideXml) {
+  return extractImages(slideXml).length > 0;
+}
+
+function hasTableContent(slideXml) {
+  return extractTables(slideXml).length > 0;
+}
+
+function hasChartContent(slideXml) {
+  return extractCharts(slideXml).length > 0;
+}
+
+// ── Element Analysis ─────────────────────────────────────────────
+
 function identifyCommonElements(slides) {
   if (slides.length === 0) return { common: [], unique: {} };
   
@@ -230,25 +387,21 @@ function identifyCommonElements(slides) {
   
   const common = Object.entries(elementPresence)
     .filter(([_, count]) => count >= Math.ceil(totalSlides * COMMON_ELEMENTS_THRESHOLD))
-    .map(([key]) => key.split(":")[0]); // Just the category
+    .map(([key]) => key.split(":")[0]);
   
   return {
     common,
-    brandElements: brandElements.slice(0, 5), // Deduplicate by taking first few
+    brandElements: brandElements.slice(0, 5),
     footers: footers.slice(0, 3),
-    backgrounds: [...new Set(backgrounds.map(b => b.content?.substring(0, 50)))],
+    backgrounds: [...new Set(backgrounds.map(b => JSON.stringify(b)))],
     decorations: decorations.slice(0, 5),
   };
 }
 
-/**
- * Identify elements unique to specific slide types.
- */
 function identifyUniqueElements(slides) {
   const unique = { cover: [], content: [], end: [] };
   
   for (const slide of slides) {
-    // Heuristic classification based on content
     let type = "content";
     if (slide.slideNum === 1) type = "cover";
     else if (slide.slideNum === slides.length) type = "end";
@@ -256,9 +409,7 @@ function identifyUniqueElements(slides) {
       type = "agenda";
     }
     
-    // Collect unique elements per type
     const slideSpecific = slide.elements.filter(e => {
-      // Elements with distinctive names or categories
       return e.name && (
         /cover|intro|thank|closing|agenda|toc/i.test(e.name) ||
         e.category === "brand-element" ||
@@ -271,7 +422,6 @@ function identifyUniqueElements(slides) {
     }
   }
   
-  // Deduplicate by name
   for (const type of Object.keys(unique)) {
     unique[type] = [...new Map(unique[type].map(e => [e.name || e.type, e])).values()].slice(0, 5);
   }
@@ -279,9 +429,8 @@ function identifyUniqueElements(slides) {
   return unique;
 }
 
-/**
- * Extract style tokens (colors, fonts, spacing) from theme/master XML.
- */
+// ── Style Token Extraction ───────────────────────────────────────
+
 function extractStyleTokens(xmlData) {
   const tokens = {
     colors: {},
@@ -289,41 +438,47 @@ function extractStyleTokens(xmlData) {
     spacing: {},
   };
   
-  // Parse theme XML for color scheme
   if (xmlData.themeXml) {
-    const colorMatches = xmlData.themeXml.match(/<a:scheme.*?>([\s\S]*?)<\/a:scheme>/);
-    if (colorMatches) {
-      const scheme = colorMatches[1];
-      // Extract named colors
-      const colorPairs = scheme.match(/<a:(?:dk[12]|lt[12])>.*?<a:srgbClr val="([A-Fa-f0-9]{6})".*?<\/a:srgbClr>.*?<a:snkName val="([^"]+)".*?<\/a:snkName>/g) || [];
-      for (const pair of colorPairs) {
-        const valMatch = pair.match(/val="([A-Fa-f0-9]{6})"/);
-        const nameMatch = pair.match(/val="([^"]+)"/);
-        if (valMatch && nameMatch) {
-          tokens.colors[nameMatch[1]] = `#${valMatch[1]}`;
+    const theme = xmlData.themeXml.theme;
+    if (theme?.themeElements) {
+      const scheme = theme.themeElements.scheme;
+      if (scheme) {
+        const clrScheme = scheme.clrScheme;
+        if (clrScheme) {
+          const colorNames = Object.keys(clrScheme).filter(k => k.startsWith("dk") || k.startsWith("lt"));
+          for (const name of colorNames) {
+            const colorVal = clrScheme[name]?.srgbClr?.["@_val"];
+            if (colorVal) {
+              tokens.colors[name] = `#${colorVal}`;
+            }
+          }
         }
       }
     }
   }
   
-  // Parse master XML for font schemes
   if (xmlData.masterXml) {
-    const fontMatches = xmlData.masterXml.match(/<a:fontScheme.*?>([\s\S]*?)<\/a:fontScheme>/);
-    if (fontMatches) {
-      const scheme = fontMatches[1];
-      const latinMatch = scheme.match(/<a:latin typeface="([^"]+)"/);
-      const eaMatch = scheme.match(/<a:ea typeface="([^"]+)"/);
-      if (latinMatch) tokens.fonts.latin = latinMatch[1];
-      if (eaMatch) tokens.fonts.eastAsian = eaMatch[1];
+    const master = xmlData.masterXml.slideMaster;
+    if (master?.theme) {
+      const theme = master.theme;
+      if (theme?.themeElements) {
+        const fontScheme = theme.themeElements.fontScheme;
+        if (fontScheme) {
+          const latin = fontScheme.majorFont?.latin?.["@_typeface"];
+          if (latin) tokens.fonts.latin = latin;
+          
+          const ea = fontScheme.majorFont?.ea?.["@_typeface"];
+          if (ea) tokens.fonts.eastAsian = ea;
+        }
+      }
     }
   }
   
   return tokens;
 }
 
-/**
- * Classify slide types based on content analysis.
- */
+// ── Slide Type Classification ─────────────────────────────────────
+
 function classifySlideTypes(slides, totalSlides) {
   const types = {
     cover: [],
@@ -355,15 +510,15 @@ function classifySlideTypes(slides, totalSlides) {
   return types;
 }
 
-/**
- * Build the principles document object.
- */
+// ── Principles Building ───────────────────────────────────────────
+
 function buildPrinciples(slides, common, unique, styles, types, warnings) {
   return {
     metadata: {
       totalSlides: slides.length,
       generatedAt: new Date().toISOString(),
-      sourceFile: slides.length > 0 ? slides[0].sourceFile || "unknown" : "unknown",
+      sourceFile: slides.length > 0 ? "template" : "unknown",
+      schemaVersion: SCHEMA_VERSION,
     },
     commonElements: {
       mustPreserve: common.common,
@@ -375,16 +530,13 @@ function buildPrinciples(slides, common, unique, styles, types, warnings) {
     slideTypes: types,
     styleTokens: styles,
     recommendations: generateRecommendations(common, unique, types, warnings),
+    warnings,
   };
 }
 
-/**
- * Generate design recommendations based on analysis.
- */
 function generateRecommendations(common, unique, types, warnings) {
   const recs = [];
   
-  // Brand elements must always be preserved
   if (common.brandElements.length > 0) {
     recs.push({
       priority: "critical",
@@ -393,7 +545,6 @@ function generateRecommendations(common, unique, types, warnings) {
     });
   }
   
-  // Footer consistency
   if (common.footers.length > 0) {
     recs.push({
       priority: "high",
@@ -402,7 +553,6 @@ function generateRecommendations(common, unique, types, warnings) {
     });
   }
   
-  // Cover/end slide preservation
   if (types.cover.length > 0) {
     recs.push({
       priority: "critical",
@@ -419,7 +569,6 @@ function generateRecommendations(common, unique, types, warnings) {
     });
   }
   
-  // Background preservation
   if (common.backgrounds.length > 0) {
     recs.push({
       priority: "medium",
@@ -431,22 +580,20 @@ function generateRecommendations(common, unique, types, warnings) {
   return recs;
 }
 
-/**
- * Generate the template-principles.md markdown document.
- */
+// ── Markdown Generation ───────────────────────────────────────────
+
 function generatePrinciplesMarkdown(principles) {
   const lines = [];
   
   lines.push("# Template Design Principles");
   lines.push("");
   lines.push(`> Auto-generated from template analysis on ${principles.metadata.generatedAt}`);
-  lines.push(`> Source: ${principles.metadata.sourceFile}`);
+  lines.push(`> Schema Version: ${principles.metadata.schemaVersion}`);
   lines.push(`> Total slides in template: ${principles.metadata.totalSlides}`);
   lines.push("");
   lines.push("---");
   lines.push("");
   
-  // Section 1: Must-Preserve Elements
   lines.push("## 1. 必须保留的元素 (Must-Preserve Elements)");
   lines.push("");
   lines.push("以下元素在生成新内容时必须保留或确认后才能弃用：");
@@ -471,7 +618,6 @@ function generatePrinciplesMarkdown(principles) {
   lines.push("  - 来源: 模板 theme/master XML");
   lines.push("");
   
-  // Section 2: Cover & End Slide Fidelity
   lines.push("## 2. 首尾页保真原则 (Cover/End Slide Fidelity)");
   lines.push("");
   lines.push("封面页和结束页应忠实于模板原始设计：");
@@ -484,11 +630,11 @@ function generatePrinciplesMarkdown(principles) {
   lines.push("| 章节分隔 (Section Divider) | **中** | 视觉风格保留，内容可替换 |");
   lines.push("");
   
-  // Section 3: Content Slide Guidelines
   lines.push("## 3. 内容页设计指南 (Content Slide Guidelines)");
   lines.push("");
   lines.push("中间内容页的设计应遵循以下原则：");
   lines.push("");
+  
   lines.push("#### 3.1 背景处理");
   if (principles.commonElements.backgrounds.length > 0) {
     lines.push("- 使用模板背景，但允许根据内容密度调整透明度");
@@ -510,7 +656,6 @@ function generatePrinciplesMarkdown(principles) {
   lines.push("- 数据优先图表化（柱状图/折线图/饼图）");
   lines.push("");
   
-  // Section 4: Style Tokens
   lines.push("## 4. 风格令牌 (Style Tokens)");
   lines.push("");
   
@@ -531,7 +676,6 @@ function generatePrinciplesMarkdown(principles) {
     lines.push("");
   }
   
-  // Section 5: Recommendations
   lines.push("## 5. 设计建议 (Design Recommendations)");
   lines.push("");
   for (const rec of principles.recommendations) {
@@ -540,7 +684,6 @@ function generatePrinciplesMarkdown(principles) {
   }
   lines.push("");
   
-  // Section 6: Slide Type Distribution
   lines.push("## 6. 模板结构统计");
   lines.push("");
   lines.push("| 类型 | 页数 | 占比 |");
@@ -551,7 +694,6 @@ function generatePrinciplesMarkdown(principles) {
   }
   lines.push("");
   
-  // Section 7: Warnings
   if (principles.warnings && principles.warnings.length > 0) {
     lines.push("## ⚠️ 分析警告");
     lines.push("");
@@ -564,6 +706,8 @@ function generatePrinciplesMarkdown(principles) {
   return lines.join("\n");
 }
 
+// ─── Module Exports ──────────────────────────────────────────────
+
 module.exports = {
   analyzeTemplate,
   extractPptxXml,
@@ -575,4 +719,5 @@ module.exports = {
   generatePrinciplesMarkdown,
   SLIDE_TYPES,
   COMMON_ELEMENTS_THRESHOLD,
+  SCHEMA_VERSION,
 };
