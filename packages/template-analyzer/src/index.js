@@ -1,5 +1,5 @@
 /**
- * @awe/template-analyzer — Template Element Extraction (M12.31)
+ * @awe/template-analyzer — Template Element Extraction (M12.31 Enhanced)
  * 
  * Parses a PPTX template file and extracts:
  *   1. Slide elements (backgrounds, logos, watermarks, decorative shapes)
@@ -7,9 +7,12 @@
  *   3. Common elements across all slides (must be preserved)
  *   4. Unique elements per slide type (cover, content, end)
  *   5. Style tokens (fonts, colors, spacing patterns)
+ *   6. Layout information (slide layouts with placeholder positions)
+ *   7. Media assets (images, graphics)
  * 
- * Generates a template-principles.md file that serves as the "design contract"
- * for the presentation generation pipeline.
+ * Generates:
+ *   - template-principles.md: Design contract for pipeline
+ *   - template-spec.md: Detailed template specification for injector
  * 
  * Uses xml2js for proper XML parsing and schema validation for output quality.
  */
@@ -52,7 +55,8 @@ function analyzeTemplate(templatePath, options = {}) {
   if (!templatePath || !fs.existsSync(templatePath)) {
     return { 
       principles: null, 
-      principlesMd: "", 
+      principlesMd: "",
+      specMd: "",
       warnings: ["Template file not found: " + templatePath],
       validation: null
     };
@@ -65,10 +69,12 @@ function analyzeTemplate(templatePath, options = {}) {
     const uniqueElements = identifyUniqueElements(slideElements);
     const styleTokens = extractStyleTokens(xmlData);
     const slideTypes = classifySlideTypes(slideElements, slideElements.length);
+    const layouts = extractLayouts(xmlData);
+    const mediaAssets = extractMediaAssets(xmlData);
     
     const principles = buildPrinciples(
       slideElements, commonElements, uniqueElements, 
-      styleTokens, slideTypes, warnings
+      styleTokens, slideTypes, layouts, warnings
     );
     
     const crossValidationWarnings = crossValidate(slideElements, principles);
@@ -83,15 +89,21 @@ function analyzeTemplate(templatePath, options = {}) {
     }
     
     const principlesMd = generatePrinciplesMarkdown(principles);
-    const outputPath = path.join(opts.outputDir, "template-principles.md");
-    fs.writeFileSync(outputPath, principlesMd);
-    warnings.push(`Saved to ${outputPath}`);
+    const specMd = generateTemplateSpec(principles, layouts, mediaAssets, templatePath);
     
-    return { principles, principlesMd, warnings, validation };
+    const principlesOutputPath = path.join(opts.outputDir, "template-principles.md");
+    const specOutputPath = path.join(opts.outputDir, "template-spec.md");
+    
+    fs.writeFileSync(principlesOutputPath, principlesMd);
+    fs.writeFileSync(specOutputPath, specMd);
+    warnings.push(`Saved to ${principlesOutputPath}`);
+    warnings.push(`Saved to ${specOutputPath}`);
+    
+    return { principles, principlesMd, specMd, warnings, validation };
     
   } catch (e) {
     warnings.push(`Template analysis failed: ${e.message}`);
-    return { principles: null, principlesMd: "", warnings, validation: null };
+    return { principles: null, principlesMd: "", specMd: "", warnings, validation: null };
   }
 }
 
@@ -117,16 +129,33 @@ function extractPptxXml(pptxPath) {
     
     let themeXml = null;
     let masterXml = null;
+    let layouts = {};
+    
     try {
       const themeContent = fs.readFileSync(path.join(tmpDir, "ppt", "theme", "theme1.xml"), "utf8");
       themeXml = parseXmlSync(themeContent);
     } catch {}
+    
     try {
       const masterContent = fs.readFileSync(path.join(tmpDir, "ppt", "slideMasters", "slideMaster1.xml"), "utf8");
       masterXml = parseXmlSync(masterContent);
     } catch {}
     
-    return { slides, themeXml, masterXml, tmpDir };
+    // Extract slide layouts
+    const layoutDir = path.join(tmpDir, "ppt", "slideLayouts");
+    if (fs.existsSync(layoutDir)) {
+      const layoutFiles = fs.readdirSync(layoutDir)
+        .filter(f => f.startsWith("slideLayout") && f.endsWith(".xml"));
+      for (const layoutFile of layoutFiles) {
+        const layoutContent = fs.readFileSync(path.join(layoutDir, layoutFile), "utf8");
+        const match = layoutFile.match(/slideLayout(\d+)\.xml/);
+        if (match) {
+          layouts[parseInt(match[1])] = parseXmlSync(layoutContent);
+        }
+      }
+    }
+    
+    return { slides, themeXml, masterXml, layouts, tmpDir };
   } catch (e) {
     throw new Error(`Failed to extract PPTX: ${e.message}`);
   }
@@ -434,6 +463,7 @@ function identifyUniqueElements(slides) {
 function extractStyleTokens(xmlData) {
   const tokens = {
     colors: {},
+    accentColors: {},
     fonts: {},
     spacing: {},
   };
@@ -445,11 +475,16 @@ function extractStyleTokens(xmlData) {
       if (scheme) {
         const clrScheme = scheme.clrScheme;
         if (clrScheme) {
-          const colorNames = Object.keys(clrScheme).filter(k => k.startsWith("dk") || k.startsWith("lt"));
+          // Extract main colors
+          const colorNames = ["dk1", "lt1", "dk2", "lt2", "accent1", "accent2", "accent3", "accent4", "accent5", "accent6"];
           for (const name of colorNames) {
             const colorVal = clrScheme[name]?.srgbClr?.["@_val"];
             if (colorVal) {
-              tokens.colors[name] = `#${colorVal}`;
+              if (name.startsWith("accent")) {
+                tokens.accentColors[name] = `#${colorVal}`;
+              } else {
+                tokens.colors[name] = `#${colorVal}`;
+              }
             }
           }
         }
@@ -464,17 +499,120 @@ function extractStyleTokens(xmlData) {
       if (theme?.themeElements) {
         const fontScheme = theme.themeElements.fontScheme;
         if (fontScheme) {
-          const latin = fontScheme.majorFont?.latin?.["@_typeface"];
-          if (latin) tokens.fonts.latin = latin;
+          // Major font (titles)
+          const majorLatin = fontScheme.majorFont?.latin?.["@_typeface"];
+          if (majorLatin) tokens.fonts.majorLatin = majorLatin;
           
-          const ea = fontScheme.majorFont?.ea?.["@_typeface"];
-          if (ea) tokens.fonts.eastAsian = ea;
+          const majorEastAsian = fontScheme.majorFont?.ea?.["@_typeface"];
+          if (majorEastAsian) tokens.fonts.majorEastAsian = majorEastAsian;
+          
+          // Minor font (body)
+          const minorLatin = fontScheme.minorFont?.latin?.["@_typeface"];
+          if (minorLatin) tokens.fonts.minorLatin = minorLatin;
+          
+          const minorEastAsian = fontScheme.minorFont?.ea?.["@_typeface"];
+          if (minorEastAsian) tokens.fonts.minorEastAsian = minorEastAsian;
         }
       }
     }
   }
   
   return tokens;
+}
+
+// ── Layout Extraction ─────────────────────────────────────────────
+
+function extractLayouts(xmlData) {
+  const layouts = {};
+  
+  if (!xmlData.layouts) return layouts;
+  
+  for (const [layoutNum, layoutXml] of Object.entries(xmlData.layouts)) {
+    const layout = {
+      num: parseInt(layoutNum),
+      name: "",
+      placeholders: [],
+      decorations: [],
+    };
+    
+    // Extract layout name
+    const spPr = layoutXml.slideLayout?.spTree?.sp;
+    if (spPr) {
+      const spArray = Array.isArray(spPr) ? spPr : [spPr];
+      for (const sp of spArray) {
+        const nvPr = sp?.nvSpPr?.nvPr;
+        if (nvPr) {
+          const name = nvPr.name;
+          const type = nvPr.type;
+          if (type === "title" || type === "ctrTitle") {
+            layout.name = name || `Layout ${layoutNum}`;
+          }
+        }
+      }
+    }
+    
+    // Extract placeholders
+    const slide = layoutXml.slideLayout;
+    if (slide?.spTree?.sp) {
+      const shapes = Array.isArray(slide.spTree.sp) ? slide.spTree.sp : [slide.spTree.sp];
+      for (const shape of shapes) {
+        const nvSpPr = shape?.nvSpPr;
+        const nvPr = nvSpPr?.nvPr;
+        if (nvPr) {
+          const phType = nvPr.type;
+          const phName = nvPr.name;
+          if (phType) {
+            layout.placeholders.push({
+              type: phType,
+              name: phName,
+              isContentPlaceholder: !!phType,
+            });
+          } else {
+            // Decorative shape
+            layout.decorations.push({
+              name: phName,
+            });
+          }
+        }
+      }
+    }
+    
+    layouts[layoutNum] = layout;
+  }
+  
+  return layouts;
+}
+
+// ── Media Extraction ─────────────────────────────────────────────
+
+function extractMediaAssets(xmlData) {
+  const media = {
+    images: [],
+    logos: [],
+    backgrounds: [],
+  };
+  
+  // Extract from slides
+  for (const [slideNum, slideXml] of Object.entries(xmlData.slides)) {
+    const slide = slideXml.slide;
+    if (!slide?.spTree?.sp) continue;
+    
+    const shapes = Array.isArray(slide.spTree.sp) ? slide.spTree.sp : [slide.spTree.sp];
+    for (const shape of shapes) {
+      if (shape?.blipFill) {
+        const embed = shape.blipFill?.blip?.["@_embed"];
+        if (embed) {
+          media.images.push({
+            slide: parseInt(slideNum),
+            relationshipId: embed,
+            type: "image",
+          });
+        }
+      }
+    }
+  }
+  
+  return media;
 }
 
 // ── Slide Type Classification ─────────────────────────────────────
@@ -512,7 +650,7 @@ function classifySlideTypes(slides, totalSlides) {
 
 // ── Principles Building ───────────────────────────────────────────
 
-function buildPrinciples(slides, common, unique, styles, types, warnings) {
+function buildPrinciples(slides, common, unique, styles, types, layouts, warnings) {
   return {
     metadata: {
       totalSlides: slides.length,
@@ -529,6 +667,7 @@ function buildPrinciples(slides, common, unique, styles, types, warnings) {
     uniqueByType: unique,
     slideTypes: types,
     styleTokens: styles,
+    layouts,
     recommendations: generateRecommendations(common, unique, types, warnings),
     warnings,
   };
@@ -669,10 +808,30 @@ function generatePrinciplesMarkdown(principles) {
     lines.push("");
   }
   
+  if (Object.keys(principles.styleTokens.accentColors || {}).length > 0) {
+    lines.push("### 强调色");
+    lines.push("| 角色 | 颜色值 |");
+    lines.push("|------|--------|");
+    for (const [role, color] of Object.entries(principles.styleTokens.accentColors)) {
+      lines.push(`| ${role} | \`${color}\` |`);
+    }
+    lines.push("");
+  }
+  
   if (Object.keys(principles.styleTokens.fonts).length > 0) {
     lines.push("### 字体方案");
-    lines.push(`- Latin: **${principles.styleTokens.fonts.latin || "Not detected"}**`);
-    lines.push(`- East Asian: **${principles.styleTokens.fonts.eastAsian || "Not detected"}**`);
+    if (principles.styleTokens.fonts.majorLatin) {
+      lines.push(`- 标题字体 (Latin): **${principles.styleTokens.fonts.majorLatin}**`);
+    }
+    if (principles.styleTokens.fonts.majorEastAsian) {
+      lines.push(`- 标题字体 (中文): **${principles.styleTokens.fonts.majorEastAsian}**`);
+    }
+    if (principles.styleTokens.fonts.minorLatin) {
+      lines.push(`- 正文字体 (Latin): **${principles.styleTokens.fonts.minorLatin}**`);
+    }
+    if (principles.styleTokens.fonts.minorEastAsian) {
+      lines.push(`- 正文字体 (中文): **${principles.styleTokens.fonts.minorEastAsian}**`);
+    }
     lines.push("");
   }
   
@@ -706,6 +865,95 @@ function generatePrinciplesMarkdown(principles) {
   return lines.join("\n");
 }
 
+function generateTemplateSpec(principles, layouts, mediaAssets, templatePath) {
+  const lines = [];
+  
+  lines.push("# Template Specification");
+  lines.push("");
+  lines.push(`> Auto-generated from ${path.basename(templatePath)}`);
+  lines.push(`> Generated at: ${principles.metadata.generatedAt}`);
+  lines.push("");
+  lines.push("---");
+  lines.push("");
+  
+  // Metadata
+  lines.push("## 模板元数据");
+  lines.push("");
+  lines.push("| 属性 | 值 |");
+  lines.push("|------|-----|");
+  lines.push(`| 总页数 | ${principles.metadata.totalSlides} |`);
+  lines.push(`| 生成时间 | ${principles.metadata.generatedAt} |`);
+  lines.push(`| Schema版本 | ${principles.metadata.schemaVersion} |`);
+  lines.push("");
+  
+  // Layout mapping
+  lines.push("## 版式映射 (Role Map)");
+  lines.push("");
+  lines.push("根据版式内容推断幻灯片角色：");
+  lines.push("");
+  
+  const roleMap = {};
+  for (const [type, nums] of Object.entries(principles.slideTypes)) {
+    for (const num of nums) {
+      roleMap[num] = type;
+    }
+  }
+  
+  lines.push("```json");
+  lines.push(JSON.stringify(roleMap, null, 2));
+  lines.push("```");
+  lines.push("");
+  
+  // Layout details
+  lines.push("## 版式详情");
+  lines.push("");
+  for (const [layoutNum, layout] of Object.entries(layouts)) {
+    lines.push(`### Layout ${layoutNum}: ${layout.name || 'Untitled'}`);
+    lines.push("");
+    lines.push("| 类型 | 名称 |");
+    lines.push("|------|------|");
+    for (const ph of layout.placeholders) {
+      lines.push(`| ${ph.type} | ${ph.name || '(unnamed)'} |`);
+    }
+    lines.push("");
+  }
+  
+  // Media assets
+  lines.push("## 媒体素材清单");
+  lines.push("");
+  lines.push(`- 图片数量: ${mediaAssets.images.length}`);
+  lines.push("");
+  
+  // Style tokens
+  lines.push("## 风格令牌");
+  lines.push("");
+  if (Object.keys(principles.styleTokens.colors).length > 0) {
+    lines.push("### 颜色方案");
+    lines.push("```json");
+    lines.push(JSON.stringify(principles.styleTokens.colors, null, 2));
+    lines.push("```");
+    lines.push("");
+  }
+  
+  if (Object.keys(principles.styleTokens.fonts).length > 0) {
+    lines.push("### 字体方案");
+    lines.push("```json");
+    lines.push(JSON.stringify(principles.styleTokens.fonts, null, 2));
+    lines.push("```");
+    lines.push("");
+  }
+  
+  // Recommendations
+  lines.push("## 设计约束");
+  lines.push("");
+  for (const rec of principles.recommendations) {
+    lines.push(`- [${rec.priority}] ${rec.rule}: ${rec.description}`);
+  }
+  lines.push("");
+  
+  return lines.join("\n");
+}
+
 // ─── Module Exports ──────────────────────────────────────────────
 
 module.exports = {
@@ -715,8 +963,11 @@ module.exports = {
   identifyCommonElements,
   identifyUniqueElements,
   extractStyleTokens,
+  extractLayouts,
+  extractMediaAssets,
   classifySlideTypes,
   generatePrinciplesMarkdown,
+  generateTemplateSpec,
   SLIDE_TYPES,
   COMMON_ELEMENTS_THRESHOLD,
   SCHEMA_VERSION,
