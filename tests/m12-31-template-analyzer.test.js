@@ -522,8 +522,8 @@ const xmlData7 = {
 const tokens7 = extractStyleTokens(xmlData7);
 assertEqual(tokens7.colors.dk1, "#1E3A5F", "Extracts dark color");
 assertEqual(tokens7.colors.lt1, "#FFFFFF", "Extracts light color");
-assertEqual(tokens7.fonts.latin, "Calibri", "Extracts Latin font");
-assertEqual(tokens7.fonts.eastAsian, "Microsoft YaHei", "Extracts East Asian font");
+assertEqual(tokens7.fonts.majorLatin, "Calibri", "Extracts Latin font");
+assertEqual(tokens7.fonts.majorEastAsian, "Microsoft YaHei", "Extracts East Asian font");
 
 // Test 7.2: Empty theme XML
 const emptyTokens = extractStyleTokens({});
