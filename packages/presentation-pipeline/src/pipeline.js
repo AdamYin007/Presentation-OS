@@ -77,6 +77,7 @@ async function runPipeline(markdownInput, options = {}) {
       api: opts.api,
       endpoint: opts.endpoint,
       outputDir: opts.outputDir,
+      brandConfig: opts.brandConfig || null,
     });
 
     return {

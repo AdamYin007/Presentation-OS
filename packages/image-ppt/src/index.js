@@ -9,8 +9,21 @@
  *
  * Features:
  * - Prompt generation from SlideSpec
+ * - Template color extraction (from brandConfig)
  * - Sample preview (2-3 slides)
  * - Full PPT generation
+ *
+ * Usage:
+ *   const { generateImagePptx } = require('./packages/image-ppt/src/index.js');
+ *
+ *   // With template colors
+ *   const result = await generateImagePptx({
+ *     slideSpecs: [...],
+ *     brandConfig: { themeColors: ['#17406D', '#0F6FC6', ...] },  // From template
+ *     apiKey: 'sk-xxx',
+ *     api: 'agnes-image-2.1-flash',
+ *     style: 'business-professional',
+ *   });
  */
 
 "use strict";
@@ -45,7 +58,7 @@ const API_CONFIG = {
   },
   // Azure OpenAI (image generation)
   azure: {
-    endpoint: "",  // e.g., https://your-resource.openai.azure.com/openai/deployments/your-deployment/images/generations:submit?api-version=2024-02-01
+    endpoint: "",
     model: "",
     size: "1024x1024",
   },
@@ -57,47 +70,62 @@ const API_CONFIG = {
   },
 };
 
+// ── Style Presets (with template color support) ───────────────────
+
 const STYLE_PRESETS = {
   "business-professional": {
     style: "professional",
-    colors: ["#1a365d", "#2c5282", "#4299e1", "#63b3ed", "#90cdf4"],
     mood: "clean, corporate, trustworthy",
     lighting: "soft, even",
     composition: "minimalist, lots of white space",
   },
   "tech-modern": {
     style: "modern",
-    colors: ["#0d1117", "#161b22", "#21262d", "#58a6ff", "#79c0ff"],
     mood: "futuristic, innovative, tech-savvy",
     lighting: "dramatic, neon accents",
     composition: "dynamic, geometric",
   },
   "minimalist": {
     style: "minimalist",
-    colors: ["#ffffff", "#f7fafc", "#edf2f7", "#cbd5e0", "#a0aec0"],
     mood: "clean, simple, elegant",
     lighting: "natural, soft shadows",
     composition: "balanced, grid-based",
   },
   "creative-vibrant": {
     style: "creative",
-    colors: ["#ff6b6b", "#feca57", "#48dbfb", "#ff9ff3", "#54a0ff"],
     mood: "energetic, playful, bold",
     lighting: "bright, saturated",
     composition: "asymmetric, dynamic",
   },
 };
 
-// ── Prompt Generation ─────────────────────────────────────────────
+// ── Prompt Generation (with template colors) ─────────────────────
 
+/**
+ * Generate image prompt for a slide
+ *
+ * @param {Object} slideSpec - Slide specification
+ * @param {string} style - Style preset name
+ * @param {Object} options - Options including brandConfig
+ * @param {Array} [options.templateColors] - Template colors from analysis
+ * @param {string} [options.primaryColor] - Primary color from template
+ * @param {string} [options.accentColor] - Accent color from template
+ */
 function generateImagePrompt(slideSpec, style, options = {}) {
   const styleConfig = STYLE_PRESETS[style] || STYLE_PRESETS["business-professional"];
+
+  // Use template colors if available, otherwise use default palette
+  const templateColors = options.templateColors || [
+    "#1a365d", "#2c5282", "#4299e1", "#63b3ed", "#90cdf4"
+  ];
+  const primaryColor = options.primaryColor || templateColors[0] || "#1a365d";
+  const accentColor = options.accentColor || templateColors[2] || "#4299e1";
 
   const parts = [
     `Professional presentation slide titled "${slideSpec.title}"`,
     `Key message: ${slideSpec.keyMessage}`,
     `${styleConfig.style} style, ${styleConfig.mood} atmosphere`,
-    `Color palette: ${styleConfig.colors.slice(0, 3).join(", ")}`,
+    `Color palette: ${primaryColor}, ${accentColor}, and complementary shades`,
     `${styleConfig.composition} layout`,
     `${styleConfig.lighting} lighting`,
     `${options.aspectRatio || "16:9"} aspect ratio`,
@@ -121,7 +149,7 @@ function generateAllImagePrompts(slideSpecs, style, options = {}) {
 async function generateImages(prompts, options = {}) {
   const {
     apiKey,
-    api = "dall-e-3",
+    api = "agnes-image-2.1-flash",
     endpoint,
     model,
     size,
@@ -130,10 +158,12 @@ async function generateImages(prompts, options = {}) {
 
   const resolvedApiKey = apiKey || azureApiKey || process.env.OPENAI_API_KEY;
   if (!resolvedApiKey) {
-    throw new Error("API key required. Pass apiKey option or set OPENAI_API_KEY environment variable.");
+    throw new Error(
+      "API key required. Pass apiKey option or set OPENAI_API_KEY environment variable."
+    );
   }
 
-  const apiConfig = API_CONFIG[api] || API_CONFIG["dall-e-3"];
+  const apiConfig = API_CONFIG[api] || API_CONFIG["agnes-image-2.1-flash"];
   const resolvedModel = model || apiConfig.model;
   const resolvedSize = size || apiConfig.size;
   const resolvedEndpoint = endpoint || apiConfig.endpoint;
@@ -162,6 +192,7 @@ async function generateImages(prompts, options = {}) {
 
 async function callImageGenerationAPI({ apiKey, model, prompt, size, endpoint, n = 1 }) {
   const isAzure = endpoint && endpoint.includes("openai.azure.com");
+  const isAgnes = endpoint && endpoint.includes("agnes-ai.cn");
 
   let url;
   let headers = { "Content-Type": "application/json" };
@@ -171,6 +202,10 @@ async function callImageGenerationAPI({ apiKey, model, prompt, size, endpoint, n
     url = endpoint;
     headers["api-key"] = apiKey;
     body = JSON.stringify({ prompt, n, size, model });
+  } else if (isAgnes) {
+    url = endpoint || "https://apihub.agnes-ai.cn/v1/images/generations";
+    headers["Authorization"] = `Bearer ${apiKey}`;
+    body = JSON.stringify({ model, prompt, n, size });
   } else {
     url = endpoint || "https://api.openai.com/v1/images/generations";
     headers["Authorization"] = `Bearer ${apiKey}`;
@@ -198,9 +233,10 @@ async function callImageGenerationAPI({ apiKey, model, prompt, size, endpoint, n
 async function generateSamplePreview(slideSpecs, style, options = {}) {
   const {
     apiKey,
-    api = "dall-e-3",
+    api = "agnes-image-2.1-flash",
     count = 3,
     outputDir = "./image-ppt-preview",
+    brandConfig,
   } = options;
 
   fs.mkdirSync(outputDir, { recursive: true });
@@ -218,10 +254,21 @@ async function generateSamplePreview(slideSpecs, style, options = {}) {
     sampleIndices.push(0);
   }
 
+  // Extract template colors from brandConfig
+  const templateColors = brandConfig?.themeColors || [
+    "#1a365d", "#2c5282", "#4299e1", "#63b3ed", "#90cdf4"
+  ];
+  const primaryColor = brandConfig?.primaryColor || templateColors[0];
+  const accentColor = brandConfig?.accentColor || templateColors[2];
+
   const samplePrompts = sampleIndices.map((index) => ({
     slideIndex: index,
     slideId: slideSpecs[index].id,
-    prompt: generateImagePrompt(slideSpecs[index], style),
+    prompt: generateImagePrompt(slideSpecs[index], style, {
+      templateColors,
+      primaryColor,
+      accentColor,
+    }),
     spec: slideSpecs[index],
   }));
 
@@ -240,6 +287,7 @@ async function generateSamplePreview(slideSpecs, style, options = {}) {
     samples: imageResults,
     outputDir,
     count: imageResults.length,
+    templateColors,
   };
 }
 
@@ -252,9 +300,16 @@ async function downloadImage(imageUrl, outputPath) {
 
 // ── Image Composer ────────────────────────────────────────────────
 
-async function composeImagePptx(imageResults, style = "business-professional") {
+async function composeImagePptx(imageResults, style = "business-professional", options = {}) {
   const pptx = new PptxGenJS();
   const styleConfig = STYLE_PRESETS[style] || STYLE_PRESETS["business-professional"];
+
+  // Extract colors from options or brandConfig
+  const templateColors = options.templateColors || [
+    "#1a365d", "#2c5282", "#4299e1", "#63b3ed", "#90cdf4"
+  ];
+  const primaryColor = options.primaryColor || templateColors[0];
+  const accentColor = options.accentColor || templateColors[2];
 
   pptx.author = "AWE Presentation-OS";
   pptx.title = "Image-Based Presentation";
@@ -267,23 +322,24 @@ async function composeImagePptx(imageResults, style = "business-professional") {
 
     const spec = result.spec;
 
+    // Add text overlay with template colors
     slide.addText(spec.title, {
       x: 0.5, y: 0.5, w: 9, h: 1,
       fontSize: 44, fontFace: "Arial",
-      color: styleConfig.colors[0], bold: true, align: "left",
+      color: primaryColor, bold: true, align: "left",
     });
 
     slide.addText(spec.keyMessage, {
       x: 0.5, y: 1.8, w: 9, h: 0.8,
       fontSize: 24, fontFace: "Arial",
-      color: styleConfig.colors[2], align: "left",
+      color: accentColor, align: "left",
     });
 
     if (spec.body && spec.body.length > 0) {
       slide.addText(spec.body.slice(0, 5), {
         x: 0.5, y: 2.8, w: 9, h: 3,
         fontSize: 18, fontFace: "Arial",
-        color: styleConfig.colors[0], align: "left", valign: "top",
+        color: primaryColor, align: "left", valign: "top",
       });
     }
 
@@ -308,11 +364,19 @@ async function generateImagePptx(options) {
     outputDir = "./image-ppt-output",
     previewOnly = false,
     generateSamples = true,
+    brandConfig,
   } = options;
 
   if (!apiKey) {
     throw new Error("apiKey is required for image generation");
   }
+
+  // Extract template colors from brandConfig
+  const templateColors = brandConfig?.themeColors || [
+    "#1a365d", "#2c5282", "#4299e1", "#63b3ed", "#90cdf4"
+  ];
+  const primaryColor = brandConfig?.primaryColor || templateColors[0];
+  const accentColor = brandConfig?.accentColor || templateColors[2];
 
   fs.mkdirSync(outputDir, { recursive: true });
 
@@ -320,8 +384,14 @@ async function generateImagePptx(options) {
   let samplePreview = null;
   if (generateSamples) {
     console.log("Generating sample preview...");
-    samplePreview = await generateSamplePreview(slideSpecs, style, { apiKey, api, outputDir });
+    samplePreview = await generateSamplePreview(slideSpecs, style, {
+      apiKey,
+      api,
+      outputDir,
+      brandConfig,
+    });
     console.log(`Generated ${samplePreview.count} sample preview images`);
+    console.log(`Template colors: ${samplePreview.templateColors?.join(', ') || 'default'}`);
 
     console.log("\nSample previews saved to:");
     for (const sample of samplePreview.samples) {
@@ -331,12 +401,19 @@ async function generateImagePptx(options) {
     }
 
     if (previewOnly) {
-      return { preview: samplePreview, stats: { total: slideSpecs.length, samples: samplePreview.count } };
+      return {
+        preview: samplePreview,
+        stats: { total: slideSpecs.length, samples: samplePreview.count },
+      };
     }
   }
 
-  // Step 2: Generate prompts for all slides
-  const prompts = generateAllImagePrompts(slideSpecs, style);
+  // Step 2: Generate prompts for all slides (with template colors)
+  const prompts = generateAllImagePrompts(slideSpecs, style, {
+    templateColors,
+    primaryColor,
+    accentColor,
+  });
   console.log(`Generated ${prompts.length} image prompts`);
 
   // Step 3: Generate images
@@ -356,9 +433,13 @@ async function generateImagePptx(options) {
     }
   }
 
-  // Step 5: Compose PPTX
+  // Step 5: Compose PPTX (with template colors)
   console.log("Composing PPTX...");
-  const pptx = await composeImagePptx(imageResults, style);
+  const pptx = await composeImagePptx(imageResults, style, {
+    templateColors,
+    primaryColor,
+    accentColor,
+  });
 
   const pptxPath = path.join(outputDir, "presentation.pptx");
   await pptx.writeFile({ fileName: pptxPath });
@@ -370,6 +451,7 @@ async function generateImagePptx(options) {
     images: imageResults,
     prompts,
     samplePreview,
+    templateColors,
     stats: {
       total: imageResults.length,
       success: successCount,
