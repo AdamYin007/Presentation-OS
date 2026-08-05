@@ -233,19 +233,19 @@ async function generatePptx(results, outputDir) {
     const spec = result.spec;
 
     // Add text overlay
-    slide.addText(spec.title, {
+    slide.addText(spec.title || "", {
       x: 0.5, y: 0.5, w: 9, h: 1,
       fontSize: 44, fontFace: "Arial",
       color: templateColors[0], bold: true, align: "left",
     });
 
-    slide.addText(spec.keyMessage, {
+    slide.addText(spec.keyMessage || "", {
       x: 0.5, y: 1.8, w: 9, h: 0.8,
       fontSize: 24, fontFace: "Arial",
       color: templateColors[2], align: "left",
     });
 
-    if (spec.body && spec.body.length > 0) {
+    if (spec.body && Array.isArray(spec.body) && spec.body.length > 0) {
       slide.addText(spec.body.slice(0, 5), {
         x: 0.5, y: 2.8, w: 9, h: 3,
         fontSize: 18, fontFace: "Arial",
