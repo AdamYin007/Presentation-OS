@@ -73,7 +73,7 @@ const prompt = generateImagePrompt(testSlideSpec, "business-professional");
 assertInclude(prompt, "Professional presentation slide", "Prompt includes role description");
 assertInclude(prompt, "AI-Powered Healthcare", "Prompt includes title");
 assertInclude(prompt, "Transforming patient care", "Prompt includes key message");
-assertInclude(prompt, "business-professional", "Prompt includes style");
+assertInclude(prompt, "professional style", "Prompt includes style");
 
 // Test different styles
 const techPrompt = generateImagePrompt(testSlideSpec, "tech-modern");
@@ -122,7 +122,7 @@ const emptySpec = {
 };
 
 const emptyPrompt = generateImagePrompt(emptySpec, "business-professional");
-assertEqual(emptyPrompt.includes("Presentation Slide"), true, "Empty spec still generates valid prompt");
+assertInclude(emptyPrompt, "presentation slide", "Empty spec still generates valid prompt");
 
 const longSpec = {
   id: "slide-long",
