@@ -118,10 +118,10 @@ console.log("\n3. Style Presets");
 console.log("-".repeat(60));
 
 assertEqual(Object.keys(STYLE_PRESETS).length, 4, "4 style presets defined");
-assertInclude(STYLE_PRESETS["business-professional"].colors.join(","), "#1a365d", "Business colors include navy");
-assertInclude(STYLE_PRESETS["tech-modern"].colors.join(","), "#58a6ff", "Tech colors include blue");
-assertInclude(STYLE_PRESETS["minimalist"].colors.join(","), "#ffffff", "Minimalist colors include white");
-assertInclude(STYLE_PRESETS["creative-vibrant"].colors.join(","), "#ff6b6b", "Creative colors include red");
+assertInclude(STYLE_PRESETS["business-professional"].mood, "corporate", "Business mood includes corporate");
+assertInclude(STYLE_PRESETS["tech-modern"].mood, "futuristic", "Tech mood includes futuristic");
+assertInclude(STYLE_PRESETS["minimalist"].mood, "clean", "Minimalist mood includes clean");
+assertInclude(STYLE_PRESETS["creative-vibrant"].mood, "energetic", "Creative mood includes energetic");
 
 // 4. API Configuration Test
 console.log("\n4. API Configuration");
