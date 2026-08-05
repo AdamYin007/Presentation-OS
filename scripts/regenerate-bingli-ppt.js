@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Re-generate Bilingual Pathology PPT with Image-Based Style
- * Uses template colors from brand analysis
+ * Uses EXPLICIT template colors (hardcoded from analysis)
  */
 
 "use strict";
@@ -9,8 +9,6 @@
 const fs = require("fs");
 const path = require("path");
 const { runPipeline } = require("../packages/presentation-pipeline/src/pipeline.js");
-const { analyzeTemplate } = require("../packages/template-analyzer/src/index.js");
-const { convertTemplateForPipeline } = require("../packages/template-analyzer/src/brand-converter.js");
 
 async function main() {
   const templatePath = "./.hermes/desktop-attachments/91360宫颈细胞学全流程智慧解决方案介绍-20260616-1.pptx";
@@ -18,18 +16,32 @@ async function main() {
 
   console.log("=== Image-Based PPT Generation with Template Colors ===\n");
 
-  // Step 1: Analyze template
-  console.log("Step 1: Analyzing template...");
-  const analysis = analyzeTemplate(templatePath);
-  console.log(`  Templates found: ${analysis.templates?.length || 0}`);
-  console.log(`  Theme colors: ${analysis.theme?.colors?.length || 0}`);
+  // Step 1: Read template colors (extracted manually from theme XML)
+  console.log("Step 1: Loading template colors...");
+  const templateColors = [
+    "#17406D", // Primary dark blue
+    "#0F6FC6", // Blue
+    "#009DD9", // Light blue
+    "#0BD0D9", // Cyan
+    "#10CF9B", // Green
+    "#7CCA62", // Light green
+    "#A5C249", // Lime
+    "#F49100", // Orange
+  ];
+  console.log(`  Template colors: ${templateColors.join(', ')}`);
 
-  // Step 2: Convert to brand config
-  console.log("\nStep 2: Converting to brand config...");
-  const brandConfig = convertTemplateForPipeline(analysis);
-  console.log(`  Primary color: ${brandConfig.primaryColor || 'default'}`);
-  console.log(`  Accent color: ${brandConfig.accentColor || 'default'}`);
-  console.log(`  Theme colors: ${(brandConfig.themeColors || []).join(', ')}`);
+  // Step 2: Create brand config
+  const brandConfig = {
+    primaryColor: templateColors[0],
+    accentColor: templateColors[2],
+    themeColors: templateColors,
+    fonts: {
+      majorLatin: "Calibri Light",
+      minorLatin: "Calibri",
+      majorEastAsian: "宋体",
+    },
+  };
+  console.log("\nStep 2: Brand config created");
 
   // Step 3: Read markdown content
   console.log("\nStep 3: Reading markdown content...");
