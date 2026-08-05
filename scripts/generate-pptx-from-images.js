@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generate PPTX from existing images
+ * Generate PPTX from existing images (fixed version 2)
  */
 
 "use strict";
@@ -14,7 +14,7 @@ async function main() {
   
   const templateColors = ["#17406D", "#0F6FC6", "#009DD9", "#0BD0D9", "#10CF9B", "#7CCA62", "#A5C249", "#F49100"];
   
-  // Slide specs
+  // Slide specs - body as array of strings for pptxgenjs
   const slides = [
     { title: "沈阳医学院附属中心医院", keyMessage: "数智病理科建设方案", body: ["项目背景", "建设目标", "技术方案"] },
     { title: "Agenda", keyMessage: "汇报提纲", body: ["项目背景与需求", "建设目标与方案", "技术架构设计", "实施计划与预期效益"] },
@@ -36,7 +36,8 @@ async function main() {
 
   for (let i = 0; i < slides.length; i++) {
     const slide = slides[i];
-    const imagePath = path.join(outputDir, `slide-0${i + 1}.jpg`);
+    const paddedNum = String(i + 1).padStart(2, '0');
+    const imagePath = path.join(outputDir, `slide-${paddedNum}.jpg`);
     
     if (!fs.existsSync(imagePath)) {
       console.log(`Warning: ${imagePath} not found, skipping`);
@@ -46,19 +47,21 @@ async function main() {
     const pptxSlide = pptx.addSlide();
     pptxSlide.background = { url: imagePath };
 
-    // Add text overlay
+    // Add text overlay - title
     pptxSlide.addText(slide.title, {
       x: 0.5, y: 0.5, w: 9, h: 1,
       fontSize: 44, fontFace: "Arial",
       color: templateColors[0], bold: true, align: "left",
     });
 
+    // Add text overlay - key message
     pptxSlide.addText(slide.keyMessage, {
       x: 0.5, y: 1.8, w: 9, h: 0.8,
       fontSize: 24, fontFace: "Arial",
       color: templateColors[2], align: "left",
     });
 
+    // Add text overlay - body (as array)
     pptxSlide.addText(slide.body, {
       x: 0.5, y: 2.8, w: 9, h: 3,
       fontSize: 18, fontFace: "Arial",
@@ -69,6 +72,7 @@ async function main() {
   const pptxPath = path.join(outputDir, "presentation.pptx");
   await pptx.writeFile({ fileName: pptxPath });
   console.log(`\n✅ PPTX saved to: ${pptxPath}`);
+  console.log(`   Size: ${Math.round(fs.statSync(pptxPath).size / 1024 / 1024 * 100) / 100} MB`);
 }
 
 main().catch(console.error);
