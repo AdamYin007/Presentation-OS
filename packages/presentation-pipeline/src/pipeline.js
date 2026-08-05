@@ -1,9 +1,10 @@
 /**
- * Pipeline Orchestrator — M12.7 / M12.14 / M12.21 / M12.33
+ * Pipeline Orchestrator — M12.7 / M12.14 / M12.21 / M12.33 / M12.35
  *
  * Chains: ingest → intent → story-planner → slidespec → theme-layout → renderer
  * M12.21: brandConfig is threaded through layoutPlan generation and renderer
  * M12.33: added previewOnly option for outline preview generation
+ * M12.35: added imagePpt option for image-based PPT generation
  */
 const { ingestDocument } = require("../../document-ingest/src/index.js");
 const { parsePresentationIntent } = require("../../intent-parser/src/index.js");
@@ -11,14 +12,35 @@ const { planDeck, generateOutlinePreview } = require("../../story-planner/src/in
 const { generateSlideSpecs } = require("../../slidespec/src/index.js");
 const { generateLayoutPlan } = require("../../theme-layout/src/index.js");
 const { renderPptx, generateBuffer } = require("../../pptx-renderer/src/index.js");
+const { generateImagePptx, generateSamplePreview } = require("../../image-ppt/src/index.js");
 const { runQualityChecks, buildManifest, writeManifest, writeSummary } = require("./qa-utils.js");
 const fs = require("fs");
 
 /**
  * Run full pipeline from markdown input to .pptx buffer.
+ *
+ * @param {string} markdownInput - Source markdown content
+ * @param {Object} options - Pipeline options
+ * @param {string} [options.style] - Presentation style
+ * @param {string} [options.templatePath] - Path to template PPTX
+ * @param {boolean} [options.previewOnly] - Only generate outline preview
+ * @param {boolean} [options.imagePpt] - Generate image-based PPT
+ * @param {string} [options.imageStyle] - Image PPT style
+ * @param {string} [options.apiKey] - API key for image generation
+ * @param {string} [options.api] - API to use (dall-e-3, gpt-image-2, azure)
+ * @param {string} [options.outputDir] - Output directory
+ * @param {boolean} [options.emitManifest] - Generate quality manifest
+ * @returns {Promise<Object>} - Pipeline result
  */
-async function runPipeline(markdownInput, options) {
-  const opts = { style: "minimal-modern", ...(options || {}) };
+async function runPipeline(markdownInput, options = {}) {
+  const opts = {
+    style: "minimal-modern",
+    previewOnly: false,
+    imagePpt: false,
+    imageStyle: "business-professional",
+    outputDir: "./output",
+    ...options,
+  };
 
   // Step 1: Document ingestion
   const ingestResult = ingestDocument(markdownInput);
@@ -45,13 +67,37 @@ async function runPipeline(markdownInput, options) {
   // Step 4: SlideSpec generation
   const slideSpecs = generateSlideSpecs(deckPlan);
 
-  // Step 5: Theme and layout assignment — M12.21: pass brandConfig
+  // Step 5: Handle image-based PPT generation
+  if (opts.imagePpt) {
+    const imageResult = await generateImagePptx({
+      slideSpecs,
+      style: opts.imageStyle,
+      apiKey: opts.apiKey,
+      api: opts.api,
+      outputDir: opts.outputDir,
+    });
+
+    return {
+      sourceDocument,
+      format: ingestResult.format,
+      intent,
+      deckPlan,
+      slideSpecs,
+      imagePpt: true,
+      pptxPath: imageResult.pptxPath,
+      slideCount: slideSpecs.length,
+      imageStats: imageResult.stats,
+      samplePreview: imageResult.samplePreview,
+    };
+  }
+
+  // Step 6: Theme and layout assignment — M12.21: pass brandConfig
   const layoutPlan = generateLayoutPlan(slideSpecs, {
     style: opts.style,
     brandConfig: opts.brandConfig || null,
   });
 
-  // Step 6: PPTX rendering — M12.21: pass brandConfig for theme overrides
+  // Step 7: PPTX rendering — M12.21: pass brandConfig for theme overrides
   const pptx = renderPptx(slideSpecs, layoutPlan, {
     brandConfig: opts.brandConfig || null,
   });
@@ -68,7 +114,7 @@ async function runPipeline(markdownInput, options) {
     slideCount: slideSpecs.length,
   };
 
-  // Step 7 (optional): Quality manifest emission
+  // Step 8 (optional): Quality manifest emission
   if (opts.emitManifest) {
     const outputDir = opts.outputDir || process.cwd();
     fs.mkdirSync(outputDir, { recursive: true });
