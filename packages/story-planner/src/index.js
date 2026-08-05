@@ -5,8 +5,9 @@
  * generates DeckPlan from PresentationIntent + optional SourceDocumentModel.
  */
 
-const { planDeck } = require("./planner.js");
+const { planDeck, generateOutlinePreview } = require("./planner.js");
 
 module.exports = {
   planDeck,
+  generateOutlinePreview,
 };

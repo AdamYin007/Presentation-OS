@@ -48,6 +48,7 @@
     "check:m12-24-presentation-compiler": "node scripts/check-m12-24-presentation-compiler.cjs",
     "check:m12-25-audience-engine": "node scripts/check-m12-25-audience-engine.cjs",
     "check:m12-31-template-analyzer": "node tests/m12-31-template-analyzer.test.js",
+    "check:m12-33-story-planner-enhanced": "node tests/m12-33-story-planner-enhanced.test.js",
     "lint": "eslint packages/ registry/packages/ppt-factory/src/ scripts/ tests/ --ext .js,.cjs",
     "lint:fix": "eslint packages/ registry/packages/ppt-factory/src/ scripts/ tests/ --ext .js,.cjs --fix",
     "format": "prettier --write 'packages/**/*.js' 'registry/**/*.js' 'scripts/**/*.js' 'tests/**/*.js'",
