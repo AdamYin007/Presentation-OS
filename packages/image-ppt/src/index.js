@@ -2,6 +2,7 @@
  * Image-Based PPT Generator Module
  *
  * Supports:
+ * - Agnes Image API (agnes-image-2.1-flash)
  * - OpenAI DALL-E 3 / GPT-Image-2
  * - Azure OpenAI (image generation)
  * - Custom OpenAI-compatible APIs
@@ -21,23 +22,34 @@ const PptxGenJS = require("pptxgenjs");
 // ── Configuration ─────────────────────────────────────────────────
 
 const API_CONFIG = {
+  // Agnes Image API (primary)
+  "agnes-image-2.1-flash": {
+    endpoint: "https://apihub.agnes-ai.cn/v1/images/generations",
+    model: "agnes-image-2.1-flash",
+    size: "1792x1024",
+    quality: "hd",
+  },
+  // OpenAI DALL-E 3
   "dall-e-3": {
     endpoint: "https://api.openai.com/v1/images/generations",
     model: "dall-e-3",
     size: "1792x1024",
     quality: "hd",
   },
+  // OpenAI GPT-Image-2
   "gpt-image-2": {
     endpoint: "https://api.openai.com/v1/images/generations",
     model: "gpt-image-2",
     size: "1792x1024",
     quality: "hd",
   },
+  // Azure OpenAI (image generation)
   azure: {
     endpoint: "",  // e.g., https://your-resource.openai.azure.com/openai/deployments/your-deployment/images/generations:submit?api-version=2024-02-01
     model: "",
     size: "1024x1024",
   },
+  // Custom API (OpenAI compatible)
   custom: {
     endpoint: "",
     model: "",
@@ -290,7 +302,7 @@ async function generateImagePptx(options) {
     slideSpecs,
     style = "business-professional",
     apiKey,
-    api = "dall-e-3",
+    api = "agnes-image-2.1-flash",
     endpoint,
     model,
     outputDir = "./image-ppt-output",
