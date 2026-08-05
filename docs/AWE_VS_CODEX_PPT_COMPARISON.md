@@ -73,15 +73,20 @@
 | **多 Agent 协作** | 高 | 1 月 | P3 |
 | **增强风格系统** | 中 | 2 周 | P1 |
 
-## 五、与 Agnes 图像模型的集成
+## 五、Agnes 图像模型集成分析
 
-### Agnes 图像模型可能性
+### 当前状态
 
-根据用户提示，Agnes 可能有以下图像模型：
-- `agnes-image-2.1-flash` - 推测为 Agnes 的图像生成模型
+根据配置检查：
+- Agnes API 当前只配置了 `agnes-2.5-flash` 聊天模型
+- API 返回 401 错误，可能是密钥过期或权限问题
+- 未配置图像生成 API 端点
 
-### 集成方案
+### 如果 Agnes 有图像模型
 
+**假设**：`agnes-image-2.1-flash` 存在
+
+**集成方案**：
 ```javascript
 // packages/image-ppt/src/index.js
 const AGNES_IMAGE_MODELS = {
@@ -91,37 +96,18 @@ const AGNES_IMAGE_MODELS = {
     size: "1792x1024",
   },
 };
-
-async function callImageGenerationAPI({ apiKey, model, prompt, size, endpoint, n = 1 }) {
-  const isAzure = endpoint && endpoint.includes("openai.azure.com");
-  const isAgnes = endpoint && endpoint.includes("agnes-ai.cn");
-  
-  let url;
-  let headers = { "Content-Type": "application/json" };
-  let body;
-  
-  if (isAzure) {
-    url = endpoint;
-    headers["api-key"] = apiKey;
-    body = JSON.stringify({ prompt, n, size, model });
-  } else if (isAgnes) {
-    url = endpoint || "https://apihub.agnes-ai.cn/v1/images/generations";
-    headers["Authorization"] = `Bearer ${apiKey}`;
-    body = JSON.stringify({ model, prompt, n, size });
-  } else {
-    url = endpoint || "https://api.openai.com/v1/images/generations";
-    headers["Authorization"] = `Bearer ${apiKey}`;
-    body = JSON.stringify({ model, prompt, n, size });
-  }
-  
-  // ... fetch logic
-}
 ```
 
-### 需要验证
+**需要验证**：
 1. Agnes 是否有图像生成 API
 2. 支持的模型名称和参数
 3. API 端点和认证方式
+
+### 建议
+
+1. **联系 Agnes 团队**：确认是否有图像生成 API
+2. **测试 API**：获取有效的 API 密钥
+3. **集成到 image-ppt 模块**：添加 Agnes 作为支持的 API 之一
 
 ## 六、评分总结
 
