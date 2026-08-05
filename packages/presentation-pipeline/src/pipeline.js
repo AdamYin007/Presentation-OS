@@ -1,13 +1,13 @@
 /**
- * Pipeline Orchestrator — M12.7 / M12.14 / M12.21
+ * Pipeline Orchestrator — M12.7 / M12.14 / M12.21 / M12.33
  *
  * Chains: ingest → intent → story-planner → slidespec → theme-layout → renderer
  * M12.21: brandConfig is threaded through layoutPlan generation and renderer
- * so that brand profiles affect actual PPTX output (colors, fonts, footer, title).
+ * M12.33: added previewOnly option for outline preview generation
  */
 const { ingestDocument } = require("../../document-ingest/src/index.js");
 const { parsePresentationIntent } = require("../../intent-parser/src/index.js");
-const { planDeck } = require("../../story-planner/src/index.js");
+const { planDeck, generateOutlinePreview } = require("../../story-planner/src/index.js");
 const { generateSlideSpecs } = require("../../slidespec/src/index.js");
 const { generateLayoutPlan } = require("../../theme-layout/src/index.js");
 const { renderPptx, generateBuffer } = require("../../pptx-renderer/src/index.js");
@@ -29,6 +29,18 @@ async function runPipeline(markdownInput, options) {
 
   // Step 3: Story planning — pass sourceDocument for sourceRef resolution
   const deckPlan = planDeck(intent, sourceDocument);
+
+  // Step 3.5: Preview mode — return outline without generating PPTX
+  if (opts.previewOnly) {
+    return {
+      sourceDocument,
+      intent,
+      deckPlan,
+      outline: generateOutlinePreview(deckPlan),
+      slideCount: deckPlan.slides.length,
+      preview: true,
+    };
+  }
 
   // Step 4: SlideSpec generation
   const slideSpecs = generateSlideSpecs(deckPlan);
