@@ -236,15 +236,20 @@ function extractBackground(slideXml) {
 function extractShapes(slideXml) {
   const slide = slideXml.slide;
   if (!slide || !slide.spTree) return [];
-  
+
   const shapes = [];
   const spElements = slide.spTree.sp;
-  
+
   const spArray = Array.isArray(spElements) ? spElements : [spElements];
   for (const sp of spArray) {
+    // Skip if this is an image element (no nvSpPr means it's not a shape)
+    if (!sp?.nvSpPr) {
+      // It might be an image - let extractImages handle it
+      continue;
+    }
     shapes.push(parseSingleShape(sp));
   }
-  
+
   return shapes.filter(Boolean);
 }
 
