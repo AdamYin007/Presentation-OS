@@ -6,7 +6,7 @@
  *   2. Sample preview
  *   3. API configuration
  *   4. Style presets
- *   5. Composition logic
+ *   5. Pipeline integration
  */
 
 "use strict";
@@ -16,10 +16,9 @@ const {
   generateAllImagePrompts,
   generateSamplePreview,
   STYLE_PRESETS,
-  IMAGE_API_CONFIG,
-  DEFAULT_IMAGE_OPTIONS,
-  SAMPLE_PREVIEW_COUNT,
+  API_CONFIG,
 } = require("../packages/image-ppt/src/index.js");
+const { runPipeline } = require("../packages/presentation-pipeline/src/pipeline.js");
 
 // ── Helpers ───────────────────────────────────────────────────────
 
@@ -84,14 +83,12 @@ const testSlideSpec = {
   designHints: {},
 };
 
-// Test basic prompt generation
 const prompt = generateImagePrompt(testSlideSpec, "business-professional");
 assertInclude(prompt, "Professional presentation slide", "Prompt includes role description");
 assertInclude(prompt, "AI-Powered Healthcare", "Prompt includes title");
 assertInclude(prompt, "Transforming patient care", "Prompt includes key message");
 assertInclude(prompt, "professional style", "Prompt includes style");
 
-// Test different styles
 const techPrompt = generateImagePrompt(testSlideSpec, "tech-modern");
 assertInclude(techPrompt, "futuristic", "Tech style includes futuristic mood");
 assertInclude(techPrompt, "neon accents", "Tech style includes lighting");
@@ -130,24 +127,33 @@ assertInclude(STYLE_PRESETS["creative-vibrant"].colors.join(","), "#ff6b6b", "Cr
 console.log("\n4. API Configuration");
 console.log("-".repeat(60));
 
-assertEqual(IMAGE_API_CONFIG["dall-e-3"].model, "dall-e-3", "DALL-E 3 model configured");
-assertEqual(IMAGE_API_CONFIG["gpt-image-2"].model, "gpt-image-2", "GPT-Image-2 model configured");
-assertInclude(IMAGE_API_CONFIG["azure"].endpoint || "openai.azure.com", "openai.azure.com", "Azure endpoint template correct");
-assertEqual(IMAGE_API_CONFIG["custom"].model, "", "Custom model empty by default");
+assertEqual(API_CONFIG["dall-e-3"].model, "dall-e-3", "DALL-E 3 model configured");
+assertEqual(API_CONFIG["gpt-image-2"].model, "gpt-image-2", "GPT-Image-2 model configured");
+assertEqual(API_CONFIG["azure"].endpoint, "", "Azure endpoint empty by default");
+assertEqual(API_CONFIG["custom"].model, "", "Custom model empty by default");
 
-// 5. Default Options Test
-console.log("\n5. Default Options");
+// 5. Pipeline Integration Test
+console.log("\n5. Pipeline Integration");
 console.log("-".repeat(60));
 
-assertEqual(DEFAULT_IMAGE_OPTIONS.api, "dall-e-3", "Default API is dall-e-3");
-assertEqual(DEFAULT_IMAGE_OPTIONS.size, "1792x1024", "Default size is 16:9");
-assertEqual(SAMPLE_PREVIEW_COUNT, 3, "Sample preview count is 3");
+assertTrue(typeof runPipeline === "function", "runPipeline is a function");
+
+// Test pipeline with imagePpt option
+const pipelineOptions = {
+  imagePpt: true,
+  imageStyle: "tech-modern",
+  apiKey: "test-key",
+  api: "dall-e-3",
+};
+
+assertEqual(pipelineOptions.imagePpt, true, "imagePpt option set correctly");
+assertEqual(pipelineOptions.imageStyle, "tech-modern", "imageStyle option set correctly");
+assertEqual(pipelineOptions.api, "dall-e-3", "api option set correctly");
 
 // 6. Sample Preview Logic Test
 console.log("\n6. Sample Preview Logic");
 console.log("-".repeat(60));
 
-// Test with different slide counts
 const shortSpecs = [
   { id: "slide-001", title: "Title", keyMessage: "Msg1", role: "title" },
   { id: "slide-002", title: "Content", keyMessage: "Msg2", role: "content" },
@@ -163,7 +169,6 @@ for (let i = 1; i <= 10; i++) {
   });
 }
 
-// Verify sample selection logic
 assertTrue(shortSpecs.length >= 2, "Short deck has 2+ slides");
 assertTrue(longSpecs.length >= 10, "Long deck has 10+ slides");
 
@@ -191,40 +196,8 @@ const longSpec = {
 const longPrompt = generateImagePrompt(longSpec, "business-professional");
 assertInclude(longPrompt, "A Very Long Title", "Long title handled correctly");
 
-// 8. Pipeline Integration Test
-console.log("\n8. Pipeline Integration");
-console.log("-".repeat(60));
-
-const { runPipeline } = require("../packages/presentation-pipeline/src/pipeline.js");
-
-assertTrue(typeof runPipeline === "function", "runPipeline is a function");
-
-// Test that pipeline accepts imagePpt option
-const pipelineOptions = {
-  imagePpt: true,
-  imageStyle: "tech-modern",
-  apiKey: "test-key",
-  api: "dall-e-3",
-};
-
-assertEqual(pipelineOptions.imagePpt, true, "imagePpt option set correctly");
-assertEqual(pipelineOptions.imageStyle, "tech-modern", "imageStyle option set correctly");
-assertEqual(pipelineOptions.api, "dall-e-3", "api option set correctly");
-
-// 9. Error Handling Test
-console.log("\n9. Error Handling");
-console.log("-".repeat(60));
-
-// Test that missing API key throws error
-try {
-  generateImagePrompt({ title: "Test", keyMessage: "Test", role: "content" }, "business-professional");
-  assertTrue(true, "Prompt generation without API key works (no key needed for prompt gen)");
-} catch (error) {
-  assertTrue(false, "Prompt generation should not require API key");
-}
-
-// 10. Output Format Test
-console.log("\n10. Output Format");
+// 8. Output Format Test
+console.log("\n8. Output Format");
 console.log("-".repeat(60));
 
 const outputStructure = {

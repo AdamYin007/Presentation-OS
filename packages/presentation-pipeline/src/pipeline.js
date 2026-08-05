@@ -4,7 +4,7 @@
  * Chains: ingest → intent → story-planner → slidespec → theme-layout → renderer
  * M12.21: brandConfig is threaded through layoutPlan generation and renderer
  * M12.33: added previewOnly option for outline preview generation
- * M12.35: added imagePpt option for image-based PPT generation
+ * M12.35: added imagePpt option for image-based PPT generation with sample preview
  */
 const { ingestDocument } = require("../../document-ingest/src/index.js");
 const { parsePresentationIntent } = require("../../intent-parser/src/index.js");
@@ -12,7 +12,7 @@ const { planDeck, generateOutlinePreview } = require("../../story-planner/src/in
 const { generateSlideSpecs } = require("../../slidespec/src/index.js");
 const { generateLayoutPlan } = require("../../theme-layout/src/index.js");
 const { renderPptx, generateBuffer } = require("../../pptx-renderer/src/index.js");
-const { generateImagePptx, generateSamplePreview } = require("../../image-ppt/src/index.js");
+const { generateImagePptx } = require("../../image-ppt/src/index.js");
 const { runQualityChecks, buildManifest, writeManifest, writeSummary } = require("./qa-utils.js");
 const fs = require("fs");
 
@@ -27,7 +27,8 @@ const fs = require("fs");
  * @param {boolean} [options.imagePpt] - Generate image-based PPT
  * @param {string} [options.imageStyle] - Image PPT style
  * @param {string} [options.apiKey] - API key for image generation
- * @param {string} [options.api] - API to use (dall-e-3, gpt-image-2, azure)
+ * @param {string} [options.api] - API to use (dall-e-3, gpt-image-2, azure, custom)
+ * @param {string} [options.endpoint] - Custom API endpoint
  * @param {string} [options.outputDir] - Output directory
  * @param {boolean} [options.emitManifest] - Generate quality manifest
  * @returns {Promise<Object>} - Pipeline result
@@ -46,10 +47,10 @@ async function runPipeline(markdownInput, options = {}) {
   const ingestResult = ingestDocument(markdownInput);
   const sourceDocument = ingestResult.model;
 
-  // Step 2: Intent parsing — pass actual SourceDocumentModel, not wrapper
+  // Step 2: Intent parsing
   const intent = parsePresentationIntent(markdownInput, { sourceDocument });
 
-  // Step 3: Story planning — pass sourceDocument for sourceRef resolution
+  // Step 3: Story planning
   const deckPlan = planDeck(intent, sourceDocument);
 
   // Step 3.5: Preview mode — return outline without generating PPTX
@@ -74,6 +75,7 @@ async function runPipeline(markdownInput, options = {}) {
       style: opts.imageStyle,
       apiKey: opts.apiKey,
       api: opts.api,
+      endpoint: opts.endpoint,
       outputDir: opts.outputDir,
     });
 
@@ -91,13 +93,13 @@ async function runPipeline(markdownInput, options = {}) {
     };
   }
 
-  // Step 6: Theme and layout assignment — M12.21: pass brandConfig
+  // Step 6: Theme and layout assignment
   const layoutPlan = generateLayoutPlan(slideSpecs, {
     style: opts.style,
     brandConfig: opts.brandConfig || null,
   });
 
-  // Step 7: PPTX rendering — M12.21: pass brandConfig for theme overrides
+  // Step 7: PPTX rendering
   const pptx = renderPptx(slideSpecs, layoutPlan, {
     brandConfig: opts.brandConfig || null,
   });
