@@ -1,0 +1,166 @@
+# AWE vs codex-ppt-skill 对比分析
+
+## 一、核心功能对比
+
+| 功能 | AWE (图片式 PPT) | codex-ppt-skill | 评分 |
+|------|------------------|-----------------|------|
+| **图片生成质量** | 依赖 API (DALL-E 3/GPT-Image-2) | 内置 GPT-Image-2 | ⭐⭐⭐ |
+| **阶段化确认流程** | 有大纲预览 | 5 步确认 (大纲→风格→样张→反馈→批量) | ⭐⭐ |
+| **风格预设** | 4 种 (business/tech/minimalist/creative) | 12 种 + 自定义风格库 | ⭐⭐ |
+| **个人风格库** | ❌ 无 | ✅ ~/.codex-ppt-skill/references/ | ⭐ |
+| **演讲稿生成** | ❌ 无 | ✅ speech.md + PPTX 备注 | ⭐ |
+| **指定图片插入** | ❌ 无 | ✅ 可插入论文原图/截图/架构图 | ⭐ |
+| **失败模式处理** | ❌ 无 | ✅ 8 种 failure modes + 自动修复 | ⭐ |
+| **多 Agent 协作** | ❌ 无 | ✅ 一页一个 agent 并行生成 | ⭐ |
+| **模板分析** | ✅ 完整模板分析系统 | ❌ 无 | ⭐⭐⭐⭐ |
+| **品牌系统** | ✅ 企业级品牌一致性 | ❌ 无 | ⭐⭐⭐⭐ |
+| **确定性生成** | ✅ 96+ 测试覆盖 | ❌ AI 生成 | ⭐⭐⭐ |
+| **可编辑 PPTX** | ❌ 图片背景 | ✅ 原生形状 | ⭐ |
+
+## 二、AWE 的优势领域
+
+### 1. 模板分析 (唯一完整系统)
+- 从 PPTX 提取主题颜色、字体、布局、媒体资产
+- 生成 template-spec.md 和 brand-config.json
+- 企业级品牌一致性保证
+
+### 2. 品牌系统
+- 从模板到品牌的自动化转换
+- 主题 token 生成
+- 布局映射
+
+### 3. 确定性生成
+- 96+ 测试用例覆盖
+- Schema 校验
+- 可预测的输出
+
+### 4. 文档长度压缩
+- 自动压缩至 ≤40 页
+- 自定义叙事模式
+- 大纲预览
+
+## 三、codex-ppt-skill 的优势领域
+
+### 1. 用户体验
+- 阶段化确认流程 (5 步)
+- 样张预览 (生成前确认)
+- 失败模式处理
+
+### 2. 风格系统
+- 12 种内置风格
+- 个人风格库持久化
+- 自定义风格复刻
+
+### 3. 高级功能
+- 演讲稿生成 (speech.md)
+- 指定图片插入 (论文原图/截图)
+- 多 Agent 并行生成
+
+### 4. 生态集成
+- Codex 内置生图
+- AtlasCloud 支持
+- 多平台兼容
+
+## 四、实现难度评估
+
+| 功能 | 难度 | 时间 | 优先级 |
+|------|------|------|--------|
+| **阶段化确认流程** | 中 | 2 周 | P0 |
+| **个人风格库** | 低 | 1 周 | P1 |
+| **演讲稿生成** | 低 | 3 天 | P1 |
+| **指定图片插入** | 中 | 2 周 | P2 |
+| **失败模式处理** | 高 | 3 周 | P2 |
+| **多 Agent 协作** | 高 | 1 月 | P3 |
+| **增强风格系统** | 中 | 2 周 | P1 |
+
+## 五、与 Agnes 图像模型的集成
+
+### Agnes 图像模型可能性
+
+根据用户提示，Agnes 可能有以下图像模型：
+- `agnes-image-2.1-flash` - 推测为 Agnes 的图像生成模型
+
+### 集成方案
+
+```javascript
+// packages/image-ppt/src/index.js
+const AGNES_IMAGE_MODELS = {
+  "agnes-image-2.1-flash": {
+    endpoint: "https://apihub.agnes-ai.cn/v1/images/generations",
+    model: "agnes-image-2.1-flash",
+    size: "1792x1024",
+  },
+};
+
+async function callImageGenerationAPI({ apiKey, model, prompt, size, endpoint, n = 1 }) {
+  const isAzure = endpoint && endpoint.includes("openai.azure.com");
+  const isAgnes = endpoint && endpoint.includes("agnes-ai.cn");
+  
+  let url;
+  let headers = { "Content-Type": "application/json" };
+  let body;
+  
+  if (isAzure) {
+    url = endpoint;
+    headers["api-key"] = apiKey;
+    body = JSON.stringify({ prompt, n, size, model });
+  } else if (isAgnes) {
+    url = endpoint || "https://apihub.agnes-ai.cn/v1/images/generations";
+    headers["Authorization"] = `Bearer ${apiKey}`;
+    body = JSON.stringify({ model, prompt, n, size });
+  } else {
+    url = endpoint || "https://api.openai.com/v1/images/generations";
+    headers["Authorization"] = `Bearer ${apiKey}`;
+    body = JSON.stringify({ model, prompt, n, size });
+  }
+  
+  // ... fetch logic
+}
+```
+
+### 需要验证
+1. Agnes 是否有图像生成 API
+2. 支持的模型名称和参数
+3. API 端点和认证方式
+
+## 六、评分总结
+
+### AWE 图片式 PPT 能力评分：75/100
+
+| 维度 | 得分 | 说明 |
+|------|------|------|
+| 技术架构 | 85/100 | 模块化设计，可扩展性强 |
+| 功能完整度 | 60/100 | 缺少阶段化流程、风格库、演讲稿 |
+| 用户体验 | 50/100 | 缺少样张确认、失败处理 |
+| 差异化优势 | 90/100 | 模板分析+品牌系统是独特优势 |
+| 测试覆盖 | 95/100 | 129 个测试用例 |
+
+### 超越路径
+
+1. **短期 (1-2 周)**:
+   - 集成 Agnes 图像模型 (如可用)
+   - 添加个人风格库
+   - 添加演讲稿生成
+
+2. **中期 (1 月)**:
+   - 实现阶段化确认流程
+   - 增强风格系统 (12+ 风格)
+   - 添加指定图片插入
+
+3. **长期 (2-3 月)**:
+   - 多 Agent 并行生成
+   - 失败模式自动修复
+   - Web UI
+
+## 七、关键结论
+
+**AWE 的图片式 PPT 目前能打 75 分**，相比 codex-ppt-skill:
+
+- ✅ **优势**: 模板分析、品牌系统、确定性生成
+- ❌ **劣势**: 用户体验、风格系统、高级功能
+- 🎯 **差异化**: 企业级模板驱动 + 品牌一致性
+
+**超越 codex-ppt 的关键**:
+1. 不直接竞争通用市场，聚焦企业级模板分析
+2. 保持确定性生成的优势
+3. 逐步补齐用户体验短板
